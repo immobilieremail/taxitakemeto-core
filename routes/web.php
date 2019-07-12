@@ -11,8 +11,9 @@
 |
 */
 
-Route::get('/', 'IndexController@index');
+Route::get('/', 'IndexController@index')->name('index');
 
-Route::resource('upload-audio', 'UploadAudioController');
+Route::get('upload-audio', 'UploadAudioController@index')->name('upload-audio.index');
+Route::post('upload-audio', 'UploadAudioController@store')->name('upload-audio.store');
 
-Route::resource('list-audio', 'ListAudioController');
+Route::get('list-audio', 'ListAudioController@index')->name('list-audio.index');
