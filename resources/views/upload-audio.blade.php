@@ -5,5 +5,8 @@
 @endsection
 
 @section('content')
-    Upload Content
+    {!! Form::open(['url' => 'upload-audio']) !!}
+        {!! Form::file('audio') !!}
+        {!! Form::submit('Envoyer') !!}
+    {!! Form::close() !!}
 @endsection

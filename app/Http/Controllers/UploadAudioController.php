@@ -10,4 +10,9 @@ class UploadAudioController extends Controller
     {
         return view('upload-audio');
     }
+
+    public function store()
+    {
+
+    }
 }
