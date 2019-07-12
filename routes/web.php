@@ -12,3 +12,7 @@
 */
 
 Route::get('/', 'IndexController@index');
+
+Route::resource('upload-audio', 'UploadAudioController');
+
+Route::resource('list-audio', 'ListAudioController');
