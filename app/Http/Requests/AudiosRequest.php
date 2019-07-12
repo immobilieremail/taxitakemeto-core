@@ -24,7 +24,7 @@ class AudiosRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'audio' => 'bail|required|mimes:audio/mpeg,mpga,mp3,wav,aac,ogg'
+            //
         ];
     }
 }

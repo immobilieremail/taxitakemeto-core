@@ -14,12 +14,12 @@ class UploadAudioController extends Controller
     public function store(AudiosRequest $request)
     {
         if ($request->has('audio')) {
-            $uniqueid = uniqid();
+            $file = $request->file('audio');
             $extension = $request->file('audio')->getClientOriginalExtension();
             $original_name = str_replace(('.' . $extension), '', $request->file('audio')->getClientOriginalName());
-            $filename = time() . '_' . $original_name  . '_' . $uniqueid . '.' . $extension;
-            $request->file('audio')->storeAs('public/uploads', $filename);
-            return 'Le nom du fichier est : ' . $filename . '.';
+            $filename = time() . '_' . $original_name  . '_' . uniqid() . '.' . $extension;
+            $file->move('storage/uploads', $filename);
+            return redirect('/');
         } else {
             return 'Request has no audio named file.';
         }
