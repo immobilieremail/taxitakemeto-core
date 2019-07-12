@@ -8,7 +8,7 @@ class UploadAudioController extends Controller
 {
     public function index()
     {
-        return view('upload-audio');
+        return view('upload-audio', ['validation_msg' => '']);
     }
 
     public function store(AudiosRequest $request)
@@ -19,9 +19,9 @@ class UploadAudioController extends Controller
             $original_name = str_replace(('.' . $extension), '', $request->file('audio')->getClientOriginalName());
             $filename = time() . '_' . $original_name  . '_' . uniqid() . '.' . $extension;
             $file->move('storage/uploads', $filename);
-            return redirect('/');
+            return view('upload-audio', ['validation_msg' => 'File has been successfully uploaded.']);
         } else {
-            return 'Request has no audio named file.';
+            return view('upload-audio', ['validation_msg' => 'File upload failed.']);
         }
     }
 }

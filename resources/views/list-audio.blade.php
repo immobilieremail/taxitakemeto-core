@@ -5,8 +5,6 @@
 @endsection
 
 @section('content')
-    List Content
-    <br>
     <div>
         <ul style="list-style: none;">
             <?php $isempty = true; ?>
