@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Audio;
 use App\Http\Requests\AudiosRequest;
+use Illuminate\Support\Facades\Auth;
+
 
 class UploadAudioController extends Controller
 {
@@ -24,6 +27,14 @@ class UploadAudioController extends Controller
             $original_name = str_replace(('.' . $extension), '', $request->file('audio')->getClientOriginalName());
             $filename = time() . '_' . $original_name  . '_' . uniqid() . '.' . $extension;
             $file->move('storage/uploads', $filename);
+
+            $audio = new Audio;
+
+            $audio->name = $original_name;
+            $audio->path = 'public/storage/uploads/' . $filename;
+            $audio->owner_id = Auth::user()->owner_id;
+            $audio->save();
+
             return view('upload-audio', ['validation_msg' => 'File has been successfully uploaded.']);
         } else {
             return view('upload-audio', ['validation_msg' => 'File upload failed.']);

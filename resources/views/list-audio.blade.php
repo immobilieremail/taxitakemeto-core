@@ -4,20 +4,17 @@
     <div class="container">
         <ul style="list-style: none;">
             <?php $isempty = true; ?>
-            @foreach(Storage::disk('local')->allFiles() as $file)
-                @if (strpos($file, 'public/uploads/') !== false)
-                    <?php $isempty = false; ?>
+                @foreach ($audios as $audio)
+                    @if ($isempty == true)
+                        <?php $isempty = false; ?>
+                    @endif
                     <li>
-                        {{-- {!! Form::open(['url' => 'list-audio']) !!}
-                            {!! Form::text('audio-name', $file) !!}
-                        {!! Form::close() !!} --}}
-                        <?php $path = str_replace('public/uploads/', 'storage/uploads/', $file); ?>
+                        <?php echo $audio->name; ?><br>
                         <audio controls type="audio">
-                            <source src={{ $path }}>
+                            <source src=<?php echo $audio->path; ?>>
                         </audio>
                     </li>
-                @endif
-            @endforeach
+                @endforeach
             @if ($isempty == true)
                 It's empty.
             @endif

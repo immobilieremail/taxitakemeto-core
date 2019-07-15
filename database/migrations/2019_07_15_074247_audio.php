@@ -14,7 +14,7 @@ class Audio extends Migration
     public function up()
     {
         Schema::create('audio', function (Blueprint $table) {
-            $table->string('id');
+            $table->string('owner_id');
             $table->string('name');
             $table->string('path');
             $table->timestamps();
