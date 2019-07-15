@@ -20,3 +20,6 @@ Route::get('upload-audio', 'UploadAudioController@index')->name('upload-audio.in
 Route::post('upload-audio', 'UploadAudioController@store')->name('upload-audio.store');
 
 Route::get('list-audio', 'ListAudioController@index')->name('list-audio.index');
+
+Route::get('share-audio', 'ShareAudioController@index')->name('share-audio.index');
+Route::post('share-audio', 'ShareAudioController@store')->name('share-audio.store');

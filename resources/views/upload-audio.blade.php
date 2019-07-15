@@ -7,7 +7,7 @@
         @endif
         {!! Form::open(['url' => 'upload-audio', 'files' => true]) !!}
             {!! Form::file('audio') !!}
-            {!! Form::submit('Envoyer') !!}
+            {!! Form::submit('Send') !!}
         {!! Form::close() !!}
     </div>
 @endsection

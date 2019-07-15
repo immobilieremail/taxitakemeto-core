@@ -18,6 +18,6 @@ class ListAudioController extends Controller
         $id = Auth::user()->owner_id;
         $audios = Audio::all()->where('owner_id', $id);
 
-        return view('list-audio', ['audios' => $audios]);
+        return view('list-audio', ['audios' => $audios, 'id' => $id]);
     }
 }

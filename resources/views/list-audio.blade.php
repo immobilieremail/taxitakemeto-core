@@ -12,6 +12,9 @@
                             <audio controls type="audio">
                                 <source src=<?php echo $audio->path; ?>>
                             </audio>
+                            @if ($id == $audio->owner_id)
+                                <a href=<?php echo '/share-audio?id=' . $audio->audio_id ?>>Share</a>
+                            @endif
                         </li>
                     @endif
                 @endforeach
