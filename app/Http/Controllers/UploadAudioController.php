@@ -22,22 +22,25 @@ class UploadAudioController extends Controller
     public function store(AudiosRequest $request)
     {
         if ($request->has('audio')) {
-            $file = $request->file('audio');
             $extension = $request->file('audio')->getClientOriginalExtension();
-            $original_name = str_replace(('.' . $extension), '', $request->file('audio')->getClientOriginalName());
-            $filename = time() . '_' . $original_name  . '_' . uniqid() . '.' . $extension;
-            $file->move('storage/uploads', $filename);
+            if ($extension == 'wav' || $extension == 'mp3' || $extension == 'ogg') {
+                // Store the file with $file->move()
+                $file = $request->file('audio');
+                $original_name = str_replace(('.' . $extension), '', $request->file('audio')->getClientOriginalName());
+                $filename = time() . '_' . $original_name  . '_' . uniqid() . '.' . $extension;
+                $file->move('storage/uploads', $filename);
 
-            $audio = new Audio;
+                // Store information in the database with $audio->save()
+                $audio = new Audio;
 
-            $audio->name = $original_name;
-            $audio->path = 'storage/uploads/' . $filename;
-            $audio->owner_id = Auth::user()->owner_id;
-            $audio->save();
+                $audio->name = $original_name;
+                $audio->path = 'storage/uploads/' . $filename;
+                $audio->owner_id = Auth::user()->owner_id;
+                $audio->save();
 
-            return view('upload-audio', ['validation_msg' => 'File has been successfully uploaded.']);
-        } else {
-            return view('upload-audio', ['validation_msg' => 'File upload failed.']);
+                return view('upload-audio', ['validation_msg' => 'File has been successfully uploaded.']);
+            }
         }
+        return view('upload-audio', ['validation_msg' => 'File upload failed.']);
     }
 }
