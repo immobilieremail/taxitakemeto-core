@@ -1,18 +1,16 @@
-@extends('template')
-
-@section('title')
-    List Audio
-@endsection
+@extends('layouts.app')
 
 @section('content')
-    <div>
+    <div class="container">
         <ul style="list-style: none;">
             <?php $isempty = true; ?>
             @foreach(Storage::disk('local')->allFiles() as $file)
                 @if (strpos($file, 'public/uploads/') !== false)
                     <?php $isempty = false; ?>
                     <li>
-                        {{ $file }}<br>
+                        {{-- {!! Form::open(['url' => 'list-audio']) !!}
+                            {!! Form::text('audio-name', $file) !!}
+                        {!! Form::close() !!} --}}
                         <?php $path = str_replace('public/uploads/', 'storage/uploads/', $file); ?>
                         <audio controls type="audio">
                             <source src={{ $path }}>

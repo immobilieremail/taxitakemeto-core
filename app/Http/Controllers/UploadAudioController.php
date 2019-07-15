@@ -6,6 +6,11 @@ use App\Http\Requests\AudiosRequest;
 
 class UploadAudioController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
         return view('upload-audio', ['validation_msg' => '']);

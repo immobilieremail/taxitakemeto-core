@@ -11,7 +11,10 @@
 |
 */
 
-Route::get('/', 'IndexController@index')->name('index');
+Auth::routes();
+
+Route::get('/', function() { return redirect('home'); });
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('upload-audio', 'UploadAudioController@index')->name('upload-audio.index');
 Route::post('upload-audio', 'UploadAudioController@store')->name('upload-audio.store');

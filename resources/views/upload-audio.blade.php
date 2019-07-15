@@ -1,15 +1,13 @@
-@extends('template')
-
-@section('title')
-    Upload Audio
-@endsection
+@extends('layouts.app')
 
 @section('content')
-    @if ($validation_msg !== '')
-        {{ $validation_msg }}<br><br>
-    @endif
-    {!! Form::open(['url' => 'upload-audio', 'files' => true]) !!}
-        {!! Form::file('audio') !!}
-        {!! Form::submit('Envoyer') !!}
-    {!! Form::close() !!}
+    <div class="container">
+        @if ($validation_msg !== '')
+            {{ $validation_msg }}<br><br>
+        @endif
+        {!! Form::open(['url' => 'upload-audio', 'files' => true]) !!}
+            {!! Form::file('audio') !!}
+            {!! Form::submit('Envoyer') !!}
+        {!! Form::close() !!}
+    </div>
 @endsection
