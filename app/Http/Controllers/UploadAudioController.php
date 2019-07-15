@@ -31,7 +31,7 @@ class UploadAudioController extends Controller
             $audio = new Audio;
 
             $audio->name = $original_name;
-            $audio->path = 'public/storage/uploads/' . $filename;
+            $audio->path = 'storage/uploads/' . $filename;
             $audio->owner_id = Auth::user()->owner_id;
             $audio->save();
 

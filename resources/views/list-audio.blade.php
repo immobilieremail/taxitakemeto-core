@@ -5,15 +5,15 @@
         <ul style="list-style: none;">
             <?php $isempty = true; ?>
                 @foreach ($audios as $audio)
-                    @if ($isempty == true)
+                    @if (File::exists($audio->path))
                         <?php $isempty = false; ?>
+                        <li>
+                            <?php echo $audio->name; ?><br>
+                            <audio controls type="audio">
+                                <source src=<?php echo $audio->path; ?>>
+                            </audio>
+                        </li>
                     @endif
-                    <li>
-                        <?php echo $audio->name; ?><br>
-                        <audio controls type="audio">
-                            <source src=<?php echo $audio->path; ?>>
-                        </audio>
-                    </li>
                 @endforeach
             @if ($isempty == true)
                 It's empty.
