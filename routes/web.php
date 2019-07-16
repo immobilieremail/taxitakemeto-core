@@ -13,7 +13,7 @@
 
 Route::get('/', 'IndexController@index')->name('index');
 
-Route::get('upload-audio', 'UploadAudioController@index')->name('upload-audio.index');
-Route::post('upload-audio', 'UploadAudioController@store')->name('upload-audio.store');
+Route::get('upload-audio/{hash}', 'UploadAudioController@index')->name('upload-audio.index');
+Route::post('upload-audio/{hash}', 'UploadAudioController@store')->name('upload-audio.store');
 
-Route::get('list-audio', 'ListAudioController@index')->name('list-audio.index');
+Route::get('list-audio/{hash}', 'ListAudioController@index')->name('list-audio.index');

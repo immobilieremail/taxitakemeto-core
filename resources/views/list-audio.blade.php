@@ -8,17 +8,15 @@
     <div>
         <ul style="list-style: none;">
             <?php $isempty = true; ?>
-            @foreach(Storage::disk('local')->allFiles() as $file)
-                @if (strpos($file, 'public/uploads/') !== false)
+            @foreach ($audios as $audio)
+                @if ($isempty == true)
                     <?php $isempty = false; ?>
-                    <li>
-                        {{ $file }}<br>
-                        <?php $path = str_replace('public/uploads/', 'storage/uploads/', $file); ?>
-                        <audio controls type="audio">
-                            <source src={{ $path }}>
-                        </audio>
-                    </li>
                 @endif
+                <li>
+                    <audio controls type="audio">
+                        <source src={{ $audio }}>
+                    </audio>
+                </li>
             @endforeach
             @if ($isempty == true)
                 It's empty.
