@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateJoinTable extends Migration
+class CreateJoinListSoundsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,19 @@ class CreateJoinTable extends Migration
      */
     public function up()
     {
-        Schema::create('join_list_sound', function (Blueprint $table) {
+        Schema::create('join_list_sounds', function (Blueprint $table) {
             $table->bigIncrements('id_list');
             $table->bigInteger('id_sound');
             $table->timestamps();
 
             $table->foreign('id_list')
                 ->references('id')
-                ->on('list')
+                ->on('sound_lists')
                 ->onDelete('cascade');
 
             $table->foreign('id_sound')
                 ->references('id')
-                ->on('sound')
+                ->on('sounds')
                 ->onDelete('cascade');
         });
     }
@@ -37,6 +37,6 @@ class CreateJoinTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('join');
+        Schema::dropIfExists('join_list_sounds');
     }
 }

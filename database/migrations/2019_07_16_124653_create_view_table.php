@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateListTable extends Migration
+class CreateViewTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,9 @@ class CreateListTable extends Migration
      */
     public function up()
     {
-        Schema::create('list', function (Blueprint $table) {
-            $table->bigIncrements('id')->unique();
+        Schema::create('views', function (Blueprint $table) {
+            $table->bigInteger('id_view')->unique()->primary();
+            $table->bigInteger('id_list');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ class CreateListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('list');
+        Schema::dropIfExists('views');
     }
 }
