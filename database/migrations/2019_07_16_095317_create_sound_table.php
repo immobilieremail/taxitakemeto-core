@@ -14,7 +14,7 @@ class CreateSoundTable extends Migration
     public function up()
     {
         Schema::create('sound', function (Blueprint $table) {
-            $table->bigInteger('id')->unique();
+            $table->bigInteger('id')->unique()->primary();
             $table->string('path')->unique();
             $table->timestamps();
         });
