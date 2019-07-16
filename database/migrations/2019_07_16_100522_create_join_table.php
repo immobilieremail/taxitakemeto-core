@@ -14,17 +14,19 @@ class CreateJoinTable extends Migration
     public function up()
     {
         Schema::create('join_list_sound', function (Blueprint $table) {
-            $table->bigInteger('id_list');
+            $table->bigIncrements('id_list');
             $table->bigInteger('id_sound');
             $table->timestamps();
 
             $table->foreign('id_list')
                 ->references('id')
-                ->on('list');
+                ->on('list')
+                ->onDelete('cascade');
 
             $table->foreign('id_sound')
                 ->references('id')
-                ->on('sound');
+                ->on('sound')
+                ->onDelete('cascade');
         });
     }
 
