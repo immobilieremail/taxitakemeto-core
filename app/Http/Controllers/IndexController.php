@@ -8,12 +8,16 @@ use App\SoundList;
 use Illuminate\Http\Request;
 
 require_once __DIR__ . "/myfunctions/rand_nbr.php";
+require_once __DIR__ . "/myfunctions/get_sound.php";
+
 
 class IndexController extends Controller
 {
     public function index()
     {
-        return view('index');
+        $edits = Edit::all();
+
+        return view('index', ['lists' => $edits]);
     }
 
     public function store()
