@@ -1,5 +1,9 @@
 @extends('template')
 
+@section('title')
+    Upload Audio
+@endsection
+
 @section('content')
     <div>
         <a href=<?php echo '/list-audio/' . $view_nbr ?>>Go to list</a><br><br>
