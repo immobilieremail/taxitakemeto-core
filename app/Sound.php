@@ -12,7 +12,7 @@ class Sound extends Model
             $sound = new Sound;
 
             $sound->id = $id;
-            $sound->path = 'storage/uploads/' . $filename;
+            $sound->path = '/storage/uploads/' . $filename;
             $sound->save();
             return true;
         } catch (\Exception $e) {

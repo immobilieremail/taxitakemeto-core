@@ -13,10 +13,11 @@
                     <?php $isempty = false; ?>
                 @endif
                 <li>
-                    {{ $list }}
-                    {{-- <audio controls type="audio">
-                        <source src={{ $audio }}>
-                    </audio> --}}
+                    @foreach ($list as $audio)
+                        <audio controls type="audio">
+                            <source src={{ $audio->path }}>
+                        </audio>
+                    @endforeach
                 </li>
             @endforeach
             @if ($isempty == true)
