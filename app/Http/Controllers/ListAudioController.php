@@ -2,22 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Audio;
+use App\Edit,
+    App\View,
+    App\Sound,
+    App\SoundList,
+    App\JoinListSound,
+    Illuminate\Http\Request,
+    Illuminate\Support\Facades\Storage;
+
+require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class ListAudioController extends Controller
 {
-    public function __construct()
+    public function show($suisse_nbr)
     {
-        $this->middleware('auth');
-    }
+        $audios = array();
 
-    public function index()
-    {
-        $id = Auth::user()->owner_id;
-        $audios = Audio::all()->where('owner_id', $id);
+        $view = View::getFirstView($suisse_nbr);
+        if ($view == NULL)
+            return view('404');
 
-        return view('list-audio', ['audios' => $audios, 'id' => $id]);
+        $list = SoundList::getFirstSoundList($view->id_list);
+        if ($list == NULL)
+            return view('404');
+
+        $audios = getSounds($list->id);
+        return view('list-audio', ['lists' => $audios]);
     }
 }

@@ -11,15 +11,12 @@
 |
 */
 
-Auth::routes();
+Route::get('/', 'IndexController@index')->name('index');
+Route::post('/', 'IndexController@store')->name('index.store');
 
-Route::get('/', function() { return redirect('home'); });
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('upload-audio/', function () {return redirect('/');});
+Route::get('upload-audio/{suisse_nbr}', 'UploadAudioController@show')->name('upload-audio.show');
+Route::post('upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
 
-Route::get('upload-audio', 'UploadAudioController@index')->name('upload-audio.index');
-Route::post('upload-audio', 'UploadAudioController@store')->name('upload-audio.store');
-
-Route::get('list-audio', 'ListAudioController@index')->name('list-audio.index');
-
-Route::get('share-audio', 'ShareAudioController@index')->name('share-audio.index');
-Route::post('share-audio', 'ShareAudioController@store')->name('share-audio.store');
+Route::get('list-audio/', function () {return redirect('/');});
+Route::get('list-audio/{suisse_nbr}', 'ListAudioController@show')->name('list-audio.show');
