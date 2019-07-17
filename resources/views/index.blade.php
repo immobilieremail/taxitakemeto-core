@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    <br>
     <div>
         {!! Form::open(['url' => '/']) !!}
             {!! Form::submit('Create new list') !!}

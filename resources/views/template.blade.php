@@ -5,6 +5,9 @@
         <title>App Name - @yield('title')</title>
     </head>
     <body>
+        <div>
+            <a href="/">Go to index</a><br>
+        </div>
         @yield('content')
     </body>
 </html>
