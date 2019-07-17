@@ -29,8 +29,15 @@ class UploadAudioController extends Controller
 
     public function store(AudiosRequest $request, $suisse_nbr)
     {
-        $failed_view = view('upload-audio', ['validation_msg' => 'File upload failed.', 'nbr' => $suisse_nbr]);
-        $success_view = view('upload-audio', ['validation_msg' => 'File has been successfully uploaded.', 'nbr' => $suisse_nbr]);
+        $view_nbr = Edit::getViewNbr($suisse_nbr);
+        $failed_view = view('upload-audio', [
+            'validation_msg' => 'File upload failed.',
+            'edit_nbr' => $suisse_nbr,
+            'view_nbr' => $view_nbr]);
+        $success_view = view('upload-audio', [
+            'validation_msg' => 'File has been successfully uploaded.',
+            'edit_nbr' => $suisse_nbr,
+            'view_nbr' => $view_nbr]);
 
         if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
@@ -46,13 +53,7 @@ class UploadAudioController extends Controller
             if ($return_value !== true)
                 return $failed_view;
 
-            $view_nbr = Edit::getViewNbr($suisse_nbr);
-            if ($view_nbr == 0)
-                return $failed_view;
-
             $soundlist_nbr = View::getSoundListNbr($view_nbr);
-            if ($soundlist_nbr == 0)
-                return $failed_view;
 
             $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
             if ($return_value == true)
@@ -66,10 +67,15 @@ class UploadAudioController extends Controller
         $count = 0;
         $edits = Edit::getEdits($suisse_nbr);
 
-        foreach ($edits as $edit)
+        foreach ($edits as $edit) {
             $count += 1;
+            $view_nbr = $edit->id_view;
+        }
         if ($count !== 1)
             return view('404');
-        return view('upload-audio', ['validation_msg' => '', 'nbr' => $suisse_nbr]);
+        return view('upload-audio', [
+            'validation_msg' => '',
+            'edit_nbr' => $suisse_nbr,
+            'view_nbr' => $view_nbr]);
     }
 }
