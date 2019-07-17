@@ -10,7 +10,7 @@ use App\Edit,
     Illuminate\Http\Request,
     Illuminate\Support\Facades\Storage;
 
-require_once __DIR__ . "/myfunctions/rand_nbr.php";
+require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class ListAudioController extends Controller
 {
@@ -26,9 +26,7 @@ class ListAudioController extends Controller
         if ($list == NULL)
             return view('404');
 
-        $joins = JoinListSound::all()->where('id_list', $list->id);
-        foreach ($joins as $join)
-            array_push($audios, Sound::all()->where('id', $join->id_sound));
+        $audios = getSounds($list->id);
         return view('list-audio', ['lists' => $audios]);
     }
 }

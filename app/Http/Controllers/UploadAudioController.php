@@ -5,19 +5,16 @@ namespace App\Http\Controllers;
 use App\Edit,
     App\View,
     App\Sound,
+    App\SoundList,
     App\JoinListSound,
     App\Http\Requests\AudiosRequest,
     Illuminate\Http\Testing\MimeType;
 
 require_once __DIR__ . "/myfunctions/rand_nbr.php";
+require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class UploadAudioController extends Controller
 {
-    public function index()
-    {
-        return redirect('/');
-    }
-
     private function storeLocally(AudiosRequest $request, $random_nbr)
     {
         $file = $request->file('audio');
@@ -41,17 +38,28 @@ class UploadAudioController extends Controller
         return false;
     }
 
+    private function getAllAudios($suisse_nbr)
+    {
+        $audios = array();
+
+        $edit = Edit::getFirstEdit($suisse_nbr);
+        $view = View::getFirstView($edit->id_view);
+        $list = SoundList::getFirstSoundList($view->id_list);
+        if ($list == NULL)
+            return NULL;
+
+        $audios = getSounds($list->id);
+        return $audios;
+    }
+
     public function store(AudiosRequest $request, $suisse_nbr)
     {
         $view_nbr = Edit::getViewNbr($suisse_nbr);
         $failed_view = view('upload-audio', [
             'validation_msg' => 'File upload failed.',
             'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr]);
-        $success_view = view('upload-audio', [
-            'validation_msg' => 'File has been successfully uploaded.',
-            'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr]);
+            'view_nbr' => $view_nbr,
+            'lists' => $this->getAllAudios($suisse_nbr)]);
 
         if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
@@ -63,7 +71,11 @@ class UploadAudioController extends Controller
             $filename = $this->storeLocally($request, $random_nbr);
             if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
                 return $failed_view;
-            return $success_view;
+            return view('upload-audio', [
+                    'validation_msg' => 'File has been successfully uploaded.',
+                    'edit_nbr' => $suisse_nbr,
+                    'view_nbr' => $view_nbr,
+                    'lists' => $this->getAllAudios($suisse_nbr)]);
         }
         return $failed_view;
     }
@@ -82,6 +94,7 @@ class UploadAudioController extends Controller
         return view('upload-audio', [
             'validation_msg' => '',
             'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr]);
+            'view_nbr' => $view_nbr,
+            'lists' => $this->getAllAudios($suisse_nbr)]);
     }
 }
