@@ -14,7 +14,7 @@ class CreateJoinListSoundsTable extends Migration
     public function up()
     {
         Schema::create('join_list_sounds', function (Blueprint $table) {
-            $table->bigIncrements('id_list');
+            $table->bigInteger('id_list')->unsigned();
             $table->bigInteger('id_sound');
             $table->timestamps();
 
