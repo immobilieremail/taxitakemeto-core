@@ -19,8 +19,7 @@ class SoundList extends Model
         $soundlists = SoundList::getSoundLists($list_id);
 
         foreach ($soundlists as $soundlist)
-            if ($first_soundlist == NULL)
-                $first_soundlist = $soundlist;
+            $first_soundlist = $soundlist;
         return $first_soundlist;
     }
 }
