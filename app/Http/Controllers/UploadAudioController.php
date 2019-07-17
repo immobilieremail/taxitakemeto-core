@@ -27,6 +27,20 @@ class UploadAudioController extends Controller
         return ($filename);
     }
 
+    private function insertIntoDB($random_nbr, $filename, $view_nbr)
+    {
+        $return_value = Sound::addToDB($random_nbr, $filename);
+        if ($return_value !== true)
+            return false;
+
+        $soundlist_nbr = View::getSoundListNbr($view_nbr);
+
+        $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
+        if ($return_value == true)
+            return true;
+        return false;
+    }
+
     public function store(AudiosRequest $request, $suisse_nbr)
     {
         $view_nbr = Edit::getViewNbr($suisse_nbr);
@@ -46,18 +60,10 @@ class UploadAudioController extends Controller
                 return $failed_view;
 
             $random_nbr = rand_large_nbr();
-
             $filename = $this->storeLocally($request, $random_nbr);
-
-            $return_value = Sound::addToDB($random_nbr, $filename);
-            if ($return_value !== true)
+            if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
                 return $failed_view;
-
-            $soundlist_nbr = View::getSoundListNbr($view_nbr);
-
-            $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
-            if ($return_value == true)
-                return $success_view;
+            return $success_view;
         }
         return $failed_view;
     }
