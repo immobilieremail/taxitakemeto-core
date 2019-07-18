@@ -6,6 +6,7 @@ use App\Edit,
     App\View,
     App\Sound,
     App\SoundList,
+    App\QueueList,
     App\JoinListSound,
     Illuminate\Http\Request,
     Illuminate\Support\Facades\File,
@@ -34,20 +35,6 @@ class UploadAudioController extends Controller
         $filename =  $random_nbr . '.' . $extension;
         $file->move('storage/uploads', $filename);
         return ($filename);
-    }
-
-    private function insertIntoDB($random_nbr, $filename, $view_nbr)
-    {
-        $return_value = Sound::addToDB($random_nbr, $filename);
-        if ($return_value !== true)
-            return false;
-
-        $soundlist_nbr = View::getSoundListNbr($view_nbr);
-
-        $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
-        if ($return_value == true)
-            return true;
-        return false;
     }
 
     private function getAllAudios($suisse_nbr)
@@ -94,10 +81,11 @@ class UploadAudioController extends Controller
         if ($this->isFileAudio($request) == true) {
             $random_nbr = rand_large_nbr();
             $filename = $this->storeLocally($request, $random_nbr);
-            if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
+            $model = QueueList::insertIntoDB(View::where('id_view', $view_nbr)->first()->id_list, $random_nbr, $filename);
+            if ($model == false)
                 return $failed_view;
             return view('upload-audio', [
-                    'validation_msg' => 'File has been successfully uploaded.',
+                    'validation_msg' => 'File has been successfully uploaded. It will be checked by moderators.',
                     'edit_nbr' => $suisse_nbr,
                     'view_nbr' => $view_nbr,
                     'lists' => $this->getAllAudios($suisse_nbr)]);
@@ -114,9 +102,8 @@ class UploadAudioController extends Controller
 
     public function destroy(Request $request, $suisse_nbr, $audio_id)
     {
+        Sound::findOrFail($audio_id)->delete();
         unlink('/home/louis/audio_handler/public' . $request->audio_path);
-        Sound::find($audio_id)->delete();
-
         return back();
     }
 }
