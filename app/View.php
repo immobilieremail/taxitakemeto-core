@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class View extends Model
 {
+    protected $fillable = ['id_view', 'id_list'];
+
     public static function getViews($view_id)
     {
         $views = View::all()->where('id_view', $view_id);

@@ -26,19 +26,18 @@ class IndexController extends Controller
 
     public function store()
     {
-        $edit = new Edit;
-        $view = new View;
-        $list = new SoundList;
-
-        $list->save();
         $view_nbr = rand_large_nbr();
-        $view->id_view = $view_nbr;
-        $view->id_list = $list->id;
-        $view->save();
         $edit_nbr = rand_large_nbr();
-        $edit->id_edit = $edit_nbr;
-        $edit->id_view = $view->id_view;
-        $edit->save();
+
+        $list = SoundList::create();
+        $view = View::create([
+            'id_view' => $view_nbr,
+            'id_list' => $list->id
+        ]);
+        $edit = Edit::create([
+            'id_edit' => $edit_nbr,
+            'id_view' => $view_nbr
+        ]);
         return redirect('upload-audio/' . $edit_nbr);
     }
 
@@ -46,7 +45,6 @@ class IndexController extends Controller
     {
         $queue = QueueList::findOrFail($queue_id);
 
-        echo $queue;
         $return_value = Sound::addToDB($queue->id_sound, $queue->path);
         if ($return_value !== true)
             return back();
