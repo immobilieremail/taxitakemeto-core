@@ -15,11 +15,8 @@ class SoundList extends Model
 
     public static function getFirstSoundList($list_id)
     {
-        $first_soundlist = NULL;
-        $soundlists = SoundList::getSoundLists($list_id);
+        $first_soundlist = SoundList::where('id', $list_id)->first();
 
-        foreach ($soundlists as $soundlist)
-            $first_soundlist = $soundlist;
         return $first_soundlist;
     }
 }
