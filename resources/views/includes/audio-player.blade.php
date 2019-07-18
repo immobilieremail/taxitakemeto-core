@@ -11,15 +11,13 @@
                         <source src={{ $audio->path }}>
                     </audio>
                     @if ($delete == true)
-                        {!! Form::open(['url' => "upload-audio/$edit_nbr", 'files' => true]) !!}
+                        {!! Form::open(['url' => "upload-audio/$edit_nbr/$audio->id", 'files' => true]) !!}
                             {{ method_field('PATCH') }}
-                            {!! Form::hidden('old_audio', $audio->id) !!}
                             {!! Form::file('audio') !!}
                             {!! Form::submit('Update') !!}
                         {!! Form::close() !!}
-                        {!! Form::open(['url' => "upload-audio/$edit_nbr"]) !!}
+                        {!! Form::open(['url' => "upload-audio/$edit_nbr/$audio->id"]) !!}
                             {{ method_field('DELETE') }}
-                            {!! Form::hidden('audio_id', $audio->id) !!}
                             {!! Form::hidden('audio_path', $audio->path) !!}
                             {!! Form::submit('Delete') !!}
                         {!! Form::close() !!}

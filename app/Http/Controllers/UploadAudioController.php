@@ -64,6 +64,24 @@ class UploadAudioController extends Controller
         return $audios;
     }
 
+    public function index($suisse_nbr)
+    {
+        $count = 0;
+        $edits = Edit::getEdits($suisse_nbr);
+
+        foreach ($edits as $edit) {
+            $count += 1;
+            $view_nbr = $edit->id_view;
+        }
+        if ($count !== 1)
+            return view('404');
+        return view('upload-audio', [
+            'validation_msg' => '',
+            'edit_nbr' => $suisse_nbr,
+            'view_nbr' => $view_nbr,
+            'lists' => $this->getAllAudios($suisse_nbr)]);
+    }
+
     public function store(Request $request, $suisse_nbr)
     {
         $view_nbr = Edit::getViewNbr($suisse_nbr);
@@ -87,35 +105,17 @@ class UploadAudioController extends Controller
         return $failed_view;
     }
 
-    public function show($suisse_nbr)
-    {
-        $count = 0;
-        $edits = Edit::getEdits($suisse_nbr);
-
-        foreach ($edits as $edit) {
-            $count += 1;
-            $view_nbr = $edit->id_view;
-        }
-        if ($count !== 1)
-            return view('404');
-        return view('upload-audio', [
-            'validation_msg' => '',
-            'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr,
-            'lists' => $this->getAllAudios($suisse_nbr)]);
-    }
-
-    public function update(Request $request, $suisse_nbr)
+    public function update(Request $request, $suisse_nbr, $audio_id)
     {
         if ($this->isFileAudio($request) == true)
-            $filename = $this->storeLocally($request, $request->old_audio);
+            $filename = $this->storeLocally($request, $audio_id);
         return back();
     }
 
-    public function destroy(Request $request, $suisse_nbr)
+    public function destroy(Request $request, $suisse_nbr, $audio_id)
     {
         unlink('/home/louis/audio_handler/public' . $request->audio_path);
-        Sound::find($request->audio_id)->delete();
+        Sound::find($audio_id)->delete();
 
         return back();
     }

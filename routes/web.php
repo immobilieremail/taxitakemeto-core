@@ -14,11 +14,9 @@
 Route::get('/', 'IndexController@index')->name('index');
 Route::post('/', 'IndexController@store')->name('index.store');
 
-Route::get('upload-audio/', function () {return redirect('/');});
-Route::get('upload-audio/{suisse_nbr}', 'UploadAudioController@show')->name('upload-audio.show');
+Route::get('upload-audio/{suisse_nbr}', 'UploadAudioController@index')->name('upload-audio.index');
 Route::post('upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
-Route::patch('upload-audio/{suisse_nbr}', 'UploadAudioController@update')->name('upload-audio.update');
-Route::delete('upload-audio/{suisse_nbr}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
+Route::patch('upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@update')->name('upload-audio.update');
+Route::delete('upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
 
-Route::get('list-audio/', function () {return redirect('/');});
-Route::get('list-audio/{suisse_nbr}', 'ListAudioController@show')->name('list-audio.show');
+Route::get('list-audio/{suisse_nbr}', 'ListAudioController@index')->name('list-audio.index');

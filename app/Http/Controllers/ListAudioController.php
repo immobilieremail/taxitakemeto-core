@@ -14,7 +14,7 @@ require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class ListAudioController extends Controller
 {
-    public function show($suisse_nbr)
+    public function index($suisse_nbr)
     {
         $audios = array();
 
