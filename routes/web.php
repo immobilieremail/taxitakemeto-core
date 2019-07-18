@@ -13,6 +13,8 @@
 
 Route::get('/', 'IndexController@index')->name('index');
 Route::post('/', 'IndexController@store')->name('index.store');
+Route::patch('/{queue_id}', 'IndexController@update')->name('index.update');
+Route::delete('/{queue_id}', 'IndexController@destroy')->name('index.destroy');
 
 Route::get('upload-audio/{suisse_nbr}', 'UploadAudioController@index')->name('upload-audio.index');
 Route::post('upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');

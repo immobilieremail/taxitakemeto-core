@@ -36,4 +36,24 @@
             @endforeach
         </ul>
     </div>
+    <div>
+        <ul style="list-style: none">
+            @foreach ($queues as $queue)
+                <li>
+                    <audio controls type="audio">
+                        <source src={{ '/storage/uploads/' . $queue->path }}>
+                    </audio>
+                    {!! Form::open(['url' => "/{$queue->id}"]) !!}
+                        {{ method_field('PATCH') }}
+                        {!! Form::submit('Accept') !!}
+                    {!! Form::close() !!}
+                    {!! Form::open(['url' => "/{$queue->id}"]) !!}
+                        {{ method_field('DELETE') }}
+                        {!! Form::submit('Reject') !!}
+                    {!! Form::close() !!}
+                </li>
+                <br>
+            @endforeach
+        </ul>
+    </div>
 @endsection
