@@ -16,6 +16,6 @@
         {!! Form::close() !!}
     </div>
     <div>
-        @include('includes.audio-player', ['lists' => $lists])
+        @include('includes.audio-player', ['lists' => $lists, 'delete' => true, 'edit_nbr' => $edit_nbr])
     </div>
 @endsection

@@ -7,6 +7,6 @@
 @section('content')
     <br>
     <div>
-        @include('includes.audio-player', ['lists' => $lists])
+        @include('includes.audio-player', ['lists' => $lists, 'delete' => false, 'edit_nbr' => 0])
     </div>
 @endsection

@@ -7,6 +7,7 @@ use App\Edit,
     App\Sound,
     App\SoundList,
     App\JoinListSound,
+    Illuminate\Http\Request,
     App\Http\Requests\AudiosRequest,
     Illuminate\Http\Testing\MimeType;
 
@@ -96,5 +97,12 @@ class UploadAudioController extends Controller
             'edit_nbr' => $suisse_nbr,
             'view_nbr' => $view_nbr,
             'lists' => $this->getAllAudios($suisse_nbr)]);
+    }
+
+    public function destroy(Request $request)
+    {
+        Sound::find($request->audio)->delete();
+
+        return back();
     }
 }
