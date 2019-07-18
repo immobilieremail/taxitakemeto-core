@@ -12,7 +12,7 @@
         @endif
         {!! Form::open(['url' => "upload-audio/$edit_nbr", 'files' => true]) !!}
             {!! Form::file('audio') !!}
-            {!! Form::submit('Envoyer') !!}
+            {!! Form::submit('Add') !!}
         {!! Form::close() !!}
     </div>
     <div>

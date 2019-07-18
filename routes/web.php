@@ -17,6 +17,7 @@ Route::post('/', 'IndexController@store')->name('index.store');
 Route::get('upload-audio/', function () {return redirect('/');});
 Route::get('upload-audio/{suisse_nbr}', 'UploadAudioController@show')->name('upload-audio.show');
 Route::post('upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
+Route::patch('upload-audio/{suisse_nbr}', 'UploadAudioController@update')->name('upload-audio.update');
 Route::delete('upload-audio/{suisse_nbr}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
 
 Route::get('list-audio/', function () {return redirect('/');});

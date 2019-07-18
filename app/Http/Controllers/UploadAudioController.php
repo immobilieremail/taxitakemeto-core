@@ -8,7 +8,7 @@ use App\Edit,
     App\SoundList,
     App\JoinListSound,
     Illuminate\Http\Request,
-    App\Http\Requests\AudiosRequest,
+    Illuminate\Support\Facades\File,
     Illuminate\Http\Testing\MimeType;
 
 require_once __DIR__ . "/myfunctions/rand_nbr.php";
@@ -16,7 +16,18 @@ require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class UploadAudioController extends Controller
 {
-    private function storeLocally(AudiosRequest $request, $random_nbr)
+    private function isFileAudio(Request $request)
+    {
+        if ($request->has('audio')) {
+            $extension = $request->file('audio')->extension();
+            $mime = MimeType::get($extension);
+            if (strpos($mime, 'audio') !== false)
+                return true;
+        }
+        return false;
+    }
+
+    private function storeLocally(Request $request, $random_nbr)
     {
         $file = $request->file('audio');
         $extension = $request->file('audio')->extension();
@@ -53,7 +64,7 @@ class UploadAudioController extends Controller
         return $audios;
     }
 
-    public function store(AudiosRequest $request, $suisse_nbr)
+    public function store(Request $request, $suisse_nbr)
     {
         $view_nbr = Edit::getViewNbr($suisse_nbr);
         $failed_view = view('upload-audio', [
@@ -62,12 +73,7 @@ class UploadAudioController extends Controller
             'view_nbr' => $view_nbr,
             'lists' => $this->getAllAudios($suisse_nbr)]);
 
-        if ($request->has('audio')) {
-            $extension = $request->file('audio')->extension();
-            $mime = MimeType::get($extension);
-            if (strpos($mime, 'audio') === false)
-                return $failed_view;
-
+        if ($this->isFileAudio($request) == true) {
             $random_nbr = rand_large_nbr();
             $filename = $this->storeLocally($request, $random_nbr);
             if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
@@ -99,9 +105,17 @@ class UploadAudioController extends Controller
             'lists' => $this->getAllAudios($suisse_nbr)]);
     }
 
-    public function destroy(Request $request)
+    public function update(Request $request, $suisse_nbr)
     {
-        Sound::find($request->audio)->delete();
+        if ($this->isFileAudio($request) == true)
+            $filename = $this->storeLocally($request, $request->old_audio);
+        return back();
+    }
+
+    public function destroy(Request $request, $suisse_nbr)
+    {
+        unlink('/home/louis/audio_handler/public' . $request->audio_path);
+        Sound::find($request->audio_id)->delete();
 
         return back();
     }
