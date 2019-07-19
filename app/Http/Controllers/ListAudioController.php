@@ -21,12 +21,10 @@ class ListAudioController extends Controller
         $view = View::getFirstView($suisse_nbr);
         if ($view == NULL)
             return view('404');
-
         $list = SoundList::getFirstSoundList($view->id_list);
         if ($list == NULL)
             return view('404');
-
         $audios = getSounds($list->id);
-        return view('list-audio', ['lists' => $audios]);
+        return view('list-audio', ['lists' => $audios, 'queue' => 0]);
     }
 }

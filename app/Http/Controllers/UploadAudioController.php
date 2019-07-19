@@ -24,8 +24,8 @@ class UploadAudioController extends Controller
         if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
             $mime = MimeType::get($extension);
-            preg_match('^([^/]+)/', $mime, $matches);
-            return $matches[0] == 'audio';
+            preg_match("#^([^/]+)/#", $mime, $matches);
+            return $matches[0] == 'audio/';
         } else {
             return false;
         }
@@ -43,20 +43,31 @@ class UploadAudioController extends Controller
     private function getAllAudios($suisse_nbr)
     {
         $audios = array();
-
         $edit = Edit::getFirstEdit($suisse_nbr);
         $view = View::getFirstView($edit->id_view);
         $list = SoundList::getFirstSoundList($view->id_list);
+
         if ($list == NULL)
             return NULL;
-
         $audios = getSounds($list->id);
         return $audios;
+    }
+
+    private function getQueueNbr($view_nbr)
+    {
+        $nbr_queue = 0;
+
+        $view = View::where('id_view', $view_nbr)->first();
+        $queues = QueueList::all()->where('id_list', $view->id_list);
+        foreach ($queues as $queue)
+            $nbr_queue += 1;
+        return $nbr_queue;
     }
 
     public function index($suisse_nbr)
     {
         $count = 0;
+        $nbr_queue = 0;
         $edits = Edit::getEdits($suisse_nbr);
 
         foreach ($edits as $edit) {
@@ -65,20 +76,24 @@ class UploadAudioController extends Controller
         }
         if ($count !== 1)
             return view('404');
+        $nbr_queue = $this->getQueueNbr($view_nbr);
         return view('upload-audio', [
             'validation_msg' => '',
             'edit_nbr' => $suisse_nbr,
             'view_nbr' => $view_nbr,
+            'queue' => $nbr_queue,
             'lists' => $this->getAllAudios($suisse_nbr)]);
     }
 
     public function store(Request $request, $suisse_nbr)
     {
         $view_nbr = Edit::getViewNbr($suisse_nbr);
+        $nbr_queue = $this->getQueueNbr($view_nbr);
         $failed_view = view('upload-audio', [
             'validation_msg' => 'File upload failed.',
             'edit_nbr' => $suisse_nbr,
             'view_nbr' => $view_nbr,
+            'queue' => $nbr_queue,
             'lists' => $this->getAllAudios($suisse_nbr)]);
 
         if ($this->isFileAudio($request) == true) {
@@ -87,10 +102,12 @@ class UploadAudioController extends Controller
             $model = QueueList::insertIntoDB(View::where('id_view', $view_nbr)->first()->id_list, $random_nbr, $filename);
             if ($model == false)
                 return $failed_view;
+            $nbr_queue += 1;
             return view('upload-audio', [
                     'validation_msg' => 'File has been successfully uploaded. It will be checked by moderators.',
                     'edit_nbr' => $suisse_nbr,
                     'view_nbr' => $view_nbr,
+                    'queue' => $nbr_queue,
                     'lists' => $this->getAllAudios($suisse_nbr)]);
         }
         return $failed_view;

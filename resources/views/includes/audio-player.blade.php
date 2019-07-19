@@ -28,6 +28,10 @@
             <br>
         @endforeach
     @endforeach
+    @if ($queue !== 0)
+        {{ $queue }} {{ $queue > 1 ? 'sounds' : 'sound'}} in queue.
+        <?php $isempty = false; ?>
+    @endif
     @if ($isempty == true)
         It's empty.
     @endif
