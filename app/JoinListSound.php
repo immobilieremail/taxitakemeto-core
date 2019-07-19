@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class JoinListSound extends Model
 {
+    protected $fillable = ['id_list', 'id_sound'];
+
     public static function addToDB($sound_nbr, $soundlist_nbr)
     {
         try {

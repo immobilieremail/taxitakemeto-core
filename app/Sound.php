@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sound extends Model
 {
+    protected $fillable = ['id', 'path'];
+
     public static function addToDB($id, $filename)
     {
         try {
