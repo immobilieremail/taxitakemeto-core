@@ -71,13 +71,18 @@ class UploadAudioController extends Controller
     {
         $count = 0;
         $edits = Edit::getEdits($suisse_nbr);
+        $view_404 = view('404');
 
         foreach ($edits as $edit) {
             $count += 1;
             $view_nbr = $edit->id_view;
         }
         if ($count !== 1)
-            return view('404');
+            return $view_404;
+        $view = View::where('id_view', $view_nbr)->first();
+        $soundlist = SoundList::find($view->id_list);
+        if ($soundlist == NULL)
+            return $view_404;
         return view('upload-audio', [
             'validation_msg' => '',
             'edit_nbr' => $suisse_nbr,
@@ -117,9 +122,14 @@ class UploadAudioController extends Controller
 
     public function destroy(Request $request, $suisse_nbr, $audio_id)
     {
-        unlink('/home/louis/audio_handler/public' . $request->audio_path);
-        Sound::find($audio_id)->delete();
+        $audio = Sound::find($audio_id);
+        $dir_path = '/home/louis/audio_handler/public';
 
+        if ($audio !== NULL) {
+            if (file_exists($dir_path . $audio->path))
+                unlink($dir_path . $request->audio_path);
+            Sound::find($audio_id)->delete();
+        }
         return back();
     }
 }
