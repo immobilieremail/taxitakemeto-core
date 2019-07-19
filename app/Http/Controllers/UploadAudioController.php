@@ -18,13 +18,16 @@ class UploadAudioController extends Controller
 {
     private function isFileAudio(Request $request)
     {
+        $matches = array();
+
         if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
             $mime = MimeType::get($extension);
-            if (strpos($mime, 'audio') !== false)
-                return true;
+            preg_match('#^([^/]+)/#', $mime, $matches);
+            return $matches[0] == 'audio/';
+        } else {
+            return false;
         }
-        return false;
     }
 
     private function storeLocally(Request $request, $random_nbr)
