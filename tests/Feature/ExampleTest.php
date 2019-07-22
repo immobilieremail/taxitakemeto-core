@@ -59,20 +59,6 @@ class ExampleTest extends TestCase
         $response->assertViewIs('list-audio');
     }
 
-    public function testAccessNonExistantUpload()
-    {
-        $response = $this->get('/upload-audio/-gef�z6816#�1heya');
-
-        $response->assertViewIs('404');
-    }
-
-    public function testAccessNonExistantList()
-    {
-        $response = $this->get('/list-audio/-gef�z6816#�1heya');
-
-        $response->assertViewIs('404');
-    }
-
     public function testDeleteSound()
     {
         $gen = $this->post('/');

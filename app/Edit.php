@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Edit extends Model
 {
+    protected $fillable = ['id_edit', 'id_view'];
+
     public static function getEdits($edit_id)
     {
         $edits = Edit::all()->where('id_edit', $edit_id);
