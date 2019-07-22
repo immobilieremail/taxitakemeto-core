@@ -20,3 +20,7 @@ Route::patch('upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@upda
 Route::delete('upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
 
 Route::get('list-audio/{suisse_nbr}', 'ListAudioController@index')->name('list-audio.index');
+
+Route::any('{catchall}', function() {
+    return view('404');
+})->where('catchall', '(.*)');
