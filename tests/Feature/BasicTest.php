@@ -9,13 +9,17 @@ use App\Edit,
     App\JoinListSound,
     Illuminate\Http\Request;
 
+use Eris\Generator,
+    Eris\TestTrait;
+
 use Tests\TestCase,
     Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ExampleTest extends TestCase
+class BasicTest extends TestCase
 {
 
     use RefreshDatabase;
+    use TestTrait;
 
     /**
      * A basic test example.
@@ -61,16 +65,18 @@ class ExampleTest extends TestCase
 
     public function testAccessNonExistantUpload()
     {
-        $response = $this->get('/upload-audio/-gef�z6816#�1heya');
-
-        $response->assertViewIs('404');
+        $this->forAll(Generator\string())->then(function ($string) {
+            $response = $this->get("/upload-audio/$string");
+            $response->assertStatus(200, "It was tested with $string.");
+        });
     }
 
     public function testAccessNonExistantList()
     {
-        $response = $this->get('/list-audio/-gef�z6816#�1heya');
-
-        $response->assertViewIs('404');
+        $this->forAll(Generator\string())->then(function ($string) {
+            $response = $this->get("/list-audio/$string");
+            $response->assertStatus(200, "It was tested with $string.");
+        });
     }
 
     public function testDeleteSound()
