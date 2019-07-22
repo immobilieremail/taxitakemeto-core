@@ -82,7 +82,7 @@ class ExampleTest extends TestCase
         $edit = Edit::all()->first();
         $response = $this->delete("/upload-audio/$edit->id_edit/-gef�z6816#�1hey");
 
-        $response->assertStatus(302);
+        $response->assertStatus(404);
     }
 
     public function testCreateAndDeleteList()
