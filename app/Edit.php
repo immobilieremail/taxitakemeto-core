@@ -8,13 +8,6 @@ class Edit extends Model
 {
     protected $fillable = ['id_edit', 'id_view'];
 
-    public static function getEdits($edit_id)
-    {
-        $edits = Edit::all()->where('id_edit', $edit_id);
-
-        return $edits;
-    }
-
     public static function getFirstEdit($edit_id)
     {
         $first_edit = Edit::where('id_edit', $edit_id)->first();

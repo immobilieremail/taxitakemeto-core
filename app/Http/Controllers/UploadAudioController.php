@@ -69,16 +69,10 @@ class UploadAudioController extends Controller
 
     public function index($suisse_nbr)
     {
-        $count = 0;
-        $edits = Edit::getEdits($suisse_nbr);
+        $edit = Edit::getFirstEdit($suisse_nbr);
         $view_404 = view('404');
 
-        foreach ($edits as $edit) {
-            $count += 1;
-            $view_nbr = $edit->id_view;
-        }
-        if ($count !== 1)
-            return $view_404;
+        $view_nbr = $edit->id_view;
         $view = View::where('id_view', $view_nbr)->first();
         $soundlist = SoundList::find($view->id_list);
         if ($soundlist == NULL)
