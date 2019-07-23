@@ -21,4 +21,25 @@ class Sound extends Model
             return $e;
         }
     }
+
+    public static function deleteFromDB($id)
+    {
+        $sound = Sound::find($id);
+        if ($sound !== NULL) {
+            $sound->delete();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function countSounds()
+    {
+        $count = 0;
+        $sounds = Sound::all();
+
+        foreach ($sounds as $sound)
+            $count += 1;
+        return $count;
+    }
 }
