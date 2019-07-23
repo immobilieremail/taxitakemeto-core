@@ -72,6 +72,8 @@ class UploadAudioController extends Controller
         $edit = Edit::getFirstEdit($suisse_nbr);
         $view_404 = view('404');
 
+        if (!isset($edit))
+            return $view_404;
         $view_nbr = $edit->id_view;
         $view = View::where('id_view', $view_nbr)->first();
         $soundlist = SoundList::find($view->id_list);
@@ -122,7 +124,8 @@ class UploadAudioController extends Controller
         if ($audio !== NULL) {
             if (file_exists($dir_path . $audio->path))
                 unlink($dir_path . $request->audio_path);
-            Sound::find($audio_id)->delete();
+            $obj = Sound::findOrFail($audio_id);
+            $obj->delete();
         }
         return back();
     }
