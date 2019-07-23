@@ -109,4 +109,52 @@ class ModelTest extends TestCase
             $this->assertFalse(true);
         }
     }
+
+    public function testSoundDeleteFromDB()
+    {
+        $sound_nbr = rand_large_nbr();
+
+        Sound::addToDB($sound_nbr, "/$sound_nbr.mp3");
+        if (Sound::deleteFromDB($sound_nbr)) {
+            $this->assertDatabaseMissing('sounds', ['id' => $sound_nbr]);
+        } else {
+            $this->assertFalse(true);
+        }
+    }
+
+    public function testCountSounds()
+    {
+        $real_value = 0;
+        $expected_value = 0;
+        $expected_sounds = Sound::all();
+
+        foreach ($expected_sounds as $expected_sound)
+            $expected_value += 1;
+        $real_value = Sound::countSounds();
+        $this->assertEquals($expected_value, $real_value);
+    }
+
+    public function testCountSoundLists()
+    {
+        $real_value = 0;
+        $expected_value = 0;
+        $expected_soundlists = SoundList::all();
+
+        foreach ($expected_soundlists as $expected_soundlist)
+            $expected_value += 1;
+        $real_value = SoundList::countSoundLists();
+        $this->assertEquals($expected_value, $real_value);
+    }
+
+    public function testCountJoinListSounds()
+    {
+        $real_value = 0;
+        $expected_value = 0;
+        $expected_joinlstsnds = JoinListSound::all();
+
+        foreach ($expected_joinlstsnds as $expected_joinlstsnd)
+            $expected_value += 1;
+        $real_value = JoinListSound::countJoinListSounds();
+        $this->assertEquals($expected_value, $real_value);
+    }
 }

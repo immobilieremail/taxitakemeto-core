@@ -64,6 +64,7 @@ class ControllerTest extends TestCase
 
         $gen = $this->post('/');
         $edit = Edit::all()->first();
+
         $sounds_before = Sound::all();
         foreach ($sounds_before as $sound_before) {
             if ($sound == NULL)
@@ -75,9 +76,7 @@ class ControllerTest extends TestCase
         $request = Request::create("/upload-audio/$edit->id_edit/-gef�z6816#�1hey", 'DELETE', ['audio_path' => '/storage/uploads/-gef�z6816#�1hey.mp3']);
         $controller->destroy($request, $edit->id_edit, '-gef�z6816#�1hey');
 
-        $sounds_after = Sound::all();
-        foreach ($sounds_after as $sound_after)
-            $count_sounds_after += 1;
+        $count_sounds_after = Sound::countSounds();
 
         $this->assertEquals($count_sounds_before, $count_sounds_after);
     }
@@ -111,18 +110,14 @@ class ControllerTest extends TestCase
             $count_soundlists_after = 0;
             $count_soundlists_before = 0;
 
-            $soundlists_before = SoundList::all();
-            foreach ($soundlists_before as $soundlist_before)
-                $count_soundlists_before += 1;
+            $count_soundlists_before = SoundList::countSoundLists();
 
             for ($i = 1; $i <= $nbr; $i++) {
                 $match = ['id' => rand_large_nbr()];
                 SoundList::create($match);
                 $this->assertDatabaseHas('sound_lists', $match);
             }
-            $soundlists_after = SoundList::all();
-            foreach ($soundlists_after as $soundlist_after)
-                $count_soundlists_after += 1;
+            $count_soundlists_after = SoundList::countSoundLists();
 
             $this->assertEquals($count_soundlists_before + $nbr, $count_soundlists_after, "With $nbr.");
         });
@@ -135,16 +130,12 @@ class ControllerTest extends TestCase
             $count_soundlists_during = 0;
             $count_soundlists_before = 0;
 
-            $soundlists_before = SoundList::all();
-            foreach ($soundlists_before as $soundlist_before)
-                $count_soundlists_before += 1;
+            $count_soundlists_before = SoundList::countSoundLists();
 
             for ($i = 1; $i <= $nbr; $i++)
                 SoundList::create(['id' => $i]);
 
-            $soundlists_during = SoundList::all();
-            foreach ($soundlists_during as $soundlist_during)
-                $count_soundlists_during += 1;
+            $count_soundlists_during = SoundList::countSoundLists();
 
             $this->assertEquals($count_soundlists_before + $nbr, $count_soundlists_during, "With $nbr.");
 
@@ -153,9 +144,7 @@ class ControllerTest extends TestCase
                 $this->assertDatabaseMissing('sound_lists', ['id' => $j]);
             }
 
-            $soundlists_after = SoundList::all();
-            foreach ($soundlists_after as $soundlist_before)
-                $count_soundlists_after += 1;
+            $count_soundlists_after = SoundList::countSoundLists();
 
             $this->assertEquals($count_soundlists_before, $count_soundlists_after, "With $nbr.");
         });
