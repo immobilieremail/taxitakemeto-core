@@ -14,4 +14,14 @@ class SoundList extends Model
 
         return $first_soundlist;
     }
+
+    public static function countSoundLists()
+    {
+        $count = 0;
+        $soundlists = SoundList::all();
+
+        foreach ($soundlists as $soundlist)
+            $count += 1;
+        return $count;
+    }
 }

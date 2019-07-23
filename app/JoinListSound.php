@@ -21,4 +21,14 @@ class JoinListSound extends Model
             return $e;
         }
     }
+
+    public static function countJoinListSounds()
+    {
+        $count = 0;
+        $joinlstsnds = JoinListSound::all();
+
+        foreach ($joinlstsnds as $joinlstsnd)
+            $count += 1;
+        return $count;
+    }
 }
