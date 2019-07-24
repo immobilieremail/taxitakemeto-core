@@ -21,39 +21,21 @@ class ControllerTest extends TestCase
     use TestTrait;
     use RefreshDatabase;
 
-    public function testAccessUpload()
-    {
-        $gen = $this->post('/');
-        $edit = Edit::all()->first();
-        $response = $this->get("/upload-audio/$edit->id_edit");
-
-        $response->assertViewIs('upload-audio');
-    }
-
-    public function testAccessView()
-    {
-        $gen = $this->post('/');
-        $edit = Edit::all()->first();
-        $response = $this->get("/list-audio/$edit->id_view");
-
-        $response->assertViewIs('list-audio');
-    }
-
     public function testDeleteSound()
     {
         $gen = $this->post('/');
         $edit = Edit::all()->first();
         $view = View::all()->first();
-        $match = [
+        $param = [
             'id' => 123456789,
             'path' => '/storage/uploads/123456789.mp3',
         ];
 
-        $sound = Sound::create($match);
+        $sound = Sound::create($param);
 
         $response = $this->delete("/upload-audio/$edit->id_edit/123456789");
 
-        $this->assertDatabaseMissing('sounds', $match);
+        $this->assertDatabaseMissing('sounds', $param);
     }
 
     public function testDeleteNonExistantSound()
@@ -76,14 +58,14 @@ class ControllerTest extends TestCase
         $request = Request::create("/upload-audio/$edit->id_edit/-gef�z6816#�1hey", 'DELETE', ['audio_path' => '/storage/uploads/-gef�z6816#�1hey.mp3']);
         $controller->destroy($request, $edit->id_edit, '-gef�z6816#�1hey');
 
-        $count_sounds_after = Sound::countSounds();
+        $count_sounds_after = Sound::all()->count();
 
         $this->assertEquals($count_sounds_before, $count_sounds_after);
     }
 
     public function testCreateEdit()
     {
-        $this->forAll(Generator\nat())->then(function ($nbr) {
+        $this->limitTo(100)->forAll(Generator\nat())->then(function ($nbr) {
             $count_edits_after = 0;
             $count_edits_before = 0;
 
@@ -92,9 +74,9 @@ class ControllerTest extends TestCase
                 $count_edits_before += 1;
 
             for ($i = 1; $i <= $nbr; $i++) {
-                $match = ['id_edit' => rand_large_nbr(), 'id_view' => rand_large_nbr()];
-                Edit::create($match);
-                $this->assertDatabaseHas('edits', $match);
+                $param = ['id_edit' => rand_large_nbr(), 'id_view' => rand_large_nbr()];
+                Edit::create($param);
+                $this->assertDatabaseHas('edits', $param);
             }
             $edits_after = Edit::all();
             foreach ($edits_after as $edit_after)
@@ -106,18 +88,18 @@ class ControllerTest extends TestCase
 
     public function testCreateList()
     {
-        $this->forAll(Generator\nat())->then(function ($nbr) {
+        $this->limitTo(100)->forAll(Generator\nat())->then(function ($nbr) {
             $count_soundlists_after = 0;
             $count_soundlists_before = 0;
 
-            $count_soundlists_before = SoundList::countSoundLists();
+            $count_soundlists_before = SoundList::all()->count();
 
             for ($i = 1; $i <= $nbr; $i++) {
-                $match = ['id' => rand_large_nbr()];
-                SoundList::create($match);
-                $this->assertDatabaseHas('sound_lists', $match);
+                $param = ['id' => rand_large_nbr()];
+                SoundList::create($param);
+                $this->assertDatabaseHas('sound_lists', $param);
             }
-            $count_soundlists_after = SoundList::countSoundLists();
+            $count_soundlists_after = SoundList::all()->count();
 
             $this->assertEquals($count_soundlists_before + $nbr, $count_soundlists_after, "With $nbr.");
         });
@@ -125,17 +107,16 @@ class ControllerTest extends TestCase
 
     public function testDeleteList()
     {
-        $this->forAll(Generator\nat())->then(function ($nbr) {
+        $this->limitTo(100)->forAll(Generator\nat())->then(function ($nbr) {
             $count_soundlists_after = 0;
             $count_soundlists_during = 0;
             $count_soundlists_before = 0;
 
-            $count_soundlists_before = SoundList::countSoundLists();
+            $count_soundlists_before = SoundList::all()->count();
 
             for ($i = 1; $i <= $nbr; $i++)
                 SoundList::create(['id' => $i]);
-
-            $count_soundlists_during = SoundList::countSoundLists();
+            $count_soundlists_during = SoundList::all()->count();
 
             $this->assertEquals($count_soundlists_before + $nbr, $count_soundlists_during, "With $nbr.");
 
@@ -143,8 +124,7 @@ class ControllerTest extends TestCase
                 SoundList::find($j)->delete();
                 $this->assertDatabaseMissing('sound_lists', ['id' => $j]);
             }
-
-            $count_soundlists_after = SoundList::countSoundLists();
+            $count_soundlists_after = SoundList::all()->count();
 
             $this->assertEquals($count_soundlists_before, $count_soundlists_after, "With $nbr.");
         });

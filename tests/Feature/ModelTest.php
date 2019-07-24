@@ -9,6 +9,9 @@ use App\Edit,
     App\JoinListSound,
     Illuminate\Http\Request;
 
+use Eris\Generator,
+    Eris\TestTrait;
+
 use Tests\TestCase,
     Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -16,79 +19,15 @@ require_once __DIR__ . "/../../app/Http/Controllers/myfunctions/rand_nbr.php";
 
 class ModelTest extends TestCase
 {
-    public function testGetFirstEdit()
-    {
-        $id_edit = rand_large_nbr();
-        $id_view = rand_large_nbr();
-        $match = [
-            'id_edit' => $id_edit,
-            'id_view' => $id_view
-        ];
-
-        $edit = Edit::create($match);
-        $rtrn = Edit::getFirstEdit($id_edit);
-        $this->assertEquals($id_edit, $rtrn->id_edit);
-    }
-
-    public function testGetViewNbr()
-    {
-        $id_edit = rand_large_nbr();
-        $id_view = rand_large_nbr();
-        $match = [
-            'id_edit' => $id_edit,
-            'id_view' => $id_view
-        ];
-
-        $edit = Edit::create($match);
-        $view_nbr = Edit::getViewNbr($id_edit);
-        $this->assertEquals($id_view, $view_nbr);
-    }
-
-    public function testGetFirstView()
-    {
-        $id_view = rand_large_nbr();
-        $id_list = rand_large_nbr();
-        $match = [
-            'id_view' => $id_view,
-            'id_list' => $id_list
-        ];
-
-        $soundlist = View::create($match);
-        $rtrn = View::getFirstView($id_view);
-        $this->assertEquals($id_view, $rtrn->id_view);
-    }
-
-    public function testGetSoundListNbr()
-    {
-        $id_view = rand_large_nbr();
-        $id_list = rand_large_nbr();
-        $match = [
-            'id_view' => $id_view,
-            'id_list' => $id_list
-        ];
-
-        $edit = View::create($match);
-        $soundlist_nbr = View::getSoundListNbr($id_view);
-        $this->assertEquals($id_list, $soundlist_nbr);
-    }
-
-    public function testGetFirstSoundList()
-    {
-        $id = rand_large_nbr();
-        $match = ['id' => $id];
-
-        $soundlist = SoundList::create($match);
-        $rtrn = SoundList::getFirstSoundList($id);
-        $this->assertEquals($id, $rtrn->id);
-    }
+    use TestTrait;
 
     public function testJoinListSoundAddToDB()
     {
         $sound_nbr = rand_large_nbr();
         $soundlist_nbr = rand_large_nbr();
-
         $sound = Sound::create(['id' => $sound_nbr, 'path' => "/$sound_nbr.mp3"]);
         $soundlist = SoundList::create(['id' => $soundlist_nbr]);
+
         if (JoinListSound::addToDb($sound_nbr, $soundlist_nbr) == true) {
             $this->assertDatabaseHas('join_list_sounds', [
                 'id_list' => $soundlist_nbr,
@@ -122,39 +61,24 @@ class ModelTest extends TestCase
         }
     }
 
-    public function testCountSounds()
+    public function testSoundMultipleAddAndDelete()
     {
-        $real_value = 0;
-        $expected_value = 0;
-        $expected_sounds = Sound::all();
+        $this->limitTo(10)->forAll(Generator\nat(), Generator\nat())->then(function ($nb1, $nb2) {
+            $nbr_add = ($nb1 > $nb2) ? $nb1 : $nb2;
+            $nbr_del = ($nb1 < $nb2) ? $nb1 : $nb2;
+            $sound_id_array = array();
 
-        foreach ($expected_sounds as $expected_sound)
-            $expected_value += 1;
-        $real_value = Sound::countSounds();
-        $this->assertEquals($expected_value, $real_value);
-    }
-
-    public function testCountSoundLists()
-    {
-        $real_value = 0;
-        $expected_value = 0;
-        $expected_soundlists = SoundList::all();
-
-        foreach ($expected_soundlists as $expected_soundlist)
-            $expected_value += 1;
-        $real_value = SoundList::countSoundLists();
-        $this->assertEquals($expected_value, $real_value);
-    }
-
-    public function testCountJoinListSounds()
-    {
-        $real_value = 0;
-        $expected_value = 0;
-        $expected_joinlstsnds = JoinListSound::all();
-
-        foreach ($expected_joinlstsnds as $expected_joinlstsnd)
-            $expected_value += 1;
-        $real_value = JoinListSound::countJoinListSounds();
-        $this->assertEquals($expected_value, $real_value);
+            $count_before = Sound::all()->count();
+            for ($i = 0; $i < $nbr_add; $i++) {
+                $sound_nbr = rand_large_nbr();
+                array_push($sound_id_array, $sound_nbr);
+                Sound::addToDB($sound_nbr, "/$sound_nbr.mp3");
+            }
+            for ($j = 0; $j < $nbr_del; $j++) {
+                Sound::deleteFromDB($sound_id_array[$j]);
+            }
+            $count_after = Sound::all()->count();
+            $this->assertEquals($count_after - $count_before, $nbr_add - $nbr_del);
+        });
     }
 }
