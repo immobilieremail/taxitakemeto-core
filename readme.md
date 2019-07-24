@@ -1,3 +1,13 @@
+# Setup
+
+After first checkout, you need to install dependencies:
+
+```
+composer install
+```
+
+# Laravel
+
 <p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 <p align="center">
