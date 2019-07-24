@@ -16,9 +16,9 @@ class JoinListSound extends Model
             $joinlstsnd->id_list = $soundlist_nbr;
             $joinlstsnd->id_sound = $sound_nbr;
             $joinlstsnd->save();
-            return true;
+            return $joinlstsnd;
         } catch (\Exception $e) {
-            return $e;
+            return null;
         }
     }
 }

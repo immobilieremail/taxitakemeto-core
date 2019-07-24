@@ -16,9 +16,9 @@ class Sound extends Model
             $sound->id = $id;
             $sound->path = '/storage/uploads/' . $filename;
             $sound->save();
-            return true;
+            return $sound;
         } catch (\Exception $e) {
-            return $e;
+            return null;
         }
     }
 
