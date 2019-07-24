@@ -45,7 +45,7 @@ class UploadAudioController extends Controller
         if ($return_value !== true)
             return false;
 
-        $soundlist_nbr = View::getSoundListNbr($view_nbr);
+        $soundlist_nbr = View::findByID($view_nbr)->id_list;
 
         $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
         if ($return_value == true)
@@ -57,9 +57,9 @@ class UploadAudioController extends Controller
     {
         $audios = array();
 
-        $edit = Edit::getFirstEdit($suisse_nbr);
-        $view = View::getFirstView($edit->id_view);
-        $list = SoundList::getFirstSoundList($view->id_list);
+        $edit = Edit::findByID($suisse_nbr);
+        $view = View::findByID($edit->id_view);
+        $list = SoundList::findByID($view->id_list);
         if ($list == NULL)
             return NULL;
 
@@ -69,7 +69,7 @@ class UploadAudioController extends Controller
 
     public function index($suisse_nbr)
     {
-        $edit = Edit::getFirstEdit($suisse_nbr);
+        $edit = Edit::where('id_edit', $suisse_nbr)->first();
         $view_404 = view('404');
 
         if (!isset($edit))
@@ -90,7 +90,7 @@ class UploadAudioController extends Controller
 
     public function store(Request $request, $suisse_nbr)
     {
-        $view_nbr = Edit::getViewNbr($suisse_nbr);
+        $view_nbr = Edit::where('id_edit', $suisse_nbr)->first()->id_view;
         $failed_view = view('upload-audio', [
             'validation_msg' => 'File upload failed.',
             'edit_nbr' => $suisse_nbr,
@@ -127,6 +127,6 @@ class UploadAudioController extends Controller
             if (file_exists($dir_path . $audio->path))
                 unlink($dir_path . $request->audio_path);
         }
-        return back();
+        return redirect("upload-audio/$suisse_nbr");
     }
 }
