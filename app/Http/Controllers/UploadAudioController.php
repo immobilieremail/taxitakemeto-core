@@ -41,14 +41,14 @@ class UploadAudioController extends Controller
 
     private function insertIntoDB($random_nbr, $filename, $view_nbr)
     {
-        $return_value = Sound::addToDB($random_nbr, $filename);
-        if ($return_value !== true)
+        $sound = Sound::addToDB($random_nbr, $filename);
+        if ($sound == null)
             return false;
 
         $soundlist_nbr = View::findByID($view_nbr)->id_list;
 
-        $return_value = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
-        if ($return_value == true)
+        $joinlstsnd = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
+        if ($joinlstsnd !== null)
             return true;
         return false;
     }
@@ -70,7 +70,7 @@ class UploadAudioController extends Controller
     public function index($suisse_nbr)
     {
         $edit = Edit::where('id_edit', $suisse_nbr)->first();
-        $view_404 = view('404');
+        $view_404 = response(view('404'), 404);
 
         if (!isset($edit))
             return $view_404;
@@ -91,22 +91,22 @@ class UploadAudioController extends Controller
     public function store(Request $request, $suisse_nbr)
     {
         $view_nbr = Edit::where('id_edit', $suisse_nbr)->first()->id_view;
-        $failed_view = view('upload-audio', [
+        $failed_view = response(view('upload-audio', [
             'validation_msg' => 'File upload failed.',
             'edit_nbr' => $suisse_nbr,
             'view_nbr' => $view_nbr,
-            'lists' => $this->getAllAudios($suisse_nbr)]);
+            'lists' => $this->getAllAudios($suisse_nbr)]), 400);
 
         if ($this->isFileAudio($request) == true) {
             $random_nbr = rand_large_nbr();
             $filename = $this->storeLocally($request, $random_nbr);
             if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
                 return $failed_view;
-            return view('upload-audio', [
+            return response(view('upload-audio', [
                     'validation_msg' => 'File has been successfully uploaded.',
                     'edit_nbr' => $suisse_nbr,
                     'view_nbr' => $view_nbr,
-                    'lists' => $this->getAllAudios($suisse_nbr)]);
+                    'lists' => $this->getAllAudios($suisse_nbr)]), 201);
         }
         return $failed_view;
     }
@@ -120,12 +120,15 @@ class UploadAudioController extends Controller
 
     public function destroy(Request $request, $suisse_nbr, $audio_id)
     {
+        $status_code = 404;
         $audio = Sound::find($audio_id);
         $dir_path = '/home/louis/audio_handler/public';
 
         if (Sound::deleteFromDB($audio_id) == true) {
-            if (file_exists($dir_path . $audio->path))
+            if (file_exists($dir_path . $audio->path)) {
                 unlink($dir_path . $request->audio_path);
+                $status_code = 200;
+            }
         }
         return redirect("upload-audio/$suisse_nbr");
     }

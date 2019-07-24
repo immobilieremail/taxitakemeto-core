@@ -16,17 +16,18 @@ class ListAudioController extends Controller
 {
     public function index($suisse_nbr)
     {
+        $view_404 = response(view('404'), 404);
         $audios = array();
 
         $view = View::findByID($suisse_nbr);
         if ($view == NULL)
-            return view('404');
+            return $view_404;
 
         $list = SoundList::findByID($view->id_list);
         if ($list == NULL)
-            return view('404');
+            return $view_404;
 
         $audios = getSounds($list->id);
-        return view('list-audio', ['lists' => $audios]);
+        return response(view('list-audio', ['lists' => $audios]), 200);
     }
 }
