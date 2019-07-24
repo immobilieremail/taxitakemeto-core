@@ -8,19 +8,10 @@ class Edit extends Model
 {
     protected $fillable = ['id_edit', 'id_view'];
 
-    public static function getFirstEdit($edit_id)
+    public static function findByID($edit_id)
     {
         $first_edit = Edit::where('id_edit', $edit_id)->first();
 
         return $first_edit;
-    }
-
-    public static function getViewNbr($edit_id)
-    {
-        $view_nbr = 0;
-        $edit = Edit::getFirstEdit($edit_id);
-
-        $view_nbr = $edit->id_view;
-        return $view_nbr;
     }
 }

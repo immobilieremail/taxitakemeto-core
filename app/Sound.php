@@ -32,14 +32,4 @@ class Sound extends Model
             return false;
         }
     }
-
-    public static function countSounds()
-    {
-        $count = 0;
-        $sounds = Sound::all();
-
-        foreach ($sounds as $sound)
-            $count += 1;
-        return $count;
-    }
 }
