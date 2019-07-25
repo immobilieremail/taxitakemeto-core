@@ -35,6 +35,6 @@ class IndexController extends Controller
         $edit->id_edit = $edit_nbr;
         $edit->id_view = $view->id_view;
         $edit->save();
-        return redirect('upload-audio/' . $edit_nbr);
+        return redirect('upload-audio/' . $edit_nbr, 303);
     }
 }

@@ -115,21 +115,20 @@ class UploadAudioController extends Controller
     {
         if ($this->isFileAudio($request) == true)
             $filename = $this->storeLocally($request, $audio_id);
-        return back();
+        return back(303);
     }
 
     public function destroy(Request $request, $suisse_nbr, $audio_id)
     {
-        $status_code = 404;
         $audio = Sound::find($audio_id);
         $dir_path = '/home/louis/audio_handler/public';
 
         if (Sound::deleteFromDB($audio_id) == true) {
-            if (file_exists($dir_path . $audio->path)) {
+            if (file_exists($dir_path . $audio->path))
                 unlink($dir_path . $request->audio_path);
-                $status_code = 200;
-            }
+            return redirect("/upload-audio/$suisse_nbr", 303);
+        } else {
+            return response(view('404'), 404);
         }
-        return redirect("upload-audio/$suisse_nbr");
     }
 }
