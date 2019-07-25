@@ -2,7 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Edit;
+use App\View;
+use App\SoundList;
 use Illuminate\Http\Request;
+
+require_once __DIR__ . "/myfunctions/rand_nbr.php";
+require_once __DIR__ . "/myfunctions/get_sound.php";
+
 
 class IndexController extends Controller
 {

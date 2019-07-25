@@ -2,7 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Edit,
+    App\View,
+    App\Sound,
+    App\SoundList,
+    App\JoinListSound,
+    Illuminate\Http\Request,
+    Illuminate\Support\Facades\File,
+    Illuminate\Http\Testing\MimeType;
+
+require_once __DIR__ . "/myfunctions/rand_nbr.php";
+require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class UploadAudioController extends Controller
 {

@@ -2,7 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Edit,
+    App\View,
+    App\Sound,
+    App\SoundList,
+    App\JoinListSound,
+    Illuminate\Http\Request,
+    Illuminate\Support\Facades\Storage;
+
+require_once __DIR__ . "/myfunctions/get_sound.php";
 
 class ListAudioController extends Controller
 {
