@@ -8,9 +8,6 @@
         <div>
             <a href="/">@lang('template_message.go_to_index')</a><br>
         </div>
-        <div>
-            <a href="/">Go to index</a><br>
-        </div>
         @yield('content')
     </body>
 </html>
