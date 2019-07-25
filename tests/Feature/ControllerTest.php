@@ -23,7 +23,7 @@ class ControllerTest extends TestCase
 
     public function testDeleteSound()
     {
-        $gen = $this->post('/');
+        $gen = $this->post('/en');
         $count_sounds_after = 0;
         $count_sounds_before = 0;
         $edit = Edit::all()->first();
@@ -38,8 +38,8 @@ class ControllerTest extends TestCase
         $count_sounds_before = Sound::all()->count();
 
         $controller = new UploadAudioController;
-        $request = Request::create("/upload-audio/$edit->id_edit/$sound_id", 'DELETE', ['audio_path' => "/storage/uploads/$sound_id.mp3"]);
-        $controller->destroy($request, $edit->id_edit, $sound_id);
+        $request = Request::create("/en/upload-audio/$edit->id_edit/$sound_id", 'DELETE', ['audio_path' => "/storage/uploads/$sound_id.mp3"]);
+        $controller->destroy($request, 'en', $edit->id_edit, $sound_id);
 
         $count_sounds_after = Sound::all()->count();
 
@@ -53,14 +53,14 @@ class ControllerTest extends TestCase
         $count_sounds_after = 0;
         $count_sounds_before = 0;
 
-        $gen = $this->post('/');
+        $gen = $this->post('/en');
         $edit = Edit::all()->first();
 
         $count_sounds_before = Sound::all()->count();
 
         $controller = new UploadAudioController;
-        $request = Request::create("/upload-audio/$edit->id_edit/-gef�z6816#�1hey", 'DELETE', ['audio_path' => '/storage/uploads/-gef�z6816#�1hey.mp3']);
-        $controller->destroy($request, $edit->id_edit, '-gef�z6816#�1hey');
+        $request = Request::create("/en/upload-audio/$edit->id_edit/-gef�z6816#�1hey", 'DELETE', ['audio_path' => '/storage/uploads/-gef�z6816#�1hey.mp3']);
+        $controller->destroy($request, 'en', $edit->id_edit, '-gef�z6816#�1hey');
 
         $count_sounds_after = Sound::all()->count();
 
@@ -139,7 +139,7 @@ class ControllerTest extends TestCase
             $count_soundlists_before = SoundList::all()->count();
 
             for ($i = 0; $i < $nbr; $i++)
-                $this->post('/');
+                $this->post('/en');
 
             $count_edits_after = Edit::all()->count();
             $count_views_after = View::all()->count();

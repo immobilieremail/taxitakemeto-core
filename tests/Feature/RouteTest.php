@@ -16,9 +16,9 @@ class RouteTest extends TestCase
     public function testAccessUpload()
     {
         if (Edit::all()->count() == 0)
-            $gen = $this->post('/');
+            $gen = $this->post('/en');
         $edit = Edit::all()->first();
-        $response = $this->get("/upload-audio/$edit->id_edit");
+        $response = $this->get("/en/upload-audio/$edit->id_edit");
 
         $response->assertStatus(200);
     }
@@ -26,9 +26,9 @@ class RouteTest extends TestCase
     public function testAccessView()
     {
         if (Edit::all()->count() == 0)
-            $gen = $this->post('/');
+            $gen = $this->post('/en');
         $edit = Edit::all()->first();
-        $response = $this->get("/list-audio/$edit->id_view");
+        $response = $this->get("/en/list-audio/$edit->id_view");
 
         $response->assertStatus(200);
     }
@@ -36,7 +36,7 @@ class RouteTest extends TestCase
     public function testCreateList()
     {
         $count_before = Edit::all()->count();
-        $response = $this->post('/');
+        $response = $this->post('/en');
         $count_after = Edit::all()->count();
         $this->assertEquals($count_before + 1, $count_after);
         $response->assertStatus(303);
@@ -46,7 +46,7 @@ class RouteTest extends TestCase
     {
         $edit_id = rand_large_nbr();
         $this->assertDatabaseMissing('edits', ['id_edit' => $edit_id]);
-        $response = $this->get("/upload-audio/$edit_id");
+        $response = $this->get("/en/upload-audio/$edit_id");
         $response->assertStatus(404);
     }
 
@@ -54,7 +54,7 @@ class RouteTest extends TestCase
     {
         $view_id = rand_large_nbr();
         $this->assertDatabaseMissing('views', ['id_view' => $view_id]);
-        $response = $this->get("/list-audio/$view_id");
+        $response = $this->get("/en/list-audio/$view_id");
         $response->assertStatus(404);
     }
 
@@ -63,10 +63,10 @@ class RouteTest extends TestCase
         $sound_id = rand_large_nbr();
 
         if (Edit::all()->count() == 0)
-            $gen = $this->post('/');
+            $gen = $this->post('/en');
         $edit = Edit::all()->first();
         $sound = Sound::addToDB($sound_id, "/$sound_id.mp3");
-        $response = $this->delete("/upload-audio/$edit->id_view/$sound_id");
+        $response = $this->delete("/en/upload-audio/$edit->id_view/$sound_id");
 
         $response->assertStatus(303);
     }
@@ -76,9 +76,9 @@ class RouteTest extends TestCase
         $sound_id = rand_large_nbr();
 
         if (Edit::all()->count() == 0)
-            $gen = $this->post('/');
+            $gen = $this->post('/en');
         $edit = Edit::all()->first();
-        $response = $this->delete("/upload-audio/$edit->id_view/$sound_id");
+        $response = $this->delete("/en/upload-audio/$edit->id_view/$sound_id");
 
         $response->assertStatus(404);
     }
@@ -89,7 +89,7 @@ class RouteTest extends TestCase
         $edit_id = rand_large_nbr();
 
         $sound = Sound::addToDB($sound_id, "/$sound_id.mp3");
-        $response = $this->delete("/upload-audio/$edit_id/$sound->id");
+        $response = $this->delete("/en/upload-audio/$edit_id/$sound->id");
 
         $response->assertStatus(404);
     }
