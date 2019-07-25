@@ -11,8 +11,16 @@
 |
 */
 
-Route::get('/', 'IndexController@index');
+Route::get('/{lang?}', 'IndexController@index')->name('index')->where('lang', implode('|', array_flip(config('app.languages'))));
+Route::post('/{lang}', 'IndexController@store')->name('index.store');
 
-Route::resource('upload-audio', 'UploadAudioController');
+Route::get('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@index')->name('upload-audio.index');
+Route::post('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
+Route::patch('/{lang}/upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@update')->name('upload-audio.update');
+Route::delete('/{lang}/upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
 
-Route::resource('list-audio', 'ListAudioController');
+Route::get('/{lang}/list-audio/{suisse_nbr}', 'ListAudioController@index')->name('list-audio.index');
+
+Route::any('/{lang}/{catchall}', function() {
+    return view('404');
+})->where('catchall', '(.*)');
