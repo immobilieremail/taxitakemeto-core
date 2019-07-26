@@ -82,7 +82,8 @@ return [
 
     'locale' => 'en',
         'languages' => [
-            'en' => 'English'
+            'en' => 'English',
+            'fr' => 'Français',
         ],
 
     /*

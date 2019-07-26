@@ -22,5 +22,5 @@ Route::delete('/{lang}/upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioContro
 Route::get('/{lang}/list-audio/{suisse_nbr}', 'ListAudioController@index')->name('list-audio.index');
 
 Route::any('/{lang}/{catchall}', function() {
-    return view('404');
+    return response(view('404'), 404);
 })->where('catchall', '(.*)');
