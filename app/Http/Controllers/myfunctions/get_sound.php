@@ -1,15 +1,15 @@
 <?php
 
-    use App\Sound,
-        App\JoinListSound;
+    use App\Audio,
+        App\JoinListAudio;
 
     function getSounds($list_id)
     {
         $audios = array();
 
-        $joins = JoinListSound::all()->where('id_list', $list_id);
+        $joins = JoinListAudio::all()->where('id_list', $list_id);
         foreach ($joins as $join)
-            array_push($audios, Sound::all()->where('id', $join->id_sound));
+            array_push($audios, Audio::all()->where('id', $join->id_audio));
         return $audios;
     }
 
