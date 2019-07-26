@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Audio extends Migration
+class CreateAudioTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,8 @@ class Audio extends Migration
     public function up()
     {
         Schema::create('audio', function (Blueprint $table) {
-            $table->string('audio_id', 100)->unique();
-            $table->string('owner_id');
-            $table->string('name');
-            $table->string('path');
+            $table->bigInteger('id')->unique()->primary();
+            $table->string('path')->unique();
             $table->timestamps();
         });
     }

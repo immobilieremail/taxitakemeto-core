@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateJoinListSoundsTable extends Migration
+class CreateJoinListAudiosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,19 @@ class CreateJoinListSoundsTable extends Migration
      */
     public function up()
     {
-        Schema::create('join_list_sounds', function (Blueprint $table) {
+        Schema::create('join_list_audio', function (Blueprint $table) {
             $table->bigInteger('id_list')->unsigned();
-            $table->bigInteger('id_sound');
+            $table->bigInteger('id_audio');
             $table->timestamps();
 
             $table->foreign('id_list')
                 ->references('id')
-                ->on('sound_lists')
+                ->on('audio_lists')
                 ->onDelete('cascade');
 
-            $table->foreign('id_sound')
+            $table->foreign('id_audio')
                 ->references('id')
-                ->on('sounds')
+                ->on('audio')
                 ->onDelete('cascade');
         });
     }
@@ -37,6 +37,6 @@ class CreateJoinListSoundsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('join_list_sounds');
+        Schema::dropIfExists('join_list_audio');
     }
 }

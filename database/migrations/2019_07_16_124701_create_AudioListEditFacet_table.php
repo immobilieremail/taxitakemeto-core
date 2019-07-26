@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateEditTable extends Migration
+class CreateAudioListEditFacetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateEditTable extends Migration
      */
     public function up()
     {
-        Schema::create('edits', function (Blueprint $table) {
-            $table->bigInteger('id_edit')->unique()->primary();
-            $table->bigInteger('id_view');
+        Schema::create('audio_list_edit_facets', function (Blueprint $table) {
+            $table->bigInteger('id')->primary();
+            $table->bigInteger('id_list');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateEditTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('edits');
+        Schema::dropIfExists('audio_list_edit_facets');
     }
 }

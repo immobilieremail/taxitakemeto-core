@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Edit,
-    App\View,
-    App\Sound,
-    App\SoundList,
-    App\JoinListSound,
+use App\Shell,
+    App\Audio,
+    App\AudioList,
+    App\JoinShellView,
+    App\JoinShellEdit,
+    App\JoinListAudio,
+    App\AudioListViewFacet,
+    App\AudioListEditFacet,
     Illuminate\Http\Request,
     Illuminate\Support\Facades\File,
     Illuminate\Http\Testing\MimeType;
@@ -41,75 +44,69 @@ class UploadAudioController extends Controller
 
     private function insertIntoDB($random_nbr, $filename, $view_nbr)
     {
-        $sound = Sound::addToDB($random_nbr, $filename);
-        if ($sound == null)
+        $audio = Audio::addToDB($random_nbr, $filename);
+        if ($audio == null)
             return false;
 
-        $soundlist_nbr = View::findByID($view_nbr)->id_list;
+        $audiolist_nbr = AudioListViewFacet::find($view_nbr)->id_list;
 
-        $joinlstsnd = JoinListSound::addToDB($random_nbr, $soundlist_nbr);
-        if ($joinlstsnd !== null)
+        $joinlstaudio = JoinListAudio::addToDB($random_nbr, $audiolist_nbr);
+        if ($joinlstaudio !== null)
             return true;
         return false;
     }
 
-    private function getAllAudios($suisse_nbr)
+    private function getAllAudios($audiolist_id)
     {
         $audios = array();
 
-        $edit = Edit::findByID($suisse_nbr);
-        $view = View::findByID($edit->id_view);
-        $list = SoundList::findByID($view->id_list);
-        if ($list == NULL)
-            return NULL;
-
-        $audios = getSounds($list->id);
+        $joinlstaudio = JoinListAudio::all()->where('id_list', $audiolist_id);
+        foreach ($joinlstaudio as $join)
+            array_push($audios, Audio::find($join->id_audio));
         return $audios;
     }
 
     public function index($lang, $suisse_nbr)
     {
-        $edit = Edit::where('id_edit', $suisse_nbr)->first();
+        $edit = AudioListEditFacet::find($suisse_nbr);
         $view_404 = response(view('404'), 404);
 
         if (!isset($edit))
             return $view_404;
-        $view_nbr = $edit->id_view;
-        $view = View::where('id_view', $view_nbr)->first();
-        if ($view == NULL)
+        $audiolist = AudioList::find($edit->id_list);
+        if ($audiolist == NULL)
             return $view_404;
-        $soundlist = SoundList::find($view->id_list);
-        if ($soundlist == NULL)
-            return $view_404;
+        $view = AudioListViewFacet::where('id_list', $edit->id_list)->first();
         return view('upload-audio', [
             'validation_msg' => '',
-            'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr,
+            'edit_nbr' => $edit->id,
+            'view_nbr' => $view->id,
             'lang' => $lang,
-            'lists' => $this->getAllAudios($suisse_nbr)]);
+            'lists' => $this->getAllAudios($audiolist->id)]);
     }
 
     public function store(Request $request, $lang, $suisse_nbr)
     {
-        $view_nbr = Edit::where('id_edit', $suisse_nbr)->first()->id_view;
+        $list_id = AudioListEditFacet::find($suisse_nbr)->id_list;
+        $view_id = AudioListViewFacet::where('id_list', $list_id)->first()->id;
         $failed_view = response(view('upload-audio', [
             'validation_msg' => __('uploadaudio_message.file_not_uploaded'),
             'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_nbr,
+            'view_nbr' => $view_id,
             'lang' => $lang,
-            'lists' => $this->getAllAudios($suisse_nbr)]), 400);
+            'lists' => $this->getAllAudios($list_id)]), 400);
 
         if ($this->isFileAudio($request) == true) {
             $random_nbr = rand_large_nbr();
             $filename = $this->storeLocally($request, $random_nbr);
-            if ($this->insertIntoDB($random_nbr, $filename, $view_nbr) == false)
+            if ($this->insertIntoDB($random_nbr, $filename, $view_id) == false)
                 return $failed_view;
             return response(view('upload-audio', [
                     'validation_msg' => __('uploadaudio_message.file_uploaded'),
                     'edit_nbr' => $suisse_nbr,
-                    'view_nbr' => $view_nbr,
+                    'view_nbr' => $view_id,
                     'lang' => $lang,
-                    'lists' => $this->getAllAudios($suisse_nbr)]), 201);
+                    'lists' => $this->getAllAudios($list_id)]), 201);
         }
         return $failed_view;
     }
@@ -123,10 +120,10 @@ class UploadAudioController extends Controller
 
     public function destroy(Request $request, $lang, $suisse_nbr, $audio_id)
     {
-        $audio = Sound::find($audio_id);
+        $audio = Audio::find($audio_id);
         $dir_path = '/home/louis/audio_handler/public';
 
-        if (Sound::deleteFromDB($audio_id) == true) {
+        if (Audio::deleteFromDB($audio_id) == true) {
             if (file_exists($dir_path . $audio->path))
                 unlink($dir_path . $request->audio_path);
             return redirect("/$lang/upload-audio/$suisse_nbr", 303);
