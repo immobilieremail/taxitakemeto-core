@@ -13,7 +13,7 @@ class CreateJoinListAudiosTable extends Migration
      */
     public function up()
     {
-        Schema::create('join_list_audios', function (Blueprint $table) {
+        Schema::create('join_list_audio', function (Blueprint $table) {
             $table->bigInteger('id_list')->unsigned();
             $table->bigInteger('id_audio');
             $table->timestamps();
@@ -25,7 +25,7 @@ class CreateJoinListAudiosTable extends Migration
 
             $table->foreign('id_audio')
                 ->references('id')
-                ->on('audios')
+                ->on('audio')
                 ->onDelete('cascade');
         });
     }
@@ -37,6 +37,6 @@ class CreateJoinListAudiosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('join_list_audios');
+        Schema::dropIfExists('join_list_audio');
     }
 }

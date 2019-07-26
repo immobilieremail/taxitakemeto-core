@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ALEditFacet extends Model
+class AudioListViewFacet extends Model
 {
     protected $fillable = ['id', 'id_list'];
 }

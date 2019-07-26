@@ -13,7 +13,7 @@ class CreateAudioTable extends Migration
      */
     public function up()
     {
-        Schema::create('audios', function (Blueprint $table) {
+        Schema::create('audio', function (Blueprint $table) {
             $table->bigInteger('id')->unique()->primary();
             $table->string('path')->unique();
             $table->timestamps();
@@ -27,6 +27,6 @@ class CreateAudioTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('audios');
+        Schema::dropIfExists('audio');
     }
 }

@@ -4,19 +4,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sound extends Model
+class Audio extends Model
 {
     protected $fillable = ['id', 'path'];
 
     public static function addToDB($id, $filename)
     {
         try {
-            $sound = new Sound;
+            $audio = new Audio;
 
-            $sound->id = $id;
-            $sound->path = '/storage/uploads/' . $filename;
-            $sound->save();
-            return $sound;
+            $audio->id = $id;
+            $audio->path = '/storage/uploads/' . $filename;
+            $audio->save();
+            return $audio;
         } catch (\Exception $e) {
             return null;
         }
@@ -24,9 +24,9 @@ class Sound extends Model
 
     public static function deleteFromDB($id)
     {
-        $sound = Sound::find($id);
-        if ($sound !== NULL) {
-            $sound->delete();
+        $audio = Audio::find($id);
+        if ($audio !== NULL) {
+            $audio->delete();
             return true;
         } else {
             return false;

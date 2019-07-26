@@ -25,7 +25,7 @@ class CreateJoinShellEditsTable extends Migration
 
             $table->foreign('id_edit')
                 ->references('id')
-                ->on('ALEditFacets')
+                ->on('audio_list_edit_facets')
                 ->onDelete('cascade');
         });
     }
