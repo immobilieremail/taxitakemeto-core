@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class SoundList extends Model
+class AudioList extends Model
 {
     protected $fillable = ['id'];
 
     public static function findByID($list_id)
     {
-        $first_soundlist = SoundList::where('id', $list_id)->first();
+        $first_AudioList = AudioList::where('id', $list_id)->first();
 
-        return $first_soundlist;
+        return $first_AudioList;
     }
 }

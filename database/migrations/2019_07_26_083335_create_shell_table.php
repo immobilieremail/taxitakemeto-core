@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSoundListTable extends Migration
+class CreateShellTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class CreateSoundListTable extends Migration
      */
     public function up()
     {
-        Schema::create('sound_lists', function (Blueprint $table) {
-            $table->bigIncrements('id')->unique();
+        Schema::create('shells', function (Blueprint $table) {
+            $table->bigInteger('id')->primary();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ class CreateSoundListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sound_lists');
+        Schema::dropIfExists('shell');
     }
 }

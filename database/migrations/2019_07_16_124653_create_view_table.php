@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateViewTable extends Migration
+class CreateALViewFacetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class CreateViewTable extends Migration
      */
     public function up()
     {
-        Schema::create('views', function (Blueprint $table) {
-            $table->bigInteger('id_view')->unique()->primary();
+        Schema::create('ALViewFacets', function (Blueprint $table) {
+            $table->bigInteger('id')->primary();
             $table->bigInteger('id_list');
             $table->timestamps();
         });
