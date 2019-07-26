@@ -26,6 +26,6 @@ class CreateShellTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('shell');
+        Schema::dropIfExists('shells');
     }
 }

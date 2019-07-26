@@ -25,7 +25,7 @@ class CreateJoinShellViewsTable extends Migration
 
             $table->foreign('id_view')
                 ->references('id')
-                ->on('ALViewFacet')
+                ->on('ALViewFacets')
                 ->onDelete('cascade');
         });
     }

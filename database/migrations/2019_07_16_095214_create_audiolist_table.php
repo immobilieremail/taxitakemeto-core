@@ -26,6 +26,6 @@ class CreateAudioListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sound_lists');
+        Schema::dropIfExists('audio_lists');
     }
 }

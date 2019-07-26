@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class Audio extends Migration
+class CreateALEditFacetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class Audio extends Migration
      */
     public function up()
     {
-        Schema::create('audio', function (Blueprint $table) {
-            $table->string('audio_id', 100)->unique();
-            $table->string('owner_id');
-            $table->string('name');
-            $table->string('path');
+        Schema::create('ALEditFacets', function (Blueprint $table) {
+            $table->bigInteger('id')->primary();
+            $table->bigInteger('id_list');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ class Audio extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('audio');
+        Schema::dropIfExists('ALEditFacets');
     }
 }
