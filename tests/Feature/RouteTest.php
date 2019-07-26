@@ -8,11 +8,37 @@ use App\Edit,
 
 use Tests\TestCase;
 
+use Eris\Generator,
+    Eris\TestTrait;
+
 use Illuminate\Http\Request,
     Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class RouteTest extends TestCase
 {
+    use TestTrait;
+
+    public function testAccessIndex()
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(302);
+    }
+
+    public function testAccessEnIndex()
+    {
+        $response = $this->get('/en');
+
+        $response->assertStatus(200);
+    }
+
+    public function testAccessFrIndex()
+    {
+        $response = $this->get('/fr');
+
+        $response->assertStatus(200);
+    }
+
     public function testAccessUpload()
     {
         if (Edit::all()->count() == 0)
