@@ -5,8 +5,17 @@
 @endsection
 
 @section('content')
+    <a href=<?php echo "/$lang/list-audio/$view_nbr" ?>>@lang('uploadaudio_message.go_to_list')</a>
+    <br><br><br>
     <div>
-        <a href=<?php echo "/$lang/list-audio/$view_nbr" ?>>@lang('uploadaudio_message.go_to_list')</a><br><br>
+        <?php $share_button = __('uploadaudio_message.share_button'); ?>
+        {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/share"]) !!}
+            {!! Form::text('share_to') !!}
+            {!! Form::submit($share_button) !!}
+        {!! Form::close() !!}
+    </div>
+    <br>
+    <div>
         @if ($validation_msg !== '')
             {{ $validation_msg }}<br><br>
         @endif

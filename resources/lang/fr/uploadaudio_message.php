@@ -8,6 +8,7 @@ return [
     'file_not_uploaded' => 'Échec de l\'upload du fichier.',
     'delete_button' => 'Supprimer',
     'update_button' => 'Modifier',
+    'share_button' => 'Partager',
     'add_button' => 'Ajouter',
 ];
 

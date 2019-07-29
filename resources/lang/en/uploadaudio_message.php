@@ -8,6 +8,7 @@ return [
     'file_not_uploaded' => 'File upload failed.',
     'delete_button' => 'Delete',
     'update_button' => 'Update',
+    'share_button' => 'Share',
     'add_button' => 'Add',
 ];
 
