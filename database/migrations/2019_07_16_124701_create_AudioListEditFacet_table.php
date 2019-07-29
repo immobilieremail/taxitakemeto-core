@@ -15,8 +15,19 @@ class CreateAudioListEditFacetTable extends Migration
     {
         Schema::create('audio_list_edit_facets', function (Blueprint $table) {
             $table->bigInteger('id')->primary();
-            $table->bigInteger('id_list');
+            $table->bigInteger('id_list')->unsigned();
+            $table->bigInteger('id_shell');
             $table->timestamps();
+
+            $table->foreign('id_list')
+                ->references('id')
+                ->on('audio_lists')
+                ->onDelete('cascade');
+
+            $table->foreign('id_shell')
+                ->references('id')
+                ->on('shells')
+                ->onDelete('cascade');
         });
     }
 
