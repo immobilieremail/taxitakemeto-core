@@ -2,7 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Audio,
+use App\Shell,
+    App\Audio,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\Http\Controllers\UploadAudioController;
@@ -42,8 +43,13 @@ class RouteTest extends TestCase
 
     public function testAccessUpload()
     {
-        if (AudioListEditFacet::all()->count() == 0)
+        if (Shell::all()->count() == 0) {
             $gen = $this->post('/en');
+        }
+        if (AudioListEditFacet::all()->count() == 0) {
+            $shell = Shell::first();
+            $this->post("/en/shell/$shell->id");
+        }
         $edit = AudioListEditFacet::all()->first();
         $response = $this->get("/en/upload-audio/$edit->id");
 
@@ -52,8 +58,13 @@ class RouteTest extends TestCase
 
     public function testAccessView()
     {
-        if (AudioListViewFacet::all()->count() == 0)
+        if (Shell::all()->count() == 0) {
             $gen = $this->post('/en');
+        }
+        if (AudioListViewFacet::all()->count() == 0) {
+            $shell = Shell::first();
+            $this->post("/en/shell/$shell->id");
+        }
         $view = AudioListViewFacet::all()->first();
         $response = $this->get("/en/list-audio/$view->id");
 
@@ -63,7 +74,11 @@ class RouteTest extends TestCase
     public function testCreateList()
     {
         $count_before = AudioListEditFacet::all()->count();
-        $response = $this->post('/en');
+        if (Shell::all()->count() == 0) {
+            $gen = $this->post('/en');
+        }
+        $shell = Shell::first();
+        $response = $this->post("/en/shell/$shell->id");
         $count_after = AudioListEditFacet::all()->count();
         $this->assertEquals($count_before + 1, $count_after);
         $response->assertStatus(303);
@@ -89,8 +104,13 @@ class RouteTest extends TestCase
     {
         $audio_id = rand_large_nbr();
 
-        if (AudioListEditFacet::all()->count() == 0)
+        if (Shell::all()->count() == 0) {
             $gen = $this->post('/en');
+        }
+        if (AudioListEditFacet::all()->count() == 0) {
+            $shell = Shell::first();
+            $this->post("/en/shell/$shell->id");
+        }
         $edit = AudioListEditFacet::all()->first();
         $audio = Audio::addToDB($audio_id, "/$audio_id.mp3");
         $response = $this->delete("/en/upload-audio/$edit->id/$audio_id");
@@ -102,8 +122,13 @@ class RouteTest extends TestCase
     {
         $audio_id = rand_large_nbr();
 
-        if (AudioListEditFacet::all()->count() == 0)
+        if (Shell::all()->count() == 0) {
             $gen = $this->post('/en');
+        }
+        if (AudioListEditFacet::all()->count() == 0) {
+            $shell = Shell::first();
+            $this->post("/en/shell/$shell->id");
+        }
         $edit = AudioListEditFacet::all()->first();
         $response = $this->delete("/en/upload-audio/$edit->id_view/$audio_id");
 
