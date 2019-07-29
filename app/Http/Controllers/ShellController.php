@@ -22,20 +22,33 @@ class ShellController extends Controller
         return $edit_id;
     }
 
+    private function sortViews($views, $edits)
+    {
+        for ($indx_e = 0; isset($edits[$indx_e]); $indx_e++) {
+            for ($indx_v = 0; isset($views[$indx_v]); $indx_v++) {
+                if ($views[$indx_v]->id_list == $edits[$indx_e]->id_list) {
+                    array_splice($views, $indx_v, 1);
+                    break;
+                }
+            }
+        }
+        return $views;
+    }
+
     public function index($lang, $shell_id)
     {
-        $edits = NULL;
         $edits_array = array();
         $views_array = array();
 
         if (Shell::find($shell_id) == NULL)
             return response(view('404'), 404);
         $edits = AudioListEditFacet::all()->where('id_shell', $shell_id);
-        foreach ($edits as $edit) {
+        foreach ($edits as $edit)
             array_push($edits_array, $edit);
-            $view = AudioListViewFacet::where('id_list', $edit->id_list)->first();
+        $views = AudioListViewFacet::all()->where('id_shell', $shell_id);
+        foreach ($views as $view)
             array_push($views_array, $view);
-        }
+        $views_array = $this->sortViews($views_array, $edits_array);
         return view('shell', [
             'lang' => $lang,
             'shell_id' => $shell_id,

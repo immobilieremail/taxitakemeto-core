@@ -14,12 +14,25 @@
     </div>
     <br>
     <div>
-        <?php $isempty = 0; ?>
-        <ul style="list-style:none">
+        <ul>
             @for ($i = 0; isset($edits[$i]); $i++)
+                @if ($i == 0)
+                    @lang('shell_message.edits')
+                @endif
                 <li>
                     {{ $i + 1 }} :
                     <a href=<?php echo "/$lang/upload-audio/" . $edits[$i]->id; ?>>{{ $edits[$i]->id }}</a>
+                </li>
+            @endfor
+        </ul>
+        <br>
+        <ul>
+            @for ($i = 0; isset($views[$i]); $i++)
+                @if ($i == 0)
+                    @lang('shell_message.views')
+                @endif
+                <li>
+                    {{ $i + 1 }} :
                     <a href=<?php echo "/$lang/list-audio/" . $views[$i]->id; ?>>{{ $views[$i]->id }}</a>
                 </li>
             @endfor

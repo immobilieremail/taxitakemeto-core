@@ -111,6 +111,24 @@ class UploadAudioController extends Controller
         return $failed_view;
     }
 
+    public function share(Request $request, $lang, $suisse_nbr)
+    {
+        $new_view = NULL;
+        $shell_to_share = Shell::find($request->share_to);
+
+        if ($shell_to_share == NULL) {
+            return back(304);
+        } else {
+            $list_id = AudioListEditFacet::find($suisse_nbr)->id_list;
+            $new_view = new AudioListViewFacet;
+            $new_view->id = rand_large_nbr();
+            $new_view->id_list = $list_id;
+            $new_view->id_shell = $shell_to_share->id;
+            $new_view->save();
+            return back(303);
+        }
+    }
+
     public function update(Request $request, $lang, $suisse_nbr, $audio_id)
     {
         if ($this->isFileAudio($request) == true)

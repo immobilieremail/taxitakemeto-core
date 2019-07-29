@@ -19,6 +19,7 @@ Route::post('/{lang}/shell/{shell_id}', 'ShellController@store')->name('shell.st
 
 Route::get('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@index')->name('upload-audio.index');
 Route::post('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
+Route::post('{lang}/upload-audio/{suisse_nbr}/share', 'UploadAudioController@share')->name('upload-audio.share');
 Route::patch('/{lang}/upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@update')->name('upload-audio.update');
 Route::delete('/{lang}/upload-audio/{suisse_nbr}/{audio_id}', 'UploadAudioController@destroy')->name('upload-audio.destroy');
 
