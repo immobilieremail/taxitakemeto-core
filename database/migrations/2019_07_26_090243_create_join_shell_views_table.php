@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAudioListEditFacetTable extends Migration
+class CreateJoinShellViewsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateAudioListEditFacetTable extends Migration
      */
     public function up()
     {
-        Schema::create('audio_list_edit_facets', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+        Schema::create('join_shell_views', function (Blueprint $table) {
             $table->bigInteger('id_shell');
-            $table->bigInteger('id_list')->unsigned();
+            $table->bigInteger('id_view');
             $table->timestamps();
 
             $table->foreign('id_shell')
@@ -24,9 +23,9 @@ class CreateAudioListEditFacetTable extends Migration
                 ->on('shells')
                 ->onDelete('cascade');
 
-            $table->foreign('id_list')
+            $table->foreign('id_view')
                 ->references('id')
-                ->on('audio_lists')
+                ->on('audio_list_view_facets')
                 ->onDelete('cascade');
         });
     }
@@ -38,6 +37,6 @@ class CreateAudioListEditFacetTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('audio_list_edit_facets');
+        Schema::dropIfExists('join_shell_views');
     }
 }
