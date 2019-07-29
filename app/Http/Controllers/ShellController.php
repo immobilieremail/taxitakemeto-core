@@ -15,20 +15,11 @@ class ShellController extends Controller
 {
     private function linkAudioListToShell($list_id, $shell_id)
     {
-        $view = new AudioListViewFacet;
-        $edit = new AudioListEditFacet;
-
-        $view_nbr = rand_large_nbr();
-        $view->id = $view_nbr;
-        $view->id_list = $list_id;
-        $view->id_shell = $shell_id;
-        $view->save();
-        $edit_nbr = rand_large_nbr();
-        $edit->id = $edit_nbr;
-        $edit->id_list = $list_id;
-        $edit->id_shell = $shell_id;
-        $edit->save();
-        return $edit_nbr;
+        $view_id = rand_large_nbr();
+        $edit_id = rand_large_nbr();
+        $view = AudioListViewFacet::addToDb($view_id, $list_id, $shell_id);
+        $edit = AudioListEditFacet::addToDb($edit_id, $list_id, $shell_id);
+        return $edit_id;
     }
 
     public function index($lang, $shell_id)
