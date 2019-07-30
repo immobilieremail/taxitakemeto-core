@@ -42,13 +42,11 @@ class UploadAudioController extends Controller
         return ($filename);
     }
 
-    private function insertIntoDB($random_nbr, $filename, $view_nbr)
+    private function insertIntoDB($random_nbr, $filename, $audiolist_nbr)
     {
         $audio = Audio::addToDB($random_nbr, $filename);
         if ($audio == null)
             return false;
-
-        $audiolist_nbr = AudioListViewFacet::find($view_nbr)->id_list;
 
         $joinlstaudio = JoinListAudio::addToDB($random_nbr, $audiolist_nbr);
         if ($joinlstaudio !== null)
@@ -89,28 +87,26 @@ class UploadAudioController extends Controller
 
     public function store(Request $request, $lang, $suisse_nbr)
     {
-        $list_id = AudioListEditFacet::find($suisse_nbr)->id_list;
-        $view_id = AudioListViewFacet::where('id_list', $list_id)->first()->id;
-        $failed_view = response(view('upload-audio', [
-            'validation_msg' => __('uploadaudio_message.file_not_uploaded'),
-            'edit_nbr' => $suisse_nbr,
-            'view_nbr' => $view_id,
-            'lang' => $lang,
-            'lists' => $this->getAllAudios($list_id)]), 400);
+        $view_nbr = NULL;
+        $status_code = 404;
+        $edit = AudioListEditFacet::find($suisse_nbr);
+        $validation_message = __('uploadaudio_message.file_not_uploaded');
+        $view_nbr = AudioListViewFacet::getViewIDIfPossible($edit->id_list, $edit->id_shell);
 
         if ($this->isFileAudio($request) == true) {
             $random_nbr = rand_large_nbr();
             $filename = $this->storeLocally($request, $random_nbr);
-            if ($this->insertIntoDB($random_nbr, $filename, $view_id) == false)
-                return $failed_view;
-            return response(view('upload-audio', [
-                    'validation_msg' => __('uploadaudio_message.file_uploaded'),
-                    'edit_nbr' => $suisse_nbr,
-                    'view_nbr' => $view_id,
-                    'lang' => $lang,
-                    'lists' => $this->getAllAudios($list_id)]), 201);
+            if ($this->insertIntoDB($random_nbr, $filename, $edit->id_list) != false) {
+                $validation_message = __('uploadaudio_message.file_uploaded');
+                $status_code = 201;
+            }
         }
-        return $failed_view;
+        return response(view('upload-audio', [
+            'validation_msg' => $validation_message,
+            'edit_nbr' => $suisse_nbr,
+            'view_nbr' => $view_nbr,
+            'lang' => $lang,
+            'lists' => $this->getAllAudios($edit->id_list)]), $status_code);
     }
 
     public function share(Request $request, $lang, $suisse_nbr)
@@ -123,7 +119,7 @@ class UploadAudioController extends Controller
         if ($shell_to_share == NULL) {
             return back();
         } else {
-            if ($request->view == true) {
+            if ($request->view == true || $request->edit == true) {
                 $new_view = AudioListViewFacet::addToDB(rand_large_nbr(), $list_id, $shell_to_share->id);
                 if ($new_view == NULL)
                     return back();
