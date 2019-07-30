@@ -72,4 +72,83 @@ class ControllerTest extends TestCase
 
         $this->assertEquals($count_sounds_before, $count_sounds_after);
     }
+
+    public function testShareViewToShell()
+    {
+        $audio_list = AudioList::create();
+        $shell_1_id = rand_large_nbr();
+        $shell_1 = Shell::create(['id' => $shell_1_id]);
+        $shell_2_id = rand_large_nbr();
+        $shell_2 = Shell::create(['id' => $shell_2_id]);
+        $edit_id = rand_large_nbr();
+        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $request_param = [
+            'share_to' => $shell_2_id,
+            'view' => true,
+            'edit' => false
+        ];
+
+        $edit = AudioListEditFacet::find($edit_id);
+        $controller = new UploadAudioController;
+        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller->share($request, 'en', $edit_id);
+
+        $new_view = AudioListViewFacet::where('id_shell', $shell_2_id)->first();
+        $response = $this->get("/en/list-audio/$new_view->id");
+        $response->assertStatus(200);
+    }
+
+    public function testShareEditToShell()
+    {
+        $audio_list = AudioList::create();
+        $shell_1_id = rand_large_nbr();
+        $shell_1 = Shell::create(['id' => $shell_1_id]);
+        $shell_2_id = rand_large_nbr();
+        $shell_2 = Shell::create(['id' => $shell_2_id]);
+        $edit_id = rand_large_nbr();
+        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $request_param = [
+            'share_to' => $shell_2_id,
+            'view' => false,
+            'edit' => true
+        ];
+
+        $edit = AudioListEditFacet::find($edit_id);
+        $controller = new UploadAudioController;
+        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller->share($request, 'en', $edit_id);
+
+        $new_edit = AudioListEditFacet::where('id_shell', $shell_2_id)->first();
+        $response = $this->get("/en/upload-audio/$new_edit->id");
+        $response->assertStatus(200);
+    }
+
+    public function testShareViewAndEditToShell()
+    {
+        $audio_list = AudioList::create();
+        $shell_1_id = rand_large_nbr();
+        $shell_1 = Shell::create(['id' => $shell_1_id]);
+        $shell_2_id = rand_large_nbr();
+        $shell_2 = Shell::create(['id' => $shell_2_id]);
+        $edit_id = rand_large_nbr();
+        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $request_param = [
+            'share_to' => $shell_2_id,
+            'view' => true,
+            'edit' => true
+        ];
+
+        $edit = AudioListEditFacet::find($edit_id);
+        $controller = new UploadAudioController;
+        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller->share($request, 'en', $edit_id);
+
+        $new_edit = AudioListEditFacet::where('id_shell', $shell_2_id)->first();
+        $response = $this->get("/en/upload-audio/$new_edit->id");
+        $response->assertStatus(200);
+
+        $new_view = AudioListViewFacet::where('id_shell', $shell_2_id)->first();
+        $response = $this->get("/en/list-audio/$new_view->id");
+        $response->assertStatus(200);
+    }
 }
