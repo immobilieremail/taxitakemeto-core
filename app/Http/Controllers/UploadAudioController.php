@@ -68,19 +68,21 @@ class UploadAudioController extends Controller
 
     public function index($lang, $suisse_nbr)
     {
+        $view_nbr = NULL;
         $edit = AudioListEditFacet::find($suisse_nbr);
         $view_404 = response(view('404'), 404);
 
         if (!isset($edit))
             return $view_404;
+        $shell_id = $edit->id_shell;
         $audiolist = AudioList::find($edit->id_list);
         if ($audiolist == NULL)
             return $view_404;
-        $view = AudioListViewFacet::where('id_list', $edit->id_list)->first();
+        $view_nbr = AudioListViewFacet::getViewIDIfPossible($edit->id_list, $shell_id);
         return view('upload-audio', [
             'validation_msg' => '',
             'edit_nbr' => $edit->id,
-            'view_nbr' => $view->id,
+            'view_nbr' => $view_nbr,
             'lang' => $lang,
             'lists' => $this->getAllAudios($audiolist->id)]);
     }
@@ -114,17 +116,23 @@ class UploadAudioController extends Controller
     public function share(Request $request, $lang, $suisse_nbr)
     {
         $new_view = NULL;
+        $new_edit = NULL;
         $shell_to_share = Shell::find($request->share_to);
+        $list_id = AudioListEditFacet::find($suisse_nbr)->id_list;
 
         if ($shell_to_share == NULL) {
-            return back(304);
+            return back();
         } else {
-            $list_id = AudioListEditFacet::find($suisse_nbr)->id_list;
-            $new_view = new AudioListViewFacet;
-            $new_view->id = rand_large_nbr();
-            $new_view->id_list = $list_id;
-            $new_view->id_shell = $shell_to_share->id;
-            $new_view->save();
+            if ($request->view == true) {
+                $new_view = AudioListViewFacet::addToDB(rand_large_nbr(), $list_id, $shell_to_share->id);
+                if ($new_view == NULL)
+                    return back();
+            }
+            if ($request->edit == true) {
+                $new_edit = AudioListEditFacet::addToDB(rand_large_nbr(), $list_id, $shell_to_share->id);
+                if ($new_edit == NULL)
+                    return back();
+            }
             return back(303);
         }
     }

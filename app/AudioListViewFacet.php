@@ -22,4 +22,16 @@ class AudioListViewFacet extends Model
             return null;
         }
     }
+
+    public static function getViewIDIfPossible($list_id, $shell_id)
+    {
+        $views = AudioListViewFacet::all()->where('id_list', $list_id);
+        foreach ($views as $view) {
+            if ($view->id_shell == $shell_id) {
+                $view_nbr = $view->id;
+                return $view_nbr;
+            }
+        }
+        return NULL;
+    }
 }

@@ -5,12 +5,18 @@
 @endsection
 
 @section('content')
-    <a href=<?php echo "/$lang/list-audio/$view_nbr" ?>>@lang('uploadaudio_message.go_to_list')</a>
+    @if ($view_nbr != NULL)
+        <a href=<?php echo "/$lang/list-audio/$view_nbr" ?>>@lang('uploadaudio_message.go_to_list')</a>
+    @endif
     <br><br><br>
     <div>
         <?php $share_button = __('uploadaudio_message.share_button'); ?>
         {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/share"]) !!}
             {!! Form::text('share_to') !!}
+            {!! Form::label('view', 'View') !!}
+            {!! Form::checkbox('view', 'view', true) !!}
+            {!! Form::label('edit', 'Edit') !!}
+            {!! Form::checkbox('edit', 'edit') !!}
             {!! Form::submit($share_button) !!}
         {!! Form::close() !!}
     </div>
@@ -26,6 +32,8 @@
         {!! Form::close() !!}
     </div>
     <div>
-        @include('includes.audio-player', ['lists' => $lists, 'delete' => true, 'edit_nbr' => $edit_nbr, 'lang' => $lang])
+        @if ($view_nbr != NULL)
+            @include('includes.audio-player', ['lists' => $lists, 'delete' => true, 'edit_nbr' => $edit_nbr, 'lang' => $lang])
+        @endif
     </div>
 @endsection
