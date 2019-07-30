@@ -31,6 +31,7 @@ class IndexController extends Controller
         $shell_nbr = rand_large_nbr();
         $shell->id = $shell_nbr;
         $shell->save();
+
         return redirect("$lang/shell/$shell_nbr", 303);
     }
 }

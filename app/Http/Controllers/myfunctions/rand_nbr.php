@@ -2,7 +2,7 @@
 
 function rand_large_nbr()
 {
-    $result = random_int(0, PHP_INT_MAX);
+    $result = str_replace("/", "", base64_encode(gmp_export(gmp_random_bits(128))));
     return $result;
 }
 

@@ -145,7 +145,7 @@ class UploadAudioController extends Controller
         $audio = Audio::find($audio_id);
         $dir_path = '/home/louis/audio_handler/public';
 
-        if (Audio::deleteFromDB($audio_id) == true) {
+        if (AudioListEditFacet::find($suisse_nbr) != NULL && Audio::deleteFromDB($audio_id) == true) {
             if (file_exists($dir_path . $audio->path))
                 unlink($dir_path . $request->audio_path);
             return redirect("/$lang/upload-audio/$suisse_nbr", 303);

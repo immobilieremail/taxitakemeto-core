@@ -25,7 +25,7 @@ class ModelTest extends TestCase
     public function testJoinListAudioAddToDB()
     {
         $audio_nbr = rand_large_nbr();
-        $audiolist_nbr = rand_large_nbr();
+        $audiolist_nbr = rand();
         $audio = Audio::create(['id' => $audio_nbr, 'path' => "/$audio_nbr.mp3"]);
         $audiolist = AudioList::create(['id' => $audiolist_nbr]);
 

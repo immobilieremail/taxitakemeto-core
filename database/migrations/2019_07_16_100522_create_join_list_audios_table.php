@@ -15,7 +15,7 @@ class CreateJoinListAudiosTable extends Migration
     {
         Schema::create('join_list_audio', function (Blueprint $table) {
             $table->bigInteger('id_list')->unsigned();
-            $table->bigInteger('id_audio');
+            $table->string('id_audio');
             $table->timestamps();
 
             $table->foreign('id_list')

@@ -14,9 +14,9 @@ class CreateAudioListViewFacetTable extends Migration
     public function up()
     {
         Schema::create('audio_list_view_facets', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->string('id')->primary();
             $table->bigInteger('id_list')->unsigned();
-            $table->bigInteger('id_shell');
+            $table->string('id_shell');
             $table->timestamps();
 
             $table->foreign('id_list')

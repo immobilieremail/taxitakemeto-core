@@ -8,6 +8,8 @@ class AudioListEditFacet extends Model
 {
     protected $fillable = ['id', 'id_list', 'id_shell'];
 
+    public $incrementing = false;
+
     public static function addToDB($id, $list_id, $shell_id)
     {
         try {

@@ -8,6 +8,8 @@ class Audio extends Model
 {
     protected $fillable = ['id', 'path'];
 
+    public $incrementing = false;
+
     public static function addToDB($id, $filename)
     {
         try {

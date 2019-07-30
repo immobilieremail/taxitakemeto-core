@@ -8,6 +8,8 @@ class JoinListAudio extends Model
 {
     protected $fillable = ['id_list', 'id_audio'];
 
+    public $incrementing = false;
+
     public static function addToDB($audio_nbr, $audiolist_nbr)
     {
         try {
