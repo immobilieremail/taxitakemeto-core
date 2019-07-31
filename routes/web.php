@@ -11,11 +11,9 @@
 |
 */
 
-Route::get('/{lang?}', 'IndexController@index')->name('index')->where('lang', implode('|', array_flip(config('app.languages'))));
-Route::post('/{lang}', 'IndexController@store')->name('index.store');
-
-Route::get('/{lang}/shell/{shell_id}', 'ShellController@index')->name('shell.index');
-Route::post('/{lang}/shell/{shell_id}', 'ShellController@store')->name('shell.store');
+Route::get('/{lang?}', 'ShellController@index')->name('index')->where('lang', implode('|', array_flip(config('app.languages'))));
+Route::post('/{lang}/shell', 'ShellController@store')->name('shell.store');
+Route::get('/{lang}/shell/{shell_id}', 'ShellController@show')->name('shell.show');
 
 Route::get('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@index')->name('upload-audio.index');
 Route::post('/{lang}/upload-audio/{suisse_nbr}', 'UploadAudioController@store')->name('upload-audio.store');
