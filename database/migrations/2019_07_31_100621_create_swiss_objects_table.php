@@ -14,7 +14,7 @@ class CreateSwissObjectsTable extends Migration
     public function up()
     {
         Schema::create('swiss_objects', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string('swiss_number', 24)->primary();
             $table->timestamps();
         });
     }
