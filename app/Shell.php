@@ -2,11 +2,8 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\SwissObject;
 
-class Shell extends Model
+class Shell extends SwissObject
 {
-    protected $fillable = ['id'];
-
-    public $incrementing = false;
 }
