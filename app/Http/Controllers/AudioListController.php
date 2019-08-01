@@ -70,4 +70,20 @@ class AudioListController extends Controller
             'lang' => $lang,
             'lists' => $audio_list->getAudios()]), $status_code);
     }
+
+    public function destroy(Request $request, $lang, $swiss_number, $audio_id)
+    {
+        $audio = Audio::find($audio_id);
+        $dir_path = '/home/louis/audio_handler/public';
+
+        if (AudioListEditFacet::find($swiss_number) != NULL) {
+            if (file_exists($dir_path . $audio->path)) {
+                unlink($dir_path . $request->audio_path);
+                $audio->delete();
+            }
+            return redirect("/$lang/audiolist_edit/$swiss_number", 303);
+        } else {
+            return response(view('404'), 404);
+        }
+    }
 }
