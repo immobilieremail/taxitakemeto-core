@@ -35,15 +35,15 @@ class AudioListController extends Controller
         $file->move('storage/uploads', $filename);
     }
 
-    public function edit($lang, $audio_list_edit_facet, $validation_msg = null)
+    public function edit($lang, $edit_facet_id, $validation_msg = null, $status_code = 200)
     {
-        $edit_facet = AudioListEditFacet::find($audio_list_edit_facet);
+        $edit_facet = AudioListEditFacet::find($edit_facet_id);
         $audio_list = AudioList::find($edit_facet->id_list);
-        return view('upload-audio', [
+        return response(view('upload-audio', [
             'validation_msg' => $validation_msg,
-            'edit_nbr' => $audio_list_edit_facet,
+            'edit_nbr' => $edit_facet_id,
             'lang' => $lang,
-            'lists' => $audio_list->getAudios()]);
+            'lists' => $audio_list->getAudios()]), $status_code);
     }
 
     public function new_audio(Request $request, $lang, $edit_facet_id)
@@ -64,11 +64,17 @@ class AudioListController extends Controller
             $validation_msg = __('uploadaudio_message.file_uploaded');
             $status_code = 201;
         }
-        return response(view('upload-audio', [
-            'validation_msg' => $validation_msg,
-            'edit_nbr' => $edit_facet_id,
-            'lang' => $lang,
-            'lists' => $audio_list->getAudios()]), $status_code);
+        return $this->edit($lang, $edit_facet_id, $validation_msg, $status_code);
+    }
+
+    public function update(Request $request, $lang, $edit_facet_id, $audio_id)
+    {
+        if ($this->isFileAudio($request) == true) {
+            $this->storeLocally($request, $audio_id);
+            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_uploaded'), 303);
+        } else {
+            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_not_uploaded'), 400);
+        }
     }
 
     public function destroy(Request $request, $lang, $swiss_number, $audio_id)

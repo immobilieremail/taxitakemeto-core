@@ -18,6 +18,7 @@ Route::post('/{lang}/shell/{shell_id}/new_audio_list', 'ShellController@new_audi
 
 Route::get('/{lang}/audiolist_edit/{swiss_number}', 'AudioListController@edit')->name('audiolist.edit');
 Route::post('/{lang}/audiolist_edit/{swiss_number}/new_audio', 'AudioListController@new_audio')->name('audiolist.new_audio');
+Route::patch('/{lang}/audiolist_edit/{swiss_number}/{audio_id}', 'AudioListController@update')->name('audiolist.update');
 Route::delete('/{lang}/audiolist_edit/{swiss_number}/{audio_id}', 'AudioListController@destroy')->name('audiolist.destroy');
 
 Route::get('/{lang}/upload-audio/{swiss_number}', 'UploadAudioController@index')->name('upload-audio.index');
