@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class JoinListAudio extends Model
+class JoinShellViewFacet extends Model
 {
     public $incrementing = false;
-    protected $fillable = ['id_list', 'id_audio'];
+    protected $fillable = ['id_shell', 'id_facet'];
 }

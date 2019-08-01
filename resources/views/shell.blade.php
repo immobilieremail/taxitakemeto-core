@@ -7,9 +7,8 @@
 @section('content')
     <br>
     <div>
-        <?php $create_list_button = __('shell_message.create_list_button'); ?>
-        {!! Form::open(['url' => "/$lang/shell/$shell_id"]) !!}
-            {!! Form::submit($create_list_button) !!}
+        {!! Form::open(['url' => route('shell.new_audio_list', [$lang, $shell_id])]) !!}
+            {!! Form::submit(__('shell_message.create_list_button')) !!}
         {!! Form::close() !!}
     </div>
     <br>
@@ -21,7 +20,7 @@
                 @endif
                 <li>
                     {{ $i + 1 }} :
-                    <a href=<?php echo "/$lang/upload-audio/" . $edits[$i]->id; ?>>{{ $edits[$i]->id }}</a>
+                    <a href=<?php echo "/$lang/audiolist_edit/" . $edits[$i]["id_facet"]; ?>>{{ $edits[$i]["id_facet"] }}</a>
                 </li>
             @endfor
         </ul>
@@ -33,7 +32,7 @@
                 @endif
                 <li>
                     {{ $i + 1 }} :
-                    <a href=<?php echo "/$lang/list-audio/" . $views[$i]->id; ?>>{{ $views[$i]->id }}</a>
+                    <a href=<?php echo "/$lang/list-audio/" . $views[$i]["id_facet"]; ?>>{{ $views[$i]["id_facet"] }}</a>
                 </li>
             @endfor
         </ul>

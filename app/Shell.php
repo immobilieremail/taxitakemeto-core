@@ -7,10 +7,10 @@ use App\SwissObject;
 class Shell extends SwissObject
 {
     public function audioListViewFacets() {
-        return AudioListViewFacet::where('id_shell', $this->shell_id)->get()->toArray();
+        return JoinShellViewFacet::where('id_shell', $this->swiss_number)->get()->toArray();
     }
 
     public function audioListEditFacets() {
-        return AudioListEditFacet::where('id_shell', $this->shell_id)->get()->toArray();
+        return JoinShellEditFacet::where('id_shell', $this->swiss_number)->get()->toArray();
     }
 }

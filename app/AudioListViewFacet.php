@@ -6,34 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class AudioListViewFacet extends Model
 {
-    protected $fillable = ['id', 'id_list', 'id_shell'];
+    protected $fillable = ['id_list'];
 
-    public $incrementing = false;
-
-    public static function addToDB($id, $list_id, $shell_id)
+    public function __construct()
     {
-        try {
-            $view = new AudioListViewFacet;
-
-            $view->id = $id;
-            $view->id_list = $list_id;
-            $view->id_shell = $shell_id;
-            $view->save();
-            return $view;
-        } catch (\Exception $e) {
-            return null;
-        }
+        parent::__construct();
     }
 
-    public static function getViewIDIfPossible($list_id, $shell_id)
+    public static function create(Array $param)
     {
-        $views = AudioListViewFacet::all()->where('id_list', $list_id);
-        foreach ($views as $view) {
-            if ($view->id_shell == $shell_id) {
-                $view_nbr = $view->id;
-                return $view_nbr;
-            }
-        }
-        return NULL;
+        $obj = new AudioListViewFacet;
+
+        $obj->id_list = $param["id_list"];
+        $obj->save();
+        return $obj;
     }
 }

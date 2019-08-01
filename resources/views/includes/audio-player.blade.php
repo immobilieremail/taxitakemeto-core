@@ -11,17 +11,15 @@
                 </audio>
                 {{-- If it is not in view --}}
                 @if ($delete == true)
-                <?php $delete_button = __('uploadaudio_message.delete_button');
-                    $update_button = __('uploadaudio_message.update_button'); ?>
-                    {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/$list->id", 'files' => true]) !!}
+                    {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/$list->swiss_number", 'files' => true]) !!}
                         {{ method_field('PATCH') }}
                         {!! Form::file('audio') !!}
-                        {!! Form::submit($update_button) !!}
+                        {!! Form::submit(__('uploadaudio_message.update_button')) !!}
                     {!! Form::close() !!}
-                    {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/$list->id"]) !!}
+                    {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/$list->swiss_number"]) !!}
                         {{ method_field('DELETE') }}
                         {!! Form::hidden('audio_path', $list->path) !!}
-                        {!! Form::submit($delete_button) !!}
+                        {!! Form::submit(__('uploadaudio_message.update_button')) !!}
                     {!! Form::close() !!}
                     <br>
                 @endif

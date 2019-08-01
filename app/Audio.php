@@ -2,36 +2,18 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\SwissObject;
 
-class Audio extends Model
+class Audio extends SwissObject
 {
-    protected $fillable = ['id', 'path'];
+    protected $fillable = ['path'];
 
-    public $incrementing = false;
-
-    public static function addToDB($id, $filename)
+    public static function create(Array $param)
     {
-        try {
-            $audio = new Audio;
+        $obj = new Audio;
 
-            $audio->id = $id;
-            $audio->path = '/storage/uploads/' . $filename;
-            $audio->save();
-            return $audio;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
-    public static function deleteFromDB($id)
-    {
-        $audio = Audio::find($id);
-        if ($audio !== NULL) {
-            $audio->delete();
-            return true;
-        } else {
-            return false;
-        }
+        $obj->path = $param["path"] . $obj->swiss_number . '.' . $param["extension"];
+        $obj->save();
+        return $obj;
     }
 }

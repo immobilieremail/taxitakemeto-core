@@ -2,26 +2,18 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\SwissObject;
 
-class AudioListEditFacet extends Model
+class AudioListEditFacet extends SwissObject
 {
-    protected $fillable = ['id', 'id_list', 'id_shell'];
+    protected $fillable = ['id_list'];
 
-    public $incrementing = false;
-
-    public static function addToDB($id, $list_id, $shell_id)
+    public static function create(Array $param)
     {
-        try {
-            $edit = new AudioListEditFacet;
+        $obj = new AudioListEditFacet;
 
-            $edit->id = $id;
-            $edit->id_list = $list_id;
-            $edit->id_shell = $shell_id;
-            $edit->save();
-            return $edit;
-        } catch (\Exception $e) {
-            return null;
-        }
+        $obj->id_list = $param["id_list"];
+        $obj->save();
+        return $obj;
     }
 }
