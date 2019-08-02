@@ -6,4 +6,5 @@
 
 @section('content')
     Content
+    @lang('auth.failed')
 @endsection
