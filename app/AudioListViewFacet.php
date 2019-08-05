@@ -2,16 +2,11 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\SwissObject;
 
-class AudioListViewFacet extends Model
+class AudioListViewFacet extends SwissObject
 {
     protected $fillable = ['id_list'];
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
 
     public static function create(Array $param)
     {
