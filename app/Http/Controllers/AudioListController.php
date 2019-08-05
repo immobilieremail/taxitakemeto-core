@@ -80,7 +80,7 @@ class AudioListController extends Controller
     public function destroy(Request $request, $lang, $swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
-        $dir_path = '/home/louis/audio_handler/public';
+        $dir_path = '/home/louis/taxitakemeto-core/public';
 
         if (AudioListEditFacet::find($swiss_number) != NULL) {
             if (file_exists($dir_path . $audio->path)) {

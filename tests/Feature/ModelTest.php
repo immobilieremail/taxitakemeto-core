@@ -22,64 +22,41 @@ class ModelTest extends TestCase
 {
     use TestTrait;
 
-    public function testJoinListAudioAddToDB()
-    {
-        $audio_nbr = rand_large_nbr();
-        $audiolist_nbr = rand();
-        $audio = Audio::create(['id' => $audio_nbr, 'path' => "/$audio_nbr.mp3"]);
-        $audiolist = AudioList::create(['id' => $audiolist_nbr]);
+    public $path = "/storage/uploads/";
+    public $extension = "mp3";
 
-        if (JoinListAudio::addToDb($audio_nbr, $audiolist_nbr) !== null) {
-            $this->assertDatabaseHas('join_list_audio', [
-                'id_list' => $audiolist_nbr,
-                'id_audio' => $audio_nbr
-            ]);
-        } else {
-            $this->assertFalse(true);
-        }
+    /** @test */
+    public function joinListAudioAddToDB()
+    {
+        $audio = Audio::create(['path' => $this->path, 'extension' => $this->extension]);
+        $audiolist = AudioList::create();
+
+        JoinListAudio::create(['id_audio' => $audio->swiss_number, 'id_list' => $audiolist->id]);
+        $this->assertDatabaseHas('join_list_audio', [
+            'id_list' => $audiolist->id,
+            'id_audio' => $audio->swiss_number
+        ]);
     }
 
-    public function testAudioAddToDB()
+    /** @test */
+    public function joinListAudioDeleteWithAudio()
     {
-        $audio_nbr = rand_large_nbr();
-
-        if (Audio::addToDB($audio_nbr, "/$audio_nbr.mp3") !== null) {
-            $this->assertDatabaseHas('audio', ['id' => $audio_nbr]);
-        } else {
-            $this->assertFalse(true);
-        }
-    }
-
-    public function testAudioDeleteFromDB()
-    {
-        $audio_nbr = rand_large_nbr();
-
-        $audio = Audio::addToDB($audio_nbr, "/$audio_nbr.mp3");
-        if (Audio::deleteFromDB($audio_nbr)) {
-            $this->assertDatabaseMissing('audio', ['id' => $audio_nbr]);
-        } else {
-            $this->assertFalse(true);
-        }
-    }
-
-    public function testJoinListAudioDeleteWithAudio()
-    {
-        $audio_id = rand_large_nbr();
-
         $count_before = JoinListAudio::all()->count();
         $audiolist = AudioList::create();
-        $audio = Audio::addToDB($audio_id, "$audio_id.mp3");
-        $joinlstsnd = JoinListAudio::addToDB($audio_id, $audiolist->id);
+        $audio = Audio::create(['path' => $this->path, 'extension' => $this->extension]);
+        $param = ['id_list' => $audiolist->id, 'id_audio' => $audio->swiss_number];
+        $joinlstsnd = JoinListAudio::create($param);
 
-        $match = ['id_list' => $audiolist->id, 'id_audio' => $audio_id];
+        $match = ['id_list' => $audiolist->id, 'id_audio' => $audio->swiss_number];
         $this->assertDatabaseHas('join_list_audio', $match);
 
-        Audio::find($audio_id)->delete();
+        Audio::find($audio->swiss_number)->delete();
         $count_after = JoinListAudio::all()->count();
         $this->assertEquals($count_before, $count_after);
     }
 
-    public function testAudioMultipleAddAndDelete()
+    /** test */
+    public function audioMultipleAddAndDelete()
     {
         $this->limitTo(10)->forAll(Generator\nat(), Generator\nat())->then(function ($nb1, $nb2) {
             $nbr_add = ($nb1 > $nb2) ? $nb1 : $nb2;
@@ -101,7 +78,8 @@ class ModelTest extends TestCase
         });
     }
 
-    public function testAudioListViewFacetAddToDB()
+    /** test */
+    public function audioListViewFacetAddToDB()
     {
         if (Shell::find(1) == NULL)
             Shell::create(['id' => 1]);
@@ -118,7 +96,8 @@ class ModelTest extends TestCase
         });
     }
 
-    public function testAudioListEditFacetAddToDB()
+    /** test */
+    public function audioListEditFacetAddToDB()
     {
         if (Shell::find(1) == NULL)
             Shell::create(['id' => 1]);

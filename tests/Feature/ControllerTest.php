@@ -9,7 +9,7 @@ use App\Shell,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     Illuminate\Http\Request,
-    App\Http\Controllers\UploadAudioController;
+    App\Http\Controllers\AudioListController;
 
 use Eris\Generator,
     Eris\TestTrait;
@@ -22,75 +22,27 @@ class ControllerTest extends TestCase
     use TestTrait;
     use RefreshDatabase;
 
-    public function testDeleteSound()
+    /** @test */
+    public function basicTest()
     {
-        $count_sounds_after = 0;
-        $count_sounds_before = 0;
-
-        $this->post('/en');
-        $shell = Shell::first();
-        $response = $this->post("/en/shell/$shell->id");
-        $edit = AudioListEditFacet::first();
-        $sound_id = rand_large_nbr();
-        $param = [
-            'id' => $sound_id,
-            'path' => "/storage/uploads/$sound_id.mp3",
-        ];
-
-        $sound = Audio::create($param);
-
-        $count_sounds_before = Audio::all()->count();
-
-        $controller = new UploadAudioController;
-        $request = Request::create("/en/upload-audio/$edit->id/$sound_id", 'DELETE', ['audio_path' => "/storage/uploads/$sound_id.mp3"]);
-        $controller->destroy($request, 'en', $edit->id, $sound_id);
-
-        $count_sounds_after = Audio::all()->count();
-
-        $this->assertEquals($count_sounds_before - 1, $count_sounds_after, "With $count_sounds_before and $count_sounds_after");
-        $this->assertDatabaseMissing('audio', $param);
+        $this->assertTrue(true);
     }
 
-    public function testDeleteNonExistantSound()
+    /** test */
+    public function shareViewToShell()
     {
-        $edit = NULL;
-        $count_sounds_after = 0;
-        $count_sounds_before = 0;
-
-        $this->post('/en');
-        $shell = Shell::first();
-        $this->post("/en/shell/$shell->id");
-        $edit = AudioListEditFacet::all()->first();
-
-        $count_sounds_before = Audio::all()->count();
-
-        $controller = new UploadAudioController;
-        $request = Request::create("/en/upload-audio/$edit->id/-gef�z6816#�1hey", 'DELETE', ['audio_path' => '/storage/uploads/-gef�z6816#�1hey.mp3']);
-        $controller->destroy($request, 'en', $edit->id, '-gef�z6816#�1hey');
-
-        $count_sounds_after = Audio::all()->count();
-
-        $this->assertEquals($count_sounds_before, $count_sounds_after);
-    }
-
-    public function testShareViewToShell()
-    {
+        $shell_1 = Shell::create();
+        $shell_2 = Shell::create();
         $audio_list = AudioList::create();
-        $shell_1_id = rand_large_nbr();
-        $shell_1 = Shell::create(['id' => $shell_1_id]);
-        $shell_2_id = rand_large_nbr();
-        $shell_2 = Shell::create(['id' => $shell_2_id]);
-        $edit_id = rand_large_nbr();
-        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $edit = AudioListEditFacet::create(['id_list' => $audio_list->id]);
         $request_param = [
             'share_to' => $shell_2_id,
             'view' => true,
             'edit' => false
         ];
 
-        $edit = AudioListEditFacet::find($edit_id);
-        $controller = new UploadAudioController;
-        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller = new AudioListController;
+        $request = Request::create("/en/audiolist_edit/$edit_id/share", 'POST', $request_param);
         $controller->share($request, 'en', $edit_id);
 
         $new_view = AudioListViewFacet::where('id_shell', $shell_2_id)->first();
@@ -98,53 +50,47 @@ class ControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testShareEditToShell()
+    /** test */
+    public function shareEditToShell()
     {
+        $shell_1 = Shell::create();
+        $shell_2 = Shell::create();
         $audio_list = AudioList::create();
-        $shell_1_id = rand_large_nbr();
-        $shell_1 = Shell::create(['id' => $shell_1_id]);
-        $shell_2_id = rand_large_nbr();
-        $shell_2 = Shell::create(['id' => $shell_2_id]);
-        $edit_id = rand_large_nbr();
-        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $edit = AudioListEditFacet::create(['id_list' => $audio_list->id]);
         $request_param = [
             'share_to' => $shell_2_id,
             'view' => false,
             'edit' => true
         ];
 
-        $edit = AudioListEditFacet::find($edit_id);
-        $controller = new UploadAudioController;
-        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller = new AudioListController;
+        $request = Request::create("/en/audiolist_edit/$edit_id/share", 'POST', $request_param);
         $controller->share($request, 'en', $edit_id);
 
         $new_edit = AudioListEditFacet::where('id_shell', $shell_2_id)->first();
-        $response = $this->get("/en/upload-audio/$new_edit->id");
+        $response = $this->get("/en/audiolist_edit/$new_edit->id");
         $response->assertStatus(200);
     }
 
-    public function testShareViewAndEditToShell()
+    /** test */
+    public function shareViewAndEditToShell()
     {
+        $shell_1 = Shell::create();
+        $shell_2 = Shell::create();
         $audio_list = AudioList::create();
-        $shell_1_id = rand_large_nbr();
-        $shell_1 = Shell::create(['id' => $shell_1_id]);
-        $shell_2_id = rand_large_nbr();
-        $shell_2 = Shell::create(['id' => $shell_2_id]);
-        $edit_id = rand_large_nbr();
-        $edit = AudioListEditFacet::addToDB($edit_id, $audio_list->id, $shell_1_id);
+        $edit = AudioListEditFacet::create(['id_list' => $audio_list->id]);
         $request_param = [
             'share_to' => $shell_2_id,
             'view' => true,
             'edit' => true
         ];
 
-        $edit = AudioListEditFacet::find($edit_id);
-        $controller = new UploadAudioController;
-        $request = Request::create("/en/upload-audio/$edit_id/share", 'POST', $request_param);
+        $controller = new AudioListController;
+        $request = Request::create("/en/audiolist_edit/$edit_id/share", 'POST', $request_param);
         $controller->share($request, 'en', $edit_id);
 
         $new_edit = AudioListEditFacet::where('id_shell', $shell_2_id)->first();
-        $response = $this->get("/en/upload-audio/$new_edit->id");
+        $response = $this->get("/en/audiolist_edit/$new_edit->id");
         $response->assertStatus(200);
 
         $new_view = AudioListViewFacet::where('id_shell', $shell_2_id)->first();
