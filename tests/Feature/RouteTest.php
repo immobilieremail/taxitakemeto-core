@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Shell,
     App\Audio,
+    App\AudioList,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\Http\Controllers\UploadAudioController;
@@ -120,17 +121,10 @@ class RouteTest extends TestCase
 
     public function testDeleteNonExistantSound()
     {
-        $audio_id = rand_large_nbr();
-
-        if (Shell::all()->count() == 0) {
-            $gen = $this->post('/en');
-        }
-        if (AudioListEditFacet::all()->count() == 0) {
-            $shell = Shell::first();
-            $this->post("/en/shell/$shell->id");
-        }
-        $edit = AudioListEditFacet::all()->first();
-        $response = $this->delete("/en/upload-audio/$edit->id_view/$audio_id");
+        $shell = Shell::create();
+        $audiolist = AudioList::create();
+        $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $response = $this->delete("/en/audiolist_edit/$audiolist_edit_facet->swiss_number/123");
 
         $response->assertStatus(404);
     }
