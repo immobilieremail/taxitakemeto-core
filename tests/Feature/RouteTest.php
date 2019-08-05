@@ -131,11 +131,8 @@ class RouteTest extends TestCase
 
     public function testDeleteSoundFromNonExistantEdit()
     {
-        $audio_id = rand_large_nbr();
-        $edit_id = rand_large_nbr();
-
-        $audio = Audio::addToDB($audio_id, "/$audio_id.mp3");
-        $response = $this->delete("/en/upload-audio/$edit_id/$audio->id");
+        $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
+        $response = $this->delete("/en/audiolist_edit/123/$audio->swiss_number");
 
         $response->assertStatus(404);
     }
