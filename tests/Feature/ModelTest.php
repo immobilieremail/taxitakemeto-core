@@ -55,7 +55,7 @@ class ModelTest extends TestCase
         $this->assertEquals($count_before, $count_after);
     }
 
-    /** test */
+    /** @test */
     public function audioMultipleAddAndDelete()
     {
         $this->limitTo(10)->forAll(Generator\nat(), Generator\nat())->then(function ($nb1, $nb2) {
@@ -65,12 +65,11 @@ class ModelTest extends TestCase
 
             $count_before = Audio::all()->count();
             for ($i = 0; $i < $nbr_add; $i++) {
-                $audio_nbr = rand_large_nbr();
-                $audio = Audio::addToDB($audio_nbr, "/$audio_nbr.mp3");
-                array_push($audio_id_array, $audio_nbr);
+                $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
+                array_push($audio_id_array, $audio);
             }
             for ($j = 0; $j < $nbr_del; $j++) {
-                Audio::deleteFromDB($audio_id_array[$j]);
+                $audio_id_array[$j]->delete();
             }
             $count_after = Audio::all()->count();
 
@@ -78,36 +77,28 @@ class ModelTest extends TestCase
         });
     }
 
-    /** test */
+    /** @test */
     public function audioListViewFacetAddToDB()
     {
-        if (Shell::find(1) == NULL)
-            Shell::create(['id' => 1]);
-        if (AudioList::find(1) == NULL)
-            AudioList::create(['id' => 1]);
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
+            $audiolist = AudioList::create();
             $count_before = AudioListViewFacet::all()->count();
             for ($i = 0; $i < $nbr; $i++) {
-                $id = rand_large_nbr();
-                AudioListViewFacet::addToDB($id, 1, 1);
+                AudioListViewFacet::create(['id_list' => $audiolist->id]);
             }
             $count_after = AudioListViewFacet::all()->count();
             $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
         });
     }
 
-    /** test */
+    /** @test */
     public function audioListEditFacetAddToDB()
     {
-        if (Shell::find(1) == NULL)
-            Shell::create(['id' => 1]);
-        if (AudioList::find(1) == NULL)
-            AudioList::create(['id' => 1]);
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
+            $audiolist = AudioList::create();
             $count_before = AudioListEditFacet::all()->count();
             for ($i = 0; $i < $nbr; $i++) {
-                $id = rand_large_nbr();
-                AudioListEditFacet::addToDB($id, 1, 1);
+                AudioListEditFacet::create(['id_list' => $audiolist->id]);
             }
             $count_after = AudioListEditFacet::all()->count();
             $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
