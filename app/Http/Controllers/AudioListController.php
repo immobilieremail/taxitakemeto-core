@@ -38,12 +38,16 @@ class AudioListController extends Controller
     public function edit($lang, $edit_facet_id, $validation_msg = null, $status_code = 200)
     {
         $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        if ($edit_facet != NULL) {
         $audio_list = AudioList::find($edit_facet->id_list);
         return response(view('upload-audio', [
             'validation_msg' => $validation_msg,
             'edit_nbr' => $edit_facet_id,
             'lang' => $lang,
             'lists' => $audio_list->getAudios()]), $status_code);
+        } else {
+            return response(view('404'), 404);
+    }
     }
 
     public function new_audio(Request $request, $lang, $edit_facet_id)
