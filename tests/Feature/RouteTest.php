@@ -44,30 +44,18 @@ class RouteTest extends TestCase
 
     public function testAccessUpload()
     {
-        if (Shell::all()->count() == 0) {
-            $gen = $this->post('/en');
-        }
-        if (AudioListEditFacet::all()->count() == 0) {
-            $shell = Shell::first();
-            $this->post("/en/shell/$shell->id");
-        }
-        $edit = AudioListEditFacet::all()->first();
-        $response = $this->get("/en/upload-audio/$edit->id");
+        $audiolist = AudioList::create();
+        $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $response = $this->get("/en/audiolist_edit/$audiolist_edit_facet->swiss_number");
 
         $response->assertStatus(200);
     }
 
     public function testAccessView()
     {
-        if (Shell::all()->count() == 0) {
-            $gen = $this->post('/en');
-        }
-        if (AudioListViewFacet::all()->count() == 0) {
-            $shell = Shell::first();
-            $this->post("/en/shell/$shell->id");
-        }
-        $view = AudioListViewFacet::all()->first();
-        $response = $this->get("/en/list-audio/$view->id");
+        $audiolist = AudioList::create();
+        $audiolist_view_facet = AudioListViewFacet::create(['id_list' => $audiolist->id]);
+        $response = $this->get("/en/list-audio/$audiolist_view_facet->swiss_number");
 
         $response->assertStatus(200);
     }
@@ -87,17 +75,17 @@ class RouteTest extends TestCase
 
     public function testAccessNonExistantUpload()
     {
-        $edit_id = rand_large_nbr();
-        $this->assertDatabaseMissing('audio_list_edit_facets', ['id' => $edit_id]);
-        $response = $this->get("/en/upload-audio/$edit_id");
+        $rand_nbr = rand();
+        $this->assertDatabaseMissing('audio_list_edit_facets', ['swiss_number' => $rand_nbr]);
+        $response = $this->get("/en/audiolist_edit/$rand_nbr");
         $response->assertStatus(404);
     }
 
     public function testAccessNonExistantView()
     {
-        $view_id = rand_large_nbr();
-        $this->assertDatabaseMissing('audio_list_view_facets', ['id' => $view_id]);
-        $response = $this->get("/en/list-audio/$view_id");
+        $rand_nbr = rand();
+        $this->assertDatabaseMissing('audio_list_view_facets', ['swiss_number' => $rand_nbr]);
+        $response = $this->get("/en/list-audio/$rand_nbr");
         $response->assertStatus(404);
     }
 
