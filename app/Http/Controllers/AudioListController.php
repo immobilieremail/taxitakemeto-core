@@ -52,10 +52,9 @@ class AudioListController extends Controller
 
     public function new_audio(Request $request, $lang, $edit_facet_id)
     {
-        $status_code = 404;
         $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        if ($edit_facet != NULL) {
         $audio_list = AudioList::find($edit_facet->id_list);
-        $validation_msg = __('uploadaudio_message.file_not_uploaded');
 
         if ($this->isFileAudio($request) == true) {
             $audio = Audio::create([
@@ -67,8 +66,14 @@ class AudioListController extends Controller
             $this->storeLocally($request, $audio->swiss_number);
             $validation_msg = __('uploadaudio_message.file_uploaded');
             $status_code = 201;
+            } else {
+                $validation_msg = __('uploadaudio_message.file_not_uploaded');
+                $status_code = 404;
         }
         return $this->edit($lang, $edit_facet_id, $validation_msg, $status_code);
+        } else {
+            response(view('404'), 404);
+        }
     }
 
     public function update(Request $request, $lang, $edit_facet_id, $audio_id)
