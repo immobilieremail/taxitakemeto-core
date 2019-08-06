@@ -14,6 +14,8 @@ use Tests\TestCase;
 use Eris\Generator,
     Eris\TestTrait;
 
+use Illuminate\Support\Facades\Storage;
+
 use Illuminate\Http\Request,
     Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -62,15 +64,12 @@ class RouteTest extends TestCase
 
     public function testCreateList()
     {
+        $shell = Shell::create();
         $count_before = AudioListEditFacet::all()->count();
-        if (Shell::all()->count() == 0) {
-            $gen = $this->post('/en');
-        }
-        $shell = Shell::first();
-        $response = $this->post("/en/shell/$shell->id");
+        $response = $this->post("/en/shell/$shell->swiss_number/new_audio_list");
         $count_after = AudioListEditFacet::all()->count();
         $this->assertEquals($count_before + 1, $count_after);
-        $response->assertStatus(303);
+        $response->assertStatus(302);
     }
 
     public function testAccessNonExistantUpload()
@@ -91,25 +90,17 @@ class RouteTest extends TestCase
 
     public function testDeleteSound()
     {
-        $audio_id = rand_large_nbr();
-
-        if (Shell::all()->count() == 0) {
-            $gen = $this->post('/en');
-        }
-        if (AudioListEditFacet::all()->count() == 0) {
-            $shell = Shell::first();
-            $this->post("/en/shell/$shell->id");
-        }
-        $edit = AudioListEditFacet::all()->first();
-        $audio = Audio::addToDB($audio_id, "/$audio_id.mp3");
-        $response = $this->delete("/en/upload-audio/$edit->id/$audio_id");
+        $audiolist = AudioList::create();
+        $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
+        Storage::disk('public')->put("/storage/uploads/$audio->swiss_number.mp3", NULL);
+        $response = $this->delete("/en/audiolist_edit/$audiolist_edit_facet->swiss_number/$audio->swiss_number");
 
         $response->assertStatus(303);
     }
 
     public function testDeleteNonExistantSound()
     {
-        $shell = Shell::create();
         $audiolist = AudioList::create();
         $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
         $response = $this->delete("/en/audiolist_edit/$audiolist_edit_facet->swiss_number/123");
