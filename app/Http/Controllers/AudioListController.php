@@ -9,7 +9,8 @@ use App\Audio,
     App\JoinListAudio,
     App\AudioListEditFacet;
 
-use Illuminate\Http\Testing\MimeType;
+use Illuminate\Http\Testing\MimeType,
+    Illuminate\Support\Facades\Storage;
 
 class AudioListController extends Controller
 {
@@ -32,7 +33,7 @@ class AudioListController extends Controller
         $file = $request->file('audio');
         $extension = $request->file('audio')->extension();
         $filename =  $audio_id . '.' . $extension;
-        $file->move('storage/uploads', $filename);
+        $file->storeAs('storage/uploads', $filename, 'public');
     }
 
     public function edit($lang, $edit_facet_id, $validation_msg = null, $status_code = 200)
@@ -64,15 +65,12 @@ class AudioListController extends Controller
                     'id_list' => $edit_facet->id_list,
                     'id_audio' => $audio->swiss_number]);
                 $this->storeLocally($request, $audio->swiss_number);
-                $validation_msg = __('uploadaudio_message.file_uploaded');
-                $status_code = 201;
+                return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
             } else {
-                $validation_msg = __('uploadaudio_message.file_not_uploaded');
-                $status_code = 404;
+                return response(view('404'), 404);
             }
-            return $this->edit($lang, $edit_facet_id, $validation_msg, $status_code);
         } else {
-            response(view('404'), 404);
+            return response(view('404'), 404);
         }
     }
 
@@ -80,21 +78,20 @@ class AudioListController extends Controller
     {
         if ($this->isFileAudio($request) == true) {
             $this->storeLocally($request, $audio_id);
-            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_uploaded'), 303);
+            return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
         } else {
-            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_not_uploaded'), 400);
+            return response(view('404'), 404);
         }
     }
 
     public function destroy(Request $request, $lang, $swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
-        if ($audio != NULL) {
-            $dir_path = '/home/louis/taxitakemeto-core/public';
 
+        if ($audio != NULL) {
             if (AudioListEditFacet::find($swiss_number) != NULL) {
-                if (file_exists($dir_path . $audio->path)) {
-                    unlink($dir_path . $audio->path);
+                if (Storage::disk('public')->exists($audio->path)) {
+                    Storage::disk('public')->delete($audio->path);
                     $audio->delete();
                     return redirect("/$lang/audiolist_edit/$swiss_number", 303);
                 } else {
