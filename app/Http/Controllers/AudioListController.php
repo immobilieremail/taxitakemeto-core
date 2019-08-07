@@ -65,15 +65,12 @@ class AudioListController extends Controller
                     'id_list' => $edit_facet->id_list,
                     'id_audio' => $audio->swiss_number]);
                 $this->storeLocally($request, $audio->swiss_number);
-                $validation_msg = __('uploadaudio_message.file_uploaded');
-                $status_code = 201;
+                return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
             } else {
-                $validation_msg = __('uploadaudio_message.file_not_uploaded');
-                $status_code = 404;
+                return response(view('404'), 404);
             }
-            return $this->edit($lang, $edit_facet_id, $validation_msg, $status_code);
         } else {
-            response(view('404'), 404);
+            return response(view('404'), 404);
         }
     }
 
@@ -81,9 +78,9 @@ class AudioListController extends Controller
     {
         if ($this->isFileAudio($request) == true) {
             $this->storeLocally($request, $audio_id);
-            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_uploaded'), 303);
+            return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
         } else {
-            return $this->edit($lang, $edit_facet_id, __('uploadaudio_message.file_not_uploaded'), 400);
+            return response(view('404'), 404);
         }
     }
 
