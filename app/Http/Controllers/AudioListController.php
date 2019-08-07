@@ -65,6 +65,7 @@ class AudioListController extends Controller
                     'id_list' => $edit_facet->id_list,
                     'id_audio' => $audio->swiss_number]);
                 $this->storeLocally($request, $audio->swiss_number);
+                $this->dispatch(new ConvertUploadedAudio($audio));
                 return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
             } else {
                 return response(view('404'), 404);
