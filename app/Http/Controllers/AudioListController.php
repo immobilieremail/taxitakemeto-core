@@ -9,7 +9,8 @@ use App\Audio,
     App\JoinListAudio,
     App\AudioListEditFacet;
 
-use Illuminate\Http\Testing\MimeType;
+use Illuminate\Http\Testing\MimeType,
+    Illuminate\Support\Facades\Storage;
 
 class AudioListController extends Controller
 {
@@ -32,7 +33,7 @@ class AudioListController extends Controller
         $file = $request->file('audio');
         $extension = $request->file('audio')->extension();
         $filename =  $audio_id . '.' . $extension;
-        $file->move('storage/uploads', $filename);
+        $file->storeAs('storage/uploads', $filename, 'public');
     }
 
     public function edit($lang, $edit_facet_id, $validation_msg = null, $status_code = 200)
@@ -89,12 +90,11 @@ class AudioListController extends Controller
     public function destroy(Request $request, $lang, $swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
-        if ($audio != NULL) {
-            $dir_path = '/home/louis/taxitakemeto-core/public';
 
+        if ($audio != NULL) {
             if (AudioListEditFacet::find($swiss_number) != NULL) {
-                if (file_exists($dir_path . $audio->path)) {
-                    unlink($dir_path . $audio->path);
+                if (Storage::disk('public')->exists($audio->path)) {
+                    Storage::disk('public')->delete($audio->path);
                     $audio->delete();
                     return redirect("/$lang/audiolist_edit/$swiss_number", 303);
                 } else {
