@@ -92,8 +92,8 @@ class RouteTest extends TestCase
     {
         $audiolist = AudioList::create();
         $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
-        Storage::disk('public')->put("/storage/uploads/$audio->swiss_number.mp3", NULL);
+        $audio = Audio::create(['extension' => 'mp3']);
+        Storage::disk('converts')->put($audio->path, NULL);
         $response = $this->delete("/en/audiolist_edit/$audiolist_edit_facet->swiss_number/$audio->swiss_number");
 
         $response->assertStatus(303);

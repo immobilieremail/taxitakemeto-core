@@ -7,7 +7,7 @@
         <li>
             <div>
                 <audio controls type="audio">
-                    <source src={{ $list->path }}>
+                    <source src={{ "/storage/converts/$list->path" }}>
                 </audio>
                 {{-- If it is not in view --}}
                 @if ($delete == true)
@@ -18,7 +18,6 @@
                     {!! Form::close() !!}
                     {!! Form::open(['url' => "/$lang/audiolist_edit/$edit_nbr/$list->swiss_number"]) !!}
                         {{ method_field('DELETE') }}
-                        {!! Form::hidden('audio_path', $list->path) !!}
                         {!! Form::submit(__('uploadaudio_message.delete_button')) !!}
                     {!! Form::close() !!}
                     <br>

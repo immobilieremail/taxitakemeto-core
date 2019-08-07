@@ -10,8 +10,6 @@ use App\Audio,
     Illuminate\Http\Request,
     Illuminate\Support\Facades\Storage;
 
-require_once __DIR__ . "/myfunctions/get_sound.php";
-
 class ListAudioController extends Controller
 {
     public function index($lang, $suisse_nbr)

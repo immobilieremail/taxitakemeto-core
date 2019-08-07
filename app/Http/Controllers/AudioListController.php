@@ -9,6 +9,8 @@ use App\Audio,
     App\JoinListAudio,
     App\AudioListEditFacet;
 
+use App\Jobs\ConvertUploadedAudio;
+
 use Illuminate\Http\Testing\MimeType,
     Illuminate\Support\Facades\Storage;
 
@@ -59,12 +61,12 @@ class AudioListController extends Controller
 
             if ($this->isFileAudio($request) == true) {
                 $audio = Audio::create([
-                    'path' => '/storage/uploads/',
                     'extension' => $request->file('audio')->extension()]);
                 $joinlstaudio = JoinListAudio::create([
                     'id_list' => $edit_facet->id_list,
                     'id_audio' => $audio->swiss_number]);
                 $this->storeLocally($request, $audio->swiss_number);
+                $this->dispatch(new ConvertUploadedAudio($audio));
                 return redirect("/$lang/audiolist_edit/$edit_facet_id", 303);
             } else {
                 return response(view('404'), 404);
@@ -90,8 +92,8 @@ class AudioListController extends Controller
 
         if ($audio != NULL) {
             if (AudioListEditFacet::find($swiss_number) != NULL) {
-                if (Storage::disk('public')->exists($audio->path)) {
-                    Storage::disk('public')->delete($audio->path);
+                if (Storage::disk('converts')->exists($audio->path)) {
+                    Storage::disk('converts')->delete($audio->path);
                     $audio->delete();
                     return redirect("/$lang/audiolist_edit/$swiss_number", 303);
                 } else {

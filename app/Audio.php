@@ -12,7 +12,7 @@ class Audio extends SwissObject
     {
         $obj = new Audio;
 
-        $obj->path = $param["path"] . $obj->swiss_number . '.' . $param["extension"];
+        $obj->path = $obj->swiss_number . '.' . $param["extension"];
         $obj->save();
         return $obj;
     }
