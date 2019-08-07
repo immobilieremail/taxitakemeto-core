@@ -16,8 +16,6 @@ use Eris\Generator,
 use Tests\TestCase,
     Illuminate\Foundation\Testing\RefreshDatabase;
 
-require_once __DIR__ . "/../../app/Http/Controllers/myfunctions/rand_nbr.php";
-
 class ModelTest extends TestCase
 {
     use TestTrait;
