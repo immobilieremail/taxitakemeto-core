@@ -21,6 +21,8 @@
                 <li>
                     {{ $i + 1 }} :
                     <a href=<?php echo "/$lang/audiolist_edit/" . $edits[$i]["id_facet"]; ?>>{{ $edits[$i]["id_facet"] }}</a>
+                    @include('includes.share-ocaps', ['edit' => $edits[$i]["id_facet"], 'lang' => $lang])
+                    <br>
                 </li>
             @endfor
         </ul>
