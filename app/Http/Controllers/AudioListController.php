@@ -6,8 +6,11 @@ use Illuminate\Http\Request;
 
 use App\Audio,
     App\AudioList,
+    App\ShellDropbox,
     App\JoinListAudio,
-    App\AudioListEditFacet;
+    App\AudioListEditFacet,
+    App\AudioListViewFacet,
+    App\ShellDropboxMessage;
 
 use App\Jobs\ConvertUploadedAudio;
 
@@ -99,6 +102,34 @@ class AudioListController extends Controller
                 } else {
                     return response(view('404'), 404);
                 }
+            } else {
+                return response(view('404'), 404);
+            }
+        } else {
+            return response(view('404'), 404);
+        }
+    }
+
+    public function share(Request $request, $lang, $edit_facet_id)
+    {
+        $audiolist_edit_facet = AudioListEditFacet::find($edit_facet_id);
+        $shell_dropbox = ShellDropbox::find($request->dropbox);
+
+        if ($audiolist_edit_facet != NULL) {
+            if ($shell_dropbox != NULL) {
+                if ($request->result == "RW") {
+                    $new_audiolist_facet = AudioListEditFacet::create(['id_list' => $audiolist_edit_facet->id_list]);
+                    $type = 'RWFAL';
+                } else {
+                    $new_audiolist_facet = AudioListViewFacet::create(['id_list' => $audiolist_edit_facet->id_list]);
+                    $type = 'ROFAL';
+                }
+                $shell_dropbox_message = ShellDropboxMessage::create([
+                    'id_receiver' => $shell_dropbox->swiss_number,
+                    'capability' => $new_audiolist_facet->swiss_number,
+                    'type' => $type
+                ]);
+                return back();
             } else {
                 return response(view('404'), 404);
             }

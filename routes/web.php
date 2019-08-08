@@ -21,6 +21,8 @@ Route::post('/{lang}/audiolist_edit/{swiss_number}/new_audio', 'AudioListControl
 Route::patch('/{lang}/audiolist_edit/{swiss_number}/{audio_id}', 'AudioListController@update')->name('audiolist.update');
 Route::delete('/{lang}/audiolist_edit/{swiss_number}/{audio_id}', 'AudioListController@destroy')->name('audiolist.destroy');
 
+Route::post('/{lang}/audiolist_share/{swiss_number}', 'AudioListController@share')->name('audiolist.share');
+
 Route::get('/{lang}/list-audio/{swiss_number}', 'ListAudioController@index')->name('list-audio.index');
 
 Route::any('/{lang}/{catchall}', function() {
