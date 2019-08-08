@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Shell,
     App\AudioList,
+    App\ShellDropbox,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\JoinShellEditFacet,
-    App\JoinShellViewFacet;
+    App\JoinShellViewFacet,
+    App\JoinShellShellDropbox;
 
 use Illuminate\Http\Request;
 
@@ -16,9 +18,16 @@ class ShellController extends Controller
     public function index($lang)
     {
         $shells = Shell::all();
+        $shell_array = array();
 
+        foreach ($shells as $shell) {
+            array_push($shell_array, [
+                "swiss_number" => $shell->swiss_number,
+                "dropbox" => $shell->getDropbox()
+            ]);
+        }
         return view('index', [
-            'shells' => $shells,
+            'shells' => $shell_array,
             'lang' => $lang]);
     }
 
@@ -41,6 +50,11 @@ class ShellController extends Controller
     public function store(Request $request, $lang)
     {
         $shell = Shell::create();
+        $dropbox = ShellDropbox::create();
+        $join_shell_shell_dropbox = JoinShellShellDropbox::create([
+            'id_shell' => $shell->swiss_number,
+            'id_dropbox' => $dropbox->swiss_number
+        ]);
 
         return redirect("$lang/shell/$shell->swiss_number", 303);
     }
