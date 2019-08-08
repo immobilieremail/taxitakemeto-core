@@ -14,7 +14,7 @@ class CreateShellDropboxesTable extends Migration
     public function up()
     {
         Schema::create('shell_dropboxes', function (Blueprint $table) {
-            $table->string('swiss_number', 24);
+            $table->string('swiss_number', 24)->primary();
             $table->timestamps();
         });
     }
