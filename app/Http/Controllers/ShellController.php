@@ -9,6 +9,7 @@ use App\Shell,
     App\AudioListViewFacet,
     App\JoinShellEditFacet,
     App\JoinShellViewFacet,
+    App\ShellDropboxMessage,
     App\JoinShellShellDropbox;
 
 use Illuminate\Http\Request;
@@ -67,8 +68,39 @@ class ShellController extends Controller
         return redirect()->route('audiolist.edit', [$lang, $audio_list_edit_facet->swiss_number]);
     }
 
+    private function accept_facet($class_facet, $class_join, $shell_dropbox_message, $shell)
+    {
+        $audiolist_facet = $class_facet::find($shell_dropbox_message->capability);
+        $join_shell_facet = $class_join::create([
+            'id_shell' => $shell->swiss_number,
+            'id_facet' => $audiolist_facet->swiss_number
+        ]);
+        $shell_dropbox_message->delete();
+    }
+
     public function accept($lang, $shell_id, $msg_id)
     {
+        $param = array();
+        $shell = Shell::find($shell_id);
+        $shell_dropbox_message = ShellDropboxMessage::find($msg_id);
 
+        if ($shell != NULL) {
+            if ($shell_dropbox_message != NULL) {
+                switch ($shell_dropbox_message->type) {
+                    case "ROFAL":
+                        $this->accept_facet(AudioListViewFacet::class,
+                            JoinShellViewFacet::class, $shell_dropbox_message, $shell);
+                        break;
+                    case "RWFAL":
+                        $this->accept_facet(AudioListEditFacet::class,
+                            JoinShellEditFacet::class, $shell_dropbox_message, $shell);
+                        break;
+                    default:
+                        return response(view('404'), 404);
+                }
+                return back();
+            }
+        }
+        return response(view('404'), 404);
     }
 }
