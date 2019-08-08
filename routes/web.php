@@ -15,6 +15,7 @@ Route::get('/{lang?}', 'ShellController@index')->name('index')->where('lang', im
 Route::post('/{lang}/shell', 'ShellController@store')->name('shell.store');
 Route::get('/{lang}/shell/{shell_id}', 'ShellController@show')->name('shell.show');
 Route::post('/{lang}/shell/{shell_id}/new_audio_list', 'ShellController@new_audio_list')->name('shell.new_audio_list');
+Route::post('/{lang}/shell/{shell_id}/{msg_id}/accept', 'ShellController@accept')->name('shell.accept');
 
 Route::get('/{lang}/audiolist_edit/{swiss_number}', 'AudioListController@edit')->name('audiolist.edit');
 Route::post('/{lang}/audiolist_edit/{swiss_number}/new_audio', 'AudioListController@new_audio')->name('audiolist.new_audio');

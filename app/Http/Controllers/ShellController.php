@@ -34,15 +34,15 @@ class ShellController extends Controller
     public function show($lang, $shell_id)
     {
         $shell = Shell::find($shell_id);
-        if ($shell == NULL)
-        {
+        if ($shell == NULL) {
             return response(view('404'), 404);
         } else {
             return view('shell', [
                 'lang' => $lang,
                 'shell_id' => $shell_id,
                 'views' => $shell->audioListViewFacets(),
-                'edits' => $shell->audioListEditFacets()
+                'edits' => $shell->audioListEditFacets(),
+                'dropbox' => $shell->shellDropboxMessages(),
             ]);
         }
     }
@@ -65,5 +65,10 @@ class ShellController extends Controller
         $audio_list_edit_facet = AudioListEditFacet::create(['id_list' => $audio_list->id]);
         $join_shell_edit_facet = JoinShellEditFacet::create(['id_shell' => $shell_id, 'id_facet' => $audio_list_edit_facet->swiss_number]);
         return redirect()->route('audiolist.edit', [$lang, $audio_list_edit_facet->swiss_number]);
+    }
+
+    public function accept($lang, $shell_id, $msg_id)
+    {
+
     }
 }
