@@ -44,6 +44,14 @@ class RouteTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function testCreateShell()
+    {
+        $count_before = Shell::all()->count();
+        $this->post("/en/shell");
+        $count_after = Shell::all()->count();
+        $this->assertEquals($count_before + 1, $count_after);
+    }
+
     public function testAccessUpload()
     {
         $audiolist = AudioList::create();

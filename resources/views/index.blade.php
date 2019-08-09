@@ -15,12 +15,12 @@
     <div>
         <?php $isempty = 0; ?>
         <ul style="list-style:none">
-            @foreach ($shells as $shell)
+            @for ($i = 0; isset($shells[$i]); $i++)
                 <?php $isempty += 1; ?>
                 <li>
-                    {{ $isempty }} : <a href=<?php echo "/$lang/shell/$shell->swiss_number"; ?>>{{ $shell->swiss_number }}</a>
+                    {{ $isempty }} : <a href=<?php echo "/$lang/shell/" . $shells[$i]["swiss_number"]; ?>>{{ $shells[$i]["swiss_number"] }}</a> => {{ $shells[$i]["dropbox"] }}
                 </li>
-            @endforeach
+            @endfor
         </ul>
     </div>
 @endsection

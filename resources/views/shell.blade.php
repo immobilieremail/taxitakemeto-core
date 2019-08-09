@@ -21,6 +21,8 @@
                 <li>
                     {{ $i + 1 }} :
                     <a href=<?php echo "/$lang/audiolist_edit/" . $edits[$i]["id_facet"]; ?>>{{ $edits[$i]["id_facet"] }}</a>
+                    @include('includes.share-ocaps', ['edit' => $edits[$i]["id_facet"], 'lang' => $lang])
+                    <br>
                 </li>
             @endfor
         </ul>
@@ -34,6 +36,18 @@
                     {{ $i + 1 }} :
                     <a href=<?php echo "/$lang/list-audio/" . $views[$i]["id_facet"]; ?>>{{ $views[$i]["id_facet"] }}</a>
                 </li>
+            @endfor
+        </ul>
+        <br>
+        <ul>
+            @for ($i = 0; isset($dropbox[$i]); $i++)
+                <li>
+                    {{ $i + 1 }} : {{ $dropbox[$i]["type"] }} | {{ $dropbox[$i]["capability"] }}
+                    {!! Form::open(['url' => "/$lang/shell/$shell_id/" . $dropbox[$i]["id"] . "/accept"]) !!}
+                        {!! Form::submit('Accept') !!}
+                    {!! Form::close() !!}
+                </li>
+                <br>
             @endfor
         </ul>
     </div>

@@ -7,18 +7,6 @@
 @section('content')
     <br><br><br>
     <div>
-        <?php $share_button = __('uploadaudio_message.share_button'); ?>
-        {!! Form::open(['url' => "/$lang/upload-audio/$edit_nbr/share"]) !!}
-            {!! Form::text('share_to') !!}
-            {!! Form::label('view', 'View') !!}
-            {!! Form::checkbox('view', 'view', true) !!}
-            {!! Form::label('edit', 'Edit') !!}
-            {!! Form::checkbox('edit', 'edit') !!}
-            {!! Form::submit($share_button) !!}
-        {!! Form::close() !!}
-    </div>
-    <br>
-    <div>
         @if ($validation_msg != null)
             {{ $validation_msg }}<br><br>
         @endif
