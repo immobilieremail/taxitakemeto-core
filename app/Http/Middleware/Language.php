@@ -15,8 +15,8 @@ class Language
      */
     public function handle($request, Closure $next)
     {
-        if (!session ()->has('locale')) {
-            session (['locale' => $request->getPreferredLanguage(config('app.locales'))]);
+        if (!session()->has('locale')) {
+            session(['locale' => $request->getPreferredLanguage(config('app.locales'))]);
         }
 
         $locale = session('locale');
