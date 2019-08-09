@@ -11,6 +11,11 @@ class SwissObject extends Model
     protected $keyType = 'string';
 
     public function __construct() {
-        $this->swiss_number = str_replace('/', '_', base64_encode(gmp_export(gmp_random_bits(128))));
+        $forbidden_char = array("+", "/");
+        $substitute_char = array("@", "_");
+        $swiss_number = base64_encode(gmp_export(gmp_random_bits(128)));
+
+        $swiss_number = str_replace($forbidden_char, $substitute_char, $swiss_number);
+        $this->swiss_number = $swiss_number;
     }
 }
