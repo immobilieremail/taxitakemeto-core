@@ -16,3 +16,11 @@ Route::get('/', 'IndexController@index');
 Route::resource('upload-audio', 'UploadAudioController');
 
 Route::resource('list-audio', 'ListAudioController');
+
+
+/*
+|--------------------------------------------------------------------------
+| Setup Language via session
+|--------------------------------------------------------------------------
+*/
+Route::get('/language/{lang}', 'IndexController@language')->name('language');
