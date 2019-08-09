@@ -15,15 +15,15 @@ class Language
      */
     public function handle($request, Closure $next)
     {
-        $locale = session()->get('locale');
-
-        if (null === $locale)
-        {
-            $language = detectBrowserLanguage();
-            $language = in_array( $language, ['en', 'fr'] ) ? $language : config('app.fallback_locale') ;
-            session()->put('locale', $language);
+        if (!session ()->has('locale')) {
+            session (['locale' => $request->getPreferredLanguage(config('app.locales'))]);
         }
-        
+
+        $locale = session('locale');
+        app()->setLocale($locale);
+
+        setlocale(LC_TIME, app()->environment('local') ? $locale : config('locale.languages')[$locale][1]);
+
         return $next($request);
     }
 }
