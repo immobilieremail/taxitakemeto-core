@@ -12,4 +12,11 @@ class IndexController extends Controller
         app()->setLocale(session()->get('locale'));
         return view('index');
     }
+
+    public function language(String $locale): Request
+    {
+        $locale = in_array ($locale, config ('app.locales')) ? $locale : config('app.fallback_locale');
+        session (['locale' => $locale]);
+        return back();
+    }
 }
