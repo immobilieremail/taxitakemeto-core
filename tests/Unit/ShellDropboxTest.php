@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Shell,
     App\AudioList,
     App\ShellDropbox,
+    App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\ShellDropboxMessage,
     App\JoinShellShellDropbox;
@@ -77,7 +78,7 @@ class ShellDropboxTest extends TestCase
     }
 
     /** @test */
-    public function routeAcceptDropboxMessage()
+    public function routeAcceptDropboxMessageWithROFALType()
     {
         $shell = Shell::create();
         $audiolist = AudioList::create();
@@ -99,5 +100,30 @@ class ShellDropboxTest extends TestCase
         $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->id/accept");
         $count_view_after = count($shell->audioListViewFacets());
         $this->assertEquals($count_view_before + 1, $count_view_after);
+    }
+
+    /** @test */
+    public function routeAcceptDropboxMessageWithRWFALType()
+    {
+        $shell = Shell::create();
+        $audiolist = AudioList::create();
+        $dropbox = ShellDropbox::create();
+        $audiolist_edit_facet = AudioListEditFacet::create([
+            'id_list' => $audiolist->id
+        ]);
+        $join_shell_dropbox = JoinShellShellDropbox::create([
+            'id_shell' => $shell->swiss_number,
+            'id_dropbox' => $dropbox->swiss_number
+        ]);
+        $shell_dropbox_msg = ShellDropboxMessage::create([
+            'id_receiver' => $dropbox->swiss_number,
+            'capability' => $audiolist_edit_facet->swiss_number,
+            'type' => "RWFAL"
+        ]);
+
+        $count_edit_before = count($shell->audioListEditFacets());
+        $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->id/accept");
+        $count_edit_after = count($shell->audioListEditFacets());
+        $this->assertEquals($count_edit_before + 1, $count_edit_after);
     }
 }
