@@ -20,7 +20,12 @@ class Shell extends SwissObject
     }
 
     public function shellDropboxMessages() {
-        $join = JoinShellShellDropbox::where('id_shell', $this->swiss_number)->first();
-        return ShellDropboxMessage::where('id_receiver', $join->id_dropbox)->get()->toArray();
+        $msg_array = array();
+        $joins = JoinDropboxToMsg::all()->where('id_dropbox', $this->getDropbox());
+
+        foreach ($joins as $join) {
+            array_push($msg_array, ShellDropboxMessage::find($join->id_msg));
+        }
+        return $msg_array;
     }
 }
