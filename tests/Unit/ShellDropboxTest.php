@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Shell,
     App\AudioList,
     App\ShellDropbox,
+    App\JoinDropboxToMsg,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\ShellDropboxMessage,
@@ -43,11 +44,13 @@ class ShellDropboxTest extends TestCase
             'id_dropbox' => $dropbox->swiss_number
         ]);
         $shell_dropbox_msg = ShellDropboxMessage::create([
-            'id_receiver' => $dropbox->swiss_number,
             'capability' => $audiolist_view_facet->swiss_number,
             'type' => "ROFAL"
         ]);
-
+        $join_dropbox_msg = JoinDropboxToMsg::create([
+            'id_dropbox' => $dropbox->swiss_number,
+            'id_msg' => $shell_dropbox_msg->swiss_number
+        ]);
         $msg_array = $shell->shellDropboxMessages();
         $this->assertEquals($shell_dropbox_msg->toArray(), $msg_array[0]);
     }

@@ -24,7 +24,7 @@ class Shell extends SwissObject
         $joins = JoinDropboxToMsg::all()->where('id_dropbox', $this->getDropbox());
 
         foreach ($joins as $join) {
-            array_push($msg_array, ShellDropboxMessage::find($join->id_msg));
+            array_push($msg_array, ShellDropboxMessage::find($join->id_msg)->toArray());
         }
         return $msg_array;
     }
