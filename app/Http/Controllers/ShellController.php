@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Shell,
     App\AudioList,
     App\ShellDropbox,
+    App\JoinDropboxToMsg,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\JoinShellEditFacet,
@@ -75,7 +76,7 @@ class ShellController extends Controller
             'id_shell' => $shell->swiss_number,
             'id_facet' => $audiolist_facet->swiss_number
         ]);
-        $shell_dropbox_message->delete();
+        JoinDropboxToMsg::where('id_msg', $shell_dropbox_message->swiss_number)->delete();
     }
 
     public function accept($lang, $shell_id, $msg_id)
@@ -86,18 +87,14 @@ class ShellController extends Controller
 
         if ($shell != NULL) {
             if ($shell_dropbox_message != NULL) {
-                switch ($shell_dropbox_message->type) {
-                    case "ROFAL":
-                        $this->accept_facet(AudioListViewFacet::class,
-                            JoinShellViewFacet::class, $shell_dropbox_message, $shell);
-                        break;
-                    case "RWFAL":
-                        $this->accept_facet(AudioListEditFacet::class,
-                            JoinShellEditFacet::class, $shell_dropbox_message, $shell);
-                        break;
-                    default:
-                        return response(view('404'), 404);
-                }
+                if ($shell_dropbox_message->type == "ROFAL") {
+                    $this->accept_facet(AudioListViewFacet::class,
+                        JoinShellViewFacet::class, $shell_dropbox_message, $shell);
+                } else if ($shell_dropbox_message->type == "RWFAL") {
+                    $this->accept_facet(AudioListEditFacet::class,
+                        JoinShellEditFacet::class, $shell_dropbox_message, $shell);
+                } else
+                    return response(view('404'), 404);
                 return back();
             }
         }
