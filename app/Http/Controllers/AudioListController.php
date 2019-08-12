@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Audio,
+use App\Shell,
+    App\Audio,
     App\AudioList,
     App\ShellDropbox,
     App\JoinListAudio,
+    App\JoinShellToMsg,
+    App\JoinDropboxToMsg,
     App\AudioListEditFacet,
     App\AudioListViewFacet,
     App\ShellDropboxMessage;
@@ -110,24 +113,37 @@ class AudioListController extends Controller
         }
     }
 
+    private function share_check_type(String $type, Int $id_list): ShellDropboxMessage
+    {
+        if ($type == "RW") {
+            $new_audiolist_facet = AudioListEditFacet::create([
+                'id_list' => $id_list]);
+        } else if ($type == "RO") {
+            $new_audiolist_facet = AudioListViewFacet::create([
+                'id_list' => $id_list]);
+        } else
+            return NULL;
+        return ShellDropboxMessage::create([
+            'capability' => $new_audiolist_facet->swiss_number,
+            'type' => $type . "FAL"]);
+    }
+
     public function share(Request $request, $lang, $edit_facet_id)
     {
         $audiolist_edit_facet = AudioListEditFacet::find($edit_facet_id);
         $shell_dropbox = ShellDropbox::find($request->dropbox);
+        $shell = Shell::find($request->shell_id);
 
         if ($audiolist_edit_facet != NULL) {
             if ($shell_dropbox != NULL) {
-                if ($request->result == "RW") {
-                    $new_audiolist_facet = AudioListEditFacet::create(['id_list' => $audiolist_edit_facet->id_list]);
-                    $type = 'RWFAL';
-                } else {
-                    $new_audiolist_facet = AudioListViewFacet::create(['id_list' => $audiolist_edit_facet->id_list]);
-                    $type = 'ROFAL';
-                }
-                $shell_dropbox_message = ShellDropboxMessage::create([
-                    'id_receiver' => $shell_dropbox->swiss_number,
-                    'capability' => $new_audiolist_facet->swiss_number,
-                    'type' => $type
+                $msg = $this->share_check_type($request->result, $audiolist_edit_facet->id_list);
+                JoinDropboxToMsg::create([
+                    'id_dropbox' => $shell_dropbox->swiss_number,
+                    'id_msg' => $msg->swiss_number
+                ]);
+                JoinShellToMsg::create([
+                    'id_shell' => $shell->swiss_number,
+                    'id_msg' => $msg->swiss_number
                 ]);
                 return back();
             } else {
