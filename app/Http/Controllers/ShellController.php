@@ -90,7 +90,7 @@ class ShellController extends Controller
                 if ($shell_dropbox_message->type == "ROFAL") {
                     $this->accept_facet(AudioListViewFacet::class,
                         JoinShellViewFacet::class, $shell_dropbox_message, $shell);
-                } else if ($shell_dropbox_message_type == "RWFAL") {
+                } else if ($shell_dropbox_message->type == "RWFAL") {
                     $this->accept_facet(AudioListEditFacet::class,
                         JoinShellEditFacet::class, $shell_dropbox_message, $shell);
                 } else

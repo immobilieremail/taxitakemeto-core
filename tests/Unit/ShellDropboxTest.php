@@ -94,13 +94,16 @@ class ShellDropboxTest extends TestCase
             'id_dropbox' => $dropbox->swiss_number
         ]);
         $shell_dropbox_msg = ShellDropboxMessage::create([
-            'id_receiver' => $dropbox->swiss_number,
             'capability' => $audiolist_view_facet->swiss_number,
             'type' => "ROFAL"
         ]);
+        $join_dropbox_msg = JoinDropboxToMsg::create([
+            'id_dropbox' => $dropbox->swiss_number,
+            'id_msg' => $shell_dropbox_msg->swiss_number
+        ]);
 
         $count_view_before = count($shell->audioListViewFacets());
-        $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->id/accept");
+        $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->swiss_number/accept");
         $count_view_after = count($shell->audioListViewFacets());
         $this->assertEquals($count_view_before + 1, $count_view_after);
     }
@@ -119,13 +122,16 @@ class ShellDropboxTest extends TestCase
             'id_dropbox' => $dropbox->swiss_number
         ]);
         $shell_dropbox_msg = ShellDropboxMessage::create([
-            'id_receiver' => $dropbox->swiss_number,
             'capability' => $audiolist_edit_facet->swiss_number,
             'type' => "RWFAL"
         ]);
+        $join_dropbox_msg = JoinDropboxToMsg::create([
+            'id_dropbox' => $dropbox->swiss_number,
+            'id_msg' => $shell_dropbox_msg->swiss_number
+        ]);
 
         $count_edit_before = count($shell->audioListEditFacets());
-        $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->id/accept");
+        $this->post("/en/shell/$shell->swiss_number/$shell_dropbox_msg->swiss_number/accept");
         $count_edit_after = count($shell->audioListEditFacets());
         $this->assertEquals($count_edit_before + 1, $count_edit_after);
     }
