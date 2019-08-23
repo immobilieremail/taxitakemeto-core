@@ -6,7 +6,7 @@ Create an empty audiolist and return the audiolist edition facet (AudioListEdit 
 ```
 {"type":"ocap",
  "ocapType":"ALEdit",
- "url":"https://.../api/audiolist_edit/{audiolist_edit_id}"}
+ "url":"http://.../api/audiolist_edit/{audiolist_edit_id}"}
 ```
 
 # Resources
@@ -43,11 +43,12 @@ GET /audiolist_edit/{audiolist_edit_id}
 
 ```
 {"type":"ALEdit",
- "new_audio":"https://...", (POST)
+ "new_audio":"http://...", (POST)
+ "view_facet":"http://...", (GET)
  "contents":[
     {"audio":Audio,
-     "update_audio":"https://...", (PUT)
-     "delete_audio":"https://..."} (DELETE)
+     "update_audio":"http://...", (PUT)
+     "delete_audio":"http://..."} (DELETE)
  ]
 }
 ```
