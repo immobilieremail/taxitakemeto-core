@@ -13,6 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/audiolist', 'AudioListController@store');
+
+Route::get('/audiolist_edit/{audiolist_edit}', 'AudioListController@edit');
+Route::post('/audiolist_edit/{audiolist_edit}/new_audio', 'AudioListController@new_audio');
+Route::put('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@update');
+Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@delete');
+
+Route::get('/audiolist_view/{audiolist_view}', 'AudioListController@view');
+
+Route::any('/{catchall}', function() {
+    return 404;
+})->where('catchall', '(.*)');
