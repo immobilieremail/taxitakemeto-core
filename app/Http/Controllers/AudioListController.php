@@ -45,7 +45,7 @@ class AudioListController extends Controller
             foreach ($audio_array as $audio) {
                 $tmp_audio = array("type" => "Audio",
                     "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path);
+                    "path_to_file" => str_replace(public_path(), '', Storage::disk('converts')->path($audio->path)));
                 $tmp_array = array("audio" => $tmp_audio);
                 array_push($return_contents, $tmp_array);
             }
@@ -65,7 +65,7 @@ class AudioListController extends Controller
             foreach ($audio_array as $audio) {
                 $tmp_audio = array("type" => "Audio",
                     "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path);
+                    "path_to_file" => str_replace(public_path(), '', Storage::disk('converts')->path($audio->path)));
                 $tmp_array = array("audio" => $tmp_audio,
                     "update_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/audio/$audio->swiss_number",
                     "delete_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/audio/$audio->swiss_number");
