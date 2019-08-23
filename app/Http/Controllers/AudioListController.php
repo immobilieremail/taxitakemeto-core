@@ -103,21 +103,13 @@ class AudioListController extends Controller
     {
         $edit_facet = AudioListEditFacet::find($edit_facet_id);
 
-        if ($edit_facet != NULL) {
-            $audio_list = AudioList::find($edit_facet->id_list);
-            if ($this->isFileAudio($request) == true) {
-                $audio = Audio::create([
-                    'extension' => $request->file('audio')->extension()]);
-                $joinlstaudio = JoinListAudio::create([
-                    'id_list' => $edit_facet->id_list,
-                    'id_audio' => $audio->swiss_number]);
-                $this->storeLocally($request, $audio->swiss_number);
-                $this->dispatch(new ConvertUploadedAudio($audio));
-                return json_encode(array("type" => "Audio",
-                    "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path));
-            } else
-                abort(404);
+        if ($edit_facet != NULL && $this->isFileAudio($request) == true) {
+            $audio = $edit_facet->addAudio($request->file('audio')->extension());
+            $this->storeLocally($request, $audio->swiss_number);
+            $this->dispatch(new ConvertUploadedAudio($audio));
+            return json_encode(array("type" => "Audio",
+                "audio_id" => $audio->swiss_number,
+                "path_to_file" => $audio->path));
         } else
             abort(404);
     }
@@ -136,14 +128,14 @@ class AudioListController extends Controller
     public function destroy($lang, $swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
+        $condition = $audio != NULL
+            && AudioListEditFacet::find($swiss_number) != NULL
+            && Storage::disk('converts')->exists($audio->path);
 
-        if ($audio != NULL && AudioListEditFacet::find($swiss_number) != NULL) {
-            if (Storage::disk('converts')->exists($audio->path)) {
-                Storage::disk('converts')->delete($audio->path);
-                $audio->delete();
-                return 200;
-            } else
-                abort(404);
+        if ($condition) {
+            Storage::disk('converts')->delete($audio->path);
+            $audio->delete();
+            return 200;
         } else
             abort(404);
     }

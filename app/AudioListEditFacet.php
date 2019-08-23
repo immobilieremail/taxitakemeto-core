@@ -23,4 +23,15 @@ class AudioListEditFacet extends SwissObject
 
         return $audiolist->getAudios();
     }
+
+    public function addAudio(String $extension): Audio
+    {
+        $audio = Audio::create([
+            'extension' => $extension]);
+        $joinlstaudio = JoinListAudio::create([
+            'id_list' => $this->id_list,
+            'id_audio' => $audio->swiss_number]);
+
+        return $audio;
+    }
 }
