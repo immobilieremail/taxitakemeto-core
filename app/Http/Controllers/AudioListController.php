@@ -114,7 +114,7 @@ class AudioListController extends Controller
             abort(404);
     }
 
-    public function update(Request $request, $lang, $edit_facet_id, $audio_id)
+    public function update(Request $request, $edit_facet_id, $audio_id)
     {
         if ($this->isFileAudio($request) == true) {
             $this->storeLocally($request, $audio_id);
@@ -125,7 +125,7 @@ class AudioListController extends Controller
             abort(404);
     }
 
-    public function destroy($lang, $swiss_number, $audio_id)
+    public function destroy($swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
         $condition = $audio != NULL

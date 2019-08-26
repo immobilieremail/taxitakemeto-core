@@ -18,7 +18,7 @@ Route::post('/audiolist', 'AudioListController@store');
 Route::get('/audiolist_edit/{audiolist_edit}', 'AudioListController@edit');
 Route::post('/audiolist_edit/{audiolist_edit}/new_audio', 'AudioListController@new_audio');
 Route::put('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@update');
-Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@delete');
+Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@destroy');
 
 Route::get('/audiolist_view/{audiolist_view}', 'AudioListController@view');
 

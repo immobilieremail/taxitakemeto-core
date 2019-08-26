@@ -74,4 +74,20 @@ class APIRouteTest extends TestCase
         foreach ($keys_to_test as $key)
             $this->assertTrue(array_key_exists($key, $json_decode));
     }
+
+    /** @test */
+    public function deleteAudiolistEditAudio()
+    {
+        $audiolist = AudioList::create();
+        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $file = new UploadedFile("/home/louis/Musique/applause.wav", "applause.wav", "audio/x-wav", 0);
+        $response = $this->post("/api/audiolist_edit/$audiolist_edit->swiss_number/new_audio", ['audio' => $file]);
+
+        $audio_json = json_decode($response->getContent());
+        $count_before = Audio::all()->count();
+        $response = $this->delete("/api/audiolist_edit/$audiolist_edit->swiss_number/audio/$audio_json->audio_id");
+        $response->assertStatus(200);
+        $count_after = Audio::all()->count();
+        $this->assertEquals($count_before, $count_after + 1);
+    }
 }
