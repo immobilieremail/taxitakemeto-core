@@ -23,28 +23,32 @@ class RouteTest extends TestCase
 {
     use TestTrait;
 
-    public function testAccessIndex()
+    /** @test */
+    public function accessIndex()
     {
         $response = $this->get('/');
 
         $response->assertStatus(302);
     }
 
-    public function testAccessEnIndex()
+    /** @test */
+    public function accessEnIndex()
     {
         $response = $this->get('/en');
 
         $response->assertStatus(200);
     }
 
-    public function testAccessFrIndex()
+    /** @test */
+    public function accessFrIndex()
     {
         $response = $this->get('/fr');
 
         $response->assertStatus(200);
     }
 
-    public function testCreateShell()
+    /** @test */
+    public function createShell()
     {
         $count_before = Shell::all()->count();
         $this->post("/en/shell");
@@ -52,7 +56,7 @@ class RouteTest extends TestCase
         $this->assertEquals($count_before + 1, $count_after);
     }
 
-    public function testAccessUpload()
+    public function accessUpload()
     {
         $audiolist = AudioList::create();
         $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
@@ -61,7 +65,7 @@ class RouteTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testAccessView()
+    public function accessView()
     {
         $audiolist = AudioList::create();
         $audiolist_view_facet = AudioListViewFacet::create(['id_list' => $audiolist->id]);
@@ -70,7 +74,8 @@ class RouteTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testCreateList()
+    /** @test */
+    public function createList()
     {
         $shell = Shell::create();
         $count_before = AudioListEditFacet::all()->count();
@@ -80,7 +85,8 @@ class RouteTest extends TestCase
         $response->assertStatus(302);
     }
 
-    public function testAccessNonExistantUpload()
+    /** @test */
+    public function accessNonExistantUpload()
     {
         $rand_nbr = rand();
         $this->assertDatabaseMissing('audio_list_edit_facets', ['swiss_number' => $rand_nbr]);
@@ -88,7 +94,7 @@ class RouteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testAccessNonExistantView()
+    public function accessNonExistantView()
     {
         $rand_nbr = rand();
         $this->assertDatabaseMissing('audio_list_view_facets', ['swiss_number' => $rand_nbr]);
@@ -96,7 +102,7 @@ class RouteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testDeleteSound()
+    public function deleteSound()
     {
         $audiolist = AudioList::create();
         $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
@@ -107,7 +113,8 @@ class RouteTest extends TestCase
         $response->assertStatus(303);
     }
 
-    public function testDeleteNonExistantSound()
+    /** @test */
+    public function deleteNonExistantSound()
     {
         $audiolist = AudioList::create();
         $audiolist_edit_facet = AudioListEditFacet::create(['id_list' => $audiolist->id]);
@@ -116,7 +123,8 @@ class RouteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testDeleteSoundFromNonExistantEdit()
+    /** @test */
+    public function deleteSoundFromNonExistantEdit()
     {
         $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
         $response = $this->delete("/en/audiolist_edit/123/$audio->swiss_number");
