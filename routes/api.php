@@ -23,5 +23,5 @@ Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListCon
 Route::get('/audiolist_view/{audiolist_view}', 'AudioListController@view');
 
 Route::any('/{catchall}', function() {
-    return 404;
+    return abort(404);
 })->where('catchall', '(.*)');
