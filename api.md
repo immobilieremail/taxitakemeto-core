@@ -47,7 +47,7 @@ GET /audiolist_edit/{audiolist_edit_id}
  "view_facet":"http://...", (GET)
  "contents":[
     {"audio":Audio,
-     "update_audio":"http://...", (PUT)
+     "update_audio":"http://...", (POST)
      "delete_audio":"http://..."} (DELETE)
  ]
 }
@@ -58,3 +58,5 @@ It returns the created Audio.
 
 "update_audio" request must contain the file (in an 'audio' variable) which will replace the previous audio.
 It returns the created Audio.
+
+"delete_audio" returns 200 on success.

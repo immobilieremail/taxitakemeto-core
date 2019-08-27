@@ -38,7 +38,7 @@ class ConvertUploadedAudio implements ShouldQueue
      * @return void
      */
     public function handle()
-    {;
+    {
         $bitRateFormat = (new Mp3)->setAudioKiloBitrate(1000); // create a file format
 
         FFMpeg::fromDisk('uploads') // open the uploaded audio from the right disk

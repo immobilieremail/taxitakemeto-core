@@ -116,8 +116,16 @@ class AudioListController extends Controller
 
     public function update(Request $request, $edit_facet_id, $audio_id)
     {
-        if ($this->isFileAudio($request) == true) {
-            $this->storeLocally($request, $audio_id);
+        $audio = Audio::find($audio_id);
+        $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        $condition = $edit_facet != NULL && $audio != NULL;
+
+        if ($condition && $this->isFileAudio($request) == true) {
+            $audio->path = str_replace('.mp3',
+                '.' . $request->file('audio')->extension(), $audio->path);
+            $audio->save();
+            $this->storeLocally($request, $audio->swiss_number);
+            $this->dispatch(new ConvertUploadedAudio($audio));
             return json_encode(array("type" => "Audio",
                 "audio_id" => $audio->swiss_number,
                 "path_to_file" => $audio->path));
