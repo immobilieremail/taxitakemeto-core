@@ -76,7 +76,7 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
-    public function deleteAudiolistEditAudio()
+    public function deleteAudiolistEditDeleteAudio()
     {
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
@@ -89,5 +89,21 @@ class APIRouteTest extends TestCase
         $response->assertStatus(200);
         $count_after = Audio::all()->count();
         $this->assertEquals($count_before, $count_after + 1);
+    }
+
+    /** @test */
+    public function postAudioListEditUpdateAudio()
+    {
+        $audiolist = AudioList::create();
+        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audio = $audiolist_edit->addAudio('mp3');
+        $file = new UploadedFile("/home/louis/Musique/applause.wav", "applause.wav", "audio/x-wav", 0);
+        $keys_to_test = array('type', 'audio_id', 'path_to_file');
+
+        $response = $this->post("/api/audiolist_edit/$audiolist_edit->swiss_number/audio/$audio->swiss_number", ['audio' => $file]);
+        $audio_json = json_decode($response->getContent());
+
+        foreach ($keys_to_test as $key)
+            $this->assertTrue(array_key_exists($key, $audio_json));
     }
 }
