@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Audio,
     App\AudioList,
+    App\AudioListViewFacet,
     App\AudioListEditFacet;
 
 use Tests\TestCase;
@@ -30,6 +31,7 @@ class APIRouteTest extends TestCase
     {
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
         $keys_to_test = array('type', 'new_audio', 'contents');
 
         $result = $this->get("/api/audiolist_edit/$audiolist_edit->swiss_number");
@@ -44,6 +46,7 @@ class APIRouteTest extends TestCase
     {
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
         $keys_to_test = array('audio', 'update_audio', 'delete_audio');
         $audio_keys_to_test = array('type', 'audio_id', 'path_to_file');
 

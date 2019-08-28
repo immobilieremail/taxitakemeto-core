@@ -34,4 +34,9 @@ class AudioListEditFacet extends SwissObject
 
         return $audio;
     }
+
+    public function getViewFacet()
+    {
+        return AudioListViewFacet::where('id_list', $this->id_list)->first();
+    }
 }

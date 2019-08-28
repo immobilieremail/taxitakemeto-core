@@ -73,6 +73,7 @@ class AudioListController extends Controller
             }
             return json_encode(array("type" => "ALEdit",
                 "new_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/new_audio",
+                "view_facet" => "$this->app_url/api/audiolist_view/" . $edit_facet->getViewFacet()->swiss_number,
                 "contents" => $return_contents));
         } else
             abort(404);
