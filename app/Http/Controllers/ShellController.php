@@ -66,6 +66,8 @@ class ShellController extends Controller
         $audio_list = AudioList::create();
         $audio_list_edit_facet = AudioListEditFacet::create(['id_list' => $audio_list->id]);
         $join_shell_edit_facet = JoinShellEditFacet::create(['id_shell' => $shell_id, 'id_facet' => $audio_list_edit_facet->swiss_number]);
+        $audio_list_view_facet = AudioListViewFacet::create(['id_list' => $audio_list->id]);
+        $join_shell_view_facet = JoinShellViewFacet::create(['id_shell' => $shell_id, 'id_facet' => $audio_list_view_facet->swiss_number]);
         return redirect()->route('audiolist.edit', [$lang, $audio_list_edit_facet->swiss_number]);
     }
 
