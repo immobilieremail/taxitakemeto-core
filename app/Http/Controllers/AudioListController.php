@@ -134,7 +134,24 @@ class AudioListController extends Controller
             abort(404);
     }
 
-    public function destroy($swiss_number, $audio_id)
+    public function list_destroy($audiolist_edit_id)
+    {
+        $audiolist_edit = AudioListEditFacet::find($audiolist_edit_id);
+
+        if ($audiolist_edit != NULL) {
+            $audiolist = AudioList::find($audiolist_edit->id_list);
+            $audios = $audiolist_edit->getAudios();
+            foreach ($audios as $audio) {
+                Storage::disk('converts')->delete($audio->path);
+                $audio->delete();
+            }
+            $audiolist->delete();
+            return 200;
+        } else
+            return abort(404);
+    }
+
+    public function audio_destroy($swiss_number, $audio_id)
     {
         $audio = Audio::find($audio_id);
         $condition = $audio != NULL

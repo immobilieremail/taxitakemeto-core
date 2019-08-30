@@ -16,9 +16,10 @@ use Illuminate\Http\Request;
 Route::post('/audiolist', 'AudioListController@store');
 
 Route::get('/audiolist_edit/{audiolist_edit}', 'AudioListController@edit');
+Route::delete('/audiolist_edit/{audiolist_edit}', 'AudioListController@list_destroy');
 Route::post('/audiolist_edit/{audiolist_edit}/new_audio', 'AudioListController@new_audio');
 Route::post('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@update');
-Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@destroy');
+Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@audio_destroy');
 
 Route::get('/audiolist_view/{audiolist_view}', 'AudioListController@view');
 
