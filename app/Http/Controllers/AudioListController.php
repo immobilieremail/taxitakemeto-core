@@ -30,7 +30,8 @@ class AudioListController extends Controller
         $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
 
-        return json_encode(array("type" => "ocap",
+        return json_encode(array(
+            "type" => "ocap",
             "ocapType" => "ALEdit",
             "url" => "$this->app_url/api/audiolist_edit/$audiolist_edit->swiss_number"));
     }
@@ -43,13 +44,15 @@ class AudioListController extends Controller
             $audio_array = $view_facet->getAudios();
             $return_contents = array();
             foreach ($audio_array as $audio) {
-                $tmp_audio = array("type" => "Audio",
+                $tmp_audio = array(
+                    "type" => "Audio",
                     "audio_id" => $audio->swiss_number,
                     "path_to_file" => str_replace(public_path(), '', Storage::disk('converts')->path($audio->path)));
                 $tmp_array = array("audio" => $tmp_audio);
                 array_push($return_contents, $tmp_array);
             }
-            return json_encode(array("type" => "ALView",
+            return json_encode(array(
+                "type" => "ALView",
                 "contents" => $return_contents));
         } else
             abort(404);
@@ -63,15 +66,19 @@ class AudioListController extends Controller
             $audio_array = $edit_facet->getAudios();
             $return_contents = array();
             foreach ($audio_array as $audio) {
-                $tmp_audio = array("type" => "Audio",
+                $tmp_audio = array(
+                    "type" => "Audio",
                     "audio_id" => $audio->swiss_number,
                     "path_to_file" => str_replace(public_path(), '', Storage::disk('converts')->path($audio->path)));
-                $tmp_array = array("audio" => $tmp_audio,
+                $tmp_array = array(
+                    "audio" => $tmp_audio,
                     "update_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/audio/$audio->swiss_number",
                     "delete_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/audio/$audio->swiss_number");
                 array_push($return_contents, $tmp_array);
             }
-            return json_encode(array("type" => "ALEdit",
+            return json_encode(array(
+                "type" => "ALEdit",
+                "delete" => "$this->app_url/api/audiolist_edit/$edit_facet_id",
                 "new_audio" => "$this->app_url/api/audiolist_edit/$edit_facet_id/new_audio",
                 "view_facet" => "$this->app_url/api/audiolist_view/" . $edit_facet->getViewFacet()->swiss_number,
                 "contents" => $return_contents));
@@ -108,7 +115,8 @@ class AudioListController extends Controller
             $audio = $edit_facet->addAudio($request->file('audio')->extension());
             $this->storeLocally($request, $audio->swiss_number);
             $this->dispatch(new ConvertUploadedAudio($audio));
-            return json_encode(array("type" => "Audio",
+            return json_encode(array(
+                "type" => "Audio",
                 "audio_id" => $audio->swiss_number,
                 "path_to_file" => $audio->path));
         } else
@@ -127,7 +135,8 @@ class AudioListController extends Controller
             $audio->save();
             $this->storeLocally($request, $audio->swiss_number);
             $this->dispatch(new ConvertUploadedAudio($audio));
-            return json_encode(array("type" => "Audio",
+            return json_encode(array(
+                "type" => "Audio",
                 "audio_id" => $audio->swiss_number,
                 "path_to_file" => $audio->path));
         } else
