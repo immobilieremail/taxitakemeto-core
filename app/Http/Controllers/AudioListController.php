@@ -24,6 +24,19 @@ class AudioListController extends Controller
 {
     protected $app_url = "http://localhost:8000";
 
+
+    public function index()
+    {
+        return response()->json(
+            [
+                'toto'  =>'titi'
+            ]
+        );
+    }
+
+    
+
+
     public function store()
     {
         $audiolist = AudioList::create();
