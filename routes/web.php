@@ -24,3 +24,6 @@ Route::resource('list-audio', 'ListAudioController');
 |--------------------------------------------------------------------------
 */
 Route::get('/language/{lang}', 'IndexController@language')->name('language');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
