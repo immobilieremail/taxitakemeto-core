@@ -7,7 +7,7 @@ Create an empty audiolist and return the audiolist edition facet (AudioListEdit 
 {
     "type":"ocap",
     "ocapType":"ALEdit",
-    "url":"http://.../api/audiolist_edit/{audiolist_edit_id}"
+    "url":"http://.../api/audiolist/{audiolist_id}/edit"
 }
 ```
 
@@ -30,7 +30,7 @@ An Audio contains information about an audio file.
 An AudioListView (or ALView) is a facet of an audiolist.
 It is the Read Only access of the audiolist : it lists all the audios of the audiolist.
 
-GET /audiolist_view/{audiolist_view_id}
+GET /audiolist/{audiolist_view_id}
 
 ```
 {
@@ -44,26 +44,25 @@ GET /audiolist_view/{audiolist_view_id}
 An AudioListEdit (or ALEdit) is a facet of an audiolist.
 It is the Read Write access of the audiolist : it lists all audios of the audiolist and gives the urls to add, update and delete audios.
 
-GET /audiolist_edit/{audiolist_edit_id}
+GET /audiolist/{audiolist_edit_id}
 
 ```
 {
     "type":"ALEdit",
-    "delete":"http://...", (DELETE)
     "new_audio":"http://...", (POST)
     "view_facet":"http://...", (GET)
     "contents":[{
         "audio":Audio,
-        "update_audio":"http://...", (POST)
+        "update_audio":"http://...", (PUT)
         "delete_audio":"http://..." (DELETE)
     }]
 }
 ```
 
-"new_audio" request must contain the file (in an 'audio' variable) which will be added to the audiolist.
+"new_audio" request must contain the file (in an 'audio' parameter) which will be added to the audiolist.
 It returns the created Audio.
 
-"update_audio" request must contain the file (in an 'audio' variable) which will replace the previous audio.
+"update_audio" request must contain the file (in an 'audio' parameter) which will replace the previous audio.
 It returns the created Audio.
 
-"delete" and "delete_audio" returns 200 on success.
+"delete_audio" returns "status":200 on success.
