@@ -5,7 +5,7 @@ namespace App;
 use App\Audio;
 use Illuminate\Database\Eloquent\Model;
 
-
+use Illuminate\Support\Facades\Storage;
 
 class AudioList extends Model
 {
@@ -13,17 +13,24 @@ class AudioList extends Model
 
     public function audios()
     {
-        $this->hasMany(Audio::class);
+        return $this->hasMany('App\Audio');
     }
 
-    /*public function getAudios()
+    public function getAudios()
     {
+        $audios = $this->audios;
         $audio_array = array();
-        $joinlstaudio = JoinListAudio::where('id_list', $this->id)->get();
-        foreach ($joinlstaudio as $join) {
-            array_push($audio_array, Audio::find($join->id_audio));
+
+        foreach ($audios as $audio) {
+            array_push($audio_array,
+                array(
+                    'type' => 'Audio',
+                    'audio_id' => $audio->swiss_number,
+                    'path_to_file' => str_replace(public_path(), '',
+                        Storage::disk('converts')->path($audio->path))
+                )
+            );
         }
         return $audio_array;
     }
-    */
 }
