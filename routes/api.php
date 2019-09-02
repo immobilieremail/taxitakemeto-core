@@ -14,19 +14,8 @@ use Illuminate\Http\Request;
 */
 
 
-Route::resource('audiolist', 'AudioListController')->only(['show']);
-
-/*
-Route::post('/audiolist', 'AudioListController@store');
-
-Route::get('/audiolist_edit/{audiolist_edit}', 'AudioListController@edit');
-Route::delete('/audiolist_edit/{audiolist_edit}', 'AudioListController@list_destroy');
-Route::post('/audiolist_edit/{audiolist_edit}/new_audio', 'AudioListController@new_audio');
-Route::post('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@update');
-Route::delete('/audiolist_edit/{audiolist_edit}/audio/{audio_id}', 'AudioListController@audio_destroy');
-
-Route::get('/audiolist_view/{audiolist_view}', 'AudioListController@view');
-*/
+Route::resource('audiolist', 'AudioListController')->only('store', 'show', 'edit');
+Route::resource('audiolist/{audiolist_id}/audio', 'AudioController')->only('store', 'update', 'destroy');
 
 Route::any('/{catchall}', function() {
     return abort(404);
