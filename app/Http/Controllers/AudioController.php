@@ -27,7 +27,7 @@ class AudioController extends Controller
     {
         $edit_facet = AudioListEditFacet::find($facet_id);
 
-        if ($edit_facet != NULL) {
+        if ($edit_facet != NULL && $request->has('audio')) {
             $extension = $request->file('audio')->extension();
             $audio = $edit_facet->addAudio($extension);
             $request->file('audio')->storeAs('storage/uploads',
