@@ -50,8 +50,5 @@ class ConvertUploadedAudio implements ShouldQueue
 
         Storage::disk('uploads')
             ->delete($this->audio->path);
-
-        $this->audio->path = $this->audio->swiss_number . '.mp3';
-        $this->audio->save();
     }
 }

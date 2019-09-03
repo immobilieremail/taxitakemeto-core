@@ -2,13 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Shell,
-    App\Audio,
+use App\Audio,
     App\AudioList,
-    App\JoinListAudio,
     App\AudioListViewFacet,
-    App\AudioListEditFacet,
-    Illuminate\Http\Request;
+    App\AudioListEditFacet;
+
+use Illuminate\Http\Request;
 
 use Eris\Generator,
     Eris\TestTrait;
@@ -22,36 +21,6 @@ class ModelTest extends TestCase
 
     public $path = "/storage/uploads/";
     public $extension = "mp3";
-
-    /** @test */
-    public function joinListAudioAddToDB()
-    {
-        $audio = Audio::create(['path' => $this->path, 'extension' => $this->extension]);
-        $audiolist = AudioList::create();
-
-        JoinListAudio::create(['id_audio' => $audio->swiss_number, 'id_list' => $audiolist->id]);
-        $this->assertDatabaseHas('join_list_audio', [
-            'id_list' => $audiolist->id,
-            'id_audio' => $audio->swiss_number
-        ]);
-    }
-
-    /** @test */
-    public function joinListAudioDeleteWithAudio()
-    {
-        $count_before = JoinListAudio::all()->count();
-        $audiolist = AudioList::create();
-        $audio = Audio::create(['path' => $this->path, 'extension' => $this->extension]);
-        $param = ['id_list' => $audiolist->id, 'id_audio' => $audio->swiss_number];
-        $joinlstsnd = JoinListAudio::create($param);
-
-        $match = ['id_list' => $audiolist->id, 'id_audio' => $audio->swiss_number];
-        $this->assertDatabaseHas('join_list_audio', $match);
-
-        Audio::find($audio->swiss_number)->delete();
-        $count_after = JoinListAudio::all()->count();
-        $this->assertEquals($count_before, $count_after);
-    }
 
     /** @test */
     public function audioMultipleAddAndDelete()
