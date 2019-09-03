@@ -32,9 +32,9 @@ class AudioListEditFacet extends SwissObject
         foreach ($audios as $audio) {
             array_push($audio_array,
                 array(
-                    "audios" => $audio,
-                    "update_audio" => "http://localhost:8000/api/audiolist/$this->swiss_number/audio/$audio->swiss_number",
-                    "delete_audio" => "http://localhost:8000/api/audiolist/$this->swiss_number/audio/$audio->swiss_number"
+                    "audio" => $audio,
+                    "update_audio" => "http://localhost:8000/api/audiolist/$this->swiss_number/audio/". $audio["audio_id"],
+                    "delete_audio" => "http://localhost:8000/api/audiolist/$this->swiss_number/audio/" . $audio["audio_id"]
                 )
             );
         }
