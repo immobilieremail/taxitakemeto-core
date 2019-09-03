@@ -17,6 +17,15 @@ use Illuminate\Http\Request;
 Route::resource('audiolist', 'AudioListController')->only('store', 'show', 'edit');
 Route::resource('audiolist/{audiolist_id}/audio', 'AudioController')->only('store', 'update', 'destroy');
 
+Route::get('/', function() {
+    return view('index',
+        [
+            'edits' => \App\AudioListEditFacet::all()->toArray(),
+            'views' => \App\AudioListViewFacet::all()->toArray()
+        ]
+    );
+});
+
 Route::any('/{catchall}', function() {
     return abort(404);
 })->where('catchall', '(.*)');
