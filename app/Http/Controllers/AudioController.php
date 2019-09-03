@@ -51,8 +51,11 @@ class AudioController extends Controller
         $condition = $edit_facet != NULL && $audio != NULL;
 
         if ($condition) {
+            $extension = $request->file('audio')->extension();
             $request->file('audio')->storeAs('storage/uploads',
                 "$audio->swiss_number.$extension", 'public');
+            $audio->path = "$audio->swiss_number.$extension";
+            $audio->save();
             $this->convert($audio);
             return response()->json(
                 [
