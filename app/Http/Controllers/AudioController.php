@@ -23,13 +23,11 @@ class AudioController extends Controller
         $audio->save();
     }
 
-    public function store(NewAudioRequest $request, $facet_id)
+    public function store(NewAudioRequest $request)
     {
-        $edit_facet = AudioListEditFacet::find($facet_id);
-
-        if ($edit_facet != NULL && $request->has('audio')) {
+        if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
-            $audio = $edit_facet->addAudio($extension);
+            $audio = Audio::create(['extension' => $extension]);
             $request->file('audio')->storeAs('storage/uploads',
                 "$audio->swiss_number.$extension", 'public');
             $this->convert($audio);
@@ -44,13 +42,11 @@ class AudioController extends Controller
             abort(404);
     }
 
-    public function update(NewAudioRequest $request, $facet_id, $audio_id)
+    public function update(NewAudioRequest $request, $audio_id)
     {
         $audio = Audio::find($audio_id);
-        $edit_facet = AudioListEditFacet::find($facet_id);
-        $condition = $edit_facet != NULL && $audio != NULL;
 
-        if ($condition) {
+        if ($audio != NULL) {
             $extension = $request->file('audio')->extension();
             $request->file('audio')->storeAs('storage/uploads',
                 "$audio->swiss_number.$extension", 'public');
