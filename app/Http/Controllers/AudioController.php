@@ -23,39 +23,30 @@ class AudioController extends Controller
         $audio->save();
     }
 
-    public function store(NewAudioRequest $request, $audiolist)
+    public function store(NewAudioRequest $request)
     {
-        $edit_facet = AudioListEditFacet::find($audiolist);
-
-        if ($edit_facet != NULL) {
-            if ($request->has('audio')) {
-                $extension = $request->file('audio')->extension();
-                $audio = $edit_facet->addAudio($extension);
-                $request->file('audio')->storeAs('storage/uploads',
-                                                 "$audio->swiss_number.$extension", 'public');
-                $this->convert($audio);
-
-                return response()->json(
-                    [
-                        "type" => "Audio",
-                        "audio_id" => $audio->swiss_number,
-                        "path_to_file" => $audio->path
-                    ]
-                );
-            } else {
-                abort(400);
-            }
+        if ($request->has('audio')) {
+            $extension = $request->file('audio')->extension();
+            $audio = Audio::create(['extension' => $extension]);
+            $request->file('audio')->storeAs('storage/uploads',
+                "$audio->swiss_number.$extension", 'public');
+            $this->convert($audio);
+            return response()->json(
+                [
+                    "type" => "Audio",
+                    "audio_id" => $audio->swiss_number,
+                    "path_to_file" => $audio->path
+                ]
+            );
         } else
             abort(404);
     }
 
-    public function update(NewAudioRequest $request, $facet_id, $audio_id)
+    public function update(NewAudioRequest $request, $audio_id)
     {
         $audio = Audio::find($audio_id);
-        $edit_facet = AudioListEditFacet::find($facet_id);
-        $condition = $edit_facet != NULL && $audio != NULL;
 
-        if ($condition) {
+        if ($audio != NULL) {
             $extension = $request->file('audio')->extension();
             $request->file('audio')->storeAs('storage/uploads',
                 "$audio->swiss_number.$extension", 'public');
