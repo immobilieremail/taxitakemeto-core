@@ -39,7 +39,7 @@ class AudioController extends Controller
                 ]
             );
         } else
-            abort(404);
+            abort(400);
     }
 
     public function update(NewAudioRequest $request, $audio_id)
@@ -61,7 +61,7 @@ class AudioController extends Controller
                 ]
             );
         } else
-            abort(404);
+            abort(400);
     }
 
     public function destroy($facet_id, $audio_id)
