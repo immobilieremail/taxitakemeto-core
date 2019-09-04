@@ -15,30 +15,7 @@ use Illuminate\Http\Request;
 
 
 Route::resource('audiolist', 'AudioListController')->only('store', 'show', 'edit');
-Route::resource('audio', 'AudioController')->only('store', 'update', 'destroy');
-
-Route::get('/audiolist', function() {
-    return view('audiolist_index',
-        [
-            'edits' => \App\AudioListEditFacet::all()->toArray(),
-            'views' => \App\AudioListViewFacet::all()->toArray()
-        ]
-    );
-});
-
-Route::get('/audiolist/{audiolist_id}/audio', function($edit_id) {
-    $audiolist_edit = \App\AudioListEditFacet::find($edit_id);
-
-    if ($audiolist_edit != NULL) {
-        return view('audio_index',
-            [
-                'audios' => $audiolist_edit->getAudios(),
-                'edit_id' => $edit_id,
-            ]
-        );
-    } else
-        abort(404);
-});
+Route::resource('audio', 'AudioController')->only('store', 'destroy');
 
 Route::any('/{catchall}', function() {
     return abort(404);

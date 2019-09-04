@@ -42,28 +42,6 @@ class AudioController extends Controller
             abort(400);
     }
 
-    public function update(NewAudioRequest $request, $audio_id)
-    {
-        $audio = Audio::find($audio_id);
-
-        if ($audio != NULL) {
-            $extension = $request->file('audio')->extension();
-            $request->file('audio')->storeAs('storage/uploads',
-                "$audio->swiss_number.$extension", 'public');
-            $audio->path = "$audio->swiss_number.$extension";
-            $audio->save();
-            $this->convert($audio);
-            return response()->json(
-                [
-                    "type" => "Audio",
-                    "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path
-                ]
-            );
-        } else
-            abort(400);
-    }
-
     public function destroy($facet_id, $audio_id)
     {
         $audio = Audio::find($audio_id);
