@@ -46,7 +46,7 @@ class ConvertUploadedAudio implements ShouldQueue
             ->export()
             ->toDisk('converts') // tell the Exporter to which disk we want to export
             ->inFormat($bitRateFormat)
-            ->save($this->audio->swiss_number . '.mp3');
+            ->save($this->audio->id . '.mp3');
 
         Storage::disk('uploads')
             ->delete($this->audio->path);

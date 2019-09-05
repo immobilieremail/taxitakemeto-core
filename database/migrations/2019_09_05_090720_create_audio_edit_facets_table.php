@@ -15,7 +15,7 @@ class CreateAudioEditFacetsTable extends Migration
     {
         Schema::create('audio_edit_facets', function (Blueprint $table) {
             $table->string('swiss_number', 24)->primary();
-            $table->bigInteger('id_audio')->unsigned();
+            $table->bigInteger('id_audio');
             $table->timestamps();
 
             $table->foreign('id_audio')

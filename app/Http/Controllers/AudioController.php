@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Audio,
-    App\AudioListEditFacet,
-    App\AudioListViewFacet;
+    App\AudioEditFacet,
+    App\AudioViewFacet;
 
 use App\Jobs\ConvertUploadedAudio;
 
@@ -19,7 +19,7 @@ class AudioController extends Controller
     private function convert(Audio $audio)
     {
         $this->dispatch(new ConvertUploadedAudio($audio));
-        $audio->path = "$audio->swiss_number.mp3";
+        $audio->path = "$audio->id.mp3";
         $audio->save();
     }
 
@@ -28,14 +28,17 @@ class AudioController extends Controller
         if ($request->has('audio')) {
             $extension = $request->file('audio')->extension();
             $audio = Audio::create(['extension' => $extension]);
+            $audio_edit = AudioEditFacet::create(["id_audio" => $audio->id]);
+            $audio_view = AudioViewFacet::create(["id_audio" => $audio->id]);
+
             $request->file('audio')->storeAs('storage/uploads',
-                "$audio->swiss_number.$extension", 'public');
+                "$audio->id.$extension", 'public');
             $this->convert($audio);
             return response()->json(
                 [
                     "type" => "ocap",
                     "ocapType" => "Audio",
-                    "url" => "http://localhost:8000/api/audio/$audio->swiss_number"
+                    "url" => "http://localhost:8000/api/audio/$audio_edit->swiss_number"
                 ]
             );
         } else
@@ -44,7 +47,9 @@ class AudioController extends Controller
 
     public function destroy($audio_id)
     {
-        $audio = Audio::find($audio_id);
+        $audio_edit = AudioEditFacet::find($audio_id);
+        $audio = ($audio_edit != NULL) ?
+            Audio::find($audio_edit->id_audio) : NULL;
         $condition = $audio != NULL
             && Storage::disk('converts')->exists($audio->path);
 
