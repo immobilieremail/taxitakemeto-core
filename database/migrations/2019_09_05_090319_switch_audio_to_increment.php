@@ -15,6 +15,7 @@ class SwitchAudioToIncrement extends Migration
     {
         Schema::table('audio', function (Blueprint $table) {
             $table->dropColumn('swiss_number');
+            $table->dropColumn('audio_list_id');
             $table->dropColumn('path');
         });
         Schema::table('audio', function (Blueprint $table) {
@@ -36,6 +37,7 @@ class SwitchAudioToIncrement extends Migration
         });
         Schema::table('audio', function (Blueprint $table) {
             $table->string('path');
+            $table->bigInteger('audio_list_id')->nullable();
             $table->string('swiss_number', 24)->primary();
         });
     }

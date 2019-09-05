@@ -2,18 +2,19 @@
 
 namespace App;
 
-use App\SwissObject;
+use Illuminate\Database\Eloquent\Model;
 
-class Audio extends SwissObject
+class Audio extends Model
 {
     protected $fillable = ['path'];
 
     public static function create(Array $param)
     {
-        $obj = new Audio;
+        $audio = new Audio;
 
-        $obj->path = $obj->swiss_number . '.' . $param["extension"];
-        $obj->save();
-        return $obj;
+        $audio->save();
+        $audio->path = $audio->id . '.' . $param["extension"];
+        $audio->save();
+        return $audio;
     }
 }

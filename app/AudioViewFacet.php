@@ -2,9 +2,18 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use App\SwissObject;
 
 class AudioViewFacet extends SwissObject
 {
-    //
+    protected $fillable = ['id_audio'];
+
+    public static function create(Array $param)
+    {
+        $obj = new AudioViewFacet;
+
+        $obj->id_audio = $param["id_audio"];
+        $obj->save();
+        return $obj;
+    }
 }
