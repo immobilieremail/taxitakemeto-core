@@ -23,7 +23,7 @@ class ReplaceJoinsWithRelationship extends Migration
         Schema::dropIfExists('shell_dropboxes');
         Schema::dropIfExists('join_shell_view_facets');
         Schema::dropIfExists('join_shell_edit_facets');
-        Schema::dropIfExists('join_list_audios');
+        Schema::dropIfExists('join_list_audio');
         Schema::dropIfExists('shells');
     }
 
@@ -41,7 +41,7 @@ class ReplaceJoinsWithRelationship extends Migration
             $table->string('swiss_number', 24)->primary();
             $table->timestamps();
         });
-        Schema::create('join_list_audios', function (Blueprint $table) {
+        Schema::create('join_list_audio', function (Blueprint $table) {
             $table->bigInteger('id_list')->unsigned();
             $table->string('id_audio', 24);
             $table->timestamps();
