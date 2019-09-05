@@ -60,4 +60,26 @@ class AudioListController extends Controller
         } else
             abort(404);
     }
+
+    public function add_audio(Request $request, $edit_facet_id)
+    {
+        $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        $audiolist = ($edit_facet) ?
+            AudioList::find($edit_facet->id_list) : NULL;
+        $audio = ($request->has('audio')) ?
+            Audio::find($request->audio) : NULL;
+
+        if ($audiolist != NULL) {
+            if ($audio != NULL) {
+                $audiolist->audios()->save($audio);
+                return response()->json(
+                    [
+                        'status' => 200
+                    ]
+                );
+            } else
+                abort(400);
+        } else
+            abort(404);
+    }
 }
