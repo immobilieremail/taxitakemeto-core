@@ -24,10 +24,9 @@ class AudioList extends Model
         foreach ($audios as $audio) {
             array_push($audio_array,
                 array(
-                    'type' => 'Audio',
-                    'audio_id' => $audio->swiss_number,
-                    'path_to_file' => str_replace(public_path(), '',
-                        Storage::disk('converts')->path($audio->path))
+                    'type' => 'ocap',
+                    'ocapType' => 'Audio',
+                    'url' => "http://localhost:8000/api/audio/$audio->swiss_number"
                 )
             );
         }

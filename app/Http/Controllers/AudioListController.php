@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\AudioList,
+use App\Audio,
+    App\AudioList,
     App\AudioListEditFacet,
     App\AudioListViewFacet;
 
 class AudioListController extends Controller
 {
-    protected $app_url = "http://localhost:8000";
-
     public function store()
     {
         $audiolist = AudioList::create();
@@ -21,8 +20,8 @@ class AudioListController extends Controller
         return response()->json(
             [
                 'type' => 'ocap',
-                'ocapType' => 'ALEdit',
-                'url' => "$this->app_url/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'ocapType' => 'AudioListEdit',
+                'url' => "http://localhost:8000/api/audiolist/$audiolist_edit->swiss_number/edit"
             ]
         );
     }
@@ -31,7 +30,7 @@ class AudioListController extends Controller
     {
         $view_facet = AudioListViewFacet::find($facet_id);
         $edit_facet = AudioListEditFacet::find($facet_id);
-        $facet_type = ($view_facet) ? "ALView" : "ALEdit";
+        $facet_type = ($view_facet) ? "AudioListView" : "AudioListEdit";
         $facet = ($view_facet) ? $view_facet : $edit_facet;
 
         if ($facet != NULL) {
@@ -52,9 +51,9 @@ class AudioListController extends Controller
         if ($edit_facet != NULL) {
             return response()->json(
                 [
-                    'type' => 'ALEdit',
-                    'new_audio' => "$this->app_url/api/audiolist/$edit_facet_id/audio",
-                    'view_facet' => "$this->app_url/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
+                    'type' => 'AudioListEdit',
+                    'add_audio' => "http://localhost:8000/api/audiolist/$edit_facet_id/audio",
+                    'view_facet' => "http://localhost:8000/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
                     'contents' => $edit_facet->getEditableAudios()
                 ]
             );
