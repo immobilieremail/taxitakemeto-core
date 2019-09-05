@@ -33,20 +33,19 @@ class AudioController extends Controller
             $this->convert($audio);
             return response()->json(
                 [
-                    "type" => "Audio",
-                    "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path
+                    "type" => "ocap",
+                    "ocapType" => "Audio",
+                    "url" => "http://localhost:8000/api/audio/$audio->swiss_number"
                 ]
             );
         } else
             abort(400);
     }
 
-    public function destroy($facet_id, $audio_id)
+    public function destroy($audio_id)
     {
         $audio = Audio::find($audio_id);
         $condition = $audio != NULL
-            && AudioListEditFacet::find($facet_id) != NULL
             && Storage::disk('converts')->exists($audio->path);
 
         if ($condition) {

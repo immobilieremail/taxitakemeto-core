@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\AudioList,
+use App\Audio,
+    App\AudioList,
     App\AudioListEditFacet,
     App\AudioListViewFacet;
 
@@ -19,7 +20,7 @@ class AudioListController extends Controller
         return response()->json(
             [
                 'type' => 'ocap',
-                'ocapType' => 'ALEdit',
+                'ocapType' => 'AudioListEdit',
                 'url' => route('audiolist.show', ['audiolist' => $audiolist_edit->swiss_number])
             ]
         );
@@ -29,7 +30,7 @@ class AudioListController extends Controller
     {
         $view_facet = AudioListViewFacet::find($facet_id);
         $edit_facet = AudioListEditFacet::find($facet_id);
-        $facet_type = ($view_facet) ? "ALView" : "ALEdit";
+        $facet_type = ($view_facet) ? "AudioListView" : "AudioListEdit";
         $facet = ($view_facet) ? $view_facet : $edit_facet;
 
         if ($facet != NULL) {
@@ -50,7 +51,7 @@ class AudioListController extends Controller
         if ($edit_facet != NULL) {
             return response()->json(
                 [
-                    'type' => 'ALEdit',
+                    'type' => 'AudioListEdit',
                     'new_audio' => route('audiolist.audio.store', ['audiolist' => $edit_facet_id]),
                     'view_facet' => route('audiolist.show', ['audiolist' => $edit_facet->getViewFacet()->swiss_number]),
                     'contents' => $edit_facet->getEditableAudios()
