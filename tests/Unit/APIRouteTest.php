@@ -115,6 +115,51 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
+    public function removeAudioFromAudioList()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $list = AudioList::create();
+        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
+        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
+
+        $list->audioViews()->save($audio_view);
+
+        $response = $this->post("/api/audiolist/$list_edit->swiss_number/remove_audio", ['audio' => $audio_view->swiss_number]);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function removeNonExistantAudioFromAudioList()
+    {
+        $list = AudioList::create();
+        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
+        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
+
+        $random_number = '54dalai247';
+
+        $response = $this->post("/api/audiolist/$list_edit->swiss_number/remove_audio", ['audio' => $random_number]);
+        $response->assertStatus(400);
+    }
+
+    /** @test */
+    public function removeNonLinkedAudioFromAudioList()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $list = AudioList::create();
+        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
+        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
+
+        $response = $this->post("/api/audiolist/$list_edit->swiss_number/remove_audio", ['audio' => $audio_view->swiss_number]);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
     public function getAudioView()
     {
         $audio = Audio::create(['extension' => 'mp3']);
