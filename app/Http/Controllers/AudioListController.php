@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Audio,
-    App\AudioList,
+    App\AudioEditFacet,
+    App\AudioViewFacet;
+
+use App\AudioList,
     App\AudioListEditFacet,
     App\AudioListViewFacet;
 
@@ -21,7 +24,7 @@ class AudioListController extends Controller
             [
                 'type' => 'ocap',
                 'ocapType' => 'AudioListEdit',
-                'url' => "http://localhost:8000/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'url' => "/api/audiolist/$audiolist_edit->swiss_number/edit"
             ]
         );
     }
@@ -52,9 +55,10 @@ class AudioListController extends Controller
             return response()->json(
                 [
                     'type' => 'AudioListEdit',
-                    'add_audio' => "http://localhost:8000/api/audiolist/$edit_facet_id/audio",
-                    'view_facet' => "http://localhost:8000/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
-                    'contents' => $edit_facet->getEditableAudios()
+                    'add_audio' => "/api/audiolist/$edit_facet_id/add_audio",
+                    'remove_audio' => "/api/audiolist/$edit_facet_id/remove_audio",
+                    'view_facet' => "/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
+                    'contents' => $edit_facet->getAudios()
                 ]
             );
         } else
@@ -67,11 +71,12 @@ class AudioListController extends Controller
         $audiolist = ($edit_facet) ?
             AudioList::find($edit_facet->id_list) : NULL;
         $audio = ($request->has('audio')) ?
-            Audio::find($request->audio) : NULL;
+            AudioViewFacet::find($request->audio) : NULL;
+
 
         if ($audiolist != NULL) {
             if ($audio != NULL) {
-                $audiolist->audios()->save($audio);
+                $audiolist->audioViews()->detach($audio);
                 return response()->json(
                     [
                         'status' => 200

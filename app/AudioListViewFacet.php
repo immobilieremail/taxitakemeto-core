@@ -21,6 +21,6 @@ class AudioListViewFacet extends SwissObject
     {
         $audiolist = AudioList::find($this->id_list);
 
-        return $audiolist->getAudios();
+        return $audiolist->getAudioViews();
     }
 }

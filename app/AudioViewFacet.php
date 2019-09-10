@@ -16,4 +16,9 @@ class AudioViewFacet extends SwissObject
         $obj->save();
         return $obj;
     }
+
+    public function lists()
+    {
+        return $this->morphToMany('App\AudioList', 'join_audio');
+    }
 }

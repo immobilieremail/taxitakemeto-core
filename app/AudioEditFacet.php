@@ -16,4 +16,14 @@ class AudioEditFacet extends SwissObject
         $obj->save();
         return $obj;
     }
+
+    public function lists()
+    {
+        return $this->morphToMany('App\AudioList', 'join_audio');
+    }
+
+    public function getViewFacet()
+    {
+        return AudioViewFacet::where('id_audio', $this->id_audio)->first();
+    }
 }

@@ -38,7 +38,7 @@ class AudioController extends Controller
                 [
                     "type" => "ocap",
                     "ocapType" => "Audio",
-                    "url" => "http://localhost:8000/api/audio/$audio_edit->swiss_number"
+                    "url" => "/api/audio/$audio_edit->swiss_number/edit"
                 ]
             );
         } else

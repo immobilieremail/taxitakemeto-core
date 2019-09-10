@@ -21,21 +21,7 @@ class AudioListEditFacet extends SwissObject
     {
         $audiolist = AudioList::find($this->id_list);
 
-        return $audiolist->getAudios();
-    }
-
-    public function getEditableAudios()
-    {
-        $audios = $this->getAudios();
-
-        foreach ($audios as $audio) {
-            array_push($audio,
-                array(
-                    "delete_audio" => "http://localhost:8000/api/audiolist/$this->swiss_number/audio/" . $audio["audio_id"]
-                )
-            );
-        }
-        return $audios;
+        return $audiolist->getAudioViews();
     }
 
     public function getViewFacet()
