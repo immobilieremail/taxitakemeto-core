@@ -45,15 +45,52 @@ class AudioController extends Controller
             abort(400);
     }
 
-    public function destroy($audio_id)
+    public function show($facet_id)
     {
-        $audio_edit = AudioEditFacet::find($audio_id);
+        $edit_facet = AudioEditFacet::find($facet_id);
+        $view_facet = AudioViewFacet::find($facet_id);
+        $facet = ($view_facet != NULL) ?
+            $view_facet : $edit_facet;
+        $facet_type = ($view_facet != NULL) ?
+            "AudioView" : "AudioEdit";
+
+        if ($facet != NULL) {
+            return response()->json(
+                [
+                    "type" => $facet_type,
+                    "id" => $facet_id,
+                    "contents" => ""
+                ]
+            );
+        } else
+            abort(404);
+    }
+
+    public function edit($edit_facet_id)
+    {
+        $edit_facet = AudioEditFacet::find($edit_facet_id);
+
+        if ($edit_facet != NULL) {
+            return response()->json(
+                [
+                    "type" => "AudioEdit",
+                    "id" => $edit_facet_id,
+                    "view_facet" => "/api/audio/" . $edit_facet->getViewFacet()->swiss_number,
+                    "contents" => "",
+                    "delete_audio" => "/api/audio/$edit_facet->swiss_number"
+                ]
+            );
+        } else
+            abort(404);
+    }
+
+    public function destroy($facet_id)
+    {
+        $audio_edit = AudioEditFacet::find($facet_id);
         $audio = ($audio_edit != NULL) ?
             Audio::find($audio_edit->id_audio) : NULL;
-        $condition = $audio != NULL
-            && Storage::disk('converts')->exists($audio->path);
 
-        if ($condition) {
+        if ($audio != NULL && Storage::disk('converts')->exists($audio->path)) {
             Storage::disk('converts')->delete($audio->path);
             $audio->delete();
             return response()->json(

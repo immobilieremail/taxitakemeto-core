@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 
 Route::resource('audiolist', 'AudioListController')->only('create', 'show', 'edit');
-Route::resource('audio', 'AudioController')->only('store', 'destroy');
+Route::resource('audio', 'AudioController')->only('store', 'show', 'edit', 'destroy');
 
 Route::any('/{catchall}', function() {
     return abort(404);
