@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Audio,
-    App\AudioList,
+    App\AudioViewFacet,
+    App\AudioEditFacet;
+
+use App\AudioList,
     App\AudioListViewFacet,
     App\AudioListEditFacet;
 
@@ -12,8 +15,7 @@ use Illuminate\Http\Request;
 use Eris\Generator,
     Eris\TestTrait;
 
-use Tests\TestCase,
-    Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class ModelTest extends TestCase
 {
@@ -21,6 +23,16 @@ class ModelTest extends TestCase
 
     public $path = "/storage/uploads/";
     public $extension = "mp3";
+
+    /** @test */
+    public function audioEditFacetGetView()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $this->assertEquals($audio_view->getOriginal(), $audio_edit->getViewFacet()->getOriginal());
+    }
 
     /** @test */
     public function audioMultipleAddAndDelete()
@@ -45,13 +57,13 @@ class ModelTest extends TestCase
     }
 
     /** @test */
-    public function audioListViewFacetAddToDB()
+    public function objectListViewFacetAddToDB()
     {
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $audiolist = AudioList::create();
+            $list = AudioList::create();
             $count_before = AudioListViewFacet::all()->count();
             for ($i = 0; $i < $nbr; $i++) {
-                AudioListViewFacet::create(['id_list' => $audiolist->id]);
+                AudioListViewFacet::create(['id_list' => $list->id]);
             }
             $count_after = AudioListViewFacet::all()->count();
             $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
@@ -59,13 +71,13 @@ class ModelTest extends TestCase
     }
 
     /** @test */
-    public function audioListEditFacetAddToDB()
+    public function objectListEditFacetAddToDB()
     {
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $audiolist = AudioList::create();
+            $list = AudioList::create();
             $count_before = AudioListEditFacet::all()->count();
             for ($i = 0; $i < $nbr; $i++) {
-                AudioListEditFacet::create(['id_list' => $audiolist->id]);
+                AudioListEditFacet::create(['id_list' => $list->id]);
             }
             $count_after = AudioListEditFacet::all()->count();
             $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
