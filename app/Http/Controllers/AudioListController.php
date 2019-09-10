@@ -40,6 +40,7 @@ class AudioListController extends Controller
             return response()->json(
                 [
                     "type" => $facet_type,
+                    "id" => $facet->swiss_number,
                     "contents" => $facet->getAudios()
                 ]
             );
@@ -55,7 +56,6 @@ class AudioListController extends Controller
             return response()->json(
                 [
                     'type' => 'AudioListEdit',
-                    'new_audio' => route('audiolist.audio.store', ['audiolist' => $edit_facet_id]),
                     'view_facet' => route('audiolist.show', ['audiolist' => $edit_facet->getViewFacet()->swiss_number]),
                     'contents' => $edit_facet->getEditableAudios()
                 ]
