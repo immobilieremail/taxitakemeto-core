@@ -2,10 +2,7 @@
 
 namespace App;
 
-use App\Audio;
 use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Support\Facades\Storage;
 
 class AudioList extends Model
 {
@@ -18,40 +15,40 @@ class AudioList extends Model
 
     public function audioViews()
     {
-        return $this->morphedByMany('App\AudioViewFacet', 'join_audio');
+        return $this->morphedByMany('App\AudioViewFacet', 'join_audio')->withPivot('pos');
+    }
+
+    private function formatAudioFacets($audio, $type)
+    {
+        return [
+            'type' => 'ocap',
+            'ocapType' => $type,
+            'url' => "/api/audio/$audio->swiss_number"
+        ];
+    }
+
+    private function getAudioFacets($audios, String $facet_type)
+    {
+        return array_map(function ($audio, $type) {
+            return $this->formatAudioFacets($audio, $type);
+        }, $audios, array_fill(0, count($audios), $facet_type));
     }
 
     public function getAudioViews()
     {
-        $audios = $this->audioViews;
-        $audio_array = array();
+        $audios = $this->audioViews->sortBy(function ($audio, $key) {
+            return $audio->pivot->pos;
+        })->values()->all();
 
-        foreach ($audios as $audio) {
-            array_push($audio_array,
-                array(
-                    'type' => 'ocap',
-                    'ocapType' => 'AudioViewFacet',
-                    'url' => "/api/audio/$audio->swiss_number"
-                )
-            );
-        }
-        return $audio_array;
+        return $this->getAudioFacets($audios, "AudioViewFacet");
     }
 
     public function getAudioEdits()
     {
-        $audios = $this->audioEdits;
-        $audio_array = array();
+        $audios = $this->audioEdits->sortBy(function ($audio, $key) {
+            return $audio->pivot->pos;
+        })->values()->all();
 
-        foreach ($audios as $audio) {
-            array_push($audio_array,
-                array(
-                    'type' => 'ocap',
-                    'ocapType' => 'AudioEditFacet',
-                    'url' => "/api/audio/$audio->swiss_number"
-                )
-            );
-        }
-        return $audio_array;
+        return $this->getAudioFacets($audios, "AudioEditFacet");
     }
 }
