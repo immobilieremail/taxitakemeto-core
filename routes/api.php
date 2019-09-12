@@ -14,11 +14,5 @@ use Illuminate\Http\Request;
 */
 
 
-Route::resource('audiolist', 'AudioListController')->only('store', 'show', 'edit');
-Route::post('audiolist/{audiolist_id}/add_audio', 'AudioListController@add_audio')->name('audiolist.add_audio');
-Route::post('audiolist/{audiolist_id}/remove_audio', 'AudioListController@remove_audio')->name('audiolist.remove_audio');
-Route::resource('audio', 'AudioController')->only('store', 'show', 'edit', 'destroy');
-
-Route::any('/{catchall}', function() {
-    return abort(404);
-})->where('catchall', '(.*)');
+Route::resource('audiolist', 'AudioListController')->except('index', 'create', 'destroy');
+Route::resource('audio', 'AudioController')->except('index', 'create', 'update');
