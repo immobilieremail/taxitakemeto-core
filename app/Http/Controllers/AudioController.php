@@ -37,7 +37,7 @@ class AudioController extends Controller
             return response()->json(
                 [
                     "type" => "ocap",
-                    "ocapType" => "Audio",
+                    "ocapType" => "AudioEdit",
                     "url" => "/api/audio/$audio_edit->swiss_number/edit"
                 ]
             );
@@ -51,14 +51,12 @@ class AudioController extends Controller
         $view_facet = AudioViewFacet::find($facet_id);
         $facet = ($view_facet != NULL) ?
             $view_facet : $edit_facet;
-        $facet_type = ($view_facet != NULL) ?
-            "AudioView" : "AudioEdit";
 
         if ($facet != NULL) {
             return response()->json(
                 [
-                    "type" => $facet_type,
-                    "id" => $facet_id,
+                    "type" => "AudioView",
+                    "id" => $facet->swiss_number,
                     "contents" => ""
                 ]
             );
