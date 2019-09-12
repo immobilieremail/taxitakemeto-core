@@ -33,81 +33,42 @@ class AudioListController extends Controller
     {
         $view_facet = AudioListViewFacet::find($facet_id);
         $edit_facet = AudioListEditFacet::find($facet_id);
-        $facet_type = ($view_facet) ? "AudioListView" : "AudioListEdit";
         $facet = ($view_facet) ? $view_facet : $edit_facet;
 
         if ($facet != NULL) {
             return response()->json(
-                [
-                    "type" => $facet_type,
-                    "id" => $facet->swiss_number,
-                    "contents" => $facet->getAudios()
-                ]
-            );
+                $facet->getJsonViewFacet());
         } else
             abort(404);
     }
 
     public function edit($edit_facet_id)
     {
-        $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        $edit_facet = AudioListEditFacet::findOrFail($edit_facet_id);
 
-        if ($edit_facet != NULL) {
-            return response()->json(
-                [
-                    'type' => 'AudioListEdit',
-                    'id' => $edit_facet->swiss_number,
-                    'add_audio' => "/api/audiolist/$edit_facet_id/add_audio",
-                    'remove_audio' => "/api/audiolist/$edit_facet_id/remove_audio",
-                    'view_facet' => "/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
-                    'contents' => $edit_facet->getAudios()
-                ]
-            );
-        } else
-            abort(404);
+        return response()->json(
+            $edit_facet->getJsonEditFacet());
     }
 
-    public function add_audio(Request $request, $edit_facet_id)
+    public function update(Request $request, $edit_facet_id)
     {
-        $edit_facet = AudioListEditFacet::find($edit_facet_id);
-        $audiolist = ($edit_facet) ?
-            AudioList::find($edit_facet->id_list) : NULL;
-        $audio = ($request->has('audio')) ?
-            AudioViewFacet::find($request->audio) : NULL;
+        $edit_facet = AudioListEditFacet::findOrFail($edit_facet_id);
+        $func = function ($audio) {
+            if (isset($audio["id"]) && is_string($audio["id"]))
+                return AudioViewFacet::find($audio["id"]);
+        };
 
-        if ($audiolist != NULL) {
-            if ($audio != NULL) {
-                $audiolist->audioViews()->save($audio);
+        if ($request->has('data') && isset($request["data"]["audios"])) {
+            $new_audios = array_filter(array_map($func, $request["data"]["audios"]));
+            if (count($request["data"]["audios"]) == count($new_audios)) {
+
+                $edit_facet->updateAudioList($new_audios);
+
                 return response()->json(
-                    [
-                        'status' => 200
-                    ]
-                );
+                    $edit_facet->getJsonEditFacet());
             } else
                 abort(400);
         } else
-            abort(404);
-    }
-
-    public function remove_audio(Request $request, $edit_facet_id)
-    {
-        $edit_facet = AudioListEditFacet::find($edit_facet_id);
-        $audiolist = ($edit_facet) ?
-            AudioList::find($edit_facet->id_list) : NULL;
-        $audio = ($request->has('audio')) ?
-            AudioViewFacet::find($request->audio) : NULL;
-
-        if ($audiolist != NULL) {
-            if ($audio != NULL) {
-                $audiolist->audioViews()->detach($audio);
-                return response()->json(
-                    [
-                        'status' => 200
-                    ]
-                );
-            } else
-                abort(400);
-        } else
-            abort(404);
+            abort(400);
     }
 }

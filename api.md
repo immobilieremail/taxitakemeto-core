@@ -1,68 +1,128 @@
 # Entry Points
 
-POST /audiolist
-Create an empty audiolist and return the audiolist edition facet (AudioListEdit or ALEdit)
+## AudioList
+
+POST /api/audiolist
+Create an empty audiolist and return the audiolist edition facet (AudioListEdit).
 
 ```
 {
     "type":"ocap",
-    "ocapType":"ALEdit",
-    "url":"http://.../api/audiolist/{audiolist_id}/edit"
+    "ocapType":"AudioListEdit",
+    "url":"/api/audiolist/{audiolist_edit_id}/edit" (GET)
 }
 ```
 
-# Resources
-
 ## Audio
 
-An Audio contains information about an audio file.
+POST /api/audio
+Create an audio and return the audio edition facet (AudioEdit).
 
 ```
 {
-   "type":"Audio",
-    "audio_id":"{audio_id}",
-    "path_to_file":"{path_to_file}"
+    "type":"ocap",
+    "ocapType":"AudioEdit",
+    "url":"/api/audio/{audio_edit_id}/edit" (GET)
+}
+```
+
+The request must be a Form Request and must contain an "audio" field with the file.
+
+# Resources
+
+## AudioView
+
+An AudioView is a facet of an audio.
+It is the Read Only access of the audio.
+
+GET /api/audio/{audio_view_id}
+
+```
+{
+    "type":"Audio",
+    "id":"{audio_view_id}",
+    "contents":""
+}
+```
+
+## AudioEdit
+
+An AudioEdit is a facet of an audio.
+It is the Read Write access of the audio.
+
+GET /api/audio/{audio_edit_id}/edit
+
+```
+{
+    "type":"Audio",
+    "id":"{audio_view_id}",
+    "view_facet":"/api/...", (GET)
+    "contents":"",
+    "delete_audio":"/api/..." (DELETE)
 }
 ```
 
 ## AudioListView
 
-An AudioListView (or ALView) is a facet of an audiolist.
+An AudioListView is a facet of an audiolist.
 It is the Read Only access of the audiolist : it lists all the audios of the audiolist.
 
 GET /audiolist/{audiolist_view_id}
 
 ```
 {
-   "type":"ALView",
-    "contents":[Audio, ...]
+    "type":"ALView",
+    "id":"{audiolist_view_id},
+    "contents":[
+        {
+            "type":"ocap",
+            "ocapType":"AudioView",
+            "url":"/api/..." (GET)
+        }
+    ]
 }
 ```
 
 ## AudioListEdit
 
-An AudioListEdit (or ALEdit) is a facet of an audiolist.
-It is the Read Write access of the audiolist : it lists all audios of the audiolist and gives the urls to add, update and delete audios.
+An AudioListEdit is a facet of an audiolist.
+It is the Read Write access of the audiolist : it lists all audios of the audiolist and gives the url to update the list.
 
-GET /audiolist/{audiolist_edit_id}
+GET /audiolist/{audiolist_edit_id}/edit
 
 ```
 {
-    "type":"ALEdit",
-    "new_audio":"http://...", (POST)
-    "view_facet":"http://...", (GET)
-    "contents":[{
-        "audio":Audio,
-        "update_audio":"http://...", (PUT)
-        "delete_audio":"http://..." (DELETE)
-    }]
+    "type":"AudioListEdit",
+    "id":"{audiolist_edit_id}",
+    "update":"/api/...", (PUT)
+    "view_facet":"/api/...", (GET)
+    "contents":[
+        {
+            "type":"ocap",
+            "ocapType":"AudioView",
+            "url":"/api/..." (GET)
+        }
+    ]
 }
 ```
 
-"new_audio" request must contain the file (in an 'audio' parameter) which will be added to the audiolist.
-It returns the created Audio.
+"update" request header "Content-Type" must be set to "application/json".
+"update" request body must contain a json with a "data" field containing an "audios" array containing all the "id" of the AudioViewFacet from the audios you want to link to the list.
+"update" request returns the updated AudioListEdit when successful.
 
-"update_audio" request must contain the file (in an 'audio' parameter) which will replace the previous audio.
-It returns the created Audio.
+### Example
 
-"delete_audio" returns "status":200 on success.
+```
+{
+    "data":{
+        "audios":[
+            {
+                "id":"{AudioViewFacet_id}
+            },
+            {
+                "id":"{AudioViewFacet_id}
+            }
+        ]
+    }
+}
+```

@@ -14,6 +14,8 @@ class CreateJoinAudiosTable extends Migration
     public function up()
     {
         Schema::create('join_audio', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('pos')->nullable();
             $table->bigInteger('audio_list_id')->nullable();
             $table->string('join_audio_id', 24)->nullable();
             $table->string('join_audio_type', 24)->nullable();

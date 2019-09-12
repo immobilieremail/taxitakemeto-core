@@ -56,31 +56,42 @@ class ModelTest extends TestCase
         });
     }
 
-    /** @test */
-    public function objectListViewFacetAddToDB()
+    private function generateAudioListWithAudio($audiolist) : Array
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $list = AudioList::create();
-            $count_before = AudioListViewFacet::all()->count();
-            for ($i = 0; $i < $nbr; $i++) {
-                AudioListViewFacet::create(['id_list' => $list->id]);
-            }
-            $count_after = AudioListViewFacet::all()->count();
-            $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
-        });
+        $random = rand(0, 10);
+        $audio_array["edits"] = [];
+        $audio_array["views"] = [];
+
+        for ($i = 0; $i < $random; $i++) {
+            $audio = Audio::create(['extension' => 'mp3']);
+            $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+            $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+
+            $audiolist->audioViews()->save($audio_view);
+            $audiolist->audioEdits()->save($audio_edit);
+            $audio_array["edits"][] = [
+                'type' => 'ocap',
+                'ocapType' => 'AudioEditFacet',
+                'url' => "/api/audio/$audio_edit->swiss_number"
+            ];
+            $audio_array["views"][] = [
+                'type' => 'ocap',
+                'ocapType' => 'AudioViewFacet',
+                'url' => "/api/audio/$audio_view->swiss_number"
+            ];
+        }
+        return $audio_array;
     }
 
     /** @test */
-    public function objectListEditFacetAddToDB()
+    public function audioListGetAudioFacets()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $list = AudioList::create();
-            $count_before = AudioListEditFacet::all()->count();
-            for ($i = 0; $i < $nbr; $i++) {
-                AudioListEditFacet::create(['id_list' => $list->id]);
-            }
-            $count_after = AudioListEditFacet::all()->count();
-            $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
+        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nb1) {
+            $audiolist = AudioList::create();
+            $audio_array = $this->generateAudioListWithAudio($audiolist);
+
+            $this->assertEquals($audiolist->getAudioEdits(), $audio_array["edits"]);
+            $this->assertEquals($audiolist->getAudioViews(), $audio_array["views"]);
         });
     }
 }

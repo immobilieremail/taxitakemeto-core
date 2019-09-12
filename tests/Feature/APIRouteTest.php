@@ -14,7 +14,6 @@ use Tests\TestCase;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class APIRouteTest extends TestCase
 {
