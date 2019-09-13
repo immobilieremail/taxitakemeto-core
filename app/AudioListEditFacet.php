@@ -53,23 +53,22 @@ class AudioListEditFacet extends SwissObject
 
     public function updateAudioList($new_audios)
     {
+        $pos = 0;
         $audiolist = AudioList::find($this->id_list);
 
         DB::beginTransaction();
 
         $audiolist->audioViews()->detach();
-        for ($i = 0; isset($new_audios[$i]); $i++) {
-            $audiolist->audioViews()->save($new_audios[$i]);
+        foreach ($new_audios as $new_audio) {
+            $audiolist->audioViews()->save($new_audio);
             $join = JoinAudio::all()
                 ->where('audio_list_id', $audiolist->id)
-                ->where('join_audio_id', $new_audios[$i]->swiss_number)
+                ->where('join_audio_id', $new_audio->swiss_number)
                 ->first();
-            $join->pos = $i;
+            $join->pos = $pos++;
             $join->save();
         }
 
         DB::commit();
-
-        return $this->getAudios();
     }
 }

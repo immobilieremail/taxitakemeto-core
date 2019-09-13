@@ -50,16 +50,21 @@ class AudioListController extends Controller
             $edit_facet->getJsonEditFacet());
     }
 
+    private function mapUpdateRequest(Array $request_audios)
+    {
+        return array_map(function ($audio) {
+            if (isset($audio["id"]) && is_string($audio["id"]))
+                return AudioViewFacet::find($audio["id"]);
+        }, $request_audios);
+    }
+
     public function update(Request $request, $edit_facet_id)
     {
         $edit_facet = AudioListEditFacet::findOrFail($edit_facet_id);
-        $func = function ($audio) {
-            if (isset($audio["id"]) && is_string($audio["id"]))
-                return AudioViewFacet::find($audio["id"]);
-        };
 
         if ($request->has('data') && isset($request["data"]["audios"])) {
-            $new_audios = array_filter(array_map($func, $request["data"]["audios"]));
+            $new_audios = array_filter(
+                $this->mapUpdateRequest($request["data"]["audios"]));
             if (count($request["data"]["audios"]) == count($new_audios)) {
 
                 $edit_facet->updateAudioList($new_audios);

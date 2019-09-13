@@ -40,7 +40,7 @@ class AudioList extends Model
             return $audio->pivot->pos;
         })->values()->all();
 
-        return $this->getAudioFacets($audios, "AudioViewFacet");
+        return $this->getAudioFacets($audios, "AudioView");
     }
 
     public function getAudioEdits()
@@ -49,6 +49,6 @@ class AudioList extends Model
             return $audio->pivot->pos;
         })->values()->all();
 
-        return $this->getAudioFacets($audios, "AudioEditFacet");
+        return $this->getAudioFacets($audios, "AudioEdit");
     }
 }
