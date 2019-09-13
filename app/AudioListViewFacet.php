@@ -17,6 +17,11 @@ class AudioListViewFacet extends SwissObject
         return $obj;
     }
 
+    public function shells()
+    {
+        return $this->morphToMany('App\Shell', 'join_audio_list');
+    }
+
     public function getAudios()
     {
         $audiolist = AudioList::find($this->id_list);

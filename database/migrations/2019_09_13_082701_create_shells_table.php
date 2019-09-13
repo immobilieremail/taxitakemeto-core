@@ -14,7 +14,7 @@ class CreateShellsTable extends Migration
     public function up()
     {
         Schema::create('shells', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->string('swiss_number', 24)->primary();
             $table->timestamps();
         });
     }

@@ -19,16 +19,16 @@ class AudioListEditFacet extends SwissObject
         return $obj;
     }
 
+    public function shells()
+    {
+        return $this->morphToMany('App\Shell', 'join_audio_list');
+    }
+
     public function getAudios()
     {
         $audiolist = AudioList::find($this->id_list);
 
         return $audiolist->getAudioViews();
-    }
-
-    public function getViewFacet()
-    {
-        return AudioListViewFacet::where('id_list', $this->id_list)->first();
     }
 
     public function getJsonViewFacet()
@@ -38,6 +38,11 @@ class AudioListEditFacet extends SwissObject
             "id" => $this->swiss_number,
             "contents" => $this->getAudios()
         ];
+    }
+
+    public function getViewFacet()
+    {
+        return AudioListViewFacet::where('id_list', $this->id_list)->first();
     }
 
     public function getJsonEditFacet()
