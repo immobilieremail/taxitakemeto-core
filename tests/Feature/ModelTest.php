@@ -71,12 +71,12 @@ class ModelTest extends TestCase
             $audiolist->audioEdits()->save($audio_edit);
             $audio_array["edits"][] = [
                 'type' => 'ocap',
-                'ocapType' => 'AudioEditFacet',
+                'ocapType' => 'AudioEdit',
                 'url' => "/api/audio/$audio_edit->swiss_number"
             ];
             $audio_array["views"][] = [
                 'type' => 'ocap',
-                'ocapType' => 'AudioViewFacet',
+                'ocapType' => 'AudioView',
                 'url' => "/api/audio/$audio_view->swiss_number"
             ];
         }

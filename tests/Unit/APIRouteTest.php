@@ -183,7 +183,7 @@ class APIRouteTest extends TestCase
             $mapped_audio = array_map(function ($audio) {
                 return [
                     'type' => 'ocap',
-                    'ocapType' => 'AudioViewFacet',
+                    'ocapType' => 'AudioView',
                     'url' => '/api/audio/' . $audio["id"]
                 ];
             }, $audio_array["audios"]);
