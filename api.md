@@ -1,18 +1,5 @@
 # Entry Points
 
-## AudioList
-
-POST /api/audiolist
-Create an empty audiolist and return the audiolist edition facet (AudioListEdit).
-
-```
-{
-    "type":"ocap",
-    "ocapType":"AudioListEdit",
-    "url":"/api/audiolist/{audiolist_edit_id}/edit" (GET)
-}
-```
-
 ## Audio
 
 POST /api/audio
@@ -27,6 +14,32 @@ Create an audio and return the audio edition facet (AudioEdit).
 ```
 
 The request must be a Form Request and must contain an "audio" field with the file.
+
+## AudioList
+
+POST /api/audiolist
+Create an empty audiolist and return the audiolist edition facet (AudioListEdit).
+
+```
+{
+    "type":"ocap",
+    "ocapType":"AudioListEdit",
+    "url":"/api/audiolist/{audiolist_edit_id}/edit" (GET)
+}
+```
+
+## Shell
+
+POST /api/shell
+Create an empty shell and return it.
+
+```
+{
+    "type":"ocap",
+    "ocapType":"Shell",
+    "url":"/api/shell/{shell_id}" (GET)
+}
+```
 
 # Resources
 
@@ -124,5 +137,34 @@ GET /audiolist/{audiolist_edit_id}/edit
             }
         ]
     }
+}
+```
+
+## Shell
+
+A Shell is an audiolists container.
+
+GET /api/shell/{shell_id}
+
+```
+{
+    "type":"Shell",
+    "id":"{shell_id}",
+    "contents":[
+        "audiolists_view":[
+            {
+                "type":"ocap",
+                "ocapType":"AudioListView",
+                "url":"/api/..." (GET)
+            }
+        ],
+        "audiolists_edit":[
+            {
+                "type":"ocap",
+                "ocapType":"AudioListEdit",
+                "url":"/api/..." (GET)
+            }
+        ]
+    ]
 }
 ```
