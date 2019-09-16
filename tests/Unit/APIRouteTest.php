@@ -10,6 +10,8 @@ use App\AudioList,
     App\AudioListViewFacet,
     App\AudioListEditFacet;
 
+use App\Shell;
+
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -21,6 +23,12 @@ use Eris\Generator,
 class APIRouteTest extends TestCase
 {
     use TestTrait;
+
+
+
+    /** Audiolist routes tests */
+
+
 
     /** @test */
     public function postAudiolist()
@@ -76,78 +84,6 @@ class APIRouteTest extends TestCase
     {
         $random_string = "a849a834fb";
         $response = $this->get("/api/audiolist/$random_string/edit");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function getAudioView()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->get("/api/audio/$audio_view->swiss_number");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function getNonExistantAudioView()
-    {
-        $random_number = "089avg4w6";
-        $response = $this->get("/api/audio/$random_number");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function getAudioEdit()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->get("/api/audio/$audio_edit->swiss_number/edit");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function getNonExistantAudioEdit()
-    {
-        $random_number = "06745aha54";
-        $response = $this->get("/api/audio/$random_number/edit");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function deleteAudio()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $file = "public/storage/converts/$audio->path";
-        $handle = fopen($file, 'w');
-        fclose($handle);
-
-        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function deleteNonExistantAudioFile()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function deleteNonExistantAudioFromNonExisantAudioFacet()
-    {
-        $random_number = "ajc5a8pfb0";
-        $response = $this->delete("/api/audio/$random_number");
         $response->assertStatus(404);
     }
 
@@ -222,5 +158,105 @@ class APIRouteTest extends TestCase
 
         $response = $this->put("/api/audiolist/$random_number", ["data" => ["audios" => [["id" => "a"], ["id" => "b"]]]]);
         $response->assertStatus(404);
+    }
+
+
+
+    /** Audio routes tests */
+
+
+
+    /** @test */
+    public function getAudioView()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $response = $this->get("/api/audio/$audio_view->swiss_number");
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function getNonExistantAudioView()
+    {
+        $random_number = "089avg4w6";
+        $response = $this->get("/api/audio/$random_number");
+        $response->assertStatus(404);
+    }
+
+    /** @test */
+    public function getAudioEdit()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $response = $this->get("/api/audio/$audio_edit->swiss_number/edit");
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function getNonExistantAudioEdit()
+    {
+        $random_number = "06745aha54";
+        $response = $this->get("/api/audio/$random_number/edit");
+        $response->assertStatus(404);
+    }
+
+    /** @test */
+    public function deleteAudio()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $file = "public/storage/converts/$audio->path";
+        $handle = fopen($file, 'w');
+        fclose($handle);
+
+        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function deleteNonExistantAudioFile()
+    {
+        $audio = Audio::create(['extension' => 'mp3']);
+        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
+
+        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
+        $response->assertStatus(404);
+    }
+
+    /** @test */
+    public function deleteNonExistantAudioFromNonExisantAudioFacet()
+    {
+        $random_number = "ajc5a8pfb0";
+        $response = $this->delete("/api/audio/$random_number");
+        $response->assertStatus(404);
+    }
+
+
+
+    /** Shell routes tests */
+
+
+
+    /** @test */
+    public function postShell()
+    {
+        $response = $this->post('/api/shell');
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function getShell()
+    {
+        $shell = Shell::create();
+
+        $response = $this->get("/api/shell/$shell->swiss_number");
+        $response->assertStatus(200);
     }
 }
