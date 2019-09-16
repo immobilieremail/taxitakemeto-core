@@ -150,6 +150,7 @@ GET /api/shell/{shell_id}
 {
     "type":"Shell",
     "id":"{shell_id}",
+    "update":"/api/...", (PUT)
     "contents":[
         "audiolists_view":[
             {
@@ -166,5 +167,29 @@ GET /api/shell/{shell_id}
             }
         ]
     ]
+}
+```
+
+"update" request header "Content-Type" must be set to "application/json".
+"update" request body must contain a json with a "data" field containing an "audiolists" array containing all the "id" of the AudioList Facets you want to link to the shell.
+"update" request returns the updated Shell when successful.
+
+### Example
+
+```
+{
+    "data":{
+        "audiolists":[
+            {
+                "id":"{AudioListViewFacet_id}
+            },
+            {
+                "id":"{AudioListEditFacet_id}
+            },
+            {
+                "id":"{AudioListViewFacet_id}
+            }
+        ]
+    }
 }
 ```
