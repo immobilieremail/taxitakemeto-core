@@ -33,7 +33,6 @@ class AudioListViewFacet extends SwissObject
     {
         return [
             "type" => 'AudioListView',
-            "id" => $this->swiss_number,
             "contents" => $this->getAudios()
         ];
     }

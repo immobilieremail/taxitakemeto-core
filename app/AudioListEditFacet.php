@@ -35,7 +35,6 @@ class AudioListEditFacet extends SwissObject
     {
         return [
             "type" => 'AudioListEdit',
-            "id" => $this->swiss_number,
             "contents" => $this->getAudios()
         ];
     }
@@ -49,7 +48,6 @@ class AudioListEditFacet extends SwissObject
     {
         return [
             'type' => 'AudioListEdit',
-            'id' => $this->swiss_number,
             'update' => "/api/audiolist/" . $this->swiss_number,
             'view_facet' => "/api/audiolist/" . $this->getViewFacet()->swiss_number,
             'contents' => $this->getAudios()

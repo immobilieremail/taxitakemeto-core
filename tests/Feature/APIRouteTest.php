@@ -28,7 +28,7 @@ class APIRouteTest extends TestCase
         $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
         $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
 
-        $keys_to_test = array('type', 'id', 'contents');
+        $keys_to_test = array('type', 'contents');
         $audio_keys_to_test = array('type', 'ocapType', 'url');
 
         $audio_edit->lists()->save($list);
@@ -53,7 +53,7 @@ class APIRouteTest extends TestCase
         $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
         $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
 
-        $keys_to_test = array('type', 'id', 'view_facet', 'contents');
+        $keys_to_test = array('type', 'view_facet', 'contents');
         $audio_keys_to_test = array('type', 'ocapType', 'url');
 
         $audio_edit->lists()->save($list);
