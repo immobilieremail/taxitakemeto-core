@@ -10,7 +10,9 @@ use App\AudioList,
     App\AudioListViewFacet,
     App\AudioListEditFacet;
 
-use App\Shell;
+use App\Shell,
+    App\ShellUserFacet,
+    App\ShellDropboxFacet;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -255,8 +257,10 @@ class APIRouteTest extends TestCase
     public function getShell()
     {
         $shell = Shell::create();
+        $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
+        $shell_dropbox = ShellDropboxFacet::create(['id_shell' => $shell->id]);
 
-        $response = $this->get("/api/shell/$shell->swiss_number");
+        $response = $this->get("/api/shell/$shell_user->swiss_number");
         $response->assertStatus(200);
     }
 
@@ -264,6 +268,8 @@ class APIRouteTest extends TestCase
     public function accessToAudioListThroughShell()
     {
         $shell = Shell::create();
+        $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
+        $shell_dropbox = ShellDropboxFacet::create(['id_shell' => $shell->id]);
 
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
@@ -283,7 +289,7 @@ class APIRouteTest extends TestCase
             "url" => "/api/audiolist/$audiolist_edit->swiss_number/edit"
         ];
 
-        $response = $this->get("/api/shell/$shell->swiss_number");
+        $response = $this->get("/api/shell/$shell_user->swiss_number");
         $this->assertEquals(json_encode($view_array),
             json_encode(json_decode($response->getContent())->contents->audiolists_view));
         $this->assertEquals(json_encode($edit_array),
@@ -322,9 +328,11 @@ class APIRouteTest extends TestCase
     {
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($random) {
             $shell = Shell::create();
+            $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
+            $shell_dropbox = ShellDropboxFacet::create(['id_shell' => $shell->id]);
 
             $audiolist_array = $this->generateAudioListsJson($shell, $random);
-            $response = $this->put("/api/shell/$shell->swiss_number", ["data" => $audiolist_array]);
+            $response = $this->put("/api/shell/$shell_user->swiss_number", ["data" => $audiolist_array]);
             $mapped_view = array_map(function($audiolist) {
                 if (!empty($audiolist) && $audiolist["type"] == "view")
                     return [

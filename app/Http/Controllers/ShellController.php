@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Shell;
+use App\Shell,
+    App\ShellUserFacet;
 
 use App\AudioListEditFacet,
     App\AudioListViewFacet;
@@ -14,19 +15,21 @@ class ShellController extends Controller
     public function store()
     {
         $shell = Shell::create();
+        $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
+        $shell_dropbox = ShellUserFacet::create(['id_shell' => $shell->id]);
 
         return response()->json(
             [
                 'type' => 'ocap',
                 'ocapType' => 'Shell',
-                'url' => "/api/shell/$shell->swiss_number"
+                'url' => "/api/shell/$shell_user->swiss_number"
             ]
         );
     }
 
     public function show($shell_id)
     {
-        $shell = Shell::findOrFail($shell_id);
+        $shell = ShellUserFacet::findOrFail($shell_id);
 
         return response()->json(
                 $shell->getJsonShell());
@@ -45,7 +48,7 @@ class ShellController extends Controller
 
     public function update(Request $request, $shell_id)
     {
-        $shell = Shell::findOrFail($shell_id);
+        $shell = ShellUserFacet::findOrFail($shell_id);
 
         if ($request->has('data') && isset($request["data"]["audiolists"])) {
             $new_audiolists = array_filter(

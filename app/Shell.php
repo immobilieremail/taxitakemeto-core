@@ -2,11 +2,10 @@
 
 namespace App;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 
-use App\SwissObject;
 
-class Shell extends SwissObject
+class Shell extends Model
 {
     public function audioListEdits()
     {
@@ -54,50 +53,5 @@ class Shell extends SwissObject
         })->values()->all();
 
         return $this->getAudioListFacets($audios, "AudioListEdit");
-    }
-
-    public function getJsonShell()
-    {
-        return [
-            'type' => 'Shell',
-            'id' => $this->swiss_number,
-            'update' => "/api/shell/" . $this->swiss_number,
-            'contents' => [
-                'audiolists_view' => $this->getAudioListViews(),
-                'audiolists_edit' => $this->getAudioListEdits()
-            ]
-        ];
-    }
-
-    private function updateShellSetJoinPos($new_audiolist, $pos)
-    {
-        $join = JoinAudioList::all()
-            ->where('shell_swiss_number', $this->swiss_number)
-            ->where('join_audio_list_id', $new_audiolist->swiss_number)
-            ->first();
-        $join->pos = $pos;
-        $join->save();
-    }
-
-    public function updateShell($new_audiolists)
-    {
-        $pos_edit = 0;
-        $pos_view = 0;
-
-        DB::beginTransaction();
-
-        $this->audioListViews()->detach();
-        $this->audioListEdits()->detach();
-        foreach ($new_audiolists as $new_audiolist) {
-            if ($new_audiolist instanceof AudioListEditFacet) {
-                $this->audioListEdits()->save($new_audiolist);
-                $this->updateShellSetJoinPos($new_audiolist, $pos_edit++);
-            } else {
-                $this->audioListViews()->save($new_audiolist);
-                $this->updateShellSetJoinPos($new_audiolist, $pos_view++);
-            }
-        }
-
-        DB::commit();
     }
 }
