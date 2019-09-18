@@ -5,10 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Shell,
-    App\ShellUserFacet;
+    App\ShellUserFacet,
+    App\ShellDropboxFacet;
 
 use App\AudioListEditFacet,
     App\AudioListViewFacet;
+
+use App\Jobs\ProcessDropboxMessage;
+
+use App\Http\Requests\SendDropboxMessageRequest;
 
 class ShellController extends Controller
 {
@@ -16,7 +21,7 @@ class ShellController extends Controller
     {
         $shell = Shell::create();
         $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
-        $shell_dropbox = ShellUserFacet::create(['id_shell' => $shell->id]);
+        $shell_dropbox = ShellDropboxFacet::create(['id_shell' => $shell->id]);
 
         return response()->json(
             [
@@ -61,6 +66,45 @@ class ShellController extends Controller
                     $shell->getJsonShell());
             } else
                 abort(400);
+        } else
+            abort(400);
+    }
+
+    /**
+     * Get objects needed to send a message to ShellDropbox
+     *
+     * @param mixed $data (return null if not array)
+     * @return mixed (array : null)
+     */
+    private function sendGetElementsID($data)
+    {
+        preg_match('#\w+==#', $data["ocap"], $ocap_id);
+        preg_match('#\w+==#', $data["dropbox"],$dropbox_id);
+
+        $shell_dropbox = ShellDropboxFacet::find($dropbox_id[0]);
+        $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';
+        $facet = $ocap_class::find($ocap_id[0]);
+        if ($shell_dropbox && $facet) {
+            return [
+                'dropbox' => $shell_dropbox,
+                'facet' => $facet
+            ];
+        } else
+            return null;
+    }
+
+    public function send(SendDropboxMessageRequest $request, $shell_id)
+    {
+        $shell_user = ShellUserFacet::findOrFail($shell_id);
+
+        $valid_data = collect($request["data"])->map(function ($data) {
+            return $this->sendGetElementsID($data);
+        });
+        if (!$valid_data->contains(null)) {
+            $valid_data->map(function ($data) {
+                $this->dispatch(new ProcessDropboxMessage($data));
+            });
+            return response('', 200);
         } else
             abort(400);
     }
