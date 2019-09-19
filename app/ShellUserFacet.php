@@ -41,8 +41,7 @@ class ShellUserFacet extends SwissObject
 
     private function updateShellSetJoinPos($new_audiolist, $pos)
     {
-        $join = JoinAudioList::all()
-            ->where('shell_id', $this->id_shell)
+        $join = JoinAudioList::where('shell_id', $this->id_shell)
             ->where('join_audio_list_id', $new_audiolist->swiss_number)
             ->first();
         $join->pos = $pos;

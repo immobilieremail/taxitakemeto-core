@@ -64,8 +64,7 @@ class AudioListEditFacet extends SwissObject
         $audiolist->audioViews()->detach();
         foreach ($new_audios as $new_audio) {
             $audiolist->audioViews()->save($new_audio);
-            $join = JoinAudio::all()
-                ->where('audio_list_id', $audiolist->id)
+            $join = JoinAudio::where('audio_list_id', $audiolist->id)
                 ->where('join_audio_id', $new_audio->swiss_number)
                 ->first();
             $join->pos = $pos++;
