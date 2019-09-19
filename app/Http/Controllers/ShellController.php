@@ -13,6 +13,7 @@ use App\AudioListEditFacet,
 
 use App\Jobs\ProcessDropboxMessage;
 
+use App\Http\Requests\UpdateShellRequest;
 use App\Http\Requests\SendDropboxMessageRequest;
 
 class ShellController extends Controller
@@ -40,32 +41,39 @@ class ShellController extends Controller
                 $shell->getJsonShell());
     }
 
-    private function mapUpdateRequest(Array $request_audiolists)
+    /**
+     * Get facet which will be linked to shell
+     *
+     * @param array $audiolist
+     * @return mixed
+     */
+    private function mapUpdateRequest(Array $audiolist)
     {
-        return array_map(function ($audiolist) {
-            if (isset($audiolist["id"]) && is_string($audiolist["id"])) {
-                $audiolist_view = AudioListViewFacet::find($audiolist["id"]);
-                $audiolist_edit = AudioListEditFacet::find($audiolist["id"]);
-                return ($audiolist_view) ? $audiolist_view : $audiolist_edit;
-            }
-        }, $request_audiolists);
+        preg_match('#[^/]+$#', $audiolist["ocap"], $ocap_id);
+
+        $ocap_class = 'App\\' . $audiolist["ocapType"] . 'Facet';
+        if (class_exists($ocap_class)) {
+            $facet = $ocap_class::find($ocap_id[0]);
+            if ($facet) {
+                return $facet;
+            } else
+                return null;
+        } else
+            return null;
     }
 
-    public function update(Request $request, $shell_id)
+    public function update(UpdateShellRequest $request, $shell_id)
     {
-        $shell = ShellUserFacet::findOrFail($shell_id);
+        $shell_user = ShellUserFacet::findOrFail($shell_id);
+        $audiolists = $request["data"]["audiolists"];
 
-        if ($request->has('data') && isset($request["data"]["audiolists"])) {
-            $new_audiolists = array_filter(
-                $this->mapUpdateRequest($request["data"]["audiolists"]));
-            if (count($request["data"]["audiolists"]) == count($new_audiolists)) {
-
-                $shell->updateShell($new_audiolists);
-
-                return response()->json(
-                    $shell->getJsonShell());
-            } else
-                abort(400);
+        $new_audiolists = collect($audiolists)->map(function ($audiolist) {
+            return $this->mapUpdateRequest($audiolist);
+        });
+        if (!$new_audiolists->contains(null)) {
+            $shell_user->updateShell($new_audiolists);
+            return response()->json(
+                $shell_user->getJsonShell());
         } else
             abort(400);
     }
@@ -84,14 +92,14 @@ class ShellController extends Controller
         $shell_dropbox = ShellDropboxFacet::find($dropbox_id[0]);
         $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';
         if (class_exists($ocap_class)) {
-        $facet = $ocap_class::find($ocap_id[0]);
-        if ($shell_dropbox && $facet) {
-            return [
-                'dropbox' => $shell_dropbox,
-                'facet' => $facet
-            ];
-        } else
-            return null;
+            $facet = $ocap_class::find($ocap_id[0]);
+            if ($shell_dropbox && $facet) {
+                return [
+                    'dropbox' => $shell_dropbox,
+                    'facet' => $facet
+                ];
+            } else
+                return null;
         } else
             return null;
     }
