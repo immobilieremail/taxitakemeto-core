@@ -309,13 +309,15 @@ class APIRouteTest extends TestCase
             if ($random_facet == 0) {
                 $shell->audioListViews()->save($audiolist_view);
                 $audiolist_array["audiolists"][] = [
-                    'id' => $audiolist_view->swiss_number,
+                    'ocapType' => 'AudioListView',
+                    'ocap' => '/api/audiolist/' . $audiolist_view->swiss_number,
                     'type' => 'view'
                 ];
             } else {
                 $shell->audioListEdits()->save($audiolist_edit);
                 $audiolist_array["audiolists"][] = [
-                    'id' => $audiolist_edit->swiss_number,
+                    'ocapType' => 'AudioListEdit',
+                    'ocap' => '/api/audiolist/' . $audiolist_edit->swiss_number,
                     'type' => 'edit'
                 ];
             }
@@ -337,16 +339,16 @@ class APIRouteTest extends TestCase
                 if (!empty($audiolist) && $audiolist["type"] == "view")
                     return [
                         'type' => 'ocap',
-                        'ocapType' => 'AudioListView',
-                        'url' => '/api/audiolist/' . $audiolist["id"]
+                        'ocapType' => $audiolist["ocapType"],
+                        'url' => $audiolist["ocap"]
                     ];
             }, $audiolist_array["audiolists"]);
             $mapped_edit = array_map(function($audiolist) {
                 if (!empty($audiolist) && $audiolist["type"] == "edit")
                     return [
                         'type' => 'ocap',
-                        'ocapType' => 'AudioListEdit',
-                        'url' => '/api/audiolist/' . $audiolist["id"] . '/edit'
+                        'ocapType' => $audiolist["ocapType"],
+                        'url' => $audiolist["ocap"] . '/edit'
                     ];
             }, $audiolist_array["audiolists"]);
             $response->assertStatus(200);
