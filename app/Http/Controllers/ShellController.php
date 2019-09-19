@@ -49,7 +49,8 @@ class ShellController extends Controller
      */
     private function mapUpdateRequest(Array $audiolist)
     {
-        preg_match('#[^/]+$#', $audiolist["ocap"], $ocap_id);
+        preg_match('#[^/]+$#', str_replace(
+            "/edit", "", $audiolist["ocap"]), $ocap_id);
 
         $ocap_class = 'App\\' . $audiolist["ocapType"] . 'Facet';
         if (class_exists($ocap_class)) {
@@ -86,8 +87,9 @@ class ShellController extends Controller
      */
     private function sendGetElementsID($data)
     {
-        preg_match('#[^/]+$#', $data["ocap"], $ocap_id);
-        preg_match('#[^/]+$#', $data["dropbox"],$dropbox_id);
+        preg_match('#[^/]+$#', str_replace(
+            "/edit", "", $data["ocap"]), $ocap_id);
+        preg_match('#[^/]+$#', $data["dropbox"], $dropbox_id);
 
         $shell_dropbox = ShellDropboxFacet::find($dropbox_id[0]);
         $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';

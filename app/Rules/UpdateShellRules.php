@@ -21,7 +21,8 @@ class UpdateShellRules implements Rule
                     if (!isset($audiolist["ocapType"], $audiolist["ocap"])
                         || !is_string($audiolist["ocapType"])
                         || !is_string($audiolist["ocap"])
-                        || !preg_match('#[^/]+$#', $audiolist["ocap"], $matches)) {
+                        || !preg_match('#[^/]+$#', str_replace(
+                                "/edit", "", $audiolist["ocap"]))) {
                         return false;
                     }
                 }
