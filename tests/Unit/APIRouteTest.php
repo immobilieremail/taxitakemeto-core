@@ -98,8 +98,6 @@ class APIRouteTest extends TestCase
             $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
             $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
 
-            $audiolist->audioViews()->save($audio_view);
-            $audiolist->audioEdits()->save($audio_edit);
             $audio_array["audios"][] = [
                 'id' => $audio_view->swiss_number
             ];
@@ -110,7 +108,7 @@ class APIRouteTest extends TestCase
     /** @test */
     public function updateAudiolist()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($random) {
+        $this->limitTo(50)->forAll(Generator\nat())->then(function ($random) {
             $audiolist = AudioList::create();
             $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
             $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
@@ -296,31 +294,33 @@ class APIRouteTest extends TestCase
             json_encode(json_decode($response->getContent())->contents->audiolists_edit));
     }
 
-    private function generateAudioListsJson($shell, $random)
+    private function generateAudioListFacet()
     {
-        $audiolist_array["audiolists"] = [];
+        $random_facet = random_int(0, 1);
+
+        $audiolist = AudioList::create();
+        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
+        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+
+        return ($random_facet) ? $audiolist_view : $audiolist_edit;
+    }
+
+    private function generateAudioListsJson($random, $dropbox = null)
+    {
+        $audiolist_array = [];
 
         for ($i = 0; $i < $random; $i++) {
-            $random_facet = random_int(0, 1);
-            $audiolist = AudioList::create();
-            $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
-            $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-
-            if ($random_facet == 0) {
-                $shell->audioListViews()->save($audiolist_view);
-                $audiolist_array["audiolists"][] = [
-                    'ocapType' => 'AudioListView',
-                    'ocap' => '/api/audiolist/' . $audiolist_view->swiss_number,
-                    'type' => 'view'
-                ];
-            } else {
-                $shell->audioListEdits()->save($audiolist_edit);
-                $audiolist_array["audiolists"][] = [
-                    'ocapType' => 'AudioListEdit',
-                    'ocap' => '/api/audiolist/' . $audiolist_edit->swiss_number,
-                    'type' => 'edit'
-                ];
-            }
+            $facet = $this->generateAudioListFacet();
+            $json_facet = [
+                'ocapType' => '',
+                'ocap' => '/api/audiolist/' . $facet->swiss_number,
+                'dropbox' => $dropbox
+            ];
+            if ($facet instanceof AudioListViewFacet) {
+                $json_facet['ocapType'] = 'AudioListView';
+            } else
+                $json_facet['ocapType'] = 'AudioListEdit';
+            $audiolist_array[] = $json_facet;
         }
         return $audiolist_array;
     }
@@ -328,15 +328,15 @@ class APIRouteTest extends TestCase
     /** @test */
     public function updateShell()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($random) {
+        $this->limitTo(50)->forAll(Generator\nat())->then(function ($random) {
             $shell = Shell::create();
             $shell_user = ShellUserFacet::create(['id_shell' => $shell->id]);
             $shell_dropbox = ShellDropboxFacet::create(['id_shell' => $shell->id]);
 
-            $audiolist_array = $this->generateAudioListsJson($shell, $random);
+            $audiolist_array["audiolists"] = $this->generateAudioListsJson($random);
             $response = $this->put("/api/shell/$shell_user->swiss_number", ["data" => $audiolist_array]);
             $mapped_view = array_map(function($audiolist) {
-                if (!empty($audiolist) && $audiolist["type"] == "view")
+                if (!empty($audiolist) && $audiolist["ocapType"] == "AudioListView")
                     return [
                         'type' => 'ocap',
                         'ocapType' => $audiolist["ocapType"],
@@ -344,7 +344,7 @@ class APIRouteTest extends TestCase
                     ];
             }, $audiolist_array["audiolists"]);
             $mapped_edit = array_map(function($audiolist) {
-                if (!empty($audiolist) && $audiolist["type"] == "edit")
+                if (!empty($audiolist) && $audiolist["ocapType"] == "AudioListEdit")
                     return [
                         'type' => 'ocap',
                         'ocapType' => $audiolist["ocapType"],
@@ -356,6 +356,49 @@ class APIRouteTest extends TestCase
                 json_encode(array_values(array_filter($mapped_edit))));
             $this->assertEquals(json_encode($response->getData()->contents->audiolists_view),
                 json_encode(array_values(array_filter($mapped_view))));
+        });
+    }
+
+    /** @test */
+    public function sendShellDropboxMessage()
+    {
+        $this->limitTo(50)->forAll(Generator\nat())->then(function ($random) {
+            $shell1 = Shell::create();
+            $shell_user1 = ShellUserFacet::create(['id_shell' => $shell1->id]);
+            $shell_dropbox1 = ShellDropboxFacet::create(['id_shell' => $shell1->id]);
+
+            $shell2 = Shell::create();
+            $shell_user2 = ShellUserFacet::create(['id_shell' => $shell2->id]);
+            $shell_dropbox2 = ShellDropboxFacet::create(['id_shell' => $shell2->id]);
+
+            $audiolist_array = $this->generateAudioListsJson($random + 1, "/api/shell/$shell_dropbox2->swiss_number");
+            $response = $this->post("/api/shell/$shell_user1->swiss_number", ["data" => $audiolist_array]);
+            $response->assertStatus(200);
+        });
+    }
+
+    /** @test */
+    public function sendBadShellDropboxMessage()
+    {
+        $this->limitTo(50)->forAll(Generator\string(), Generator\string())->then(function ($ocap_type, $ocap) {
+            if ($ocap_type != "" && $ocap != "" && substr($ocap_type, -1) != "/" && substr($ocap, -1) != "/") {
+                $shell1 = Shell::create();
+                $shell_user1 = ShellUserFacet::create(['id_shell' => $shell1->id]);
+                $shell_dropbox1 = ShellDropboxFacet::create(['id_shell' => $shell1->id]);
+
+                $shell2 = Shell::create();
+                $shell_user2 = ShellUserFacet::create(['id_shell' => $shell2->id]);
+                $shell_dropbox2 = ShellDropboxFacet::create(['id_shell' => $shell2->id]);
+
+                $msg = [
+                    "ocapType" => $ocap_type,
+                    "ocap" => $ocap,
+                    "dropbox" => "/api/shell/$shell_dropbox2->swiss_number"
+                ];
+                $response = $this->post("/api/shell/$shell_user1->swiss_number", ["data" => [$msg]]);
+                $response->assertStatus(400);
+            } else
+                $this->assertTrue(true);
         });
     }
 }
