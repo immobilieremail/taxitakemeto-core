@@ -149,7 +149,7 @@ GET /api/shell/{shell_id}
 ```
 {
     "type":"Shell",
-    "id":"{shell_id}",
+    "dropbox":"/api/...",
     "update":"/api/...", (PUT)
     "contents":[
         "audiolists_view":[
@@ -170,8 +170,10 @@ GET /api/shell/{shell_id}
 }
 ```
 
+"dropbox" field is the Shell public url : it gives others Shells the capacity to send ocap to this Shell.
+
 "update" request header "Content-Type" must be set to "application/json".
-"update" request body must contain a json with a "data" field containing an "audiolists" array containing all the "id" of the AudioList Facets you want to link to the shell.
+"update" request body must contain a json with a "data" field containing an "audiolists" array containing the "ocapType" and the "ocap" url of the objects which will be added to the shell.
 "update" request returns the updated Shell when successful.
 
 ### Example
@@ -181,13 +183,16 @@ GET /api/shell/{shell_id}
     "data":{
         "audiolists":[
             {
-                "id":"{AudioListViewFacet_id}
+                "ocapType":"AudioListView",
+                "ocap":"/api/audiolist/89adaA74@a_0zaxQM"
             },
             {
-                "id":"{AudioListEditFacet_id}
+                "ocapType":"AudioListEdit",
+                "ocap":"/api/audiolist/@apNdzaw463n63bcR"
             },
             {
-                "id":"{AudioListViewFacet_id}
+                "ocapType":"AudioListView",
+                "ocap":"/api/audiolist/opea4587Oa3Z_uya"
             }
         ]
     }
