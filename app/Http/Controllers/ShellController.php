@@ -93,7 +93,7 @@ class ShellController extends Controller
 
         $shell_dropbox = ShellDropboxFacet::find($dropbox_id[0]);
         $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';
-        if (class_exists($ocap_class)) {
+        if (method_exists($ocap_class, 'shells')) {
             $facet = $ocap_class::find($ocap_id[0]);
             if ($shell_dropbox && $facet) {
                 return [

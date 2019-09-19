@@ -19,12 +19,18 @@ class ShellUserFacet extends SwissObject
         return $obj;
     }
 
+    public function getDropboxFacet()
+    {
+        return ShellDropboxFacet::where('id_shell', $this->id_shell)->first();
+    }
+
     public function getJsonShell()
     {
         $shell = Shell::find($this->id_shell);
 
         return [
             'type' => 'Shell',
+            'dropbox' => "/api/shell/" . $this->getDropboxFacet()->swiss_number,
             'update' => "/api/shell/" . $this->swiss_number,
             'contents' => [
                 'audiolists_view' => $shell->getAudioListViews(),
