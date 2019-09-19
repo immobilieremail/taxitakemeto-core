@@ -26,7 +26,7 @@ class SendDropboxMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            'data' => [new DropboxMessageRules]
+            'data' => ['required', new DropboxMessageRules]
         ];
     }
 }

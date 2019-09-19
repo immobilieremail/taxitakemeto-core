@@ -78,17 +78,20 @@ class ShellController extends Controller
      */
     private function sendGetElementsID($data)
     {
-        preg_match('#\w+==#', $data["ocap"], $ocap_id);
-        preg_match('#\w+==#', $data["dropbox"],$dropbox_id);
+        preg_match('#[^/]+$#', $data["ocap"], $ocap_id);
+        preg_match('#[^/]+$#', $data["dropbox"],$dropbox_id);
 
         $shell_dropbox = ShellDropboxFacet::find($dropbox_id[0]);
         $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';
+        if (class_exists($ocap_class)) {
         $facet = $ocap_class::find($ocap_id[0]);
         if ($shell_dropbox && $facet) {
             return [
                 'dropbox' => $shell_dropbox,
                 'facet' => $facet
             ];
+        } else
+            return null;
         } else
             return null;
     }

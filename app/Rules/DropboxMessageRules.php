@@ -21,8 +21,8 @@ class DropboxMessageRules implements Rule
                     || !is_string($data["ocapType"])
                     || !is_string($data["dropbox"])
                     || !is_string($data["ocap"])
-                    || !preg_match('#\w+==#', $data["dropbox"])
-                    || !preg_match('#\w+==#', $data["ocap"]))
+                    || !preg_match('#[^/]+$#', $data["dropbox"], $dropbox_matches)
+                    || !preg_match('#[^/]+$#', $data["ocap"], $ocap_matches))
                     return false;
             }
             return true;
