@@ -14,23 +14,28 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class APIRouteTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
-    public function audiolistEntryPoint()
+    public function audio_list_entry_point()
     {
-        $keys_to_test = array('type', 'ocapType', 'url');
 
-        $count_before = AudioList::all()->count();
-        $result = $this->post('/api/audiolist');
-        $json_decode = json_decode($result->getContent());
+        $response       = $this->get('/api/audiolist/create');
+        $audioListCount = AudioList::all()->count();
 
-        $count_after = AudioList::all()->count();
-        $this->assertEquals($count_before + 1, $count_after);
-        foreach ($keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'ocapType',
+                'url'
+            ]);
+        $this->assertEquals($audioListCount, 1);
     }
 
     /** @test */
-    public function getAudiolistEdit()
+    public function get_audio_list_edit()
     {
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
