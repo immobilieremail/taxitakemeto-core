@@ -15,14 +15,6 @@ use App\Http\Requests\NewAudioRequest;
 
 class AudioController extends Controller
 {
-    // need dispatch method from Controller
-    private function convert(Audio $audio)
-    {
-        $this->dispatch(new ConvertUploadedAudio($audio));
-        $audio->path = "$audio->id.mp3";
-        $audio->save();
-    }
-
     public function store(NewAudioRequest $request)
     {
         if ($request->has('audio')) {
@@ -33,7 +25,7 @@ class AudioController extends Controller
 
             $request->file('audio')->storeAs('storage/uploads',
                 "$audio->id.$extension", 'public');
-            $this->convert($audio);
+            $this->dispatch(new ConvertUploadedAudio($audio));
             return response()->json(
                 [
                     "type" => "ocap",
@@ -49,10 +41,10 @@ class AudioController extends Controller
     {
         $edit_facet = AudioEditFacet::find($facet_id);
         $view_facet = AudioViewFacet::find($facet_id);
-        $facet = ($view_facet != NULL) ?
+        $facet = ($view_facet != null) ?
             $view_facet : $edit_facet;
 
-        if ($facet != NULL) {
+        if ($facet != null) {
             $audio_path = Audio::find($facet->id_audio)->path;
             return response()->json(
                 [
@@ -69,7 +61,7 @@ class AudioController extends Controller
     {
         $edit_facet = AudioEditFacet::find($edit_facet_id);
 
-        if ($edit_facet != NULL) {
+        if ($edit_facet != null) {
             $audio_path = Audio::find($edit_facet->id_audio)->path;
             return response()->json(
                 [
@@ -87,17 +79,13 @@ class AudioController extends Controller
     public function destroy($facet_id)
     {
         $audio_edit = AudioEditFacet::find($facet_id);
-        $audio = ($audio_edit != NULL) ?
-            Audio::find($audio_edit->id_audio) : NULL;
+        $audio = ($audio_edit != null) ?
+            Audio::find($audio_edit->id_audio) : null;
 
-        if ($audio != NULL && Storage::disk('converts')->exists($audio->path)) {
+        if ($audio != null && Storage::disk('converts')->exists($audio->path)) {
             Storage::disk('converts')->delete($audio->path);
             $audio->delete();
-            return response()->json(
-                [
-                    'status' => 200
-                ]
-            );
+            return response('', 200);
         } else
             abort(404);
     }
