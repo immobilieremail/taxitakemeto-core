@@ -18,15 +18,6 @@ class CreateJoinListAudiosTable extends Migration
             $table->string('id_audio');
             $table->timestamps();
 
-            $table->foreign('id_list')
-                ->references('id')
-                ->on('audio_lists')
-                ->onDelete('cascade');
-
-            $table->foreign('id_audio')
-                ->references('id')
-                ->on('audio')
-                ->onDelete('cascade');
         });
     }
 

@@ -13,13 +13,9 @@ class ReplaceJoinsWithRelationship extends Migration
      */
     public function up()
     {
-        Schema::table('audio', function (Blueprint $table) {
-            $table->bigInteger('audio_list_id')->nullable();
-        });
         Schema::dropIfExists('join_shell_to_msgs');
         Schema::dropIfExists('join_dropbox_to_msgs');
         Schema::dropIfExists('join_shell_shell_dropboxes');
-        Schema::dropIfExists('shell_dropbox_messages');
         Schema::dropIfExists('shell_dropboxes');
         Schema::dropIfExists('join_shell_view_facets');
         Schema::dropIfExists('join_shell_edit_facets');
