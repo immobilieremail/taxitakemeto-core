@@ -10,7 +10,8 @@ class SwissObject extends Model
     protected $primaryKey = 'swiss_number';
     protected $keyType = 'string';
 
-    public function __construct() {
+    public function __construct(array $attributes = array()) {
+        parent::__construct($attributes);
         $forbidden_char = array("+", "/");
         $substitute_char = array("@", "_");
         $swiss_number = base64_encode(gmp_export(gmp_random_bits(128)));

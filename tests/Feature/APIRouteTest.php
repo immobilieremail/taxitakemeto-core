@@ -35,22 +35,24 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
-    public function get_audio_list_edit()
+    public function get_audio_list_edit_and_view_facets()
     {
-        $audiolist = AudioList::create();
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
-        $keys_to_test = array('type', 'new_audio', 'view_facet', 'contents');
-
-        $result = $this->get("/api/audiolist/$audiolist_edit->swiss_number/edit");
-        $json_decode = json_decode($result->getContent());
-
-        foreach ($keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode));
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        
+        $response   = $this->get(route('audiolist.edit', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4)
+            ->assertJsonStructure([
+                'type',
+                'new_audio',
+                'view_facet',
+                'contents'
+            ]);
     }
 
     /** @test */
-    public function getAudiolistEditWithAudio()
+    public function get_audiolist_edit_with_audio()
     {
         $audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
