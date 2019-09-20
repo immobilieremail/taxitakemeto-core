@@ -10,9 +10,9 @@ class AudioListEditFacet extends SwissObject
     protected $fillable = ['id_list'];
 
 
-    public function viewFacet()
+    public function audioList()
     {
-        return $this->belongsTo(AudioList::class, 'id', 'swiss_number');
+        return $this->belongsTo(AudioList::class, 'id', 'id_list');
     }
 
     // public static function create(Array $param)
@@ -50,6 +50,8 @@ class AudioListEditFacet extends SwissObject
 
     public function addAudio(String $extension): Audio
     {
+        $this->audioList->audios()->save(new Audio(['extension' => $extension]));
+
         $audiolist = AudioList::find($this->id_list);
         $audio = Audio::create(['extension' => $extension]);
 
@@ -57,8 +59,5 @@ class AudioListEditFacet extends SwissObject
         return $audio;
     }
 
-    public function getViewFacet()
-    {
-        return AudioListViewFacet::where('id_list', $this->id_list)->first();
-    }
+    
 }

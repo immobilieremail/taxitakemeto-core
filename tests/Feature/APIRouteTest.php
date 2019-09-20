@@ -38,7 +38,7 @@ class APIRouteTest extends TestCase
     public function get_audio_list_edit_and_view_facets()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
-        
+
         $response   = $this->get(route('audiolist.edit', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
         $response
             ->assertStatus(200)
@@ -54,7 +54,16 @@ class APIRouteTest extends TestCase
     /** @test */
     public function get_audiolist_edit_with_audio()
     {
-        $audiolist = AudioList::create();
+        $this->withoutExceptionHandling();
+        $audiolistWithFacets = factory(AudioList::class)->create();
+
+        //$audiolistWithFacets->editFacet->
+        $response   = $this->get(route('audiolist.edit', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
+
+        $response
+            ->assertStatus(200);
+
+        /*$audiolist = AudioList::create();
         $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
         $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
         $keys_to_test = array('audio', 'update_audio', 'delete_audio');
@@ -67,7 +76,7 @@ class APIRouteTest extends TestCase
         foreach ($keys_to_test as $key)
             $this->assertTrue(array_key_exists($key, $json_decode->contents[0]));
         foreach ($audio_keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode->contents[0]->audio));
+            $this->assertTrue(array_key_exists($key, $json_decode->contents[0]->audio));*/
     }
 
     public function postAudiolistEditNewAudio()

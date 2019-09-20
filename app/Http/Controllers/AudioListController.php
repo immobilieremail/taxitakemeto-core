@@ -45,16 +45,17 @@ class AudioListController extends Controller
             abort(404);
     }
 
-    public function edit($edit_facet_id)
+    public function edit(AudioListEditFacet $edit_facet_id)
     {
-        $edit_facet = AudioListEditFacet::find($edit_facet_id);
-
+        dd($edit_facet_id);
+        $edit_facet = AudioListEditFacet::with('audioList')->find($edit_facet_id);
+        dd($edit_facet);
         if ($edit_facet != NULL) {
             return response()->json(
                 [
                     'type' => 'ALEdit',
                     'new_audio' => "$this->app_url/api/audiolist/$edit_facet_id/audio",
-                    'view_facet' => "$this->app_url/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
+                    'view_facet' => "$this->app_url/api/audiolist/" . $edit_facet->audioList->viewFacet->swiss_number,
                     'contents' => $edit_facet->getEditableAudios()
                 ]
             );
