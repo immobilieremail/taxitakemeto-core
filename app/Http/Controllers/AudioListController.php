@@ -12,7 +12,7 @@ class AudioListController extends Controller
 {
     protected $app_url = "http://localhost:8000";
 
-    public function store()
+    public function create()
     {
         $audiolist = AudioList::create();
         $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
