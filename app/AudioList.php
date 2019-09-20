@@ -15,7 +15,7 @@ class AudioList extends Model
 
     public function audios()
     {
-        return $this->hasMany('App\Audio');
+        return $this->hasMany(Audio::class);
     }
 
     public function viewFacet()
