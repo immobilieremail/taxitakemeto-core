@@ -89,6 +89,10 @@ return [
     */
 
     'locale' => 'en',
+        'languages' => [
+            'en' => 'English',
+            'fr' => 'Français',
+        ],
 
     /*
     |--------------------------------------------------------------------------
@@ -183,6 +187,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Collective\Html\HtmlServiceProvider::class,
+        Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
+
     ],
 
     /*
@@ -233,7 +240,9 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'FFMpeg' => Pbmedia\LaravelFFMpeg\FFMpegFacade::class,
     ],
 
 ];
