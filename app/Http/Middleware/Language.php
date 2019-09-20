@@ -2,16 +2,12 @@
 
 namespace App\Http\Middleware;
 
-<<<<<<< HEAD
-use Closure;
-=======
 use Closure,
     Illuminate\Foundation\Application,
     Illuminate\Http\Request,
     Illuminate\Support\Facades\App,
     Illuminate\Support\Facades\Config,
     Illuminate\Support\Facades\Session;
->>>>>>> c84982b970c5d4b5b8285329b8d125ce4f645e27
 
 class Language
 {
@@ -24,16 +20,6 @@ class Language
      */
     public function handle($request, Closure $next)
     {
-<<<<<<< HEAD
-        if (!session()->has('locale')) {
-            session(['locale' => $request->getPreferredLanguage(config('app.locales'))]);
-        }
-
-        $locale = session('locale');
-        app()->setLocale($locale);
-
-        setlocale(LC_TIME, app()->environment('local') ? $locale : config('locale.languages')[$locale][1]);
-=======
         // Access to the first segment of the url
         $segment_1 = $request->segment(1);
 
@@ -55,7 +41,6 @@ class Language
         }
         // Set language for traduction files
         App::setLocale(Session::get('applocale'));
->>>>>>> c84982b970c5d4b5b8285329b8d125ce4f645e27
 
         return $next($request);
     }
