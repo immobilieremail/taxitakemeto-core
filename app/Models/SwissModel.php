@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Extensions\SwissNumber;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class SwissModel extends Model 
+abstract class SwissModel extends Model
 {
     protected $casts = [
         'id' => 'string'
@@ -20,5 +20,5 @@ abstract class SwissModel extends Model
             $swiss_number = new SwissNumber;
             $model->id = $swiss_number();
         });
-    }   
+    }
 }
