@@ -11,3 +11,5 @@
 |
 */
 
+Route::get('/elm', function (){
+    return view('elm');});
