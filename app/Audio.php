@@ -8,12 +8,19 @@ class Audio extends SwissObject
 {
     protected $fillable = ['path'];
 
-    public static function create(Array $param)
+    public function __construct(array $attributes = array())
     {
-        $obj = new Audio;
+        parent::__construct($attributes);
 
-        $obj->path = $obj->swiss_number . '.' . $param["extension"];
-        $obj->save();
-        return $obj;
+        if (isset($attributes['extension']))
+            $this->path = "$this->swiss_number." . $attributes['extension'];
+    }
+
+    public static function create(array $attributes = array())
+    {
+        $audio = new Audio($attributes);
+
+        $audio->save();
+        return $audio;
     }
 }

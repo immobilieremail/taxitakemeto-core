@@ -45,11 +45,10 @@ class AudioListController extends Controller
             abort(404);
     }
 
-    public function edit(AudioListEditFacet $edit_facet_id)
+    public function edit($edit_facet_id)
     {
-        dd($edit_facet_id);
-        $edit_facet = AudioListEditFacet::with('audioList')->find($edit_facet_id);
-        dd($edit_facet);
+        $edit_facet = AudioListEditFacet::find($edit_facet_id);
+
         if ($edit_facet != NULL) {
             return response()->json(
                 [

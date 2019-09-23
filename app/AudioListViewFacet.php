@@ -9,25 +9,13 @@ class AudioListViewFacet extends SwissObject
 {
     protected $fillable = ['id_list'];
 
-    public function __construct(array $attributes = array())
+    public function audioList()
     {
-        parent::__construct($attributes);
+        return $this->belongsTo(AudioList::class, 'id_list');
     }
-
-
-    // public static function create(Array $param)
-    // {
-    //     $obj = new AudioListViewFacet;
-
-    //     $obj->id_list = $param["id_list"];
-    //     $obj->save();
-    //     return $obj;
-    // }
 
     public function getAudios()
     {
-        $audiolist = AudioList::find($this->id_list);
-
-        return $audiolist->getAudios();
+        return $this->audioList->getAudios();
     }
 }

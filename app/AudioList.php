@@ -28,23 +28,19 @@ class AudioList extends Model
         return $this->hasOne(AudioListEditFacet::class, 'id_list', 'id');
     }
 
-
-
     public function getAudios()
     {
         $audios = $this->audios;
-        $audio_array = array();
 
-        foreach ($audios as $audio) {
-            array_push($audio_array,
-                array(
+        $audio_array = collect($audios)->map(function ($audio) {
+            return [
+                'audio' => [
                     'type' => 'Audio',
                     'audio_id' => $audio->swiss_number,
-                    'path_to_file' => str_replace(public_path(), '',
-                        Storage::disk('converts')->path($audio->path))
-                )
-            );
-        }
+                    'path_to_file' => $audio->path
+                ]
+            ];
+        });
         return $audio_array;
     }
 }
