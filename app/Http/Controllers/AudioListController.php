@@ -10,8 +10,6 @@ use App\AudioList,
 
 class AudioListController extends Controller
 {
-    protected $app_url = "http://localhost:8000";
-
     public function create()
     {
         $audiolist = AudioList::create();
@@ -22,7 +20,7 @@ class AudioListController extends Controller
             [
                 'type' => 'ocap',
                 'ocapType' => 'ALEdit',
-                'url' => "$this->app_url/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'url' => "/api/audiolist/$audiolist_edit->swiss_number/edit"
             ]
         );
     }
@@ -53,8 +51,8 @@ class AudioListController extends Controller
             return response()->json(
                 [
                     'type' => 'ALEdit',
-                    'new_audio' => "$this->app_url/api/audiolist/$edit_facet_id/audio",
-                    'view_facet' => "$this->app_url/api/audiolist/" . $edit_facet->audioList->viewFacet->swiss_number,
+                    'new_audio' => "/api/audiolist/$edit_facet->swiss_number/audio",
+                    'view_facet' => "/api/audiolist/" . $edit_facet->audioList->viewFacet->swiss_number,
                     'contents' => $edit_facet->getEditableAudios()
                 ]
             );
