@@ -17,9 +17,8 @@ class APIRouteTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function audio_list_entry_point()
+    public function audiolist_entry_point()
     {
-
         $response       = $this->get('/api/audiolist/create');
         $audioListCount = AudioList::all()->count();
 
@@ -31,11 +30,49 @@ class APIRouteTest extends TestCase
                 'ocapType',
                 'url'
             ]);
-        $this->assertEquals($audioListCount, 1);
     }
 
     /** @test */
-    public function get_audio_list_edit_and_view_facets()
+    public function get_audiolist_view()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $response   = $this->get(route('audiolist.show', ['audiolist' => $audiolistWithFacets->viewFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'contents'
+            ]);
+    }
+
+    /** @test */
+    public function get_audiolist_view_with_audio()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $audiolistWithFacets->editFacet->addAudio('mp3');
+        $response   = $this->get(route('audiolist.show', ['audiolist' => $audiolistWithFacets->viewFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'contents' => [
+                    [
+                        'audio' => [
+                            'type',
+                            'audio_id',
+                            'path_to_file'
+                        ]
+                    ]
+                ]
+            ]);
+    }
+
+    /** @test */
+    public function get_audiolist_edit()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
 
@@ -54,45 +91,28 @@ class APIRouteTest extends TestCase
     /** @test */
     public function get_audiolist_edit_with_audio()
     {
-        $this->withoutExceptionHandling();
-        $audiolistWithFacets = factory(AudioList::class)->create();
+        $audiolistWithFacets    = factory(AudioList::class)->create();
 
-        //$audiolistWithFacets->editFacet->
+        $audiolistWithFacets->editFacet->addAudio('mp3');
         $response   = $this->get(route('audiolist.edit', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
-
         $response
-            ->assertStatus(200);
-
-        /*$audiolist = AudioList::create();
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
-        $keys_to_test = array('audio', 'update_audio', 'delete_audio');
-        $audio_keys_to_test = array('type', 'audio_id', 'path_to_file');
-
-        $audiolist_edit->addAudio('mp3');
-        $result = $this->get("/api/audiolist/$audiolist_edit->swiss_number/edit");
-        $json_decode = json_decode($result->getContent());
-
-        foreach ($keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode->contents[0]));
-        foreach ($audio_keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode->contents[0]->audio));*/
-    }
-
-    public function postAudiolistEditNewAudio()
-    {
-        $audiolist = AudioList::create();
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $file = new UploadedFile("/home/louis/Musique/applause.wav", "applause.wav", "audio/x-wav", 0);
-        $keys_to_test = array('type', 'audio_id', 'path_to_file');
-
-        $count_before = Audio::all()->count();
-        $response = $this->post("/api/audiolist/$audiolist_edit->swiss_number/audio", ['audio' => $file]);
-        $json_decode = json_decode($response->getContent());
-
-        $count_after = Audio::all()->count();
-        $this->assertEquals($count_before + 1, $count_after);
-        foreach ($keys_to_test as $key)
-            $this->assertTrue(array_key_exists($key, $json_decode));
+            ->assertStatus(200)
+            ->assertJsonCount(4)
+            ->assertJsonStructure([
+                'type',
+                'new_audio',
+                'view_facet',
+                'contents' => [
+                    [
+                        'audio' => [
+                            'type',
+                            'audio_id',
+                            'path_to_file'
+                        ],
+                        'update_audio',
+                        'delete_audio'
+                    ]
+                ]
+            ]);
     }
 }
