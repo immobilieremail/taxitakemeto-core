@@ -16,7 +16,7 @@ class CreateAudioTable extends Migration
         Schema::create('audio', function (Blueprint $table) {
             $table->string('swiss_number', 24)->primary();
             $table->bigInteger('audio_list_id')->nullable();
-            $table->string('path')->unique();
+            $table->string('path')->unique()->nullable();
             $table->timestamps();
         });
     }

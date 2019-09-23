@@ -17,6 +17,11 @@ class CreateAudioListViewFacetTable extends Migration
             $table->string('swiss_number', 24)->primary();
             $table->bigInteger('id_list')->unsigned();
             $table->timestamps();
+
+            $table->foreign('id_list')
+                ->references('id')
+                ->on('audio_lists')
+                ->onDelete('cascade');
         });
     }
 
