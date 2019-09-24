@@ -10,7 +10,7 @@ use App\Audio,
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class APIRouteTest extends TestCase
 {
@@ -44,6 +44,14 @@ class APIRouteTest extends TestCase
                 'type',
                 'contents'
             ]);
+    }
+
+    /** @test */
+    public function get_bad_audiolist_view()
+    {
+        $response   = $this->get(route('audiolist.show', ['audiolist' => \str_random(24)]));
+        $response
+            ->assertStatus(404);
     }
 
     /** @test */
@@ -88,6 +96,14 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
+    public function get_bad_audiolist_edit()
+    {
+        $response   = $this->get(route('audiolist.edit', ['audiolist' => \str_random(24)]));
+        $response
+            ->assertStatus(404);
+    }
+
+    /** @test */
     public function get_audiolist_edit_with_audio()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
@@ -113,5 +129,54 @@ class APIRouteTest extends TestCase
                     ]
                 ]
             ]);
+    }
+
+    /** @test */
+    public function audio_entry_point_bad_audio()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $response   = $this->post(route('audio.store', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]), ['audio' => '']);
+        $response
+            ->assertStatus(302);
+    }
+
+    /** @test */
+    public function update_bad_audio()
+    {
+        $response   = $this->put(route('audio.update', [
+            'audiolist' => \str_random(24),
+            'audio' => \str_random(24)]));
+        $response
+            ->assertStatus(404);
+    }
+
+    /** @test */
+    public function destroy_audio()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        $audio                  = $audiolistWithFacets->editFacet->addAudio('mp3');
+
+        Storage::disk('converts')->put($audio->path, '');
+
+        $response   = $this->delete(route('audio.destroy', [
+            'audiolist' => $audiolistWithFacets->editFacet->swiss_number,
+            'audio' => $audio->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(1)
+            ->assertJsonStructure([
+                'status'
+            ]);
+    }
+
+    /** @test */
+    public function destroy_bad_audio()
+    {
+        $response   = $this->delete(route('audio.destroy', [
+            'audiolist' => \str_random(24),
+            'audio' => \str_random(24)]));
+        $response
+            ->assertStatus(404);
     }
 }
