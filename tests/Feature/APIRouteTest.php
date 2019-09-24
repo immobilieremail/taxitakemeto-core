@@ -20,7 +20,6 @@ class APIRouteTest extends TestCase
     public function audiolist_entry_point()
     {
         $response       = $this->get('/api/audiolist/create');
-        $audioListCount = AudioList::all()->count();
 
         $response
             ->assertStatus(200)

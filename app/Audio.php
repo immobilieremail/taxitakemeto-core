@@ -13,7 +13,7 @@ class Audio extends SwissObject
         parent::__construct($attributes);
 
         if (isset($attributes['extension']))
-            $this->path = "$this->swiss_number." . $attributes['extension'];
+            $this->path = $this->swiss_number . '.' . $attributes['extension'];
     }
 
     public static function create(array $attributes = array())
