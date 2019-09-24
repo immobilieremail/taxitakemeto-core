@@ -18,14 +18,4 @@ abstract class SwissObject extends Model
         $swiss_number = new SwissNumber;
         $this->swiss_number = $swiss_number();
     }
-
-    // protected static function boot()
-    // {
-    //     parent::boot();
-
-    //     static::creating(function ($model) {
-    //         $swiss_number = new SwissNumber;
-    //         $model->swiss_number = $swiss_number();
-    //     });
-    // }
 }
