@@ -31,13 +31,14 @@ main =
 type alias Model =
   { key : Nav.Key
   , url : Url.Url
-  , ocaps : List OcapData
+  , ocaps : List OcapData -- kept for debugging
+  , audiolistEdits :  List AudiolistEdit
   }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( Model key url [], Cmd.none )
+  ( Model key url [] [], Cmd.none )
 
 
 
@@ -73,7 +74,15 @@ update msg model =
     GotNewAudiolistEdit data ->
       case data of
         Ok ocap ->
-          ( { model | ocaps = model.ocaps ++ [ocap] }, Cmd.none )
+          case extractAudiolistEdit ocap of
+            Nothing ->
+              ( { model
+                | ocaps = model.ocaps ++ [ocap] }, Cmd.none )
+
+            Just aledit ->
+              ( { model
+                | audiolistEdits = model.audiolistEdits ++ [aledit]
+                , ocaps = model.ocaps ++ [ocap] }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -96,11 +105,17 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "TaxiTakeMeTo"
   , body =
-    [ div [] <|
-        [ button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
-        ] ++ (List.map viewOcap model.ocaps)
-    ]
+    [ h1 [] [ text "AudiolistEdits" ]
+    , button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
+    ] ++ (List.map viewAudiolistEdit model.audiolistEdits)
   }
+
+
+viewAudiolistEdit : AudiolistEdit -> Html Msg
+viewAudiolistEdit aledit =
+  li []
+    [ a [ href aledit.url ] [ text aledit.url ]
+    ]
 
 
 viewOcap : OcapData -> Html Msg
@@ -123,10 +138,6 @@ type alias OcapData =
   , url : String
   }
 
-type alias AudiolistEdit =
-  { url : String
-  }
-
 decodeOcap : Decoder OcapData
 decodeOcap =
   D.map3 OcapData
@@ -134,22 +145,16 @@ decodeOcap =
     (field "ocapType" string)
     (field "url" string)
 
-{-
-decodeAudioListEdit : D.Decoder AudiolistEdit
-decodeAudioListEdit =
-  let
-    checkOcap : String -> String -> String -> D.Decoder AudiolistEdit
-    checkOcap jsonType ocapType url =
-      if jsonType == "ocap" && ocapType == "ALEdit" then
-        D.succeed url
-      else
-        D.fail "Not a AudiolistEdit ocap"
-  in        
-  D.succeed checkOcap
-    (D.field "type" D.string)
-    (D.field "ocapType" D.string)
-    (D.field "url" D.string)
--}
+type alias AudiolistEdit =
+  { url : String
+  }
+
+extractAudiolistEdit : OcapData -> Maybe AudiolistEdit
+extractAudiolistEdit ocap =
+  if ocap.jsonType == "ocap" && ocap.ocapType == "ALEdit" then
+    Just <| AudiolistEdit ocap.url
+  else
+    Nothing
 
 getNewAudiolistEdit : Cmd Msg
 getNewAudiolistEdit =
