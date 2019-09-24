@@ -8,6 +8,8 @@ import Html.Events exposing (..)
 import Http
 import Json.Decode as D exposing (Decoder, field, string, int)
 import Url
+import Url.Parser as P
+import Url.Parser exposing ((</>))
 
 
 
@@ -29,18 +31,21 @@ main =
 
 -- MODEL
 
+type CurrentView
+  = ViewDashboard
+  | ViewAudiolistEdit AudiolistEdit
 
 type alias Model =
   { key : Nav.Key
-  , url : Url.Url
   , ocaps : List OcapData -- kept for debugging
   , audiolistEdits :  List AudiolistEdit
+  , currentView : CurrentView
   }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( Model key url [] [], Cmd.none )
+  ( updateFromUrl (Model key [] [] ViewDashboard) url, Cmd.none )
 
 
 
@@ -54,19 +59,49 @@ type Msg
   | GotNewAudiolistEdit (Result Http.Error OcapData)
 
 
+type Route
+  = RouteDashboard
+  | RouteAudiolistEdit (Maybe String)
+
+router : P.Parser (Route -> a) a
+router =
+  P.oneOf
+    [ P.map RouteDashboard <| P.s "elm"
+    , P.map RouteAudiolistEdit <| P.s "elm" </> P.s "aledit" </> P.fragment identity
+    ]
+
+updateFromUrl : Model -> Url.Url -> Model
+updateFromUrl model url =
+  case P.parse router url of
+    Nothing ->
+      model
+
+    Just route ->
+      case route of
+        RouteDashboard ->
+          { model | currentView = ViewDashboard }
+
+        RouteAudiolistEdit data ->
+          case data of
+            Nothing ->
+              { model | currentView = ViewDashboard}
+
+            Just ocapUrl ->
+              { model | currentView = ViewAudiolistEdit <| AudiolistEdit ocapUrl}
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     LinkClicked urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          ( model, Nav.pushUrl model.key (Url.toString url) )
+          ( updateFromUrl model url, Nav.pushUrl model.key (Url.toString url) )
 
         Browser.External href ->
           ( model, Nav.load href )
 
     UrlChanged url ->
-      ( { model | url = url }
+      ( updateFromUrl model url
       , Cmd.none
       )
 
@@ -105,18 +140,32 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
+  case model.currentView of
+    ViewDashboard ->
+      viewDashboard model
+
+    ViewAudiolistEdit aledit ->
+      viewAudiolistEdit aledit
+
+viewDashboard : Model -> Browser.Document Msg
+viewDashboard model =
   { title = "TaxiTakeMeTo"
   , body =
     [ h1 [] [ text "AudiolistEdits" ]
     , button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
-    ] ++ (List.map viewAudiolistEdit model.audiolistEdits)
+    ] ++ (List.map linkAudiolistEdit model.audiolistEdits)
   }
 
-
-viewAudiolistEdit : AudiolistEdit -> Html Msg
 viewAudiolistEdit aledit =
+  { title = "TaxiTakeMeTo"
+  , body =
+    [ div [] [ text "Oops..." ] ]
+  }
+
+linkAudiolistEdit : AudiolistEdit -> Html Msg
+linkAudiolistEdit aledit =
   li []
-    [ a [ href aledit.url ] [ text aledit.url ]
+    [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
     ]
 
 
