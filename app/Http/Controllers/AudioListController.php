@@ -20,7 +20,7 @@ class AudioListController extends Controller
             [
                 'type' => 'ocap',
                 'ocapType' => 'ALEdit',
-                'url' => "/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'url' => route('audiolist.show', ['audiolist' => $audiolist_edit->swiss_number])
             ]
         );
     }
@@ -51,8 +51,8 @@ class AudioListController extends Controller
             return response()->json(
                 [
                     'type' => 'ALEdit',
-                    'new_audio' => "/api/audiolist/$edit_facet->swiss_number/audio",
-                    'view_facet' => "/api/audiolist/" . $edit_facet->audioList->viewFacet->swiss_number,
+                    'new_audio' => route('audiolist.audio.store', ['audiolist' => $edit_facet_id]),
+                    'view_facet' => route('audiolist.show', ['audiolist' => $edit_facet->getViewFacet()->swiss_number]),
                     'contents' => $edit_facet->getEditableAudios()
                 ]
             );

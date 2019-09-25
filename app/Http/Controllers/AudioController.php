@@ -23,23 +23,28 @@ class AudioController extends Controller
         $audio->save();
     }
 
-    public function store(NewAudioRequest $request, $facet_id)
+    public function store(NewAudioRequest $request, $audiolist)
     {
-        $edit_facet = AudioListEditFacet::find($facet_id);
+        $edit_facet = AudioListEditFacet::find($audiolist);
 
-        if ($edit_facet != NULL && $request->has('audio')) {
-            $extension = $request->file('audio')->extension();
-            $audio = $edit_facet->addAudio($extension);
-            $request->file('audio')->storeAs('storage/uploads',
-                "$audio->swiss_number.$extension", 'public');
-            $this->convert($audio);
-            return response()->json(
-                [
-                    "type" => "Audio",
-                    "audio_id" => $audio->swiss_number,
-                    "path_to_file" => $audio->path
-                ]
-            );
+        if ($edit_facet != NULL) {
+            if ($request->has('audio')) {
+                $extension = $request->file('audio')->extension();
+                $audio = $edit_facet->addAudio($extension);
+                $request->file('audio')->storeAs('storage/uploads',
+                                                 "$audio->swiss_number.$extension", 'public');
+                $this->convert($audio);
+
+                return response()->json(
+                    [
+                        "type" => "Audio",
+                        "audio_id" => $audio->swiss_number,
+                        "path_to_file" => $audio->path
+                    ]
+                );
+            } else {
+                abort(400);
+            }
         } else
             abort(404);
     }
