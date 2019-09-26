@@ -21,6 +21,167 @@ use Eris\Generator,
 class APIRouteTest extends TestCase
 {
     use RefreshDatabase;
+    use TestTrait;
+
+    /** @test */
+    public function get_audio_view()
+    {
+        $audioWithFacets    = factory(Audio::class)->create();
+
+        $response = $this->get(route('audio.show', ['audio' => $audioWithFacets->viewFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'path'
+            ]);
+    }
+
+    /** @test */
+    public function get_non_existant_audio_view()
+    {
+        $random_number = "089avg4w6";
+        $response = $this->get(route('audio.show', ['audio' => $random_number]));
+        $response
+            ->assertStatus(404);
+    }
+
+    /** @test */
+    public function get_audio_edit()
+    {
+        $audioWithFacets    = factory(Audio::class)->create();
+
+        $response = $this->get(route('audio.edit', ['audio' => $audioWithFacets->editFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4)
+            ->assertJsonStructure([
+                'type',
+                'view_facet',
+                'path',
+                'delete'
+            ]);
+    }
+
+    /** @test */
+    public function get_non_existant_audio_edit()
+    {
+        $random_number = "06745aha54";
+        $response = $this->get(route('audio.edit', ['audio' => $random_number]));
+        $response
+            ->assertStatus(404);
+    }
+
+    /** @test */
+    public function delete_audio()
+    {
+        $audioWithFacets    = factory(Audio::class)->create();
+
+        $file = "public/storage/converts/$audioWithFacets->path";
+        $handle = fopen($file, 'w');
+        fclose($handle);
+
+        $response = $this->delete(route('audio.destroy', ['audio' => $audioWithFacets->editFacet->swiss_number]));
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function delete_non_existant_audio_file()
+    {
+        $audioWithFacets    = factory(Audio::class)->create();
+
+        $response = $this->delete(route('audio.destroy', ['audio' => $audioWithFacets->editFacet->swiss_number]));
+        $response->assertStatus(404);
+    }
+
+    /** @test */
+    public function delete_non_existant_audio_from_non_exisant_audio_facet()
+    {
+        $random_number = "ajc5a8pfb0";
+        $response = $this->delete(route('audio.destroy', ['audio' => $random_number]));
+        $response->assertStatus(404);
+    }
+
+    private function generate_audios_json($audiolist) : Array
+    {
+        $random = rand(0, 10);
+        $audio_array["audios"] = [];
+
+        for ($i = 0; $i < $random; $i++) {
+            $audioWithFacets = factory(Audio::class)->create();
+
+            $audiolist->audioViews()->save($audioWithFacets->viewFacet);
+            $audiolist->audioEdits()->save($audioWithFacets->editFacet);
+            $audio_array["audios"][] = [
+                'id' => $audioWithFacets->viewFacet->swiss_number
+            ];
+        }
+        return $audio_array;
+    }
+
+    /** @test */
+    public function update_audiolist()
+    {
+        $this->limitTo(10)->forAll(Generator\nat())->then(function () {
+            $audiolistWithFacets    = factory(AudioList::class)->create();
+            $audio_array            = $this->generate_audios_json($audiolistWithFacets);
+            $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ['data' => $audio_array]);
+
+            $mapped_audio           = array_map(function ($audio) {
+                return [
+                    'type' => 'ocap',
+                    'ocapType' => 'AudioView',
+                    'url' => '/api/audio/' . $audio["id"]
+                ];
+            }, $audio_array["audios"]);
+
+            $response
+                ->assertStatus(200)
+                ->assertJsonStructure([
+                    'type',
+                    'update',
+                    'view_facet',
+                    'contents'
+                ]);
+
+            $this->assertEquals(json_encode($response->getData()->contents),
+                json_encode($mapped_audio));
+        });
+    }
+
+    /** @test */
+    public function update_audiolist_with_bad_data_request()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        $bad_request            = ["audios" => [["id" => "a"], ["id" => "b"]]];
+        $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ["data" => $bad_request]);
+
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function update_audiolist_with_bad_something_request()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        $bad_request            = ["b" => [["id" => "a"], ["id" => "b"]]];
+        $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ["a" => $bad_request]);
+
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function update_non_existant_audiolist()
+    {
+        $random_number          = '4da7848daj';
+        $bad_request            = ["audios" => [["id" => "a"], ["id" => "b"]]];
+        $response               = $this->put(route('audiolist.update', [$random_number]), ["data" => $bad_request]);
+
+        $response
+            ->assertStatus(404);
+    }
 
     /** @test */
     public function audiolist_entry_point()
