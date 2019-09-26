@@ -2,12 +2,11 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\AudioListViewFacet;
+use App\AudioViewFacet;
 use Faker\Generator as Faker;
 
-$factory->define(AudioListViewFacet::class, function (Faker $faker) {
+$factory->define(AudioViewFacet::class, function (Faker $faker) {
     return [
         //
     ];
 });
-
