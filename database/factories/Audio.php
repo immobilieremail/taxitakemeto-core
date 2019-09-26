@@ -10,7 +10,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Audio::class, function (Faker $faker) {
     return [
-        'id'            =>  rand(200, 560),
         'path'          =>  str_random(24) . '.mp3',
         'created_at'    =>  Carbon::now(),
         'updated_at'    =>  Carbon::now(),

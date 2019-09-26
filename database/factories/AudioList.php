@@ -10,7 +10,6 @@ use Faker\Generator as Faker;
 
 $factory->define(AudioList::class, function (Faker $faker) {
     return [
-        'id'            =>  rand(200, 560),
         'created_at'    =>  Carbon::now(),
         'updated_at'    =>  Carbon::now(),
     ];
