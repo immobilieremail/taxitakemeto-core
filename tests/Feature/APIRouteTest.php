@@ -25,7 +25,7 @@ class APIRouteTest extends TestCase
     /** @test */
     public function audiolist_entry_point()
     {
-        $response       = $this->get('/api/audiolist/create');
+        $response       = $this->get(route('audiolist.create'));
 
         $response
             ->assertStatus(200)
@@ -64,8 +64,10 @@ class APIRouteTest extends TestCase
     public function get_audiolist_view_with_audio()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
+        $audioWithFacets        = factory(Audio::class)->create();
 
-        $audiolistWithFacets->editFacet->addAudio('mp3');
+        $audiolistWithFacets->audioViews()->save($audioWithFacets->viewFacet);
+        $audiolistWithFacets->audioEdits()->save($audioWithFacets->editFacet);
         $response   = $this->get(route('audiolist.show', ['audiolist' => $audiolistWithFacets->viewFacet->swiss_number]));
         $response
             ->assertStatus(200)
@@ -74,11 +76,9 @@ class APIRouteTest extends TestCase
                 'type',
                 'contents' => [
                     [
-                        'audio' => [
-                            'type',
-                            'audio_id',
-                            'path_to_file'
-                        ]
+                        'type',
+                        'ocapType',
+                        'url'
                     ]
                 ]
             ]);
@@ -113,8 +113,10 @@ class APIRouteTest extends TestCase
     public function get_audiolist_edit_with_audio()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
+        $audioWithFacets        = factory(Audio::class)->create();
 
-        $audiolistWithFacets->editFacet->addAudio('mp3');
+        $audiolistWithFacets->audioViews()->save($audioWithFacets->viewFacet);
+        $audiolistWithFacets->audioEdits()->save($audioWithFacets->editFacet);
         $response   = $this->get(route('audiolist.edit', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
         $response
             ->assertStatus(200)
@@ -125,13 +127,9 @@ class APIRouteTest extends TestCase
                 'view_facet',
                 'contents' => [
                     [
-                        'audio' => [
-                            'type',
-                            'audio_id',
-                            'path_to_file'
-                        ],
-                        'update_audio',
-                        'delete_audio'
+                        'type',
+                        'ocapType',
+                        'url'
                     ]
                 ]
             ]);
@@ -142,38 +140,22 @@ class APIRouteTest extends TestCase
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
 
-        $response   = $this->post(route('audio.store', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]), ['audio' => '']);
+        $response   = $this->post(route('audio.store'), ['audio' => '']);
         $response
             ->assertStatus(302);
     }
 
     /** @test */
-    public function update_bad_audio()
-    {
-        $response   = $this->put(route('audio.update', [
-            'audiolist' => \str_random(24),
-            'audio' => \str_random(24)]));
-        $response
-            ->assertStatus(404);
-    }
-
-    /** @test */
     public function destroy_audio()
     {
-        $audiolistWithFacets    = factory(AudioList::class)->create();
-        $audio                  = $audiolistWithFacets->editFacet->addAudio('mp3');
+        $audioWithFacets        = factory(Audio::class)->create();
 
-        Storage::disk('converts')->put($audio->path, '');
+        Storage::disk('converts')->put($audioWithFacets->path, '');
 
         $response   = $this->delete(route('audio.destroy', [
-            'audiolist' => $audiolistWithFacets->editFacet->swiss_number,
-            'audio' => $audio->swiss_number]));
+            'audio' => $audioWithFacets->editFacet->swiss_number]));
         $response
-            ->assertStatus(200)
-            ->assertJsonCount(1)
-            ->assertJsonStructure([
-                'status'
-            ]);
+            ->assertStatus(200);
     }
 
     /** @test */
