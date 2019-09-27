@@ -1,4 +1,4 @@
-FROM php:7.2
+FROM php:7.3
 
 RUN apt-get update -y && apt-get install -y \
   build-essential openssl gnupg apt-transport-https git zip unzip libpng-dev libpq-dev
@@ -17,9 +17,10 @@ RUN apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libpng-dev \
-    && docker-php-ext-install -j$(nproc) iconv \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd
+        libgmp-dev \
+    && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h \
+    && docker-php-ext-configure gmp \
+    && docker-php-ext-install iconv gd gmp opcache
 
 COPY docker/upload_max_filesize.ini $PHP_INI_DIR/conf.d/
 
