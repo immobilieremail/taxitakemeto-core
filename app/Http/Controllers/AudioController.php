@@ -30,7 +30,7 @@ class AudioController extends Controller
                 [
                     "type" => "ocap",
                     "ocapType" => "AudioEdit",
-                    "url" => "/api/audio/$audio_edit->swiss_number/edit"
+                    "url" => route('audio.edit', ['audio' => $audio_edit->swiss_number])
                 ]
             );
         } else
