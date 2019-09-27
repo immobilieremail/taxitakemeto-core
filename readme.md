@@ -1,72 +1,70 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+Taxi Take Me To
+==============
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Setup development environment
+--------
 
-## About Laravel
+This project uses [Docker](https://www.docker.com/community-edition) to setup development environment.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+First, [download and install Docker](https://www.docker.com/community-edition#/download) on your platform.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+If you are on **Linux**, **you have to** install `docker-compose` too.
 
-## Learning Laravel
+Then clone this project on your computer with git.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+To build the application, move in the project directory and run
+```
+docker-compose build
+```
+It will fetch the base image from Docker Hub and install required packages and gems.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1400 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+When the build is finished, you copy (and modify if needed) the `.env` file then you need to create the database. First, start the PostgreSQL container to initialize the database:
+```
+cp .env.example .env
+docker-compose up
+```
+Then, you can create the database and install missing assets with:
+```
+docker-compose run app bin/setup
+```
 
-## Laravel Sponsors
+Update development environment
+----------
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+To run the last version of the code from an existing development environment, you need to get the new commits, rebuild the image, update dependencies and migrate the database with the following commands:
+```
+git pull
+docker-compose build
+docker-compose run app bin/setup
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
+Seed data to database
+---------
 
-## Contributing
+To add some hotels to the database, you can use the following command:
+```
+docker-compose run app php artisan db:seed --class=HotelsTableSeeder
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Use development environment
+--------
 
-## Security Vulnerabilities
+To launch the application, move in the project directory and run
+```
+docker-compose up
+```
+It will launch one container for PostgreSQL, one for Redis and one for the application.
+To close the containers, just press `Ctrl+C`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you need to run a command in a container, you can use
+```
+docker-compose run <container> <command>
+```
+`<container>` can be app, postgres or redis depending on the container you need.
 
-## License
+The application can be accessed in your browser at [localhost:8000](http://localhost:8000/).
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The emails sent by the application are accessible at [localhost:1081](http://localhost:1081/).
+
+Kibana, used to managed Elasticsearch, can be accessed in your browser at [localhost:5601](http://localhost:5601/).

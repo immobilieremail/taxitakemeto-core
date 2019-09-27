@@ -1,0 +1,41 @@
+app:
+  build: .
+  command: php artisan serve --host=0.0.0.0 --port=8000
+  volumes:
+    - .:/app
+    - ./tmp/home:/root
+  ports:
+    - "8000:8000"
+  links:
+    - elasticsearch
+    - postgres
+    - mailcatcher
+elasticsearch:
+  image: docker.elastic.co/elasticsearch/elasticsearch:6.7.1
+  environment:
+    - discovery.type=single-node
+    - cluster.name=docker-cluster
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  ulimits:
+    memlock:
+      soft: -1
+      hard: -1
+  ports:
+    - 9200:9200
+kibana:
+  image: docker.elastic.co/kibana/kibana:6.7.1
+  links:
+    - elasticsearch
+  ports:
+    - 5601:5601
+postgres:
+  image: postgres:9.6
+  volumes:
+    - ./tmp/postgres:/var/lib/postgresql/data
+  ports:
+    - "7001:5432"
+mailcatcher:
+  image: tophfr/mailcatcher
+  ports:
+    - "1081:80"

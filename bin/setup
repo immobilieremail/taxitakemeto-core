@@ -1,0 +1,7 @@
+#!/bin/sh
+
+composer install
+yarn
+
+php artisan db:setup
+php artisan migrate --seed
