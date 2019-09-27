@@ -24,7 +24,7 @@ class AudioController extends Controller
             $audio_view = AudioViewFacet::create(["id_audio" => $audio->id]);
 
             $request->file('audio')->storeAs('storage/uploads',
-                "$audio->id.$extension", 'public');
+                "$audio->path", 'public');
             $this->dispatch(new ConvertUploadedAudio($audio));
             return response()->json(
                 [

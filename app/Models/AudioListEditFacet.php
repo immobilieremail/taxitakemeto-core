@@ -32,8 +32,32 @@ class AudioListEditFacet extends SwissObject
         return $audio_array;
     }
 
-    public function addAudio(String $extension): Audio
+    public function getJsonEditFacet()
     {
-        return $this->audioList->audios()->save(new Audio(['extension' => $extension]));
+        return [
+            'type' => 'AudioListEdit',
+            'update' => route('audiolist.update', ['audiolist' => $this->swiss_number]),
+            'view_facet' => route('audiolist.show', ['audiolist' => $this->audioList->viewFacet->swiss_number]),
+            'contents' => $this->getAudios()
+        ];
+    }
+
+    public function updateAudioList($new_audios)
+    {
+        $pos = 0;
+
+        DB::beginTransaction();
+
+        $this->audioList->audioViews()->detach();
+        foreach ($new_audios as $new_audio) {
+            $this->audioList->audioViews()->save($new_audio);
+            $join = JoinAudio::where('audio_list_id', $this->id_list)
+                ->where('join_audio_id', $new_audio->swiss_number)
+                ->first();
+            $join->pos = $pos++;
+            $join->save();
+        }
+
+        DB::commit();
     }
 }
