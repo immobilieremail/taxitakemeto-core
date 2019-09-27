@@ -17,7 +17,7 @@ The request must be a Form Request and must contain an "audio" field with the fi
 
 ## AudioList
 
-POST /api/audiolist
+POST http://.../api/audiolist
 Create an empty audiolist and return the audiolist edition facet (AudioListEdit).
 
 ```
