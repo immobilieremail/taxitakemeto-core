@@ -53,8 +53,11 @@ class AudioListController extends Controller
     private function mapUpdateRequest(Array $request_audios)
     {
         return array_map(function ($audio) {
-            if (isset($audio["id"]) && is_string($audio["id"]))
-                return AudioViewFacet::find($audio["id"]);
+            if (isset($audio['ocap']) && is_string($audio['ocap'])) {
+                if (preg_match('#[^/]+$#', $audio['ocap'], $matches)) {
+                    return AudioViewFacet::find($matches[0]);
+                }
+            }
         }, $request_audios);
     }
 

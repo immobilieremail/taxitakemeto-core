@@ -2,27 +2,27 @@
 
 ## AudioList
 
-POST /api/audiolist
+POST http://.../api/audiolist
 Create an empty audiolist and return the audiolist edition facet (AudioListEdit).
 
 ```
 {
     "type":"ocap",
     "ocapType":"AudioListEdit",
-    "url":"/api/audiolist/{audiolist_edit_id}/edit" (GET)
+    "url":"http://.../api/audiolist/{audiolist_edit_id}/edit" (GET)
 }
 ```
 
 ## Audio
 
-POST /api/audio
+POST http://.../api/audio
 Create an audio and return the audio edition facet (AudioEdit).
 
 ```
 {
     "type":"ocap",
     "ocapType":"AudioEdit",
-    "url":"/api/audio/{audio_edit_id}/edit" (GET)
+    "url":"http://.../api/audio/{audio_edit_id}/edit" (GET)
 }
 ```
 
@@ -35,13 +35,12 @@ The request must be a Form Request and must contain an "audio" field with the fi
 An AudioView is a facet of an audio.
 It is the Read Only access of the audio.
 
-GET /api/audio/{audio_view_id}
+GET http://.../api/audio/{audio_view_id}
 
 ```
 {
-    "type":"Audio",
-    "id":"{audio_view_id}",
-    "contents":""
+    "type":"AudioView",
+    "path":"{audio_path}"
 }
 ```
 
@@ -50,15 +49,14 @@ GET /api/audio/{audio_view_id}
 An AudioEdit is a facet of an audio.
 It is the Read Write access of the audio.
 
-GET /api/audio/{audio_edit_id}/edit
+GET http://.../api/audio/{audio_edit_id}/edit
 
 ```
 {
-    "type":"Audio",
-    "id":"{audio_view_id}",
-    "view_facet":"/api/...", (GET)
-    "contents":"",
-    "delete_audio":"/api/..." (DELETE)
+    "type":"AudioEdit",
+    "view_facet":"http://.../api/...", (GET)
+    "path":"{audio_path}",
+    "delete":"http://.../api/..." (DELETE)
 }
 ```
 
@@ -67,12 +65,11 @@ GET /api/audio/{audio_edit_id}/edit
 An AudioListView is a facet of an audiolist.
 It is the Read Only access of the audiolist : it lists all the audios of the audiolist.
 
-GET /audiolist/{audiolist_view_id}
+GET http://.../audiolist/{audiolist_view_id}
 
 ```
 {
-    "type":"ALView",
-    "id":"{audiolist_view_id},
+    "type":"AudioListView",
     "contents":[
         {
             "type":"ocap",
@@ -88,26 +85,25 @@ GET /audiolist/{audiolist_view_id}
 An AudioListEdit is a facet of an audiolist.
 It is the Read Write access of the audiolist : it lists all audios of the audiolist and gives the url to update the list.
 
-GET /audiolist/{audiolist_edit_id}/edit
+GET http://.../audiolist/{audiolist_edit_id}/edit
 
 ```
 {
     "type":"AudioListEdit",
-    "id":"{audiolist_edit_id}",
-    "update":"/api/...", (PUT)
-    "view_facet":"/api/...", (GET)
+    "view_facet":"http://.../api/...", (GET)
+    "update":"http://.../api/...", (PUT)
     "contents":[
         {
             "type":"ocap",
             "ocapType":"AudioView",
-            "url":"/api/..." (GET)
+            "url":"http://.../api/..." (GET)
         }
     ]
 }
 ```
 
 "update" request header "Content-Type" must be set to "application/json".
-"update" request body must contain a json with a "data" field containing an "audios" array containing all the "id" of the AudioViewFacet from the audios you want to link to the list.
+"update" request body must contain a json with a "data" field containing an "audios" array containing all the "ocap" (url) of the AudioViewFacet from the audios you want to link to the list.
 "update" request returns the updated AudioListEdit when successful.
 
 ### Example
@@ -117,10 +113,10 @@ GET /audiolist/{audiolist_edit_id}/edit
     "data":{
         "audios":[
             {
-                "id":"{AudioViewFacet_id}
+                "ocap":"http://.../api/audio/{audio_view_id}"
             },
             {
-                "id":"{AudioViewFacet_id}
+                "ocap":"http://.../api/audio/{audio_view_id}"
             }
         ]
     }
