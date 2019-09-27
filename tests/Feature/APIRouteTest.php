@@ -114,7 +114,7 @@ class APIRouteTest extends TestCase
             $audiolist->audioViews()->save($audioWithFacets->viewFacet);
             $audiolist->audioEdits()->save($audioWithFacets->editFacet);
             $audio_array["audios"][] = [
-                'id' => $audioWithFacets->viewFacet->swiss_number
+                'ocap' => route('audio.show', ['audio' => $audioWithFacets->viewFacet->swiss_number])
             ];
         }
         return $audio_array;
@@ -132,7 +132,7 @@ class APIRouteTest extends TestCase
                 return [
                     'type' => 'ocap',
                     'ocapType' => 'AudioView',
-                    'url' => '/api/audio/' . $audio["id"]
+                    'url' => $audio["ocap"]
                 ];
             }, $audio_array["audios"]);
 
