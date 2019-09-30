@@ -2,13 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Audio,
-    App\AudioViewFacet,
-    App\AudioEditFacet;
-
-use App\AudioList,
-    App\AudioListViewFacet,
-    App\AudioListEditFacet;
+use App\Audio;
+use App\AudioList;
+use App\Shell;
 
 use Tests\TestCase;
 use Illuminate\Http\Request;
@@ -111,8 +107,6 @@ class APIRouteTest extends TestCase
         for ($i = 0; $i < $random; $i++) {
             $audioWithFacets = factory(Audio::class)->create();
 
-            $audiolist->audioViews()->save($audioWithFacets->viewFacet);
-            $audiolist->audioEdits()->save($audioWithFacets->editFacet);
             $audio_array["audios"][] = [
                 'ocap' => route('audio.show', ['audio' => $audioWithFacets->viewFacet->swiss_number])
             ];
@@ -123,7 +117,7 @@ class APIRouteTest extends TestCase
     /** @test */
     public function update_audiolist()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function () {
+        $this->limitTo(50)->forAll(Generator\nat())->then(function () {
             $audiolistWithFacets    = factory(AudioList::class)->create();
             $audio_array            = $this->generate_audios_json($audiolistWithFacets);
             $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ['data' => $audio_array]);
@@ -138,6 +132,7 @@ class APIRouteTest extends TestCase
 
             $response
                 ->assertStatus(200)
+                ->assertJsonCount(4)
                 ->assertJsonStructure([
                     'type',
                     'update',
@@ -330,204 +325,182 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
-    public function postAudiolist()
+    public function shell_entry_point()
     {
-        $response = $this->post('/api/audiolist');
-
-        return $response->assertStatus(200);
+        $response   = $this->get(route('shell.create'));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'ocapType',
+                'url'
+            ]);
     }
 
     /** @test */
-    public function getAudiolistView()
+    public function get_shell_user_facet()
     {
-        $list = AudioList::create();
-        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
-        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
-
-        $response = $this->get("/api/audiolist/$list_view->swiss_number");
-        $response->assertStatus(200);
+        $shellWithFacets    = factory(Shell::class)->create();
+        $response           = $this->get(route('shell.show', ['shell' => $shellWithFacets->userFacet]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4)
+            ->assertJsonStructure([
+                'type',
+                'dropbox',
+                'update',
+                'contents' => [
+                    'audiolists_view',
+                    'audiolists_edit'
+                ]
+            ]);
     }
 
     /** @test */
-    public function getAudiolistViewButItIsAudiolistEdit()
+    public function get_shell_user_facet_with_audiolist()
     {
-        $list = AudioList::create();
-        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
-        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        $shellWithFacets        = factory(Shell::class)->create();
 
-        $response = $this->get("/api/audiolist/$list_edit->swiss_number");
-        $response->assertStatus(200);
+        $shellWithFacets->audioListEdits()->save($audiolistWithFacets->editFacet);
+        $shellWithFacets->audioListViews()->save($audiolistWithFacets->viewFacet);
+        $response               = $this->get(route('shell.show', ['shell' => $shellWithFacets->userFacet]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(4)
+            ->assertJsonStructure([
+                'type',
+                'dropbox',
+                'update',
+                'contents' => [
+                    'audiolists_view' => [
+                        [
+                            'type',
+                            'ocapType',
+                            'url'
+                        ]
+                    ],
+                    'audiolists_edit' => [
+                        [
+                            'type',
+                            'ocapType',
+                            'url'
+                        ]
+                    ]
+                ]
+            ]);
     }
 
     /** @test */
-    public function getNonExistantAudiolistView()
+    public function get_bad_shell_user_facet()
     {
-        $random_string = "89da8a94pw";
-        $response = $this->get("/api/audiolist/$random_string");
-        $response->assertStatus(404);
+        $response   = $this->get(route('shell.show', ['shell' => \str_random(24)]));
+        $response
+            ->assertStatus(404);
     }
 
-    /** @test */
-    public function getAudiolistEdit()
-    {
-        $list = AudioList::create();
-        $list_edit = AudioListEditFacet::create(['id_list' => $list->id]);
-        $list_view = AudioListViewFacet::create(['id_list' => $list->id]);
-
-        $response = $this->get("/api/audiolist/$list_edit->swiss_number/edit");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function getNonExistantAudiolistEdit()
-    {
-        $random_string = "a849a834fb";
-        $response = $this->get("/api/audiolist/$random_string/edit");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function getAudioView()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->get("/api/audio/$audio_view->swiss_number");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function getNonExistantAudioView()
-    {
-        $random_number = "089avg4w6";
-        $response = $this->get("/api/audio/$random_number");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function getAudioEdit()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->get("/api/audio/$audio_edit->swiss_number/edit");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function getNonExistantAudioEdit()
-    {
-        $random_number = "06745aha54";
-        $response = $this->get("/api/audio/$random_number/edit");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function deleteAudio()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $file = "public/storage/converts/$audio->path";
-        $handle = fopen($file, 'w');
-        fclose($handle);
-
-        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function deleteNonExistantAudioFile()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $response = $this->delete("/api/audio/$audio_edit->swiss_number");
-        $response->assertStatus(404);
-    }
-
-    /** @test */
-    public function deleteNonExistantAudioFromNonExisantAudioFacet()
-    {
-        $random_number = "ajc5a8pfb0";
-        $response = $this->delete("/api/audio/$random_number");
-        $response->assertStatus(404);
-    }
-
-    private function generateAudiosJson($audiolist) : Array
+    public function generate_audiolists_json($shell) : Array
     {
         $random = rand(0, 10);
-        $audio_array["audios"] = [];
+        $audiolist_array["audiolists"] = [];
 
         for ($i = 0; $i < $random; $i++) {
-            $audio = Audio::create(['extension' => 'mp3']);
-            $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-            $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
+            $select_facet           = rand(0, 1);
+            $audioListWithFacets    = factory(AudioList::class)->create();
 
-            $audiolist->audioViews()->save($audio_view);
-            $audiolist->audioEdits()->save($audio_edit);
-            $audio_array["audios"][] = [
-                'id' => $audio_view->swiss_number
-            ];
+            if ($select_facet == 0) {
+                $audiolist_array["audiolists"][] = [
+                    'ocapType' => 'AudioListView',
+                    'ocap' => route('audiolist.show', ['audiolist' => $audioListWithFacets->viewFacet->swiss_number])
+                ];
+            } else {
+                $audiolist_array["audiolists"][] = [
+                    'ocapType' => 'AudioListEdit',
+                    'ocap' => route('audiolist.edit', ['audiolist' => $audioListWithFacets->editFacet->swiss_number])
+                ];
+            }
         }
-        return $audio_array;
+        return $audiolist_array;
     }
 
     /** @test */
-    public function updateAudiolist()
+    public function update_shell()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function () {
-            $audiolist = AudioList::create();
-            $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-            $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
+        $this->limitTo(50)->forAll(Generator\nat())->then(function () {
+            $shellWithFacets        = factory(Shell::class)->create();
+            $audiolists_array        = $this->generate_audiolists_json($shellWithFacets);
+            $response               = $this->put(route('shell.update', ['shell' => $shellWithFacets->userFacet->swiss_number]), ['data' => $audiolists_array]);
 
-            $audio_array = $this->generateAudiosJson($audiolist);
-            $response = $this->put("/api/audiolist/$audiolist_edit->swiss_number", ["data" => $audio_array]);
-            $mapped_audio = array_map(function ($audio) {
-                return [
-                    'type' => 'ocap',
-                    'ocapType' => 'AudioView',
-                    'url' => '/api/audio/' . $audio["id"]
-                ];
-            }, $audio_array["audios"]);
-            $response->assertStatus(200);
-            $this->assertEquals(json_encode($response->getData()->contents),
-                json_encode($mapped_audio));
+            $mapped_audiolists_view = array_filter(array_map(function ($audiolist) {
+                if ($audiolist['ocapType'] == 'AudioListView') {
+                    return [
+                        'type' => 'ocap',
+                        'ocapType' => $audiolist['ocapType'],
+                        'url' => $audiolist['ocap']
+                    ];
+                } else
+                    return null;
+            }, $audiolists_array['audiolists']));
+
+            $mapped_audiolists_edit = array_filter(array_map(function ($audiolist) {
+                if ($audiolist['ocapType'] == 'AudioListEdit') {
+                    return [
+                        'type' => 'ocap',
+                        'ocapType' => $audiolist['ocapType'],
+                        'url' => $audiolist['ocap']
+                    ];
+                } else
+                    return null;
+            }, $audiolists_array['audiolists']));
+
+            $response
+                ->assertStatus(200)
+                ->assertJsonCount(4)
+                ->assertJsonStructure([
+                    'type',
+                    'dropbox',
+                    'update',
+                    'contents'
+                ]);
+
+            $this->assertEquals(json_encode($response->getData()->contents->audiolists_view),
+                json_encode(array_values($mapped_audiolists_view)));
+            $this->assertEquals(json_encode($response->getData()->contents->audiolists_edit),
+                json_encode(array_values($mapped_audiolists_edit)));
         });
     }
 
-    /** @test */
-    public function updateAudiolistWithBadDataRequest()
+        /** @test */
+    public function update_shell_with_bad_data_request()
     {
-        $audiolist = AudioList::create();
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
+        $shellWithFacets    = factory(Shell::class)->create();
+        $bad_request        = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
+        $response           = $this->put(route('shell.update', [$shellWithFacets->userFacet->swiss_number]), ["data" => $bad_request]);
 
-        $response = $this->put("/api/audiolist/$audiolist_edit->swiss_number", ["data" => ["audios" => [["id" => "a"], ["id" => "b"]]]]);
-        $response->assertStatus(400);
+        $response
+            ->assertStatus(400);
     }
 
     /** @test */
-    public function updateAudiolistWithBadSomethingRequest()
+    public function update_shell_with_bad_something_request()
     {
-        $audiolist = AudioList::create();
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
+        $shellWithFacets    = factory(Shell::class)->create();
+        $bad_request        = ["b" => [["id" => "a"], ["id" => "b"]]];
+        $response           = $this->put(route('shell.update', [$shellWithFacets->userFacet->swiss_number]), ["a" => $bad_request]);
 
-        $response = $this->put("/api/audiolist/$audiolist_edit->swiss_number", ["b" => ["n" => [["id" => "cho"], ["id" => "co"]]]]);
-        $response->assertStatus(400);
+        $response
+            ->assertStatus(400);
     }
 
     /** @test */
-    public function updateNonExistantAudiolist()
+    public function update_non_existant_shell()
     {
-        $random_number = '4da7848daj';
+        $random_number          = '4da7848daj';
+        $bad_request            = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
+        $response               = $this->put(route('shell.update', [$random_number]), ["data" => $bad_request]);
 
-        $response = $this->put("/api/audiolist/$random_number", ["data" => ["audios" => [["id" => "a"], ["id" => "b"]]]]);
-        $response->assertStatus(404);
+        $response
+            ->assertStatus(404);
     }
 }
