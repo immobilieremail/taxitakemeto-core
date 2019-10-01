@@ -10,31 +10,20 @@ class ShellUserFacet extends SwissObject
 {
     protected $fillable = ['id_shell'];
 
-    public static function create(Array $param)
+    public function shell()
     {
-        $obj = new ShellUserFacet;
-
-        $obj->id_shell = $param["id_shell"];
-        $obj->save();
-        return $obj;
-    }
-
-    public function getDropboxFacet()
-    {
-        return ShellDropboxFacet::where('id_shell', $this->id_shell)->first();
+        return $this->belongsTo(Shell::class, 'id_shell');
     }
 
     public function getJsonShell()
     {
-        $shell = Shell::find($this->id_shell);
-
         return [
             'type' => 'Shell',
-            'dropbox' => "/api/shell/" . $this->getDropboxFacet()->swiss_number,
-            'update' => "/api/shell/" . $this->swiss_number,
+            'dropbox' => route('shell.send', ['shell' => $this->shell->dropboxFacet->swiss_number]),
+            'update' =>  route('shell.update', ['shell' => $this->swiss_number]),
             'contents' => [
-                'audiolists_view' => $shell->getAudioListViews(),
-                'audiolists_edit' => $shell->getAudioListEdits()
+                'audiolists_view' => $this->shell->getAudioListViews(),
+                'audiolists_edit' => $this->shell->getAudioListEdits()
             ]
         ];
     }
@@ -52,18 +41,17 @@ class ShellUserFacet extends SwissObject
     {
         $pos_edit = 0;
         $pos_view = 0;
-        $shell = Shell::find($this->id_shell);
 
         DB::beginTransaction();
 
-        $shell->audioListViews()->detach();
-        $shell->audioListEdits()->detach();
+        $this->shell->audioListViews()->detach();
+        $this->shell->audioListEdits()->detach();
         foreach ($new_audiolists as $new_audiolist) {
             if ($new_audiolist instanceof AudioListEditFacet) {
-                $shell->audioListEdits()->save($new_audiolist);
+                $this->shell->audioListEdits()->save($new_audiolist);
                 $this->updateShellSetJoinPos($new_audiolist, $pos_edit++);
-            } else {
-                $shell->audioListViews()->save($new_audiolist);
+            } else if ($new_audiolist instanceof AudioListViewFacet) {
+                $this->shell->audioListViews()->save($new_audiolist);
                 $this->updateShellSetJoinPos($new_audiolist, $pos_view++);
             }
         }

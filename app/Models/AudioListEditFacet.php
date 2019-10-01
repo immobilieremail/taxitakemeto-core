@@ -26,15 +26,7 @@ class AudioListEditFacet extends SwissObject
 
     public function getEditableAudios()
     {
-        $audios = $this->getAudios();
-
-        $audio_array = collect($audios)->map(function ($audio) {
-            return $audio += [
-                "update_audio" => "/api/audiolist/$this->swiss_number/audio/" . $audio["audio"]["audio_id"],
-                "delete_audio" => "/api/audiolist/$this->swiss_number/audio/" . $audio["audio"]["audio_id"]
-            ];
-        });
-        return $audio_array;
+        return $this->audioList->getAudioEdits();
     }
 
     public function getJsonEditFacet()
