@@ -440,4 +440,15 @@ class APIRouteTest extends TestCase
         $response
             ->assertStatus(400);
     }
+
+    /** @test */
+    public function send_shell_bad_request()
+    {
+        $shell_receiver = factory(Shell::class)->create();
+        $request        = [];
+
+        $response   = $this->post(route('shell.send', ['shell' => $shell_receiver->dropboxFacet->swiss_number]), ["data" => $request]);
+        $response
+            ->assertStatus(400);
+    }
 }

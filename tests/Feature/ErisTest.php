@@ -139,16 +139,22 @@ class ErisTest extends TestCase
     public function send_shell()
     {
         $this->limitTo(50)->forAll(Generator\nat())->then(function ($rand) {
-            $rand = ($rand < 1) ? 1 : $rand;
-
-            $shell_receiver         = factory(Shell::class)->create();
-            $request                = [];
+            $rand           = ($rand < 1) ? 1 : $rand;
+            $shell_receiver = factory(Shell::class)->create();
+            $request        = [];
 
             for ($i = 0; $i < $rand; $i++) {
+                $select_facet = rand(0, 1);
+                $route_facet = ($select_facet == 0) ?
+                    'audiolist.show' : 'audiolist.edit';
                 $audiolistWithFacets = factory(AudioList::class)->create();
+                $swiss_number_facet = ($select_facet == 0) ?
+                    $audiolistWithFacets->viewFacet->swiss_number :
+                    $audiolistWithFacets->editFacet->swiss_number;
+
                 $request['data'][] = [
-                    'ocapType' => 'AudioListView',
-                    'ocap' => route('audiolist.show', ['audiolist' => $audiolistWithFacets->viewFacet->swiss_number])
+                    'ocapType' => ($select_facet == 0) ? 'AudioListView' : 'AudioListEdit',
+                    'ocap' => route($route_facet, ['audiolist' => $swiss_number_facet])
                 ];
             }
 
