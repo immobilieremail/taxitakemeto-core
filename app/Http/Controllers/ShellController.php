@@ -99,14 +99,13 @@ class ShellController extends Controller
     {
         $dropbox = ShellDropboxFacet::findOrFail($shell_id);
 
-        if (!isset($request['data'])) {
+        if (!isset($request['data']))
             abort(400);
-        }
 
         $valid_data = collect($request["data"])->map(function ($data) {
             return $this->sendGetElementsID($data);
         });
-        if (!$valid_data->contains(null)) {
+        if (!$valid_data->contains(null) && !$valid_data->isEmpty()) {
             foreach ($valid_data as $data)
                 $data->shells()->save($dropbox->shell);
             return response('', 200);
