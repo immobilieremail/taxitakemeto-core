@@ -18,9 +18,10 @@ RUN apt-get install -y \
         libjpeg62-turbo-dev \
         libpng-dev \
         libgmp-dev \
+	libcurl4-gnutls-dev \
     && ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h \
     && docker-php-ext-configure gmp \
-    && docker-php-ext-install iconv gd gmp opcache
+    && docker-php-ext-install curl iconv gd gmp opcache
 
 COPY docker/upload_max_filesize.ini $PHP_INI_DIR/conf.d/
 
