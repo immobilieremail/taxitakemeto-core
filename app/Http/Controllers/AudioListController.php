@@ -17,8 +17,8 @@ class AudioListController extends Controller
     public function create()
     {
         $audiolist = AudioList::create();
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audiolist_view = $audiolist->viewFacet()->save(new AudioListViewFacet);
+        $audiolist_edit = $audiolist->editFacet()->save(new AudioListEditFacet);
 
         return response()->json(
             [

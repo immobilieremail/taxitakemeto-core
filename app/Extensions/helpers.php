@@ -7,3 +7,12 @@ function detectBrowserLanguage()
 
 	return $prefered;
 }
+
+function getSwissNumberFromUrl(String $url)
+{
+	if (!preg_match('#[^/]+$#', str_replace("/edit", "", $url), $matches)) {
+		return null;
+	} else {
+		return $matches[0];
+	}
+}
