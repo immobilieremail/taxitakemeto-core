@@ -17,7 +17,6 @@ use Eris\Generator,
 class APIRouteTest extends TestCase
 {
     use RefreshDatabase;
-    use TestTrait;
 
     /** @test */
     public function get_audio_view()
@@ -99,58 +98,12 @@ class APIRouteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    private function generate_audios_json($audiolist) : Array
-    {
-        $random = rand(0, 10);
-        $audio_array["audios"] = [];
-
-        for ($i = 0; $i < $random; $i++) {
-            $audioWithFacets = factory(Audio::class)->create();
-
-            $audio_array["audios"][] = [
-                'ocap' => route('audio.show', ['audio' => $audioWithFacets->viewFacet->swiss_number])
-            ];
-        }
-        return $audio_array;
-    }
-
-    /** @test */
-    public function update_audiolist()
-    {
-        $this->limitTo(50)->forAll(Generator\nat())->then(function () {
-            $audiolistWithFacets    = factory(AudioList::class)->create();
-            $audio_array            = $this->generate_audios_json($audiolistWithFacets);
-            $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ['data' => $audio_array]);
-
-            $mapped_audio           = array_map(function ($audio) {
-                return [
-                    'type' => 'ocap',
-                    'ocapType' => 'AudioView',
-                    'url' => $audio["ocap"]
-                ];
-            }, $audio_array["audios"]);
-
-            $response
-                ->assertStatus(200)
-                ->assertJsonCount(4)
-                ->assertJsonStructure([
-                    'type',
-                    'update',
-                    'view_facet',
-                    'contents'
-                ]);
-
-            $this->assertEquals(json_encode($response->getData()->contents),
-                json_encode($mapped_audio));
-        });
-    }
-
     /** @test */
     public function update_audiolist_with_bad_data_request()
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
         $bad_request            = ["audios" => [["id" => "a"], ["id" => "b"]]];
-        $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ["data" => $bad_request]);
+        $response               = $this->put(route('audiolist.update', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]), ["data" => $bad_request]);
 
         $response
             ->assertStatus(400);
@@ -161,7 +114,7 @@ class APIRouteTest extends TestCase
     {
         $audiolistWithFacets    = factory(AudioList::class)->create();
         $bad_request            = ["b" => [["id" => "a"], ["id" => "b"]]];
-        $response               = $this->put(route('audiolist.update', [$audiolistWithFacets->editFacet->swiss_number]), ["a" => $bad_request]);
+        $response               = $this->put(route('audiolist.update', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]), ["a" => $bad_request]);
 
         $response
             ->assertStatus(400);
@@ -172,7 +125,7 @@ class APIRouteTest extends TestCase
     {
         $random_number          = '4da7848daj';
         $bad_request            = ["audios" => [["id" => "a"], ["id" => "b"]]];
-        $response               = $this->put(route('audiolist.update', [$random_number]), ["data" => $bad_request]);
+        $response               = $this->put(route('audiolist.update', ['audiolist' => $random_number]), ["data" => $bad_request]);
 
         $response
             ->assertStatus(404);
@@ -199,6 +152,21 @@ class APIRouteTest extends TestCase
         $audiolistWithFacets    = factory(AudioList::class)->create();
 
         $response   = $this->get(route('audiolist.show', ['audiolist' => $audiolistWithFacets->viewFacet->swiss_number]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'contents'
+            ]);
+    }
+
+    /** @test */
+    public function get_audiolist_view_but_with_edit_id()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $response   = $this->get(route('audiolist.show', ['audiolist' => $audiolistWithFacets->editFacet->swiss_number]));
         $response
             ->assertStatus(200)
             ->assertJsonCount(2)
@@ -400,7 +368,40 @@ class APIRouteTest extends TestCase
             ->assertStatus(404);
     }
 
-    public function generate_audiolists_json($shell) : Array
+    /** @test */
+    public function update_shell_with_bad_data_request()
+    {
+        $shellWithFacets    = factory(Shell::class)->create();
+        $bad_request        = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
+        $response           = $this->put(route('shell.update', ['shell' => $shellWithFacets->userFacet->swiss_number]), ["data" => $bad_request]);
+
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function update_shell_with_bad_something_request()
+    {
+        $shellWithFacets    = factory(Shell::class)->create();
+        $bad_request        = ["b" => [["id" => "a"], ["id" => "b"]]];
+        $response           = $this->put(route('shell.update', ['shell' => $shellWithFacets->userFacet->swiss_number]), ["a" => $bad_request]);
+
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function update_non_existant_shell()
+    {
+        $random_number          = '4da7848daj';
+        $bad_request            = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
+        $response               = $this->put(route('shell.update', ['shell' => $random_number]), ["data" => $bad_request]);
+
+        $response
+            ->assertStatus(404);
+    }
+
+    public function generate_audiolists_json() : Array
     {
         $random = rand(0, 10);
         $audiolist_array["audiolists"] = [];
@@ -425,82 +426,18 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
-    public function update_shell()
-    {
-        $this->limitTo(50)->forAll(Generator\nat())->then(function () {
-            $shellWithFacets        = factory(Shell::class)->create();
-            $audiolists_array        = $this->generate_audiolists_json($shellWithFacets);
-            $response               = $this->put(route('shell.update', ['shell' => $shellWithFacets->userFacet->swiss_number]), ['data' => $audiolists_array]);
-
-            $mapped_audiolists_view = array_filter(array_map(function ($audiolist) {
-                if ($audiolist['ocapType'] == 'AudioListView') {
-                    return [
-                        'type' => 'ocap',
-                        'ocapType' => $audiolist['ocapType'],
-                        'url' => $audiolist['ocap']
-                    ];
-                } else
-                    return null;
-            }, $audiolists_array['audiolists']));
-
-            $mapped_audiolists_edit = array_filter(array_map(function ($audiolist) {
-                if ($audiolist['ocapType'] == 'AudioListEdit') {
-                    return [
-                        'type' => 'ocap',
-                        'ocapType' => $audiolist['ocapType'],
-                        'url' => $audiolist['ocap']
-                    ];
-                } else
-                    return null;
-            }, $audiolists_array['audiolists']));
-
-            $response
-                ->assertStatus(200)
-                ->assertJsonCount(4)
-                ->assertJsonStructure([
-                    'type',
-                    'dropbox',
-                    'update',
-                    'contents'
-                ]);
-
-            $this->assertEquals(json_encode($response->getData()->contents->audiolists_view),
-                json_encode(array_values($mapped_audiolists_view)));
-            $this->assertEquals(json_encode($response->getData()->contents->audiolists_edit),
-                json_encode(array_values($mapped_audiolists_edit)));
-        });
-    }
-
-        /** @test */
-    public function update_shell_with_bad_data_request()
+    public function update_shell_with_bad_ocap_type()
     {
         $shellWithFacets    = factory(Shell::class)->create();
-        $bad_request        = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
-        $response           = $this->put(route('shell.update', [$shellWithFacets->userFacet->swiss_number]), ["data" => $bad_request]);
+        $audiolists_array   = $this->generate_audiolists_json();
 
+        $bad_audiolists_array['audiolists'] = array_map(function ($audiolist) {
+            $audiolist['ocapType'] = \str_random();
+            return $audiolist;
+        }, $audiolists_array['audiolists']);
+
+        $response   = $this->put(route('shell.update', ['shell' => $shellWithFacets->userFacet->swiss_number]), ["data" => $bad_audiolists_array]);
         $response
             ->assertStatus(400);
-    }
-
-    /** @test */
-    public function update_shell_with_bad_something_request()
-    {
-        $shellWithFacets    = factory(Shell::class)->create();
-        $bad_request        = ["b" => [["id" => "a"], ["id" => "b"]]];
-        $response           = $this->put(route('shell.update', [$shellWithFacets->userFacet->swiss_number]), ["a" => $bad_request]);
-
-        $response
-            ->assertStatus(400);
-    }
-
-    /** @test */
-    public function update_non_existant_shell()
-    {
-        $random_number          = '4da7848daj';
-        $bad_request            = ["audiolists" => [["id" => "a"], ["id" => "b"]]];
-        $response               = $this->put(route('shell.update', [$random_number]), ["data" => $bad_request]);
-
-        $response
-            ->assertStatus(404);
     }
 }
