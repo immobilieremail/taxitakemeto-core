@@ -26,7 +26,10 @@ class AudioListEditFacet extends SwissObject
 
     public function getEditableAudios()
     {
-        return $this->audioList->getAudioEdits();
+        return [
+            "type" => 'AudioListEdit',
+            "contents" => $this->getAudios()
+        ];
     }
 
     public function getJsonEditFacet()
