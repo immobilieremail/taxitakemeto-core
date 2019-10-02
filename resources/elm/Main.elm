@@ -214,3 +214,12 @@ getNewAudiolistEdit =
     , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
     , body = Http.emptyBody
     }
+
+
+decodeAudiolistContent : D.Decoder
+getAudiolistContent : String -> Cmd Msg
+getAudiolistContent url =
+  Http.get
+    { url = url
+    , expect = Http.expectJson GotAudiolistContent decodeAudiolistContent
+    }
