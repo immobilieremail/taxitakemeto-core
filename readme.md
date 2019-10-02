@@ -4,6 +4,8 @@ After first checkout, you need to install dependencies:
 
 ```
 composer install
+
+elm install
 ```
 
 And then initialize config:
@@ -18,8 +20,11 @@ php artisan key:generate
 You start the application with:
 
 ```
-php artisan serve
+php artisan serve       ---->   LARAVEL
+
+elm-app start           ---->   ELM
 ```
+
 
 # Laravel
 
