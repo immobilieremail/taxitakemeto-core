@@ -8,16 +8,12 @@ class AudioViewFacet extends SwissObject
 {
     protected $fillable = ['id_audio'];
 
-    public static function create(Array $param)
+    public function audio()
     {
-        $obj = new AudioViewFacet;
-
-        $obj->id_audio = $param["id_audio"];
-        $obj->save();
-        return $obj;
+        return $this->belongsTo(Audio::class, 'id_audio');
     }
 
-    public function lists()
+    public function audiolists()
     {
         return $this->morphToMany('App\AudioList', 'join_audio');
     }

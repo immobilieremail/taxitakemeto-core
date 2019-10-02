@@ -14,7 +14,7 @@ use App\AudioList,
 
 class AudioListController extends Controller
 {
-    public function store()
+    public function create()
     {
         $audiolist = AudioList::create();
         $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
@@ -24,7 +24,7 @@ class AudioListController extends Controller
             [
                 'type' => 'ocap',
                 'ocapType' => 'AudioListEdit',
-                'url' => "/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'url' => route('audiolist.edit', ['audiolist' => $audiolist_edit->swiss_number])
             ]
         );
     }
@@ -53,8 +53,11 @@ class AudioListController extends Controller
     private function mapUpdateRequest(Array $request_audios)
     {
         return array_map(function ($audio) {
-            if (isset($audio["id"]) && is_string($audio["id"]))
-                return AudioViewFacet::find($audio["id"]);
+            if (isset($audio['ocap']) && is_string($audio['ocap'])) {
+                if (preg_match('#[^/]+$#', $audio['ocap'], $matches)) {
+                    return AudioViewFacet::find($matches[0]);
+                }
+            }
         }, $request_audios);
     }
 

@@ -24,13 +24,13 @@ class AudioController extends Controller
             $audio_view = AudioViewFacet::create(["id_audio" => $audio->id]);
 
             $request->file('audio')->storeAs('storage/uploads',
-                "$audio->id.$extension", 'public');
+                "$audio->path", 'public');
             $this->dispatch(new ConvertUploadedAudio($audio));
             return response()->json(
                 [
                     "type" => "ocap",
                     "ocapType" => "AudioEdit",
-                    "url" => "/api/audio/$audio_edit->swiss_number/edit"
+                    "url" => route('audio.edit', ['audio' => $audio_edit->swiss_number])
                 ]
             );
         } else
@@ -48,8 +48,8 @@ class AudioController extends Controller
             $audio_path = Audio::find($facet->id_audio)->path;
             return response()->json(
                 [
-                    "type" => "AudioView",
-                    "contents" => (Storage::disk('converts')->exists($audio_path)) ?
+                    'type' => 'AudioView',
+                    'path' => (Storage::disk('converts')->exists($audio_path)) ?
                         Storage::disk('converts')->getDriver()->getAdapter()->getPathPrefix() . $audio_path : null
                 ]
             );
@@ -59,32 +59,26 @@ class AudioController extends Controller
 
     public function edit($edit_facet_id)
     {
-        $edit_facet = AudioEditFacet::find($edit_facet_id);
+        $edit_facet = AudioEditFacet::findOrFail($edit_facet_id);
 
-        if ($edit_facet != null) {
-            $audio_path = Audio::find($edit_facet->id_audio)->path;
-            return response()->json(
-                [
-                    "type" => "AudioEdit",
-                    "view_facet" => "/api/audio/" . $edit_facet->getViewFacet()->swiss_number,
-                    "contents" => (Storage::disk('converts')->exists($audio_path)) ?
-                        Storage::disk('converts')->getDriver()->getAdapter()->getPathPrefix() . $audio_path : null,
-                    "delete_audio" => "/api/audio/$edit_facet->swiss_number"
-                ]
-            );
-        } else
-            abort(404);
+        return response()->json(
+            [
+                'type' => 'AudioEdit',
+                'view_facet' => route('audio.show', ['audio' => $edit_facet->audio->viewFacet->swiss_number]),
+                'path' => (Storage::disk('converts')->exists($edit_facet->audio->path)) ?
+                    Storage::disk('converts')->getDriver()->getAdapter()->getPathPrefix() . $edit_facet->audio->path : '',
+                'delete' => route('audio.destroy', ['audio' => $edit_facet->swiss_number])
+            ]
+        );
     }
 
     public function destroy($facet_id)
     {
-        $audio_edit = AudioEditFacet::find($facet_id);
-        $audio = ($audio_edit != null) ?
-            Audio::find($audio_edit->id_audio) : null;
+        $audio_edit = AudioEditFacet::findOrFail($facet_id);
 
-        if ($audio != null && Storage::disk('converts')->exists($audio->path)) {
-            Storage::disk('converts')->delete($audio->path);
-            $audio->delete();
+        if (Storage::disk('converts')->exists($audio_edit->audio->path)) {
+            Storage::disk('converts')->delete($audio_edit->audio->path);
+            $audio_edit->audio->delete();
             return response('', 200);
         } else
             abort(404);

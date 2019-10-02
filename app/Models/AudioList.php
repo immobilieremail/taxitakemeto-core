@@ -2,11 +2,31 @@
 
 namespace App;
 
+use App\Audio;
+use App\AudioListEditFacet;
+
+use App\AudioListViewFacet;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class AudioList extends Model
 {
     protected $fillable = ['id'];
+
+    public function audios()
+    {
+        return $this->hasMany(Audio::class);
+    }
+
+    public function viewFacet()
+    {
+        return $this->hasOne(AudioListViewFacet::class, 'id_list', 'id');
+    }
+
+    public function editFacet()
+    {
+        return $this->hasOne(AudioListEditFacet::class, 'id_list', 'id');
+    }
 
     public function audioEdits()
     {
@@ -23,7 +43,8 @@ class AudioList extends Model
         return [
             'type' => 'ocap',
             'ocapType' => $type,
-            'url' => "/api/audio/$audio->swiss_number"
+            'url' => route(($type == "AudioEdit") ?
+                'audio.edit' : 'audio.show', ['audio' => $audio->swiss_number])
         ];
     }
 
