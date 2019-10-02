@@ -23,21 +23,7 @@ class ModelTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-<<<<<<< HEAD
     public function audio_multiple_add_and_delete()
-=======
-    public function audioEditFacetGetView()
-    {
-        $audio = Audio::create(['extension' => 'mp3']);
-        $audio_edit = AudioEditFacet::create(['id_audio' => $audio->id]);
-        $audio_view = AudioViewFacet::create(['id_audio' => $audio->id]);
-
-        $this->assertEquals($audio_view->getOriginal(), $audio_edit->getViewFacet()->getOriginal());
-    }
-
-    /** @test */
-    public function audioMultipleAddAndDelete()
->>>>>>> Add tests for Audio - AudioList relationships
     {
         $this->limitTo(10)->forAll(Generator\nat(), Generator\nat())->then(function ($nb1, $nb2) {
             $nbr_add = ($nb1 > $nb2) ? $nb1 : $nb2;
@@ -53,10 +39,7 @@ class ModelTest extends TestCase
             }
             $count_after = Audio::all()->count();
 
-<<<<<<< HEAD
             $this->assertEquals($count_after - $count_before, $nbr_add - $nbr_del);
-=======
-            $this->assertEquals($count_after - $count_before, $nbr_add - $nbr_del, "With $count_after - $count_before and $nbr_add - $nbr_del");
         });
     }
 
@@ -90,24 +73,12 @@ class ModelTest extends TestCase
     /** @test */
     public function audioListGetAudioFacets()
     {
-<<<<<<< HEAD
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $list = AudioList::create();
-            $count_before = AudioListEditFacet::all()->count();
-            for ($i = 0; $i < $nbr; $i++) {
-                AudioListEditFacet::create(['id_list' => $list->id]);
-            }
-            $count_after = AudioListEditFacet::all()->count();
-            $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
->>>>>>> Add tests for Audio - AudioList relationships
-=======
         $this->limitTo(10)->forAll(Generator\nat())->then(function ($nb1) {
             $audiolist = AudioList::create();
             $audio_array = $this->generateAudioListWithAudio($audiolist);
 
             $this->assertEquals($audiolist->getAudioEdits(), $audio_array["edits"]);
             $this->assertEquals($audiolist->getAudioViews(), $audio_array["views"]);
->>>>>>> Create tests for AudioList update
         });
     }
 }
