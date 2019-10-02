@@ -10,12 +10,13 @@ use App\AudioList,
     App\AudioListViewFacet,
     App\AudioListEditFacet;
 
+use Tests\TestCase;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use Eris\Generator,
     Eris\TestTrait;
-
-use Tests\TestCase;
 
 class ModelTest extends TestCase
 {
@@ -59,12 +60,12 @@ class ModelTest extends TestCase
             $audio_array["edits"][] = [
                 'type' => 'ocap',
                 'ocapType' => 'AudioEdit',
-                'url' => "/api/audio/$audio_edit->swiss_number"
+                'url' => route('audio.edit', ['audio' => $audio_edit->swiss_number])
             ];
             $audio_array["views"][] = [
                 'type' => 'ocap',
                 'ocapType' => 'AudioView',
-                'url' => "/api/audio/$audio_view->swiss_number"
+                'url' => route('audio.show', ['audio' => $audio_view->swiss_number])
             ];
         }
         return $audio_array;
