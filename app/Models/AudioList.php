@@ -66,17 +66,10 @@ class AudioList extends Model
 
     public function getAudioEdits()
     {
-        $audios = $this->audios;
+        $audios = $this->audioEdits->sortBy(function ($audio, $key) {
+            return $audio->pivot->pos;
+        })->values()->all();
 
-        $audio_array = collect($audios)->map(function ($audio) {
-            return [
-                'audio' => [
-                    'type' => 'Audio',
-                    'audio_id' => $audio->swiss_number,
-                    'path_to_file' => $audio->path
-                ]
-            ];
-        });
-        return $audio_array;
+        return $this->getAudioFacets($audios, "AudioEdit");
     }
 }
