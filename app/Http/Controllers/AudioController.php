@@ -45,12 +45,10 @@ class AudioController extends Controller
             $view_facet : $edit_facet;
 
         if ($facet != null) {
-            $audio_path = Audio::find($facet->id_audio)->path;
             return response()->json(
                 [
                     'type' => 'AudioView',
-                    'path' => (Storage::disk('converts')->exists($audio_path)) ?
-                        Storage::disk('converts')->getDriver()->getAdapter()->getPathPrefix() . $audio_path : null
+                    'path' => Storage::disk('converts')->url($facet->audio->path)
                 ]
             );
         } else
@@ -65,8 +63,7 @@ class AudioController extends Controller
             [
                 'type' => 'AudioEdit',
                 'view_facet' => route('audio.show', ['audio' => $edit_facet->audio->viewFacet->swiss_number]),
-                'path' => (Storage::disk('converts')->exists($edit_facet->audio->path)) ?
-                    Storage::disk('converts')->getDriver()->getAdapter()->getPathPrefix() . $edit_facet->audio->path : '',
+                'path' => Storage::disk('converts')->url($edit_facet->audio->path),
                 'delete' => route('audio.destroy', ['audio' => $edit_facet->swiss_number])
             ]
         );

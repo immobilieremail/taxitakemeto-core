@@ -26,7 +26,7 @@ class NewAudioRequest extends FormRequest
     public function rules()
     {
         return [
-            'audio' => ['bail', 'file', new AudioRules]
+            'audio' => ['bail', 'required', 'file', new AudioRules]
         ];
     }
 }
