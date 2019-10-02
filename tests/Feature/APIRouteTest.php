@@ -7,7 +7,7 @@ use App\AudioList;
 use App\Shell;
 
 use Tests\TestCase;
-use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -17,6 +17,22 @@ use Eris\Generator,
 class APIRouteTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function post_audio()
+    {
+        $file = new UploadedFile('/home/louis/Musique/applause.wav', 'audio');
+        $response = $this->post(route('audio.store'), ['audio' => $file]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'ocap',
+                'ocapType'
+            ]);
+    }
 
     /** @test */
     public function get_audio_view()
@@ -442,10 +458,32 @@ class APIRouteTest extends TestCase
     }
 
     /** @test */
-    public function send_shell_bad_request()
+    public function send_shell_bad_data()
     {
         $shell_receiver = factory(Shell::class)->create();
         $request        = [];
+
+        $response   = $this->post(route('shell.send', ['shell' => $shell_receiver->dropboxFacet->swiss_number]), ["data" => $request]);
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function send_shell_no_data_request()
+    {
+        $shell_receiver = factory(Shell::class)->create();
+        $request        = [];
+
+        $response   = $this->post(route('shell.send', ['shell' => $shell_receiver->dropboxFacet->swiss_number]), ["p" => $request]);
+        $response
+            ->assertStatus(400);
+    }
+
+    /** @test */
+    public function send_shell_bad_ocap_request()
+    {
+        $shell_receiver = factory(Shell::class)->create();
+        $request        = [['ocap' => '4d987aaj', 'ocapType' => 'AudioListView']];
 
         $response   = $this->post(route('shell.send', ['shell' => $shell_receiver->dropboxFacet->swiss_number]), ["data" => $request]);
         $response
