@@ -11,6 +11,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use Illuminate\Support\Facades\Storage;
+
 use Eris\Generator,
     Eris\TestTrait;
 
@@ -235,7 +237,7 @@ class APIRouteTest extends TestCase
             ->assertJsonCount(4)
             ->assertJsonStructure([
                 'type',
-                'new_audio',
+                'update',
                 'view_facet',
                 'contents'
             ]);
@@ -263,7 +265,7 @@ class APIRouteTest extends TestCase
             ->assertJsonCount(4)
             ->assertJsonStructure([
                 'type',
-                'new_audio',
+                'update',
                 'view_facet',
                 'contents' => [
                     [
@@ -283,29 +285,6 @@ class APIRouteTest extends TestCase
         $response   = $this->post(route('audio.store'));
         $response
             ->assertStatus(302);
-    }
-
-    /** @test */
-    public function destroy_audio()
-    {
-        $audioWithFacets        = factory(Audio::class)->create();
-
-        Storage::disk('converts')->put($audioWithFacets->path, '');
-
-        $response   = $this->delete(route('audio.destroy', [
-            'audio' => $audioWithFacets->editFacet->swiss_number]));
-        $response
-            ->assertStatus(200);
-    }
-
-    /** @test */
-    public function destroy_bad_audio()
-    {
-        $response   = $this->delete(route('audiolist.audio.destroy', [
-            'audiolist' => \str_random(24),
-            'audio' => \str_random(24)]));
-        $response
-            ->assertStatus(404);
     }
 
     /** @test */
