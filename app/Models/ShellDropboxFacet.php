@@ -8,12 +8,8 @@ class ShellDropboxFacet extends SwissObject
 {
     protected $fillable = ['id_shell'];
 
-    public static function create(Array $param)
+    public function shell()
     {
-        $obj = new ShellDropboxFacet;
-
-        $obj->id_shell = $param["id_shell"];
-        $obj->save();
-        return $obj;
+        return $this->belongsTo(Shell::class, 'id_shell');
     }
 }

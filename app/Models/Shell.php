@@ -7,6 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shell extends Model
 {
+    public function userFacet()
+    {
+        return $this->HasOne(ShellUserFacet::class, 'id_shell', 'id');
+    }
+
+    public function dropboxFacet()
+    {
+        return $this->HasOne(ShellDropboxFacet::class, 'id_shell', 'id');
+    }
+
     public function audioListEdits()
     {
         return $this->morphedByMany('App\AudioListEditFacet', 'join_audio_list')->withPivot('pos');
