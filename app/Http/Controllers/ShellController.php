@@ -18,7 +18,7 @@ use App\Http\Requests\SendDropboxMessageRequest;
 
 class ShellController extends Controller
 {
-    public function create()
+    public function store()
     {
         $shell = Shell::create();
         $shell_user = $shell->userFacet()->save(new ShellUserFacet);

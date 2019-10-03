@@ -14,7 +14,7 @@ use App\AudioList,
 
 class AudioListController extends Controller
 {
-    public function create()
+    public function store()
     {
         $audiolist = AudioList::create();
         $audiolist_view = $audiolist->viewFacet()->save(new AudioListViewFacet);

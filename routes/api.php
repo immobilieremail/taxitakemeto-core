@@ -14,8 +14,8 @@ use Illuminate\Http\Request;
 */
 
 
-Route::resource('shell', 'ShellController')->only('create', 'show', 'update');
+Route::resource('shell', 'ShellController')->only('store', 'show', 'update');
 Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
 
-Route::resource('audiolist', 'AudioListController')->only('create', 'show', 'edit', 'update');
+Route::resource('audiolist', 'AudioListController')->only('store', 'show', 'edit', 'update');
 Route::resource('audio', 'AudioController')->only('store', 'show', 'edit', 'destroy');
