@@ -17,7 +17,7 @@ class AudioRules implements Rule
      */
     public function passes($attribute, $value)
     {
-        $mime = MimeType::get($value->extension());
+        $mime = $value->getMimeType();
         if (!is_string($mime))
             return false;
         preg_match('#^([^/]+)/#', $mime, $matches);

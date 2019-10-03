@@ -18,13 +18,15 @@ class AudioController extends Controller
     public function store(NewAudioRequest $request)
     {
         if ($request->has('audio')) {
+            if (!$request->file('audio')->getFileInfo()->getSize())
+                abort(415);
+
             $extension = $request->file('audio')->extension();
             $audio = Audio::create(['extension' => $extension]);
-            $audio_edit = AudioEditFacet::create(["id_audio" => $audio->id]);
-            $audio_view = AudioViewFacet::create(["id_audio" => $audio->id]);
+            $audio_edit = $audio->editFacet()->save(new AudioEditFacet);
+            $audio_view = $audio->viewFacet()->save(new AudioViewFacet);
 
-            $request->file('audio')->storeAs('storage/uploads',
-                "$audio->path", 'public');
+            $request->file('audio')->storeAs('storage/uploads', "$audio->path", 'public');
             $this->dispatch(new ConvertUploadedAudio($audio));
             return response()->json(
                 [
