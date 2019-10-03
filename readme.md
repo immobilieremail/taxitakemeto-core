@@ -5,7 +5,7 @@ After first checkout, you need to install dependencies:
 ```
 composer install
 
-elm install
+npm install
 ```
 
 And then initialize config:
@@ -20,7 +20,7 @@ php artisan key:generate
 You start the application with:
 
 ```
-php artisan serve       ---->   LARAVEL
+php artisan serve    
 npm run watch
 
 ```
