@@ -4,25 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Audio,
+    App\AudioEditFacet,
+    App\AudioViewFacet;
+
 use App\AudioList,
     App\AudioListEditFacet,
     App\AudioListViewFacet;
 
 class AudioListController extends Controller
 {
-    protected $app_url = "http://localhost:8000";
-
-    public function store()
+    public function create()
     {
         $audiolist = AudioList::create();
-        $audiolist_view = AudioListViewFacet::create(['id_list' => $audiolist->id]);
-        $audiolist_edit = AudioListEditFacet::create(['id_list' => $audiolist->id]);
+        $audiolist_view = $audiolist->viewFacet()->save(new AudioListViewFacet);
+        $audiolist_edit = $audiolist->editFacet()->save(new AudioListEditFacet);
 
         return response()->json(
             [
                 'type' => 'ocap',
-                'ocapType' => 'ALEdit',
-                'url' => "$this->app_url/api/audiolist/$audiolist_edit->swiss_number/edit"
+                'ocapType' => 'AudioListEdit',
+                'url' => route('audiolist.edit', ['audiolist' => $audiolist_edit->swiss_number])
             ]
         );
     }
@@ -31,34 +33,50 @@ class AudioListController extends Controller
     {
         $view_facet = AudioListViewFacet::find($facet_id);
         $edit_facet = AudioListEditFacet::find($facet_id);
-        $facet_type = ($view_facet) ? "ALView" : "ALEdit";
         $facet = ($view_facet) ? $view_facet : $edit_facet;
 
         if ($facet != NULL) {
             return response()->json(
-                [
-                    "type" => $facet_type,
-                    "contents" => $facet->getAudios()
-                ]
-            );
+                $facet->getJsonViewFacet());
         } else
             abort(404);
     }
 
     public function edit($edit_facet_id)
     {
-        $edit_facet = AudioListEditFacet::find($edit_facet_id);
+        $edit_facet = AudioListEditFacet::findOrFail($edit_facet_id);
 
-        if ($edit_facet != NULL) {
-            return response()->json(
-                [
-                    'type' => 'ALEdit',
-                    'new_audio' => "$this->app_url/api/audiolist/$edit_facet_id/audio",
-                    'view_facet' => "$this->app_url/api/audiolist/" . $edit_facet->getViewFacet()->swiss_number,
-                    'contents' => $edit_facet->getEditableAudios()
-                ]
-            );
+        return response()->json(
+            $edit_facet->getJsonEditFacet());
+    }
+
+    private function mapUpdateRequest(Array $request_audios)
+    {
+        return array_map(function ($audio) {
+            if (isset($audio['ocap']) && is_string($audio['ocap'])) {
+                if (preg_match('#[^/]+$#', $audio['ocap'], $matches)) {
+                    return AudioViewFacet::find($matches[0]);
+                }
+            }
+        }, $request_audios);
+    }
+
+    public function update(Request $request, $edit_facet_id)
+    {
+        $edit_facet = AudioListEditFacet::findOrFail($edit_facet_id);
+
+        if ($request->has('data') && isset($request["data"]["audios"])) {
+            $new_audios = array_filter(
+                $this->mapUpdateRequest($request["data"]["audios"]));
+            if (count($request["data"]["audios"]) == count($new_audios)) {
+
+                $edit_facet->updateAudioList($new_audios);
+
+                return response()->json(
+                    $edit_facet->getJsonEditFacet());
+            } else
+                abort(400);
         } else
-            abort(404);
+            abort(400);
     }
 }

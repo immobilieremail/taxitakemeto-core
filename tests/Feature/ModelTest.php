@@ -3,72 +3,104 @@
 namespace Tests\Feature;
 
 use App\Audio,
-    App\AudioList,
+    App\AudioViewFacet,
+    App\AudioEditFacet;
+
+use App\AudioList,
     App\AudioListViewFacet,
     App\AudioListEditFacet;
 
+use App\Shell,
+    App\ShellUserFacet,
+    App\ShellDropboxFacet;
+
+use Tests\TestCase;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use Eris\Generator,
     Eris\TestTrait;
 
-use Tests\TestCase,
-    Illuminate\Foundation\Testing\RefreshDatabase;
-
 class ModelTest extends TestCase
 {
     use TestTrait;
-
-    public $path = "/storage/uploads/";
-    public $extension = "mp3";
+    use RefreshDatabase;
 
     /** @test */
-    public function audioMultipleAddAndDelete()
+    public function audio_multiple_add_and_delete()
     {
         $this->limitTo(10)->forAll(Generator\nat(), Generator\nat())->then(function ($nb1, $nb2) {
             $nbr_add = ($nb1 > $nb2) ? $nb1 : $nb2;
             $nbr_del = ($nb1 < $nb2) ? $nb1 : $nb2;
-            $audio_id_array = array();
+            $audio_id_array = [];
 
             $count_before = Audio::all()->count();
             for ($i = 0; $i < $nbr_add; $i++) {
-                $audio = Audio::create(['path' => '/storage/uploads/', 'extension' => 'mp3']);
-                array_push($audio_id_array, $audio);
+                $audio_id_array[] = Audio::create(['extension' => 'mp3']);
             }
             for ($j = 0; $j < $nbr_del; $j++) {
                 $audio_id_array[$j]->delete();
             }
             $count_after = Audio::all()->count();
 
-            $this->assertEquals($count_after - $count_before, $nbr_add - $nbr_del, "With $count_after - $count_before and $nbr_add - $nbr_del");
+            $this->assertEquals($count_after - $count_before, $nbr_add - $nbr_del);
         });
     }
 
     /** @test */
-    public function audioListViewFacetAddToDB()
+    public function access_audio_through_facet()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $audiolist = AudioList::create();
-            $count_before = AudioListViewFacet::all()->count();
-            for ($i = 0; $i < $nbr; $i++) {
-                AudioListViewFacet::create(['id_list' => $audiolist->id]);
-            }
-            $count_after = AudioListViewFacet::all()->count();
-            $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
-        });
+        $audioWithFacets    = factory(Audio::class)->create();
+
+        $this->assertEquals($audioWithFacets->id, $audioWithFacets->editFacet->audio->id);
+        $this->assertEquals($audioWithFacets->path, $audioWithFacets->editFacet->audio->path);
+        $this->assertEquals($audioWithFacets->id, $audioWithFacets->viewFacet->audio->id);
+        $this->assertEquals($audioWithFacets->path, $audioWithFacets->viewFacet->audio->path);
     }
 
     /** @test */
-    public function audioListEditFacetAddToDB()
+    public function access_audiolist_through_audio_facet()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
-            $audiolist = AudioList::create();
-            $count_before = AudioListEditFacet::all()->count();
-            for ($i = 0; $i < $nbr; $i++) {
-                AudioListEditFacet::create(['id_list' => $audiolist->id]);
-            }
-            $count_after = AudioListEditFacet::all()->count();
-            $this->assertEquals($count_before + $nbr, $count_after, "With $count_before + $nbr and $count_after");
-        });
+        $audioWithFacets        = factory(Audio::class)->create();
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $audiolistWithFacets->audioViews()->save($audioWithFacets->viewFacet);
+        $audiolistWithFacets->audioEdits()->save($audioWithFacets->editFacet);
+
+        $this->assertEquals($audiolistWithFacets->id, $audioWithFacets->editFacet->audiolists->first()->id);
+        $this->assertEquals($audiolistWithFacets->id, $audioWithFacets->viewFacet->audiolists->first()->id);
+    }
+
+    /** @test */
+    public function access_shell_through_audiolist_facet()
+    {
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+        $shellWithFacets        = factory(Shell::class)->create();
+
+        $shellWithFacets->audioListViews()->save($audiolistWithFacets->viewFacet);
+        $shellWithFacets->audioListEdits()->save($audiolistWithFacets->editFacet);
+
+        $this->assertEquals($shellWithFacets->id, $audiolistWithFacets->editFacet->shells->first()->id);
+        $this->assertEquals($shellWithFacets->id, $audiolistWithFacets->viewFacet->shells->first()->id);
+    }
+
+    /** @test */
+    public function get_audio_edits()
+    {
+        $audioWithFacets        = factory(Audio::class)->create();
+        $audiolistWithFacets    = factory(AudioList::class)->create();
+
+        $audiolistWithFacets->audioEdits()->save($audioWithFacets->editFacet);
+        $audio_edits = $audiolistWithFacets->getAudioEdits();
+        $audio_edits_forged = [
+            [
+                'type' => 'ocap',
+                'ocapType' => 'AudioEdit',
+                'url' => route('audio.edit', ['audio' => $audioWithFacets->editFacet->swiss_number])
+            ]
+        ];
+
+        $this->assertJsonStringEqualsJsonString(json_encode($audio_edits), json_encode($audio_edits_forged));
     }
 }
