@@ -21,8 +21,8 @@ You start the application with:
 
 ```
 php artisan serve       ---->   LARAVEL
+npm run watch
 
-elm-app start           ---->   ELM
 ```
 
 
