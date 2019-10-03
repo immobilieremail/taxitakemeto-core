@@ -21,19 +21,13 @@ class APIRouteTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
-    public function post_audio()
+    public function post_fake_audio()
     {
-        $file = new UploadedFile('/home/louis/Musique/applause.wav', 'audio');
+        $file = UploadedFile::fake()->create('file.mp3', 1);
         $response = $this->post(route('audio.store'), ['audio' => $file]);
 
         $response
-            ->assertStatus(200)
-            ->assertJsonCount(3)
-            ->assertJsonStructure([
-                'type',
-                'ocap',
-                'ocapType'
-            ]);
+            ->assertStatus(415);
     }
 
     /** @test */
