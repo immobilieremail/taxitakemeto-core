@@ -29,14 +29,13 @@ class Shell extends Model
 
     private function formatAudioListFacets($audiolist, $type)
     {
-        $basic_url = "/api/audiolist/$audiolist->swiss_number";
-        $complete_url = ($audiolist instanceof AudioListEditFacet) ?
-            $basic_url . '/edit' : $basic_url;
+        $url = ($audiolist instanceof AudioListEditFacet) ?
+            'audiolist.edit' : 'audiolist.show';
 
         return [
             'type' => 'ocap',
             'ocapType' => $type,
-            'url' => $complete_url
+            'url' => route($url, ['audiolist' => $audiolist->swiss_number])
         ];
     }
 
