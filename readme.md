@@ -4,6 +4,8 @@ After first checkout, you need to install dependencies:
 
 ```
 composer install
+
+npm install
 ```
 
 And then initialize config:
@@ -18,8 +20,11 @@ php artisan key:generate
 You start the application with:
 
 ```
-php artisan serve
+php artisan serve    
+npm run watch
+
 ```
+
 
 # Laravel
 

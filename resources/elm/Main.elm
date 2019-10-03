@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as D exposing (Decoder, field, string, int)
+import Json.Decode as D exposing (Decoder,map4, map3, field, string, int)
 import Url
 import Url.Parser as P
 import Url.Parser exposing ((</>))
@@ -215,12 +215,32 @@ getNewAudiolistEdit =
     , body = Http.emptyBody
     }
 
-{-
-decodeAudiolistContent : D.Decoder
-getAudiolistContent : String -> Cmd Msg
-getAudiolistContent url =
-  Http.get
-    { url = url
-    , expect = Http.expectJson GotAudiolistContent decodeAudiolistContent
-    }
--}
+
+
+
+
+
+
+
+-- type alias AudioList =
+--     { jsontype : String
+--     , viewfacet : String
+--     , update : String
+--     , contents : String
+--     }
+
+-- decodeAudiolistContent : Decoder AudioList
+-- decodeAudiolistContent =
+--     D.map4 AudioList
+--     (field "type" string)
+--     (field "view_facet" string)
+--     (field "update" string)
+--     (field "contents" string)
+
+
+-- getAudiolistContent : String -> Cmd Msg
+-- getAudiolistContent url =
+--   Http.get
+--     { url = url
+--     , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
+--     }
