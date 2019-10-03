@@ -202,7 +202,7 @@ type alias AudiolistEdit =
 
 extractAudiolistEdit : OcapData -> Maybe AudiolistEdit
 extractAudiolistEdit ocap =
-  if ocap.jsonType == "ocap" && ocap.ocapType == "ALEdit" then
+  if ocap.jsonType == "ocap" && ocap.ocapType == "AudioListEdit" then
     Just <| AudiolistEdit ocap.url
   else
     Nothing
