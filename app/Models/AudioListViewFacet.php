@@ -21,6 +21,14 @@ class AudioListViewFacet extends SwissObject
 
     public function getAudios()
     {
-        return $this->audioList->getAudios();
+        return $this->audioList->getAudioViews();
+    }
+
+    public function getJsonViewFacet()
+    {
+        return [
+            'type' => 'AudioListEdit',
+            'contents' => $this->getAudios()
+        ];
     }
 }

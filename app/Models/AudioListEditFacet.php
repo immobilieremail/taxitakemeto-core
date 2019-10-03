@@ -5,6 +5,8 @@ namespace App;
 use App\AudioList;
 use App\SwissObject;
 
+use Illuminate\Support\Facades\DB;
+
 class AudioListEditFacet extends SwissObject
 {
     protected $fillable = ['id_list'];
@@ -24,11 +26,11 @@ class AudioListEditFacet extends SwissObject
         return $this->audioList->getAudioViews();
     }
 
-    public function getEditableAudios()
+    public function getJsonViewFacet()
     {
         return [
-            "type" => 'AudioListEdit',
-            "contents" => $this->getAudios()
+            'type' => 'AudioListEdit',
+            'contents' => $this->getAudios()
         ];
     }
 
