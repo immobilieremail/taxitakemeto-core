@@ -19,13 +19,13 @@ import Url.Parser exposing ((</>))
 main : Program () Model Msg
 main =
   Browser.application
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    , onUrlChange = UrlChanged
-    , onUrlRequest = LinkClicked
-    }
+  { init = init
+  , view = view
+  , update = update
+  , subscriptions = subscriptions
+  , onUrlChange = UrlChanged
+  , onUrlRequest = LinkClicked
+  }
 
 
 
@@ -68,72 +68,75 @@ type Route
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
-    [ P.map RouteDashboard <| P.s "elm"
-    , P.map RouteAudiolistEdit <| P.s "elm" </> P.s "aledit" </> P.fragment identity
-    ]
+  [ P.map RouteDashboard <| P.s "elm"
+  , P.map RouteAudiolistEdit <| P.s "elm" </> P.s "aledit" </> P.fragment identity
+  ]
 
 updateFromUrl : Model -> Url.Url -> Model
 updateFromUrl model url =
   case P.parse router url of
-    Nothing ->
-      model
+  Nothing ->
+    model
 
-    Just route ->
-      case route of
-        RouteDashboard ->
-          { model | currentView = ViewDashboard }
+  Just route ->
+    case route of
+    RouteDashboard ->
+      { model | currentView = ViewDashboard }
 
-        RouteAudiolistEdit data ->
-          case data of
-            Nothing ->
-              { model | currentView = ViewDashboard}
+    RouteAudiolistEdit data ->
+      case data of
+      Nothing ->
+        { model | currentView = ViewDashboard}
 
-            Just ocapUrl ->
-              { model | currentView = ViewAudiolistEdit <| AudiolistEdit ocapUrl}
+      Just ocapUrl ->
+        { model | currentView = ViewAudiolistEdit <| AudiolistEdit ocapUrl}
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-    LinkClicked urlRequest ->
-      case urlRequest of
-        Browser.Internal url ->
-          ( updateFromUrl model url, Nav.pushUrl model.key (Url.toString url) )
+  LinkClicked urlRequest ->
+    case urlRequest of
+    Browser.Internal url ->
+      ( updateFromUrl model url, Nav.pushUrl model.key (Url.toString url) )
 
-        Browser.External href ->
-          ( model, Nav.load href )
+    Browser.External href ->
+      ( model, Nav.load href )
 
-    UrlChanged url ->
-      ( updateFromUrl model url
-      , Cmd.none
-      )
+  UrlChanged url ->
+    ( updateFromUrl model url
+    , Cmd.none
+    )
 
-    GetNewAudiolistEdit ->
-      ( model, getNewAudiolistEdit )
+  GetNewAudioEdit ->
+    (model, getNewAudioEdit)
 
-    GotNewAudiolistEdit data ->
-      case data of
-        Ok ocap ->
-          case extractAudiolistEdit ocap of
-            Nothing ->
-              ( { model
-                | ocaps = model.ocaps ++ [ocap] }, Cmd.none )
+  GetNewAudiolistEdit ->
+    ( model, getNewAudiolistEdit )
 
-            Just aledit ->
-              ( { model
-                | audiolistEdits = model.audiolistEdits ++ [aledit]
-                , ocaps = model.ocaps ++ [ocap] }, Cmd.none )
+  GotNewAudiolistEdit data ->
+    case data of
+    Ok ocap ->
+      case extractAudiolistEdit ocap of
+      Nothing ->
+        ( { model
+        | ocaps = model.ocaps ++ [ocap] }, Cmd.none )
 
-        Err _ ->
-          ( model, Cmd.none )
+      Just aledit ->
+        ( { model
+        | audiolistEdits = model.audiolistEdits ++ [aledit]
+        , ocaps = model.ocaps ++ [ocap] }, Cmd.none )
 
-    GotNewAudiolistContent data ->
-      case data of
-        Ok ocap ->
-            ( { model
-              | audiolistContent = ocap.contents }, Cmd.none )
+    Err _ ->
+      ( model, Cmd.none )
 
-        Err _ ->
-          ( model, Cmd.none )
+  GotNewAudiolistContent data ->
+    case data of
+    Ok ocap ->
+      ( { model
+        | audiolistContent = ocap.contents }, Cmd.none )
+
+    Err _ ->
+      ( model, Cmd.none )
 
 
 
@@ -154,44 +157,46 @@ subscriptions _ =
 view : Model -> Browser.Document Msg
 view model =
   case model.currentView of
-    ViewDashboard ->
-      viewDashboard model
+  ViewDashboard ->
+    viewDashboard model
 
-    ViewAudiolistEdit aledit ->
-      viewAudiolistEdit aledit
+  ViewAudiolistEdit aledit ->
+    viewAudiolistEdit aledit
 
 viewDashboard : Model -> Browser.Document Msg
 viewDashboard model =
   { title = "TaxiTakeMeTo"
   , body =
-    [ h1 [] [ text "AudiolistEdits" ]
-    , button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
-    ] ++ (List.map linkAudiolistEdit model.audiolistEdits)
+  [ h1 [] [ text "AudiolistEdits" ]
+  , button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
+  ] ++ (List.map linkAudiolistEdit model.audiolistEdits)
   }
 
 viewAudiolistEdit aledit =
   { title = "TaxiTakeMeTo"
   , body =
-    [ div [] [ text "Oops..." ] ]
+  [ h1 [] [ text "Audio list" ]
+  , button [ onClick GetNewAudioEdit ] [ text "New Audio Edit" ]
+  ] ++ (List.map linkAudioEdit model.audioEdits)
   }
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
 linkAudiolistEdit aledit =
   li []
-    [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
-    ]
+  [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
+  ]
 
 
 viewOcap : OcapData -> Html Msg
 viewOcap ocap =
   dl [ style "border" "solid" ]
-    [ dt [] [ text "type" ]
-    , dd [] [ text ocap.jsonType ]
-    , dt [] [ text "ocapType" ]
-    , dd [] [ text ocap.ocapType ]
-    , dt [] [ text "url" ]
-    , dd [] [ text ocap.url ]
-    ]
+  [ dt [] [ text "type" ]
+  , dd [] [ text ocap.jsonType ]
+  , dt [] [ text "ocapType" ]
+  , dd [] [ text ocap.ocapType ]
+  , dt [] [ text "url" ]
+  , dd [] [ text ocap.url ]
+  ]
 
 
 -- JSON API
@@ -205,9 +210,9 @@ type alias OcapData =
 decodeOcap : Decoder OcapData
 decodeOcap =
   D.map3 OcapData
-    (field "type" string)
-    (field "ocapType" string)
-    (field "url" string)
+  (field "type" string)
+  (field "ocapType" string)
+  (field "url" string)
 
 type alias AudiolistEdit =
   { url : String
@@ -216,39 +221,39 @@ type alias AudiolistEdit =
 extractAudiolistEdit : OcapData -> Maybe AudiolistEdit
 extractAudiolistEdit ocap =
   if ocap.jsonType == "ocap" && ocap.ocapType == "AudioListEdit" then
-    Just <| AudiolistEdit ocap.url
+  Just <| AudiolistEdit ocap.url
   else
-    Nothing
+  Nothing
 
 
 getNewAudiolistEdit : Cmd Msg
 getNewAudiolistEdit =
   Http.post
-    { url = "/api/audiolist"
-    , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
-    , body = Http.emptyBody
-    }
+  { url = "/api/audiolist"
+  , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
+  , body = Http.emptyBody
+  }
 
 
 type alias AudioList =
-    { jsontype : String
-    , viewfacet : String
-    , update : String
-    , contents : List OcapData
-    }
+  { jsontype : String
+  , viewfacet : String
+  , update : String
+  , contents : List OcapData
+  }
 
 decodeAudiolistContent : Decoder AudioList
 decodeAudiolistContent =
-    D.map4 AudioList
-    (field "type" string)
-    (field "view_facet" string)
-    (field "update" string)
-    (field "contents" (D.list decodeOcap))
+  D.map4 AudioList
+  (field "type" string)
+  (field "view_facet" string)
+  (field "update" string)
+  (field "contents" (D.list decodeOcap))
 
 getAudiolistContent : String -> Cmd Msg
 getAudiolistContent url =
   Http.get
-    { url = url
-    , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
-    }
+  { url = url
+  , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
+  }
 
