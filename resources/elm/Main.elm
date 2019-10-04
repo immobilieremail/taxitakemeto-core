@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Draganddrop
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
@@ -57,6 +58,8 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | GetNewAudiolistEdit
+  | GetNewAudioEdit
+  | GotNewAudioEdit
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudiolistContent (Result Http.Error AudioList)
 
@@ -231,6 +234,14 @@ getNewAudiolistEdit =
   Http.post
   { url = "/api/audiolist"
   , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
+  , body = Http.emptyBody
+  }
+
+getNewAudioEdit : Cmd Msg
+getNewAudioEdit =
+  Http.post
+  { url = "/api/audio"
+  , expect = Http.expectJson GotNewAudioEdit decodeOcap
   , body = Http.emptyBody
   }
 
