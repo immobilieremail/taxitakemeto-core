@@ -6,7 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
-import Json.Decode as D exposing (Decoder,map4, map3, field, string, int)
+import Json.Decode as D exposing (Decoder,map4, map3, field, string, int, list)
 import Url
 import Url.Parser as P
 import Url.Parser exposing ((</>))
@@ -40,12 +40,13 @@ type alias Model =
   , ocaps : List OcapData -- kept for debugging
   , audiolistEdits :  List AudiolistEdit
   , currentView : CurrentView
+  , audiolistContent : List OcapData
   }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (Model key [] [] ViewDashboard) url, Cmd.none )
+  ( updateFromUrl (Model key [] [] ViewDashboard []) url, Cmd.none )
 
 
 
@@ -57,6 +58,7 @@ type Msg
   | UrlChanged Url.Url
   | GetNewAudiolistEdit
   | GotNewAudiolistEdit (Result Http.Error OcapData)
+  | GotNewAudiolistContent (Result Http.Error AudioList)
 
 
 type Route
@@ -123,6 +125,17 @@ update msg model =
 
         Err _ ->
           ( model, Cmd.none )
+
+    GotNewAudiolistContent data ->
+      case data of
+        Ok ocap ->
+            ( { model
+              | audiolistContent = ocap.contents }, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
+
+
 
 
 
@@ -207,6 +220,7 @@ extractAudiolistEdit ocap =
   else
     Nothing
 
+
 getNewAudiolistEdit : Cmd Msg
 getNewAudiolistEdit =
   Http.post
@@ -216,31 +230,25 @@ getNewAudiolistEdit =
     }
 
 
+type alias AudioList =
+    { jsontype : String
+    , viewfacet : String
+    , update : String
+    , contents : List OcapData
+    }
 
+decodeAudiolistContent : Decoder AudioList
+decodeAudiolistContent =
+    D.map4 AudioList
+    (field "type" string)
+    (field "view_facet" string)
+    (field "update" string)
+    (field "contents" (D.list decodeOcap))
 
+getAudiolistContent : String -> Cmd Msg
+getAudiolistContent url =
+  Http.get
+    { url = url
+    , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
+    }
 
-
-
-
--- type alias AudioList =
---     { jsontype : String
---     , viewfacet : String
---     , update : String
---     , contents : String
---     }
-
--- decodeAudiolistContent : Decoder AudioList
--- decodeAudiolistContent =
---     D.map4 AudioList
---     (field "type" string)
---     (field "view_facet" string)
---     (field "update" string)
---     (field "contents" string)
-
-
--- getAudiolistContent : String -> Cmd Msg
--- getAudiolistContent url =
---   Http.get
---     { url = url
---     , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
---     }
