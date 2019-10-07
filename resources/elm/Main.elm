@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import Draganddrop
 import Browser
+import File exposing (File)
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -36,18 +36,26 @@ type CurrentView
   = ViewDashboard
   | ViewAudiolistEdit AudiolistEdit
 
+type Upload
+  = Waiting
+  | Done
+  | Fail
+
 type alias Model =
   { key : Nav.Key
   , ocaps : List OcapData -- kept for debugging
   , audiolistEdits :  List AudiolistEdit
+  , audioEdits : List AudioEdit
   , currentView : CurrentView
   , audiolistContent : List OcapData
+  , files : List File
+  , upload : Upload
   }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (Model key [] [] ViewDashboard []) url, Cmd.none )
+  ( updateFromUrl (Model key [] [] [] ViewDashboard [] [] Waiting) url, Cmd.none )
 
 
 
@@ -57,11 +65,13 @@ init flags url key =
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
+  | GotFiles (List File)
   | GetNewAudiolistEdit
   | GetNewAudioEdit
-  | GotNewAudioEdit
+  | GotNewAudioEdit (Result Http.Error OcapData)
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudiolistContent (Result Http.Error AudioList)
+  | Uploaded (Result Http.Error ())
 
 
 type Route
@@ -116,6 +126,28 @@ update msg model =
   GetNewAudiolistEdit ->
     ( model, getNewAudiolistEdit )
 
+  GotFiles inputFiles ->
+    ( model, Http.request
+        { method = "POST"
+          , url = "/api/audio"
+          , headers = []
+          , body = Http.multipartBody (List.map (Http.filePart "audio") inputFiles)
+          , expect = Http.expectWhatever Uploaded
+          , timeout = Nothing
+          , tracker = Just "upload"
+          }
+    )
+
+  Uploaded result ->
+      case result of
+        Ok _ ->
+          ( { model
+          | upload = Done }, Cmd.none)
+
+        Err _ ->
+          ({ model
+          | upload = Fail }, Cmd.none)
+
   GotNewAudiolistEdit data ->
     case data of
     Ok ocap ->
@@ -128,6 +160,20 @@ update msg model =
         ( { model
         | audiolistEdits = model.audiolistEdits ++ [aledit]
         , ocaps = model.ocaps ++ [ocap] }, Cmd.none )
+
+    Err _ ->
+      ( model, Cmd.none )
+
+  GotNewAudioEdit data ->
+    case data of
+    Ok ocap ->
+      case extractAudioEdit ocap of
+      Nothing ->
+        ( model, Cmd.none )
+
+      Just audioedit ->
+        ( { model
+        | audioEdits = model.audioEdits ++ [audioedit] }, Cmd.none )
 
     Err _ ->
       ( model, Cmd.none )
@@ -179,8 +225,14 @@ viewAudiolistEdit aledit =
   { title = "TaxiTakeMeTo"
   , body =
   [ h1 [] [ text "Audio list" ]
+  ,input
+        [ type_ "file"
+        , multiple True
+        , on "change" (D.map GotFiles filesDecoder)
+        ]
+        []
   , button [ onClick GetNewAudioEdit ] [ text "New Audio Edit" ]
-  ] ++ (List.map linkAudioEdit model.audioEdits)
+  ]
   }
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
@@ -204,6 +256,10 @@ viewOcap ocap =
 
 -- JSON API
 
+filesDecoder : D.Decoder (List File)
+filesDecoder =
+  D.at ["target","files"] (D.list File.decoder)
+
 type alias OcapData =
   { jsonType : String
   , ocapType : String
@@ -221,10 +277,21 @@ type alias AudiolistEdit =
   { url : String
   }
 
+type alias AudioEdit =
+  { url : String
+  }
+
 extractAudiolistEdit : OcapData -> Maybe AudiolistEdit
 extractAudiolistEdit ocap =
   if ocap.jsonType == "ocap" && ocap.ocapType == "AudioListEdit" then
   Just <| AudiolistEdit ocap.url
+  else
+  Nothing
+
+extractAudioEdit : OcapData -> Maybe AudioEdit
+extractAudioEdit ocap =
+  if ocap.jsonType == "ocap" && ocap.ocapType == "AudioEdit" then
+  Just <| AudioEdit ocap.url
   else
   Nothing
 
@@ -267,4 +334,3 @@ getAudiolistContent url =
   { url = url
   , expect = Http.expectJson GotNewAudiolistContent decodeAudiolistContent
   }
-
