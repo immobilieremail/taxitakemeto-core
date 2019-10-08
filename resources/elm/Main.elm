@@ -62,7 +62,6 @@ type Msg
   | UrlChanged Url.Url
   | GotFiles (List File)
   | GetNewAudiolistEdit
-  | GetNewAudioEdit
   | GotNewAudioEdit (Result Http.Error OcapData)
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudiolistContent (Result Http.Error AudioList)
@@ -112,9 +111,6 @@ update msg model =
     ( updateFromUrl model url
     , Cmd.none
     )
-
-  GetNewAudioEdit ->
-    (model, getNewAudioEdit)
 
   GetNewAudiolistEdit ->
     ( model, getNewAudiolistEdit )
@@ -193,7 +189,7 @@ view model =
     viewDashboard model
 
   ViewAudiolistEdit aledit ->
-    viewAudiolistEdit aledit
+    viewAudiolistEdit model
 
 viewDashboard : Model -> Browser.Document Msg
 viewDashboard model =
@@ -204,7 +200,7 @@ viewDashboard model =
   ] ++ (List.map linkAudiolistEdit model.audiolistEdits)
   }
 
-viewAudiolistEdit aledit =
+viewAudiolistEdit model =
   { title = "TaxiTakeMeTo"
   , body =
   [ h1 [] [ text "Audio list" ]
@@ -214,8 +210,7 @@ viewAudiolistEdit aledit =
         , on "change" (D.map GotFiles filesDecoder)
         ]
         []
-  , button [ onClick GetNewAudioEdit ] [ text "New Audio Edit" ]
-  ]
+  ] ++ (List.map linkAudioEdit model.audioEdits)
   }
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
@@ -224,6 +219,11 @@ linkAudiolistEdit aledit =
   [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
   ]
 
+linkAudioEdit : AudioEdit -> Html Msg
+linkAudioEdit aledit =
+  li []
+  [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
+  ]
 
 viewOcap : OcapData -> Html Msg
 viewOcap ocap =
@@ -286,15 +286,6 @@ getNewAudiolistEdit =
   , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
   , body = Http.emptyBody
   }
-
-getNewAudioEdit : Cmd Msg
-getNewAudioEdit =
-  Http.post
-  { url = "/api/audio"
-  , expect = Http.expectJson GotNewAudioEdit decodeOcap
-  , body = Http.emptyBody
-  }
-
 
 type alias AudioList =
   { jsontype : String
