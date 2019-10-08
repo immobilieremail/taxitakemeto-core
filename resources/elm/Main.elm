@@ -36,10 +36,6 @@ type CurrentView
   = ViewDashboard
   | ViewAudiolistEdit AudiolistEdit
 
-type Upload
-  = Waiting
-  | Done
-  | Fail
 
 type alias Model =
   { key : Nav.Key
@@ -49,13 +45,12 @@ type alias Model =
   , currentView : CurrentView
   , audiolistContent : List OcapData
   , files : List File
-  , upload : Upload
   }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (Model key [] [] [] ViewDashboard [] [] Waiting) url, Cmd.none )
+  ( updateFromUrl (Model key [] [] [] ViewDashboard [] []) url, Cmd.none )
 
 
 
@@ -71,8 +66,6 @@ type Msg
   | GotNewAudioEdit (Result Http.Error OcapData)
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudiolistContent (Result Http.Error AudioList)
-  | Uploaded (Result Http.Error ())
-
 
 type Route
   = RouteDashboard
@@ -132,21 +125,11 @@ update msg model =
           , url = "/api/audio"
           , headers = []
           , body = Http.multipartBody (List.map (Http.filePart "audio") inputFiles)
-          , expect = Http.expectWhatever Uploaded
+          , expect = Http.expectJson GotNewAudioEdit decodeOcap
           , timeout = Nothing
           , tracker = Just "upload"
           }
     )
-
-  Uploaded result ->
-      case result of
-        Ok _ ->
-          ( { model
-          | upload = Done }, Cmd.none)
-
-        Err _ ->
-          ({ model
-          | upload = Fail }, Cmd.none)
 
   GotNewAudiolistEdit data ->
     case data of
