@@ -8,25 +8,29 @@ use Illuminate\Support\Facades\Storage;
 use App\Audio,
     App\AudioEditFacet,
     App\AudioViewFacet;
-
+use App\Extensions\SwissNumber;
 use App\Jobs\ConvertUploadedAudio;
 
 use App\Http\Requests\NewAudioRequest;
 
 class AudioController extends Controller
 {
-    public function store(NewAudioRequest $request)
+    public function store(Request $request)
     {
-        if ($request->has('audio')) {
-            if (!$request->file('audio')->getFileInfo()->getSize())
-                abort(415);
+        if ($request->has('audio') && $request->file('audio') != null) {
+            if (!preg_match("#^(audio)/#", $request->file('audio')->getMimeType())) {
+                return response()->json(['error' => 'Unsupported Media Type'], 415);
+            }
 
+            $swiss_number = new SwissNumber;
             $extension = $request->file('audio')->extension();
-            $audio = Audio::create(['extension' => $extension]);
+            $filename = $swiss_number() . '.' . $extension;
+            $request->file('audio')->storeAs('storage/uploads', $filename, 'public');
+
+            $audio = Audio::create(['path' => $filename]);
             $audio_edit = $audio->editFacet()->save(new AudioEditFacet);
             $audio_view = $audio->viewFacet()->save(new AudioViewFacet);
 
-            $request->file('audio')->storeAs('storage/uploads', "$audio->path", 'public');
             $this->dispatch(new ConvertUploadedAudio($audio));
             return response()->json(
                 [
