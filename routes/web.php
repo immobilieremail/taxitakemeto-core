@@ -11,5 +11,5 @@
 |
 */
 
-Route::get('/elm', function (){
-    return view('elm');});
+Route::get('/', function (){
+    return view('elm');})->name('home');

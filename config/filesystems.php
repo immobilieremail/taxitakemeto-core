@@ -56,6 +56,7 @@ return [
         'converts' => [
             'driver' => 'local',
             'root' => public_path() . '/storage/converts',
+            'url' => env('APP_URL').'/storage/converts',
         ],
 
         'public' => [
