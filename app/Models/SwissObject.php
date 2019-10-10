@@ -10,6 +10,7 @@ abstract class SwissObject extends Model
     public $incrementing = false;
     protected $primaryKey = 'swiss_number';
     protected $keyType = 'string';
+    protected $table = 'facets';
 
     public function __construct(array $attributes = array())
     {
