@@ -18,4 +18,4 @@ Route::resource('shell', 'ShellController')->only('create', 'show', 'update');
 Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
 
 Route::resource('audiolist', 'AudioListController')->only('create', 'show', 'edit', 'update');
-Route::resource('audio', 'AudioController')->only('store', 'show', 'edit', 'destroy');
+Route::resource('media', 'MediaController')->only('store', 'show', 'edit', 'destroy');
