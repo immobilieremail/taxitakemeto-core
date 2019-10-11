@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class SwissObject extends Model
 {
+
     public $incrementing = false;
     protected $primaryKey = 'swiss_number';
     protected $keyType = 'string';
@@ -16,7 +17,6 @@ abstract class SwissObject extends Model
     {
         parent::__construct($attributes);
 
-        $swiss_number = new SwissNumber;
-        $this->swiss_number = $swiss_number();
+        $this->swiss_number = swiss_number();
     }
 }
