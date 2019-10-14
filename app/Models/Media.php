@@ -63,17 +63,6 @@ abstract class Media extends Model
     }
 
 
-
-
-
-    /**
-     * @param array
-     */
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-    }
-
     /**
      * Model boot function, init path when model saved
      *
