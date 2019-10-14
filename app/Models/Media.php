@@ -16,6 +16,12 @@ abstract class Media extends Model
     protected $extension;
 
     /**
+     * Store manipulated media type
+     * @var String
+     */
+    protected $media_type;
+
+    /**
      * Table where media are stored
      * @var String
      */
@@ -38,6 +44,8 @@ abstract class Media extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
+
+        $this->extension = $attributes['extension'];
     }
 
     /**
@@ -74,6 +82,7 @@ abstract class Media extends Model
 
         static::creating(function (Media $item) {
             $item->setPathAttribute();
+            $item->setMediaType();
         });
     }
 
@@ -87,6 +96,15 @@ abstract class Media extends Model
     }
 
     /**
+     * Set media_type variable attribute based
+     * - on media type
+     */
+    protected function setMediaType()
+    {
+        $this->attributes['media_type'] = $this->getMediaType();
+    }
+
+    /**
      * Get file extention from protected variable
      *
      * @return String
@@ -96,18 +114,13 @@ abstract class Media extends Model
         return $this->extension;
     }
 
-
     /**
-     * @return [type]
-
-    public function viewFacet()
+     * Get file extention from protected variable
+     *
+     * @return String
+     */
+    protected function getMediaType(): String
     {
-        return $this->morphOne(MediaView::class, 'target');
+        return $this->media_type;
     }
-
-    public function editFacet()
-    {
-        return $this->morphOne(MediaEdit::class, 'target');
-    }
-    */
 }
