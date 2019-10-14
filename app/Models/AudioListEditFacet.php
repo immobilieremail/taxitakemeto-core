@@ -44,6 +44,7 @@ class AudioListEditFacet extends SwissObject
         ];
     }
 
+    
     public function updateAudioList($new_audios)
     {
         $pos = 0;

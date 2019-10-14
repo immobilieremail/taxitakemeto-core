@@ -5,8 +5,23 @@ namespace App;
 use App\Extensions\SwissNumber;
 use Illuminate\Database\Eloquent\Model;
 
-class Audio extends Model
+class Audio extends Media
 {
+    /**
+     * Audio file are store in MP3 format
+     * @var String
+     */
+    protected $extension = 'mp3';
+    
+
+
+
+
+
+
+
+
+    /*
     protected $fillable = ['path'];
 
     public function __construct(array $attributes = array())
@@ -34,5 +49,5 @@ class Audio extends Model
     public function editFacet()
     {
         return $this->hasOne(AudioEditFacet::class, 'id_audio', 'id');
-    }
+    }*/
 }
