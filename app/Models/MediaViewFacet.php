@@ -4,4 +4,4 @@ namespace App\Models;
 
 use App\Models\Facet;
 
-class MediaEditFacet extends Facet {}
+class MediaViewFacet extends Facet {}
