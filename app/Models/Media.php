@@ -14,7 +14,7 @@ abstract class Media extends Model
      * @var String
      */
     protected $extension;
-    
+
     /**
      * Table where media are stored
      * @var String
@@ -23,7 +23,7 @@ abstract class Media extends Model
 
     /**
      * Model fillable data
-     * 
+     *
      * @var Array
      */
     protected $fillable = [
@@ -32,7 +32,7 @@ abstract class Media extends Model
 
     /**
      * Constructor for eloquent model hierarchy
-     * 
+     *
      * @param array $attributes
      */
     public function __construct(array $attributes = array())
@@ -42,7 +42,7 @@ abstract class Media extends Model
 
     /**
      * EditFacet for specific media
-     * 
+     *
      * @return [type] [description]
      */
     public function editFacet()
@@ -53,7 +53,7 @@ abstract class Media extends Model
 
     /**
      * ViewFacet for specific media
-     * 
+     *
      * @return [type] [description]
      */
     public function viewFacet()
@@ -76,13 +76,13 @@ abstract class Media extends Model
 
     /**
      * Model boot function, init path when model saved
-     * 
+     *
      * @return void
      */
     public static function boot()
     {
         parent::boot();
-    
+
         static::creating(function (Media $item) {
             $item->setPathAttribute();
         });
@@ -99,7 +99,7 @@ abstract class Media extends Model
 
     /**
      * Get file extention from protected variable
-     * 
+     *
      * @return String
      */
     protected function getExtension(): String
@@ -110,7 +110,7 @@ abstract class Media extends Model
 
     /**
      * @return [type]
-     
+
     public function viewFacet()
     {
         return $this->morphOne(MediaView::class, 'target');
