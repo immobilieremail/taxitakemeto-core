@@ -1,5 +1,7 @@
 <?php
 
+use App\Extensions\SwissNumber;
+
 function detectBrowserLanguage()
 {
 	$all 		= explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']);
@@ -15,4 +17,15 @@ function getSwissNumberFromUrl(String $url)
 	} else {
 		return $matches[0];
 	}
+}
+
+/**
+ * Generate swiss number from class
+ *
+ * @return String generated Swiss Number
+ */
+function swiss_number(): String
+{
+    $swiss_number = new SwissNumber;
+    return $swiss_number();
 }
