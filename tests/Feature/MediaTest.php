@@ -15,45 +15,6 @@ class MediaTest extends TestCase
      * @test
      *
      */
-    public function create_media()
-    {
-        $response = $this->post(route('media.store'), ['media' => fopen('/home/mohamed/Téléchargements/applause.wav', 'r')]);
-        $response
-            ->assertStatus(200)
-            ->assertJsonCount(3)
-            ->assertJsonStructure([
-                "type",
-                "ocapType",
-                "url"
-            ]);
-    }
-
-    /**
-     * @test
-     *
-     */
-    public function create_bad_media()
-    {
-        $response = $this->post(route('media.store'), ['media' => "('/home/mohamed/Téléchargements/applause.wav')"]);
-        $response
-            ->assertStatus(415);
-    }
-
-    /**
-     * @test
-     *
-     */
-    public function create_bad_request_media()
-    {
-        $response = $this->post(route('media.store'), ['string' => "('/home/mohamed/Téléchargements/applause.wav')"]);
-        $response
-            ->assertStatus(400);
-    }
-
-    /**
-     * @test
-     *
-     */
     public function view_media()
     {
         $media = factory(Media::class)->create();
@@ -82,18 +43,17 @@ class MediaTest extends TestCase
      * @test
      *
      */
-    public function edit_media()
+    public function edit_facet_media()
     {
         $media = factory(Media::class)->create();
-        $response = $this->get(route('media.edit', ['medium' => $media->editFacet->swiss_number]));
+        $response = $this->get(route('media.show', ['medium' => $media->editFacet->swiss_number]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(4)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 "type",
                 "view_facet",
                 "path",
-                "delete"
             ]);
     }
 
@@ -101,9 +61,9 @@ class MediaTest extends TestCase
      * @test
      *
      */
-    public function bad_edit_media()
+    public function bad_edit_facet_media()
     {
-        $response = $this->get(route('media.edit', ['medium' => "dautrechoses"]));
+        $response = $this->get(route('media.show', ['medium' => "dautreschoses"]));
         $response
             ->assertStatus(404);
     }
