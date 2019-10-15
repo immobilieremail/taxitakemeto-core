@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class Media extends Model
 {
     protected $fillable = [
-        'path', 'mimetype'
+        'path', 'media_type'
     ];
 
     public function viewFacet()
