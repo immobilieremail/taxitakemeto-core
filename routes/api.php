@@ -19,3 +19,4 @@ Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
 
 //Route::resource('medialist', 'MediaListController')->only('create', 'show', 'edit', 'update');
 Route::resource('media', 'MediaController')->only('store', 'show', 'destroy');
+Route::resource('obj', 'FacetController');
