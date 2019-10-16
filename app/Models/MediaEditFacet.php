@@ -10,7 +10,7 @@ class MediaEditFacet extends Facet
     {
         parent::__construct($attributes);
 
-        $this->facet_type = 'edit';
+        $this->facet_type = 'App\Models\MediaEditFacet';
     }
 
     /**
@@ -21,5 +21,28 @@ class MediaEditFacet extends Facet
     public function target()
     {
         return $this->belongsTo(Media::class);
+    }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        return [
+            'a' => 'edit'
+        ];
+    }
+
+    public function has_destroy()
+    {
+        return true;
+    }
+
+    public function destroyTarget()
+    {
+        $media = $this->target;
+        $media-> delete();
     }
 }

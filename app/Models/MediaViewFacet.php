@@ -10,7 +10,7 @@ class MediaViewFacet extends Facet
     {
         parent::__construct($attributes);
 
-        $this->facet_type = 'view';
+        $this->facet_type = 'App\Models\MediaViewFacet';
     }
 
     /**
@@ -21,5 +21,17 @@ class MediaViewFacet extends Facet
     public function target()
     {
         return $this->belongsTo(Media::class);
+    }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        return [
+            'a' => 'view'
+        ];
     }
 }
