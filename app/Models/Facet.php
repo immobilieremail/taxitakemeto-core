@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Facet extends SwissObject
+class Facet extends SwissObject
 {
     /**
      * Specific table to use
@@ -35,5 +35,48 @@ abstract class Facet extends SwissObject
      *
      * @return [type] [description]
      */
-    abstract public function target();
+    public function target()
+    {
+        return null;
+    }
+
+    public function has_index()
+    {
+        return false;
+    }
+
+    public function has_store()
+    {
+        return false;
+    }
+
+    public function has_create()
+    {
+        return false;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
+    public function has_show()
+    {
+        return false;
+    }
+
+    public function has_update()
+    {
+        return false;
+    }
+
+    public function has_destroy()
+    {
+        return false;
+    }
+
+    public function has_edit()
+    {
+        return false;
+    }
 }
