@@ -12,4 +12,14 @@ class MediaEditFacet extends Facet
 
         $this->facet_type = 'edit';
     }
+
+    /**
+     * Inverse relation of EditFacet for specific media
+     *
+     * @return [type] [description]
+     */
+    public function target()
+    {
+        return $this->belongsTo(Media::class);
+    }
 }

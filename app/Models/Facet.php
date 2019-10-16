@@ -29,4 +29,11 @@ abstract class Facet extends SwissObject
     {
         parent::__construct($attributes);
     }
+
+    /**
+     * Inverse of relationship
+     *
+     * @return [type] [description]
+     */
+    abstract public function target();
 }

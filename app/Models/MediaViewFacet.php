@@ -12,4 +12,14 @@ class MediaViewFacet extends Facet
 
         $this->facet_type = 'view';
     }
+
+    /**
+     * Inverse relation of ViewFacet for specific media
+     *
+     * @return [type] [description]
+     */
+    public function target()
+    {
+        return $this->belongsTo(Media::class);
+    }
 }
