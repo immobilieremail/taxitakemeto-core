@@ -10,18 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 class Media extends Model
 {
     /**
-     * Store manipulated file extension
-     * @var String
-     */
-    protected $extension;
-
-    /**
-     * Store manipulated media type
-     * @var String
-     */
-    protected $media_type;
-
-    /**
      * Table where media are stored
      * @var String
      */
@@ -44,13 +32,6 @@ class Media extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-
-        if (isset($attributes['extension'])) {
-            $this->extension = $attributes['extension'];
-        }
-        if (isset($attributes['media_type'])) {
-            $this->media_type = $attributes['media_type'];
-        }
     }
 
     /**
@@ -73,59 +54,5 @@ class Media extends Model
     {
         return $this->hasOne(MediaViewFacet::class, 'target_id')
                     ->where('facet_type', 'view');
-    }
-
-
-    /**
-     * Model boot function, init path when model saved
-     *
-     * @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Media $item) {
-            $item->setPathAttribute();
-            $item->setMediaType();
-        });
-    }
-
-    /**
-     * Set path variable attribute based
-     * - on a swiss number and file extension
-     */
-    protected function setPathAttribute()
-    {
-        $this->attributes['path'] = swiss_number().'.'.$this->getExtension();
-    }
-
-    /**
-     * Set media_type variable attribute based
-     * - on media type
-     */
-    protected function setMediaType()
-    {
-        $this->attributes['media_type'] = $this->getMediaType();
-    }
-
-    /**
-     * Get file extention from protected variable
-     *
-     * @return String
-     */
-    protected function getExtension(): String
-    {
-        return $this->extension;
-    }
-
-    /**
-     * Get file extention from protected variable
-     *
-     * @return String
-     */
-    protected function getMediaType(): String
-    {
-        return $this->media_type;
     }
 }
