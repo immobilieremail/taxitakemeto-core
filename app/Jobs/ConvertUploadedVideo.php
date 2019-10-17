@@ -2,26 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Audio;
-
-use Illuminate\Support\Facades\Storage;
-
-use FFMpeg;
-use FFMpeg\Coordinate\Dimension;
-use FFMpeg\Format\Audio\Mp3;
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ConvertUploadedAudio implements ShouldQueue
+class ConvertUploadedVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $audio;
-
+    public $video;
     /**
      * Create a new job instance.
      *
@@ -29,7 +20,7 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function __construct(Media $media)
     {
-        $this->audio = $media;
+        $this->video = $media;
     }
 
     /**
@@ -39,20 +30,20 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function handle()
     {
-        $audio_path = swiss_number();
-        $bitRateFormat = (new Mp3)->setAudioKiloBitrate(256); // create a file format
+        $video_path = swiss_number();
+        $bitRateFormat = (new X264)->setKiloBitrate(1500); // create a file format
 
         FFMpeg::fromDisk('uploads') // open the uploaded audio from the right disk
-            ->open($this->audio->path)
+            ->open($this->video->path)
             ->export()
             ->toDisk('converts') // tell the Exporter to which disk we want to export
             ->inFormat($bitRateFormat)
-            ->save("$audio_path.mp3");
+            ->save("$video_path.mp4");
 
         Storage::disk('uploads')
-            ->delete($this->audio->path);
+            ->delete($this->video->path);
 
-        $this->audio->path = "$audio_path.mp3";
-        $this->audio->save();
+        $this->video->path = "$video_path.mp4";
+        $this->video->save();
     }
 }
