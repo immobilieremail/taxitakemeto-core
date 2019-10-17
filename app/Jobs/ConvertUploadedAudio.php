@@ -2,16 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Audio;
-
-use Illuminate\Support\Facades\Storage;
-
 use FFMpeg;
-use FFMpeg\Coordinate\Dimension;
-use FFMpeg\Format\Audio\Mp3;
 
+use App\Models\Media;
+use FFMpeg\Format\Audio\Mp3;
 use Illuminate\Bus\Queueable;
+
+use FFMpeg\Coordinate\Dimension;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

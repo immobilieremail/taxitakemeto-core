@@ -2,9 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Models\Media;
 use Spatie\Glide\GlideImage;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,18 +34,18 @@ class ConvertUploadedImage implements ShouldQueue
      */
     public function handle()
     {
-        $image_path = swiss_number();
-        $url = Storage::url($this->image->path);
-        $path = Storage::disk('converts')->getAdapter()->getPathPrefix();
+        $image_name = swiss_number();
+        $upload_path = Storage::disk('uploads')->getAdapter()->getPathPrefix();
+        $convert_path = Storage::disk('converts')->getAdapter()->getPathPrefix();
 
-        GlideImage::create($url)
+        GlideImage::create($upload_path . $this->image->path)
             ->modify(['fm'=>'jpg'])
-            ->save($path . $image_path . '.jpg');
+            ->save($convert_path . $image_name . '.jpg');
 
         Storage::disk('uploads')
             ->delete($this->image->path);
 
-        $this->image->path = "$image_path.jpg";
+        $this->image->path = "$image_name.jpg";
         $this->image->save();
     }
 }
