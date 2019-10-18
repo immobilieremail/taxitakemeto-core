@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Facet;
+use Illuminate\Support\Facades\Storage;
 
 class MediaViewFacet extends Facet
 {
@@ -31,7 +32,8 @@ class MediaViewFacet extends Facet
     public function description()
     {
         return [
-            'a' => 'view'
+            'type' => 'MediaViewFacet',
+            'path' => Storage::disk('converts')->url($this->target->path)
         ];
     }
 }

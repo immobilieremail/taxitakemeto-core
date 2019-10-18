@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Facet;
+use Illuminate\Support\Facades\Storage;
 
 class MediaEditFacet extends Facet
 {
@@ -31,7 +32,9 @@ class MediaEditFacet extends Facet
     public function description()
     {
         return [
-            'a' => 'edit'
+            'type' => 'MediaEditFacet',
+            'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
+            'path' => Storage::disk('converts')->url($this->target->path)
         ];
     }
 
