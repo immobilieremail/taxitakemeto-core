@@ -38,20 +38,23 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function handle()
     {
-        $audio_path = swiss_number();
-        $bitRateFormat = (new Mp3)->setAudioKiloBitrate(256); // create a file format
+        $audio_name = swiss_number();
+        $ffprobe = \FFMpeg\FFProbe::create();
+        $audio_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->audio->path;
+        $bit_rate = $ffprobe->format($audio_path)->get('bit_rate') / 1024; // get bit rate in Kb
+        $bitRateFormat = (new Mp3)->setAudioKiloBitrate(($bit_rate > 256) ? 256 : $bit_rate); // create a file format
 
         FFMpeg::fromDisk('uploads') // open the uploaded audio from the right disk
             ->open($this->audio->path)
             ->export()
             ->toDisk('converts') // tell the Exporter to which disk we want to export
             ->inFormat($bitRateFormat)
-            ->save("$audio_path.mp3");
+            ->save("$audio_name.mp3");
 
         Storage::disk('uploads')
             ->delete($this->audio->path);
 
-        $this->audio->path = "$audio_path.mp3";
+        $this->audio->path = "$audio_name.mp3";
         $this->audio->save();
     }
 }

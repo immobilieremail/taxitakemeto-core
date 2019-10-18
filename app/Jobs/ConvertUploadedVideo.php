@@ -10,6 +10,7 @@ use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
 
 use FFMpeg\Coordinate\Dimension;
+use FFMpeg\Filters\Audio\SimpleFilter;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
@@ -38,20 +39,23 @@ class ConvertUploadedVideo implements ShouldQueue
      */
     public function handle()
     {
-        $video_path = swiss_number();
-        $bitRateFormat = (new X264('libmp3lame', 'libx264'))->setKiloBitrate(1500); // create a file format
+        $video_name = swiss_number();
+        $ffprobe = \FFMpeg\FFProbe::create();
+        $video_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->video->path;
+        $bit_rate = $ffprobe->format($video_path)->get('bit_rate') / 1024; // get bit rate in Kb
+        $bitRateFormat = (new X264('aac', 'libx264'))->setKiloBitrate(($bit_rate > 500) ? 500 : $bit_rate); // create a file format
 
         FFMpeg::fromDisk('uploads') // open the uploaded audio from the right disk
             ->open($this->video->path)
             ->export()
             ->toDisk('converts') // tell the Exporter to which disk we want to export
             ->inFormat($bitRateFormat)
-            ->save("$video_path.mp4");
+            ->save("$video_name.mp4");
 
         Storage::disk('uploads')
             ->delete($this->video->path);
 
-        $this->video->path = "$video_path.mp4";
+        $this->video->path = "$video_name.mp4";
         $this->video->save();
     }
 }
