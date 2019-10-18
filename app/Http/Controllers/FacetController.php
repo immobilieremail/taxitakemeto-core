@@ -52,7 +52,7 @@ class FacetController extends Controller
 
         if ($true_facet != null && $true_facet->has_destroy() == true) {
             $true_facet->destroyTarget();
-            return response('Deleted !', 200);
+            return response('', 204);
         } else {
             return response('Not Found', 404);
         }
