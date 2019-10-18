@@ -20,6 +20,16 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->has('media') == false) {
+            return response('Bad Request', 400);
+        }
+        elseif ($request->file('media') == null) {
+            return response('Unsupported Media Type', 415);
+        }
+        elseif (!in_array(substr($request->file('media')->getMimeType(), 0, 6), ['audio/', 'video/', 'image/'], true)) {
+            return response('Unsupported Media Type', 415);
+        }
+
         $media_name = swiss_number() . '.' . $request->file('media')->extension();
         $path = $request->file('media')->storeAs('', $media_name, 'uploads');
         $mime_type = $request->file('media')->getMimeType();
@@ -27,11 +37,12 @@ class MediaController extends Controller
         $media_type = [];
         preg_match('#(^[a-z])\w+#', $mime_type, $media_type);
 
-        $media = Media::create(['path'=>$path, 'media_type'=>$media_type[0]]);
+        # TODO : replace by new Media (doesn't work with ConvertUploadedMedia Jobs)
+        $media = Media::create(['path' => $path, 'media_type' => $media_type[0]]);
         $media->editFacet()->save(new MediaEditFacet);
         $media->viewFacet()->save(new MediaViewFacet);
 
-        if ($media_type[0] == 'audio'){
+        if ($media_type[0] == 'audio') {
             $this->dispatch(new ConvertUploadedAudio($media));
         }
         elseif ($media_type[0] == 'video') {
@@ -40,6 +51,10 @@ class MediaController extends Controller
         elseif ($media_type[0] == 'image') {
             $this->dispatch(new ConvertUploadedImage($media));
         }
-        return response('Success !', 200);
+        return response()->json([
+            'type' => 'ocap',
+            'ocapType' => 'MediaEditFacet',
+            'url' => route('obj.show', ['obj' => $media->editFacet->id])
+        ]);
     }
 }
