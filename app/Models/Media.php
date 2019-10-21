@@ -7,7 +7,7 @@ use App\Models\MediaEditFacet;
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Media extends Model
+class Media extends Model
 {
     /**
      * Table where media are stored
