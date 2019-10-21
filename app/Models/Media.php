@@ -42,7 +42,7 @@ class Media extends Model
     public function editFacet()
     {
         return $this->hasOne(MediaEditFacet::class, 'target_id')
-                    ->where('facet_type', 'App\Models\MediaEditFacet');
+                    ->where('type', 'App\Models\MediaEditFacet');
     }
 
     /**
@@ -53,6 +53,6 @@ class Media extends Model
     public function viewFacet()
     {
         return $this->hasOne(MediaViewFacet::class, 'target_id')
-                    ->where('facet_type', 'App\Models\MediaViewFacet');
+                    ->where('type', 'App\Models\MediaViewFacet');
     }
 }
