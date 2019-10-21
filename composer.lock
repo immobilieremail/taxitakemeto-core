@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3ce4b4c33b06a7a6fca96552c61c0b1c",
+    "content-hash": "e178e163d92b263cbc3f68efaa52b451",
     "packages": [
         {
             "name": "alchemy/binary-driver",
@@ -1333,6 +1333,70 @@
                 "processing"
             ],
             "time": "2019-04-03T23:46:42+00:00"
+        },
+        {
+            "name": "mannikj/laravel-sti",
+            "version": "v1.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MannikJ/laravel-sti.git",
+                "reference": "b68d5bee9ca9b361c535324342425bd59e506cb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MannikJ/laravel-sti/zipball/b68d5bee9ca9b361c535324342425bd59e506cb8",
+                "reference": "b68d5bee9ca9b361c535324342425bd59e506cb8",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.8.*",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "dms/phpunit-arraysubset-asserts": "^0.1.0",
+                "orchestra/testbench": "3.8.*",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "MannikJ\\Laravel\\SingleTableInheritance\\SingleTableInheritanceServiceProvider"
+                    ],
+                    "aliases": {
+                        "STI": "MannikJ\\Laravel\\SingleTableInheritance\\Facades\\STI"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MannikJ\\Laravel\\SingleTableInheritance\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jannik Malken",
+                    "email": "mannikj@web.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A single table inheritance trait for you eloquent models",
+            "homepage": "https://github.com/mannikj/laravel-sti",
+            "keywords": [
+                "eloquent",
+                "laravel",
+                "laravel-sti",
+                "mannikj",
+                "model",
+                "single table inheritance",
+                "sti",
+                "trait"
+            ],
+            "time": "2019-10-11T11:55:42+00:00"
         },
         {
             "name": "monolog/monolog",
