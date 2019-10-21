@@ -10,18 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 abstract class Media extends Model
 {
     /**
-     * Store manipulated file extension
-     * @var String
-     */
-    protected $extension;
-
-    /**
-     * Store manipulated media type
-     * @var String
-     */
-    protected $media_type;
-
-    /**
      * Table where media are stored
      * @var String
      */
@@ -33,7 +21,7 @@ abstract class Media extends Model
      * @var Array
      */
     protected $fillable = [
-        'path', 'media_type', 'mimetype'
+        'path', 'media_type'
     ];
 
     /**
@@ -44,8 +32,6 @@ abstract class Media extends Model
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
-
-        $this->extension = $attributes['extension'];
     }
 
     /**
@@ -56,7 +42,7 @@ abstract class Media extends Model
     public function editFacet()
     {
         return $this->hasOne(MediaEditFacet::class, 'target_id')
-                    ->where('facet_type', 'edit');
+                    ->where('facet_type', 'App\Models\MediaEditFacet');
     }
 
     /**
@@ -67,60 +53,6 @@ abstract class Media extends Model
     public function viewFacet()
     {
         return $this->hasOne(MediaViewFacet::class, 'target_id')
-                    ->where('facet_type', 'view');
-    }
-
-
-    /**
-     * Model boot function, init path when model saved
-     *
-     * @return void
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Media $item) {
-            $item->setPathAttribute();
-            $item->setMediaType();
-        });
-    }
-
-    /**
-     * Set path variable attribute based
-     * - on a swiss number and file extension
-     */
-    protected function setPathAttribute()
-    {
-        $this->attributes['path'] = swiss_number().'.'.$this->getExtension();
-    }
-
-    /**
-     * Set media_type variable attribute based
-     * - on media type
-     */
-    protected function setMediaType()
-    {
-        $this->attributes['media_type'] = $this->getMediaType();
-    }
-
-    /**
-     * Get file extention from protected variable
-     *
-     * @return String
-     */
-    protected function getExtension(): String
-    {
-        return $this->extension;
-    }
-
-    /**
-     * Get file extention from protected variable
-     *
-     * @return String
-     */
-    protected function getMediaType(): String
-    {
-        return $this->media_type;
+                    ->where('facet_type', 'App\Models\MediaViewFacet');
     }
 }

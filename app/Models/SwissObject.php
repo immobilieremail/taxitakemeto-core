@@ -24,7 +24,7 @@ abstract class SwissObject extends Model
 
     /**
      * Constructor to affect swiss number @ model creation
-     * 
+     *
      * @param array $attributes [description]
      */
     public function __construct(array $attributes = array())

@@ -5,22 +5,23 @@ namespace App\Jobs;
 use FFMpeg;
 
 use App\Models\Media;
-use FFMpeg\Format\Audio\Mp3;
+
+use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
 
 use FFMpeg\Coordinate\Dimension;
+use FFMpeg\Filters\Audio\SimpleFilter;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ConvertUploadedAudio implements ShouldQueue
+class ConvertUploadedVideo implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $audio;
-
+    public $video;
     /**
      * Create a new job instance.
      *
@@ -28,7 +29,7 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function __construct(Media $media)
     {
-        $this->audio = $media;
+        $this->video = $media;
     }
 
     /**
@@ -38,23 +39,23 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function handle()
     {
-        $audio_name = swiss_number();
+        $video_name = swiss_number();
         $ffprobe = \FFMpeg\FFProbe::create();
-        $audio_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->audio->path;
-        $bit_rate = $ffprobe->format($audio_path)->get('bit_rate') / 1024; // get bit rate in Kb
-        $bitRateFormat = (new Mp3)->setAudioKiloBitrate(($bit_rate > 256) ? 256 : $bit_rate); // create a file format
+        $video_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->video->path;
+        $bit_rate = $ffprobe->format($video_path)->get('bit_rate') / 1024; // get bit rate in Kb
+        $bitRateFormat = (new X264('aac', 'libx264'))->setKiloBitrate(($bit_rate > 500) ? 500 : $bit_rate); // create a file format
 
         FFMpeg::fromDisk('uploads') // open the uploaded audio from the right disk
-            ->open($this->audio->path)
+            ->open($this->video->path)
             ->export()
             ->toDisk('converts') // tell the Exporter to which disk we want to export
             ->inFormat($bitRateFormat)
-            ->save("$audio_name.mp3");
+            ->save("$video_name.mp4");
 
         Storage::disk('uploads')
-            ->delete($this->audio->path);
+            ->delete($this->video->path);
 
-        $this->audio->path = "$audio_name.mp3";
-        $this->audio->save();
+        $this->video->path = "$video_name.mp4";
+        $this->video->save();
     }
 }

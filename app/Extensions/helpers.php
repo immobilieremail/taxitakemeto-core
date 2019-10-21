@@ -21,7 +21,7 @@ function getSwissNumberFromUrl(String $url)
 
 /**
  * Generate swiss number from class
- * 
+ *
  * @return String generated Swiss Number
  */
 function swiss_number(): String
