@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use MannikJ\Laravel\SingleTableInheritance\Traits\SingleTableInheritance;
 
 class Facet extends SwissObject
 {
+    use SingleTableInheritance;
+
     /**
      * Specific table to use
      * @var string
@@ -17,7 +20,7 @@ class Facet extends SwissObject
      * @var array
      */
     protected $fillable         = [
-        'id', 'target_id', 'facet_type'
+        'id', 'target_id', 'type'
     ];
 
     /**
