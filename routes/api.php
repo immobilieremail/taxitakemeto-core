@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 Route::resource('shell', 'ShellController')->only('create', 'show', 'update');
 Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
 
-Route::post('media', 'MediaController@store');
-Route::post('list', 'OcapListController@store');
+Route::post('media', 'MediaController@store')->name('media.store');
+Route::post('list', 'OcapListController@store')->name('list.store');
 Route::resource('obj', 'FacetController');
 
