@@ -6,7 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ListTest extends TestCase
+class OcapListTest extends TestCase
 {
     /**
      * A basic feature test example.
