@@ -30,8 +30,13 @@ class OcapListViewFacet extends Facet
 
     public function description()
     {
+        $facetList = $this->target->contents;
+        $collection = $facetList->map(function ($facet){
+            return route('obj.show', ['obj' => $facet->id]);
+        });
         return [
             'type' => 'OcapListViewFacet',
+            'contents' => $collection->toArray()
         ];
     }
 }
