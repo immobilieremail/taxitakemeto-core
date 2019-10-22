@@ -30,12 +30,12 @@ class FacetController extends Controller
      */
     public function show(String $facet)
     {
-        $facet_obj = Facet::find($facet);
+        $facet_obj = Facet::findOrFail($facet);
 
-        if ($facet_obj != null && $facet_obj->has_show() == true) {
+        if ($facet_obj->has_show() == true) {
             return response()->json($facet_obj->description());
         } else {
-            return response('Not Found', 404);
+            return response('Method Not Allowed', 405);
         }
     }
 
@@ -44,15 +44,21 @@ class FacetController extends Controller
         //
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param String $facet
+     * @return void
+     */
     public function destroy(String $facet)
     {
-        $facet_obj = Facet::find($facet);
+        $facet_obj = Facet::findOrFail($facet);
 
         if ($facet_obj != null && $facet_obj->has_destroy() == true) {
             $facet_obj->destroyTarget();
             return response('', 204);
         } else {
-            return response('Not Found', 404);
+            return response('Method Not Allowed', 405);
         }
     }
 
