@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
 
 class OcapListEditFacet extends Facet
@@ -50,6 +51,32 @@ class OcapListEditFacet extends Facet
     {
         $ocapList = $this->target;
         $ocapList-> delete();
+    }
+
+    public function updateTarget(Request $request)
+    {
+        if (!isset($request["ocaps"]) || !is_array($request["ocaps"])) {
+            return false;
+        }
+
+        $ocapCollection = collect($request["ocaps"])->map(function ($ocap) {
+            $ocapId = [];
+            if (!preg_match("#([^/])+$#", $ocap, $ocapId)){
+                return null;
+            } else {
+                return Facet::find($ocapId[0]);
+            }
+        });
+
+        if ($ocapCollection->search(null) !== false) {
+            return false;
+        } else {
+            $this->target->contents()->detach();
+            foreach ($ocapCollection as $facet) {
+                $this->target->contents()->save($facet);
+            }
+            return true;
+        }
     }
 
     public function has_update()
