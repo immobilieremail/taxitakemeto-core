@@ -32,7 +32,6 @@ class OcapListViewFacet extends Facet
     {
         return [
             'type' => 'OcapListViewFacet',
-            'path' => Storage::disk('converts')->url($this->target->path)
         ];
     }
 }
