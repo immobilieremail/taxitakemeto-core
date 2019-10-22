@@ -21,4 +21,26 @@ class OcapList extends Model
     {
         return $this->belongsToMany(Facet::class);
     }
+
+    /**
+     * EditFacet for specific ocaplist
+     *
+     * @return [type] [description]
+     */
+    public function editFacet()
+    {
+        return $this->hasOne(OcapListEditFacet::class, 'target_id')
+                    ->where('type', 'App\Models\OcapListEditFacet');
+    }
+
+    /**
+     * ViewFacet for specific ocaplist
+     *
+     * @return [type] [description]
+     */
+    public function viewFacet()
+    {
+        return $this->hasOne(OcapListViewFacet::class, 'target_id')
+                    ->where('type', 'App\Models\OcapListViewFacet');
+    }
 }
