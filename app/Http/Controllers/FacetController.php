@@ -39,9 +39,26 @@ class FacetController extends Controller
         }
     }
 
-    public function update()
+    /**
+     * Undocumented function
+     *
+     * @param String $facet
+     * @param Request $request
+     * @return void
+     */
+    public function update(String $facet, Request $request)
     {
-        //
+        $facet_obj = Facet::findOrFail($facet);
+
+        if($facet_obj->has_update() == true) {
+            if ($facet_obj->updateTarget($request) == true) {
+                return response('No Content', 204);
+            } else {
+                return response('Bad Request', 400);
+            }
+        } else {
+            return response('Method Not Allowed', 405);
+        }
     }
 
     /**
