@@ -64,7 +64,7 @@ class OcapListEditFacet extends Facet
             if (!preg_match("#([^/])+$#", $ocap, $ocapId)){
                 return null;
             } else {
-                return Facet::find($ocapId[0]);
+                return Facet::where('id', $ocapId[0])->first();
             }
         });
 
