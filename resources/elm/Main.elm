@@ -11,6 +11,16 @@ import Json.Decode as D exposing (Decoder,map4, map3, field, string, int, list)
 import Url
 import Url.Parser as P
 import Url.Parser exposing ((</>))
+import Bootstrap.Navbar as Navbar
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
+import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
+import Bootstrap.Button as Button
+import Bootstrap.ListGroup as Listgroup
+import Bootstrap.Modal as Modal
+import Bootstrap.Text as Text
 
 
 
@@ -49,7 +59,7 @@ type alias Model =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (Model key [] [] ViewDashboard [] []) url, Cmd.none )
+  ( updateFromUrl (Model key [] [] ViewDashboard [ Audio "" "" "" "" ] []) url, Cmd.none )
 
 
 
@@ -199,12 +209,39 @@ view model =
 
 viewDashboard : Model -> Browser.Document Msg
 viewDashboard model =
-  { title = "TaxiTakeMeTo"
-  , body =
-  [ h1 [] [ text "AudiolistEdits" ]
-  , button [ onClick GetNewAudiolistEdit ] [ text "New Audiolist" ]
-  ] ++ (List.map linkAudiolistEdit model.audiolistEdits)
-  }
+    { title = "My point d'intérêt"
+    , body =
+        [ h1 [ class "text-center"] [ text "My PI" ]
+        , Grid.container [ class "p-4" ]
+            [ Grid.row
+                [ Row.middleXs ]
+                [ Grid.col
+                    [ Col.sm6 ]
+                    [ img [  class "d-block mx-auto img-fluid m-3", src "https://image.noelshack.com/fichiers/2019/43/3/1571840262-screenshot.png" ] [] ]
+                , Grid.col
+                    [ Col.sm6 ]
+                    [ text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends." ]
+                ]
+            ]
+        ,  h1  [ class "text-center"] [ text "Audio language" ]
+        , Grid.container [ class "p-4" ] (List.map viewAudioLanguage model.audioContent)
+        ]
+    }
+
+viewAudioLanguage : Audio -> Html.Html msg
+viewAudioLanguage audio =
+  Grid.row
+    [ Row.middleXs ]
+    [ Grid.col
+      [ Col.sm4 ]
+      [ h3 [ class "text-center"] [text "Language"] ]
+    , Grid.col
+      [ Col.sm2 ]
+      [ img [class "d-block mx-auto img-fluid", src "storage/converts/sound.png"] [] ]
+    , Grid.col
+      [ Col.sm6, Col.textAlign Text.alignXsCenter ]
+      [ Html.audio [controls True] [ Html.source [ src audio.path, type_ "audio/mpeg"] [] ]  ]
+    ]
 
 viewAudiolistEdit : Model -> Browser.Document Msg
 viewAudiolistEdit model =
