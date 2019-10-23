@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf_8">
-        <title>App Name - @yield('title')</title>
+        <title>@lang('template_message.title') - @yield('title')</title>
     </head>
     <body>
         @yield('content')

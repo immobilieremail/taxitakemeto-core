@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::resource('shell', 'ShellController')->only('create', 'show', 'update');
+Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
+
+Route::resource('audiolist', 'AudioListController')->only('create', 'show', 'edit', 'update');
+Route::resource('media', 'MediaController')->only('store', 'show', 'edit', 'destroy');
