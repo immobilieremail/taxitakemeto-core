@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAudioTable extends Migration
+class CreateFacetTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateAudioTable extends Migration
      */
     public function up()
     {
-        Schema::create('audio', function (Blueprint $table) {
-            $table->string('swiss_number', 24)->primary();
-            $table->bigInteger('audio_list_id')->nullable();
-            $table->string('path')->unique()->nullable();
+        Schema::create('facets', function (Blueprint $table) {
+            $table->string('id', 24)->primary();
+            $table->bigInteger('target_id')->unsigned()->nullable();
+            $table->string('facet_type');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ class CreateAudioTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('audio');
+        Schema::dropIfExists('facets');
     }
 }

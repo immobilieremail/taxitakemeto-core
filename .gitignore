@@ -14,3 +14,5 @@ yarn-error.log
 .vscode/
 .env.testing
 /coverage
+/elm-stuff
+/public

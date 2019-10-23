@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\AudioListEditFacet;
+use App\Models\MediaViewFacet;
 use Faker\Generator as Faker;
 
-$factory->define(AudioListEditFacet::class, function (Faker $faker) {
+$factory->define(MediaViewFacet::class, function (Faker $faker) {
     return [
         //
     ];
