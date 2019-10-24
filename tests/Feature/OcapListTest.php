@@ -6,6 +6,8 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use App\Models\OcapList;
+
 use App\Models\Media;
 
 use Eris\Generator,
@@ -90,15 +92,6 @@ class OcapListTest extends TestCase
             ->assertStatus(404);
     }
 
-    function generate_view_ocap($value)
-    {
-        $media = factory(Media::class)->create();
-        $route = rand(0, 1)
-            ? route('obj.show', ['obj' => $media->viewFacet->id])
-            : route('obj.show', ['obj' => $media->editFacet->id]);
-        return ($route);
-    }
-
     /**
      * @test
      *
@@ -109,16 +102,17 @@ class OcapListTest extends TestCase
             $ocaplist = factory(OcapList::class)->create();
 
             $empty_array = array_fill(0, $nbr, null);
-            $ocaps = array_map('generate_view_ocap', $empty_array);
+            $ocaps = array_map(
+                function ($value) {
+                    $media = factory(Media::class)->create();
+                    $route = rand(0, 1)
+                        ? route('obj.show', ['obj' => $media->viewFacet->id])
+                        : route('obj.show', ['obj' => $media->editFacet->id]);
+                    return ($route);
+                }, $empty_array);
             $response = $this->put(route('obj.update', ['obj' => $ocaplist->editFacet->id]), ["ocaps" => $ocaps]);
             $response
-                ->assertStatus(200)
-                ->assertJsonCount(3)
-                ->assertJsonStructure([
-                    "type",
-                    "view_facet",
-                    "contents"=> $ocaps
-                ]);
+                ->assertStatus(204);
         });
     }
 
@@ -128,7 +122,7 @@ class OcapListTest extends TestCase
      */
     public function bad_update_ocap_list()
     {
-        $this->limitTo(10)->forAll(Generator\nat())->then(function ($nbr) {
+        $this->limitTo(10)->forAll(Generator\pos())->then(function ($nbr) {
             $ocaplist = factory(OcapList::class)->create();
 
             $ocaps = array_fill(0, $nbr, str_random(40));
