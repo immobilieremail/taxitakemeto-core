@@ -244,19 +244,33 @@ viewDashboard model =
     { title = "My point d'intérêt"
     , body =
         [ viewNavbar model
+        , h1 [ class "text-center"] [ text "My PI" ]
         , Grid.container [ class "p-4" ]
             [ Grid.row
                 [ Row.middleXs ]
                 [ Grid.col
                     [ Col.sm6 ]
-                    [ img [  class "d-block mx-auto img-fluid m-3", src "https://image.noelshack.com/fichiers/2019/43/3/1571840262-screenshot.png" ] [] ]
+                    [ img [  class "d-block mx-auto img-fluid m-3 rounded", src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ] [] ]
                 , Grid.col
                     [ Col.sm6 ]
-                    [ text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends." ]
+                    [ h3 [] [text "Red Restaurant"]
+                      , div [ class "text-justify"] [text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends."]
+                    ]
                 ]
             ]
+        ,  hr [] []
         ,  h1  [ class "text-center"] [ text "Audio language" ]
         , Grid.container [ class "p-4" ] (List.map viewAudioLanguage model.audioContent)
+        ,  hr [] []
+        ,  h1  [ class "text-center"] [ text "Simple view" ]
+        , Grid.container [ class "p-4" ]
+            [ Grid.row
+                [ Row.middleXs ]
+                [ Grid.col
+                    [ Col.sm12 ]
+                    [ img [  class "d-block mx-auto img-fluid m-3 rounded", style "width" "120px", src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png" ] [ text " Simple view"] ]
+                ]
+            ]
         ]
     }
 
