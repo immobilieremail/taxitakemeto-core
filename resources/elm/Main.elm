@@ -56,10 +56,21 @@ type alias Model =
   , files : List File
   }
 
+model0 key = { key = key
+             , ocaps = []
+             , audiolistEdits = []
+             , currentView = ViewDashboard
+             , audioContent = []
+             , files = []
+             }
+
+fakeModel0 key =
+  let model = model0 key
+  in { model | audioContent = [ Audio "" "" "" "", Audio "" "" "" "" ] }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (Model key [] [] ViewDashboard [ Audio "" "" "" "" ] []) url, Cmd.none )
+  ( updateFromUrl (model0 key) url, Cmd.none )
 
 
 
