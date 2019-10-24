@@ -54,23 +54,27 @@ type alias Model =
   , currentView : CurrentView
   , audioContent : List Audio
   , files : List File
+  , navbarState : Navbar.State
   }
 
-model0 key = { key = key
+model0 key state = { key = key
              , ocaps = []
              , audiolistEdits = []
              , currentView = ViewDashboard
              , audioContent = []
              , files = []
+             , navbarState = state
              }
 
-fakeModel0 key =
-  let model = model0 key
+fakeModel0 key state =
+  let model = model0 key state
   in { model | audioContent = [ Audio "" "" "" "", Audio "" "" "" "" ] }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  ( updateFromUrl (model0 key) url, Cmd.none )
+  let (state, cmd) = Navbar.initialState UpdateNavbar
+      model = fakeModel0 key state
+  in ( updateFromUrl model url, cmd )
 
 
 
@@ -85,6 +89,7 @@ type Msg
   | GotNewAudioEdit (Result Http.Error OcapData)
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudioContent (Result Http.Error Audio)
+  | UpdateNavbar Navbar.State
 
 type Route
   = RouteDashboard
@@ -194,6 +199,9 @@ update msg model =
     Err _ ->
       ( model, Cmd.none )
 
+  UpdateNavbar state ->
+    ( { model | navbarState = state }, Cmd.none)
+
 
 
 
@@ -201,8 +209,8 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-  Sub.none
+subscriptions model =
+  Navbar.subscriptions model.navbarState UpdateNavbar
 
 
 
@@ -218,11 +226,24 @@ view model =
   ViewAudiolistEdit aledit ->
     viewAudiolistEdit model
 
+viewNavbar : Model -> Html Msg
+viewNavbar model =
+  Navbar.config UpdateNavbar
+    |> Navbar.withAnimation
+    |> Navbar.brand [ href "#" ] [ img [ src "https://completeconcussions.com/drive/uploads/2017/10/detail-john-doe.jpg", class "rounded d-inline-block align-top img-thumbnails", style "width" "60px" ] [ text "Brand" ] ]
+    |> Navbar.items
+        [ Navbar.itemLink [href "#"] [ text "Item 1"]
+        , Navbar.itemLink [href "#"] [ text "Item 2"]
+        , Navbar.itemLink [href "#"] [ text "Item 3"]
+        , Navbar.itemLink [href "#"] [ text "Item 4"]
+        ]
+    |> Navbar.view model.navbarState
+
 viewDashboard : Model -> Browser.Document Msg
 viewDashboard model =
     { title = "My point d'intérêt"
     , body =
-        [ h1 [ class "text-center"] [ text "My PI" ]
+        [ viewNavbar model
         , Grid.container [ class "p-4" ]
             [ Grid.row
                 [ Row.middleXs ]
