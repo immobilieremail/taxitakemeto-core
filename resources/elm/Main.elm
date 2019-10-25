@@ -44,6 +44,7 @@ main =
 
 type CurrentView
   = ViewDashboard
+  | SimpleViewDashboard
   | ViewAudiolistEdit AudiolistEdit
 
 
@@ -84,6 +85,7 @@ init flags url key =
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
+  | ViewChanged CurrentView
   | GotFiles (List File)
   | GetNewAudiolistEdit
   | GotNewAudioEdit (Result Http.Error OcapData)
@@ -136,6 +138,9 @@ update msg model =
     ( updateFromUrl model url
     , Cmd.none
     )
+
+  ViewChanged newView ->
+    ( { model | currentView = newView }, Cmd.none )
 
   GetNewAudiolistEdit ->
     ( model, getNewAudiolistEdit )
@@ -223,6 +228,8 @@ view model =
   ViewDashboard ->
     viewDashboard model
 
+  SimpleViewDashboard ->
+    simpleViewDashboard model
   ViewAudiolistEdit aledit ->
     viewAudiolistEdit model
 
