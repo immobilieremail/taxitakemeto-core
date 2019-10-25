@@ -69,7 +69,13 @@ model0 key state = { key = key
 
 fakeModel0 key state =
   let model = model0 key state
-  in { model | audioContent = [ Audio "" "" "" "", Audio "" "" "" "" ] }
+  in { model | audioContent =
+    [
+      Audio "" "English" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
+      Audio "" "ไทย" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
+      Audio "" "Français" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" ""
+    ]
+  }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
@@ -287,13 +293,13 @@ viewAudioLanguage audio =
     [ Row.middleXs ]
     [ Grid.col
       [ Col.sm4 ]
-      [ h3 [ class "text-center"] [text "Language"] ]
+      [ h3 [ class "text-center"] [text audio.language] ]
     , Grid.col
       [ Col.sm2 ]
       [ img [class "d-block mx-auto img-fluid", src "storage/converts/sound.png"] [] ]
     , Grid.col
       [ Col.sm6, Col.textAlign Text.alignXsCenter ]
-      [ Html.audio [controls True] [ Html.source [ src audio.path, type_ "audio/mpeg"] [] ]  ]
+      [ Html.audio [controls True, style "width" "100%", style "max-width" "300px"] [ Html.source [ src audio.path, type_ "audio/mpeg"] [] ]  ]
     ]
 
 viewAudiolistEdit : Model -> Browser.Document Msg
@@ -356,8 +362,9 @@ decodeOcap =
 
 decodeAudioContent : Decoder Audio
 decodeAudioContent =
-  D.map4 Audio
+  D.map5 Audio
   (field "type" string)
+  (field "language" string)
   (field "view_facet" string)
   (field "path" string)
   (field "delete" string)
@@ -402,6 +409,7 @@ type alias AudioList =
 
 type alias Audio =
   { jsontype : String
+  , language : String
   , viewfacet : String
   , path : String
   , deleteAudio : String
