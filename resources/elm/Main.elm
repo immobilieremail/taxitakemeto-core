@@ -255,15 +255,23 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-  case model.currentView of
-  ViewDashboard ->
-    viewDashboard model
+  { title = "TaxiTakeMeTo"
+  , body =
+    [ viewNavbar model
+    , case model.currentView of
+      ViewListPIDashboard ->
+        viewListPIDashboard model.listPI
 
-  SimpleViewDashboard ->
-    simpleViewDashboard model
+      ViewDashboard ->
+        viewDashboard model.currentPI
 
-  ViewAudiolistEdit aledit ->
-    viewAudiolistEdit model
+      SimpleViewDashboard ->
+        simpleViewDashboard model.currentPI
+
+      ViewAudiolistEdit aledit ->
+        text "AudioLists"
+    ]
+  }
 
 viewNavbar : Model -> Html Msg
 viewNavbar model =
@@ -294,12 +302,113 @@ viewNavbar model =
       ]
     |> Navbar.view model.navbarState
 
-viewDashboard : Model -> Browser.Document Msg
-viewDashboard model =
-  { title = "My point d'intérêt"
-  , body =
-    [ viewNavbar model
-    , h1
+viewTagPI : Tag -> Html Msg
+viewTagPI tag =
+  case tag of
+  Free ->
+    Button.button
+      [ Button.small
+      , Button.attrs [ style "width" "120px", style "height" "30px"]
+      , Button.outlineSuccess
+      , (Button.disabled False)
+      ]
+      [text "Free"]
+
+  Paying ->
+    Button.button
+      [ Button.small
+      , Button.attrs [ style "width" "120px", style "height" "30px" ]
+      , Button.outlineWarning
+      , (Button.disabled False)
+      ]
+      [text "Paying"]
+
+  NotReserved ->
+    Button.button
+      [ Button.small
+      , Button.attrs [ style "width" "120px", style "height" "30px" ]
+      , Button.outlineDanger
+      , (Button.disabled False)
+      ]
+      [text "Not Reserved"]
+
+  OnGoing ->
+    Button.button
+      [ Button.small
+      , Button.attrs [ style "width" "120px", style "height" "30px" ]
+      , Button.outlinePrimary
+      , (Button.disabled False)
+      ]
+      [text "On Going"]
+
+viewSimplePILink : PI -> Html Msg
+viewSimplePILink pi =
+  div
+    []
+    [ Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs3, Col.textAlign Text.alignXsCenter ]
+        [ img
+            [ src "https://storage.needpix.com/rsynced_images/garbage-2091534_1280.png"
+            , style "max-width" "35px"
+            , class "img-fluid"
+            ]
+            []
+        ]
+        , Grid.col
+        [ Col.xs6, Col.textAlign Text.alignXsCenter  ]
+        [ h3
+            []
+            [ text pi.title ]
+        ]
+        , Grid.col
+        [ Col.xs3, Col.textAlign Text.alignXsCenter ]
+        [ img
+            [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Antu_arrow-right.svg/1024px-Antu_arrow-right.svg.png"
+            , style "max-width" "40px"
+            , class "img-fluid"
+            , onClick (ViewChanged ViewDashboard)
+            ]
+            []
+        ]
+      ]
+    , Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.sm3 ]
+        []
+      , Grid.col
+        [ Col.sm6 ]
+        [ div
+          [ class "text-center py-3 d-flex justify-content-around" ]
+          (List.map viewTagPI pi.tags)
+        ]
+      , Grid.col
+        [ Col.sm3 ]
+        []
+      ]
+    , hr [] []
+    ]
+
+viewListPIDashboard : List PI -> Html Msg
+viewListPIDashboard listPI =
+  div
+    []
+    [ h1
+      [ class "text-center pt-4" ]
+      [ text "My list of PIs" ]
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      (List.map viewSimplePILink listPI)
+    ]
+
+viewDashboard : PI -> Html Msg
+viewDashboard pi =
+  div
+    []
+    [ h1
       [ class "text-center pt-4"]
       [ text "My Point of Interest" ]
     , Grid.container
@@ -312,6 +421,7 @@ viewDashboard model =
           [ Col.sm6 ]
           [ img
             [ class "d-block mx-auto img-fluid m-3 rounded"
+            , style "width" "400px"
             , src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ]
             []
           ]
@@ -319,10 +429,10 @@ viewDashboard model =
           [ Col.sm6 ]
           [ h3
             []
-            [text "Red Restaurant"]
+            [text pi.title]
           , div
             [ class "text-justify"]
-            [text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends."]
+            [text pi.description]
           ]
         ]
       , Grid.row
@@ -366,7 +476,7 @@ viewDashboard model =
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
-        (List.map viewAudioLanguage model.audioContent)
+        (List.map viewAudioLanguage pi.audios)
       , hr
         [class "pt-4 pb-3"]
         []
@@ -388,12 +498,11 @@ viewDashboard model =
         ]
       ]
     ]
-  }
 
-simpleViewDashboard : Model -> Browser.Document Msg
-simpleViewDashboard model =
-  { title = "My point d'intérêt"
-  , body =
+simpleViewDashboard : PI -> Html Msg
+simpleViewDashboard pi =
+  div
+    []
     [ h1
       [ class "text-center pt-4"]
       [ text "My Point of Interest" ]
@@ -430,7 +539,7 @@ simpleViewDashboard model =
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
-        (List.map viewAudioLanguage model.audioContent)
+        (List.map viewAudioLanguage pi.audios)
       , hr
         [class "pt-4 pb-3"]
         []
@@ -452,28 +561,28 @@ simpleViewDashboard model =
         ]
       ]
     ]
-  }
 
 viewAudioLanguage : Audio -> Html.Html msg
 viewAudioLanguage audio =
   Grid.row
     [ Row.middleXs ]
     [ Grid.col
-      [ Col.sm4 ]
+      [ Col.xs5 ]
       [ h3
         [ class "text-center"]
         [text audio.language]
       ]
     , Grid.col
-      [ Col.sm2 ]
+      [ Col.xs2 ]
       [ img
         [ class "d-block mx-auto img-fluid"
+        , style "max-width" "35px"
         , src "storage/converts/sound.png"
         ]
         []
       ]
     , Grid.col
-      [ Col.sm6, Col.textAlign Text.alignXsCenter ]
+      [ Col.sm5, Col.textAlign Text.alignXsCenter ]
       [ Html.audio
         [ controls True
         , style "width" "100%"
@@ -488,21 +597,21 @@ viewAudioLanguage audio =
       ]
     ]
 
-viewAudiolistEdit : Model -> Browser.Document Msg
-viewAudiolistEdit model =
-  { title = "TaxiTakeMeTo"
-  , body =
-    [ h1
-      []
-      [ text "Audio list" ]
-    , input
-      [ type_ "file"
-      , multiple True
-      , on "change" (D.map GotFiles filesDecoder)
-      ]
-      []
-    ] ++ (List.map linkAudioEdit model.audioContent)
-  }
+-- viewAudiolistEdit : Model -> Html Msg
+-- viewAudiolistEdit model =
+--   div
+--     []
+--     [ h1
+--       []
+--       [ text "Audio list" ]
+--     , input
+--       [ type_ "file"
+--       , multiple True
+--       , on "change" (D.map GotFiles filesDecoder)
+--       ]
+--       []
+--     , (List.map linkAudioEdit model.audioContent)
+--     ]
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
 linkAudiolistEdit aledit =
