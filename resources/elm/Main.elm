@@ -245,7 +245,14 @@ viewNavbar model =
   Navbar.config UpdateNavbar
     |> Navbar.withAnimation
     |> Navbar.collapseMedium
-    |> Navbar.brand [ href "#" ] [ img [ src "https://completeconcussions.com/drive/uploads/2017/10/detail-john-doe.jpg", class " align-middle d-inline-block rounded align-top img-thumbnails ", style "width" "60px" ] [ text "Brand" ], text "John Doe" ]
+    |> Navbar.brand
+      [ href "#" ]
+      [ img
+        [ src "https://completeconcussions.com/drive/uploads/2017/10/detail-john-doe.jpg"
+        , class " align-middle d-inline-block rounded align-top img-thumbnails "
+        , style "width" "60px" ]
+        []
+      ]
     |> Navbar.items
         [ Navbar.itemLink [href "#"] [ text "Item 1"]
         , Navbar.itemLink [href "#"] [ text "Item 2"]
