@@ -254,95 +254,180 @@ viewNavbar model =
         []
       ]
     |> Navbar.items
-        [ Navbar.itemLink [href "#"] [ text "Item 1"]
-        , Navbar.itemLink [href "#"] [ text "Item 2"]
-        , Navbar.itemLink [href "#"] [ text "Item 3"]
-        , Navbar.itemLink [href "#"] [ text "Item 4"]
-        ]
+      [ Navbar.itemLink
+        [href "#"]
+        [ text "Item 1"]
+      , Navbar.itemLink
+        [href "#"]
+        [ text "Item 2"]
+      , Navbar.itemLink
+        [href "#"]
+        [ text "Item 3"]
+      , Navbar.itemLink
+        [href "#"]
+        [ text "Item 4"]
+      ]
     |> Navbar.view model.navbarState
 
 viewDashboard : Model -> Browser.Document Msg
 viewDashboard model =
-    { title = "My point d'intérêt"
-    , body =
-        [ viewNavbar model
-        , h1 [ class "text-center pt-4"] [ text "My Point of Interest" ]
-        , Grid.container [ class "p-4 mb-4 rounded", style "box-shadow" "0px 0px 50px 1px lightgray" ]
-            [ Grid.row
-                [ Row.middleXs ]
-                [ Grid.col
-                    [ Col.sm6 ]
-                    [ img [  class "d-block mx-auto img-fluid m-3 rounded", src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ] [] ]
-                , Grid.col
-                    [ Col.sm6 ]
-                    [ h3 [] [text "Red Restaurant"]
-                      , div [ class "text-justify"] [text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends."]
-                    ]
-                ]
-              , Grid.row
-                [ Row.middleXs ]
-                [ Grid.col
-                    [ Col.sm2 ] []
-                  , Grid.col
-                    [ Col.sm4 ]
-                    [ div [ class "text-center py-3" ] [
-                      Button.button
-                        [ Button.large, Button.outlineDanger, (Button.disabled False) ]
-                        [text "Not reserved"]
-                      ]
-                    ]
-                , Grid.col
-                    [ Col.sm4 ]
-                    [ div [ class "text-center py-3" ] [
-                      Button.button
-                        [ Button.large, Button.outlineSuccess, (Button.disabled False) ] [text "On going"]
-                      ]
-                    ]
-                , Grid.col
-                    [ Col.sm2 ] []
-                ]
-                , hr [class "pt-4 pb-2"] []
-                , h2  [ class "text-center"] [ text "Audio language" ]
-                , Grid.container [ class "p-4" ] (List.map viewAudioLanguage model.audioContent)
-                , hr [class "pt-4 pb-3"] []
-                , div [ class "text-center" ] [
-                  Button.button
-                    [ Button.large, Button.outlineSecondary, Button.onClick (ViewChanged SimpleViewDashboard) ]
-                    [ text "Simple view", img [ class "mx-auto img-fluid pl-3 rounded", style "width" "60px", src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png" ] [] ]
-                ]
-            ]
+  { title = "My point d'intérêt"
+  , body =
+    [ viewNavbar model
+    , h1
+      [ class "text-center pt-4"]
+      [ text "My Point of Interest" ]
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray"
+      ]
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.sm6 ]
+          [ img
+            [ class "d-block mx-auto img-fluid m-3 rounded"
+            , src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ]
+            []
+          ]
+        , Grid.col
+          [ Col.sm6 ]
+          [ h3
+            []
+            [text "Red Restaurant"]
+          , div
+            [ class "text-justify"]
+            [text "Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends."]
+          ]
         ]
-    }
+      , Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.sm2 ]
+          []
+        , Grid.col
+          [ Col.sm4 ]
+          [ div
+            [ class "text-center py-3" ]
+            [ Button.button
+              [ Button.large
+              , Button.outlineDanger
+              , (Button.disabled False)
+              ]
+              [text "Not reserved"]
+            ]
+          ]
+        , Grid.col
+          [ Col.sm4 ]
+          [ div
+            [ class "text-center py-3" ]
+            [ Button.button
+              [ Button.large
+              , Button.outlineSuccess
+              , (Button.disabled False)
+              ]
+              [text "On going"]
+            ]
+          ]
+        , Grid.col
+          [ Col.sm2 ]
+          []
+        ]
+      , hr
+        [class "pt-4 pb-2"]
+        []
+      , h2
+        [ class "text-center"]
+        [ text "Audio language" ]
+      , Grid.container
+        [ class "p-4" ]
+        (List.map viewAudioLanguage model.audioContent)
+      , hr
+        [class "pt-4 pb-3"]
+        []
+      , div
+        [ class "text-center" ]
+        [ Button.button
+          [ Button.large
+          , Button.outlineSecondary
+          , Button.onClick (ViewChanged SimpleViewDashboard)
+          ]
+          [ text "Simple view"
+          , img
+            [ class "mx-auto img-fluid pl-3 rounded"
+            , style "width" "60px"
+            , src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png"
+            ]
+            []
+          ]
+        ]
+      ]
+    ]
+  }
 
 simpleViewDashboard : Model -> Browser.Document Msg
 simpleViewDashboard model =
-    { title = "My point d'intérêt"
-    , body =
-        [ h1 [ class "text-center pt-4"] [ text "My Point of Interest" ]
-        , Grid.container [ class "p-4 mb-4 rounded", style "box-shadow" "0px 0px 50px 1px lightgray" ]
-            [ Grid.row
-                [ Row.middleXs ]
-                [ Grid.col
-                    [ Col.sm6 ]
-                    [ img [  style "width" "100%", style "max-width" "150px", class "d-block mx-auto img-fluid m-3 rounded", src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ] [] ]
-                , Grid.col
-                    [ Col.sm6 ]
-                    [ h4 [] [text "Red Restaurant"]
-                      , div [ class "text-justify"] [text "Your bones don't break, mine do. That's clear."]
-                    ]
-                ]
-                , hr [class "pt-4"] []
-                , h2  [ class "text-center"] [ text "Audio language" ]
-                , Grid.container [ class "p-4" ] (List.map viewAudioLanguage model.audioContent)
-                , hr [class "pt-4 pb-3"] []
-                , div [ class "text-center" ] [
-                  Button.button
-                    [ Button.large, Button.outlineSecondary, Button.onClick (ViewChanged ViewDashboard) ]
-                    [ text "Exit view", img [ class "mx-auto img-fluid pl-3 rounded", style "width" "60px", src "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Ic_exit_to_app_48px.svg/1024px-Ic_exit_to_app_48px.svg.png" ] [] ]
-                ]
+  { title = "My point d'intérêt"
+  , body =
+    [ h1
+      [ class "text-center pt-4"]
+      [ text "My Point of Interest" ]
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.sm6 ]
+          [ img
+            [ style "width" "100%"
+            , style "max-width" "150px"
+            , class "d-block mx-auto img-fluid m-3 rounded"
+            , src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg"
             ]
+            []
+          ]
+        , Grid.col
+          [ Col.sm6 ]
+          [ h4
+            []
+            [text "Red Restaurant"]
+          , div
+            [ class "text-justify"]
+            [text "Your bones don't break, mine do. That's clear."]
+          ]
         ]
-    }
+      , hr
+        [class "pt-4"]
+        []
+      , h2
+        [ class "text-center"]
+        [ text "Audio language" ]
+      , Grid.container
+        [ class "p-4" ]
+        (List.map viewAudioLanguage model.audioContent)
+      , hr
+        [class "pt-4 pb-3"]
+        []
+      , div
+        [ class "text-center" ]
+        [ Button.button
+          [ Button.large
+          , Button.outlineSecondary
+          , Button.onClick (ViewChanged ViewDashboard)
+          ]
+          [ text "Exit view"
+          , img
+            [ class "mx-auto img-fluid pl-3 rounded"
+            , style "width" "60px"
+            , src "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Ic_exit_to_app_48px.svg/1024px-Ic_exit_to_app_48px.svg.png"
+            ]
+            []
+          ]
+        ]
+      ]
+    ]
+  }
 
 viewAudioLanguage : Audio -> Html.Html msg
 viewAudioLanguage audio =
@@ -350,27 +435,48 @@ viewAudioLanguage audio =
     [ Row.middleXs ]
     [ Grid.col
       [ Col.sm4 ]
-      [ h3 [ class "text-center"] [text audio.language] ]
+      [ h3
+        [ class "text-center"]
+        [text audio.language]
+      ]
     , Grid.col
       [ Col.sm2 ]
-      [ img [class "d-block mx-auto img-fluid", src "storage/converts/sound.png"] [] ]
+      [ img
+        [ class "d-block mx-auto img-fluid"
+        , src "storage/converts/sound.png"
+        ]
+        []
+      ]
     , Grid.col
       [ Col.sm6, Col.textAlign Text.alignXsCenter ]
-      [ Html.audio [controls True, style "width" "100%", style "max-width" "300px"] [ Html.source [ src audio.path, type_ "audio/mpeg"] [] ]  ]
+      [ Html.audio
+        [ controls True
+        , style "width" "100%"
+        , style "max-width" "300px"
+        ]
+        [ Html.source
+          [ src audio.path
+          , type_ "audio/mpeg"
+          ]
+          []
+        ]
+      ]
     ]
 
 viewAudiolistEdit : Model -> Browser.Document Msg
 viewAudiolistEdit model =
   { title = "TaxiTakeMeTo"
   , body =
-  [ h1 [] [ text "Audio list" ]
-  ,input
-        [ type_ "file"
-        , multiple True
-        , on "change" (D.map GotFiles filesDecoder)
-        ]
-        []
-  ] ++ (List.map linkAudioEdit model.audioContent)
+    [ h1
+      []
+      [ text "Audio list" ]
+    , input
+      [ type_ "file"
+      , multiple True
+      , on "change" (D.map GotFiles filesDecoder)
+      ]
+      []
+    ] ++ (List.map linkAudioEdit model.audioContent)
   }
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
