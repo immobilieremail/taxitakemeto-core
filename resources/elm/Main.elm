@@ -43,10 +43,31 @@ main =
 -- MODEL
 
 type CurrentView
-  = ViewDashboard
+  = ViewListPIDashboard
+  | ViewDashboard
   | SimpleViewDashboard
   | ViewAudiolistEdit AudiolistEdit
 
+
+type Tag
+  = Free
+  | Paying
+  | NotReserved
+  | OnGoing
+
+
+type alias Image =
+  { url : String
+  }
+
+
+type alias PI =
+  { title : String
+  , description : String
+  , images : List Image
+  , audios : List Audio
+  , tags : List Tag
+  }
 
 type alias Model =
   { key : Nav.Key
@@ -56,6 +77,8 @@ type alias Model =
   , audioContent : List Audio
   , files : List File
   , navbarState : Navbar.State
+  , listPI : List PI
+  , currentPI : PI
   }
 
 model0 key state = { key = key
@@ -65,6 +88,8 @@ model0 key state = { key = key
              , audioContent = []
              , files = []
              , navbarState = state
+             , listPI = []
+             , currentPI = PI "" "" [] [] []
              }
 
 fakeModel0 key state =
