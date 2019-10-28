@@ -94,11 +94,18 @@ model0 key state = { key = key
 
 fakeModel0 key state =
   let model = model0 key state
-  in { model | audioContent =
+  in { model | currentPI =
+    PI "Red Restaurant" "Your bones don't break, mine do. I love this restaurant." []
     [
       Audio "" "English" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
       Audio "" "ไทย" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
       Audio "" "Français" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" ""
+    ] []
+    , listPI =
+      [ PI "Meenakshi Amman Temple - India" "This is a beautiful temple. I love it." [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"] [] [ Free ]
+      , PI "Food Festival - Singapour" "This festival is so yummy i buy a ticket every year just to taste new flavor." [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"] [] [ Paying ]
+      , PI "Hôtel F1 - Bordeaux" "The best hotel i have ever seen in my whole life." [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"] [] [ Paying, NotReserved ]
+      , PI "Souk Rabais Bazar - Marrakech" "I bought so much things i had to sell my step-mother." [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg" ] [] [ OnGoing ]
     ]
   }
 
