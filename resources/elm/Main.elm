@@ -44,8 +44,8 @@ main =
 
 type CurrentView
   = ViewListPIDashboard
-  | ViewDashboard
-  | SimpleViewDashboard
+  | ViewDashboard PI
+  | SimpleViewDashboard PI
   | ViewAudiolistEdit AudiolistEdit
 
 
@@ -160,12 +160,12 @@ updateFromUrl model url =
   Just route ->
     case route of
     RouteDashboard ->
-      { model | currentView = ViewDashboard }
+      { model | currentView = ViewDashboard model.currentPI }
 
     RouteAudiolistEdit data ->
       case data of
       Nothing ->
-        { model | currentView = ViewDashboard}
+        { model | currentView = ViewDashboard model.currentPI }
 
       Just ocapUrl ->
         { model | currentView = ViewAudiolistEdit <| AudiolistEdit ocapUrl}
@@ -276,13 +276,19 @@ view model =
     [ viewNavbar model
     , case model.currentView of
       ViewListPIDashboard ->
-        viewListPIDashboard model.listPI
+        div
+          []
+          [ viewNavbar model
+          , viewListPIDashboard model.listPI ]
 
-      ViewDashboard ->
-        viewDashboard model.currentPI
+      ViewDashboard pi ->
+        div
+          []
+          [ viewNavbar model
+          , viewDashboard pi ]
 
-      SimpleViewDashboard ->
-        simpleViewDashboard model.currentPI
+      SimpleViewDashboard pi ->
+        simpleViewDashboard pi
 
       ViewAudiolistEdit aledit ->
         text "AudioLists"
@@ -295,7 +301,7 @@ viewNavbar model =
     |> Navbar.withAnimation
     |> Navbar.collapseMedium
     |> Navbar.brand
-      [ href "#" ]
+      [ onClick (ViewChanged ViewListPIDashboard) ]
       [ img
         [ src "https://completeconcussions.com/drive/uploads/2017/10/detail-john-doe.jpg"
         , class " align-middle d-inline-block rounded align-top img-thumbnails "
@@ -396,29 +402,25 @@ viewSimplePILink pi =
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
-        [ Col.xs3, Col.textAlign Text.alignXsCenter ]
-        [ img
-            [ src "https://storage.needpix.com/rsynced_images/garbage-2091534_1280.png"
-            , style "max-width" "35px"
-            , class "img-fluid"
-            ]
-            []
-        ]
-        , Grid.col
+        [ Col.xs3 ]
+        []
+      , Grid.col
         [ Col.xs6, Col.textAlign Text.alignXsCenter  ]
         [ h3
-            []
+            [ onClick (ViewChanged (ViewDashboard pi)) ]
             [ text pi.title ]
         ]
         , Grid.col
         [ Col.xs3, Col.textAlign Text.alignXsCenter ]
-        [ img
+        [ Button.button
+          [ Button.roleLink, Button.onClick (ViewChanged (ViewDashboard pi)) ]
+          [ img
             [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Antu_arrow-right.svg/1024px-Antu_arrow-right.svg.png"
             , style "max-width" "40px"
             , class "img-fluid"
-            , onClick (ViewChanged ViewDashboard)
             ]
             []
+          ]
         ]
       ]
     , Grid.row
@@ -462,7 +464,7 @@ viewDashboard pi =
     []
     [ h1
       [ class "text-center pt-4"]
-      [ text "My Point of Interest" ]
+      [ text pi.title ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray"
@@ -537,7 +539,7 @@ viewDashboard pi =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged SimpleViewDashboard)
+          , Button.onClick (ViewChanged (SimpleViewDashboard pi))
           ]
           [ text "Simple view"
           , img
@@ -557,7 +559,7 @@ simpleViewDashboard pi =
     []
     [ h1
       [ class "text-center pt-4"]
-      [ text "My Point of Interest" ]
+      [ text pi.title ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
@@ -576,11 +578,8 @@ simpleViewDashboard pi =
         , Grid.col
           [ Col.sm6 ]
           [ h4
-            []
-            [text "Red Restaurant"]
-          , div
-            [ class "text-justify"]
-            [text "Your bones don't break, mine do. That's clear."]
+            [class "text-center "]
+            [text pi.address]
           ]
         ]
       , hr
