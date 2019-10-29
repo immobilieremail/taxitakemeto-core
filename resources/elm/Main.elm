@@ -695,21 +695,6 @@ viewAudioLanguage audio =
       ]
     ]
 
--- viewAudiolistEdit : Model -> Html Msg
--- viewAudiolistEdit model =
---   div
---     []
---     [ h1
---       []
---       [ text "Audio list" ]
---     , input
---       [ type_ "file"
---       , multiple True
---       , on "change" (D.map GotFiles filesDecoder)
---       ]
---       []
---     , (List.map linkAudioEdit model.audioContent)
---     ]
 
 linkAudiolistEdit : AudiolistEdit -> Html Msg
 linkAudiolistEdit aledit =
