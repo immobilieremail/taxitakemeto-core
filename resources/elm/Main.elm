@@ -21,6 +21,7 @@ import Bootstrap.Button as Button
 import Bootstrap.ListGroup as Listgroup
 import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
+import Color
 
 
 
@@ -299,12 +300,13 @@ view model =
 viewNavbar : Model -> Html Msg
 viewNavbar model =
   Navbar.config UpdateNavbar
+    |> Navbar.lightCustom Color.lightGrey
     |> Navbar.withAnimation
     |> Navbar.collapseMedium
     |> Navbar.brand
       [ onClick (ViewChanged ViewListPIDashboard) ]
       [ img
-        [ src "https://completeconcussions.com/drive/uploads/2017/10/detail-john-doe.jpg"
+        [ src "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
         , class " align-middle d-inline-block rounded align-top img-thumbnails "
         , style "width" "60px" ]
         []
