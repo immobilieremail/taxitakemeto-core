@@ -88,6 +88,7 @@ type alias Model =
   , navbarState : Navbar.State
   , listPI : List PI
   , currentPI : PI
+  , modalVisibility : Modal.Visibility
   }
 
 model0 key state = { key = key
@@ -99,6 +100,7 @@ model0 key state = { key = key
              , navbarState = state
              , listPI = []
              , currentPI = PI "" "" "" [] [] [] []
+             , modalVisibility = Modal.hidden
              }
 
 fakeModel0 key state =
@@ -139,6 +141,8 @@ type Msg
   | GotNewAudiolistEdit (Result Http.Error OcapData)
   | GotNewAudioContent (Result Http.Error Audio)
   | UpdateNavbar Navbar.State
+  | CloseModal
+  | ShowModal
 
 type Route
   = RouteDashboard
@@ -254,7 +258,11 @@ update msg model =
   UpdateNavbar state ->
     ( { model | navbarState = state }, Cmd.none)
 
+  CloseModal ->
+    ( { model | modalVisibility = Modal.hidden } , Cmd.none )
 
+  ShowModal ->
+    ( { model | modalVisibility = Modal.shown } , Cmd.none )
 
 
 -- SUBSCRIPTIONS
@@ -273,7 +281,7 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "TaxiTakeMeTo"
   , body =
-    [ viewNavbar model
+    [ viewModal model
     , case model.currentView of
       ViewListPIDashboard ->
         div
@@ -323,6 +331,26 @@ viewNavbar model =
         [ text "Item 4"]
       ]
     |> Navbar.view model.navbarState
+
+
+viewModal : Model -> Html Msg
+viewModal model =
+  div []
+    [ Modal.config CloseModal
+      |> Modal.small
+      |> Modal.hideOnBackdropClick True
+      |> Modal.body [] [ p [] [ text "This is a modal for you !"] ]
+      |> Modal.footer []
+        [ Button.button
+          [ Button.outlinePrimary
+          , Button.attrs
+            [ onClick CloseModal ]
+          ]
+          [ text "Close" ]
+        ]
+      |> Modal.view model.modalVisibility
+    ]
+
 
 viewTagPI : Tag -> Html Msg
 viewTagPI tag =
