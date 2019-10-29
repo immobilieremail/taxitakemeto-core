@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import File exposing (File)
+import Array
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
