@@ -477,6 +477,43 @@ viewListPIDashboard listPI =
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
       (List.map viewSimplePILink listPI)
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.sm3 ]
+          []
+        , Grid.col
+          [ Col.sm6 ]
+          [ div
+            [ class "text-center py-3 d-flex justify-content-around" ]
+            [ Button.button
+              [Button.roleLink]
+              [ img
+                [ src "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
+                , style "max-width" "70px"
+                , class "img-fluid"
+                ]
+                []
+              ]
+            , Button.button
+              [Button.roleLink]
+              [ img
+                [ src "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
+                , style "max-width" "70px"
+                , class "img-fluid"
+                ]
+                []
+              ]
+            ]
+          ]
+        , Grid.col
+          [ Col.sm3 ]
+          []
+        ]
+      ]
     ]
 
 viewDashboard : PI -> Html Msg
