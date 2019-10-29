@@ -105,18 +105,11 @@ model0 key state = { key = key
 
 fakeModel0 key state =
   let model = model0 key state
-  in { model | currentPI =
-    PI "Red Restaurant" "Your bones don't break, mine do. I love this restaurant." []
-    [
-      Audio "" "English" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
-      Audio "" "ไทย" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" "",
-      Audio "" "Français" "" "http://localhost:8000/storage/converts/0Fma9oR2sTgEINpUgaa7iA==.mp4" ""
-    ] []
-    , listPI =
-      [ PI "Meenakshi Amman Temple - India" "This is a beautiful temple. I love it." [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"] [] [ Free ]
-      , PI "Food Festival - Singapour" "This festival is so yummy i buy a ticket every year just to taste new flavor." [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"] [] [ Paying ]
-      , PI "Hôtel F1 - Bordeaux" "The best hotel i have ever seen in my whole life." [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"] [] [ Paying, NotReserved ]
-      , PI "Souk Rabais Bazar - Marrakech" "I bought so much things i had to sell my step-mother." [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg" ] [] [ OnGoing ]
+  in { model | listPI =
+      [ PI "Meenakshi Amman Temple - India" "मीनाक्षी सुन्दरेश्वरर मन्दिर या मीनाक्षी अम्मां मन्दिर या केवल मीनाक्षी मन्दिर (तमिल: மீனாக்ஷி அம்மன் கோவில்) भारत के तमिल नाडु राज्य के मदुरई नगर, में स्थित एक ऐतिहासिक मन्दिर है। यह हिन्दू देवता शिव (“‘सुन्दरेश्वरर”’ या सुन्दर ईश्वर के रूप में) एवं उनकी भार्या देवी पार्वती (मीनाक्षी या मछली के आकार की आंख वाली देवी के रूप में) दोनो को समर्पित है। यह . I love it." "9 Boulevard de la Canopée" [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"] [ Audio "" "Hindi" "india" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ] [ Free ] [ TouristicPlace ]
+      , PI "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer" [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"] [ Audio "" "Chinese" "china" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ] [ Paying ] [ Restaurant, TouristicPlace ]
+      , PI "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)" [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"] [ Audio "" "English" "united-kingdom" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ] [ Paying, NotReserved ] [ Hotel ]
+      , PI "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand" [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg" ] [ Audio "" "Langue du Zouk" "mali" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ] [ OnGoing ] [ Shop, TouristicPlace, Restaurant ]
     ]
   }
 
@@ -504,15 +497,18 @@ viewDashboard pi =
           [ img
             [ class "d-block mx-auto img-fluid m-3 rounded"
             , style "width" "400px"
-            , src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg" ]
+            , onClick ShowModal
+            , case (Array.get 0 (Array.fromList pi.images)) of
+              Just image ->
+                src image.url
+              Nothing ->
+                src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg"
+            ]
             []
           ]
         , Grid.col
           [ Col.sm6 ]
-          [ h3
-            []
-            [text pi.title]
-          , div
+          [ div
             [ class "text-justify"]
             [text pi.description]
           ]
@@ -520,34 +516,16 @@ viewDashboard pi =
       , Grid.row
         [ Row.middleXs ]
         [ Grid.col
-          [ Col.sm2 ]
+          [ Col.sm3 ]
           []
         , Grid.col
-          [ Col.sm4 ]
+          [ Col.sm6 ]
           [ div
-            [ class "text-center py-3" ]
-            [ Button.button
-              [ Button.large
-              , Button.outlineDanger
-              , (Button.disabled False)
-              ]
-              [text "Not reserved"]
-            ]
+            [ class "text-center py-3 d-flex justify-content-around" ]
+            (List.map viewTagPI pi.tags)
           ]
         , Grid.col
-          [ Col.sm4 ]
-          [ div
-            [ class "text-center py-3" ]
-            [ Button.button
-              [ Button.large
-              , Button.outlineSuccess
-              , (Button.disabled False)
-              ]
-              [text "On going"]
-            ]
-          ]
-        , Grid.col
-          [ Col.sm2 ]
+          [ Col.sm3 ]
           []
         ]
       , hr
@@ -599,7 +577,11 @@ simpleViewDashboard pi =
             [ style "width" "100%"
             , style "max-width" "150px"
             , class "d-block mx-auto img-fluid m-3 rounded"
-            , src "https://img2.10bestmedia.com/Images/Photos/189483/p-Red_54_990x660_201406020123.jpg"
+            , case (Array.get 0 (Array.fromList pi.images)) of
+              Just image ->
+                src image.url
+              Nothing ->
+                src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg"
             ]
             []
           ]
@@ -656,7 +638,7 @@ viewAudioLanguage audio =
       [ img
         [ class "d-block mx-auto img-fluid"
         , style "max-width" "35px"
-        , src "storage/converts/sound.png"
+        , src ("http://localhost:8000/storage/flags/" ++ audio.flagLang ++ ".png")
         ]
         []
       ]
@@ -738,9 +720,10 @@ decodeOcap =
 
 decodeAudioContent : Decoder Audio
 decodeAudioContent =
-  D.map5 Audio
+  D.map6 Audio
   (field "type" string)
   (field "language" string)
+  (field "flagLang" string)
   (field "view_facet" string)
   (field "path" string)
   (field "delete" string)
@@ -786,6 +769,7 @@ type alias AudioList =
 type alias Audio =
   { jsontype : String
   , language : String
+  , flagLang : String
   , viewfacet : String
   , path : String
   , deleteAudio : String
