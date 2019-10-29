@@ -94,7 +94,7 @@ type alias Model =
 model0 key state = { key = key
              , ocaps = []
              , audiolistEdits = []
-             , currentView = ViewDashboard
+             , currentView = ViewListPIDashboard
              , audioContent = []
              , files = []
              , navbarState = state
