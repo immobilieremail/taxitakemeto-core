@@ -61,12 +61,21 @@ type alias Image =
   }
 
 
+type TypePI
+  = Restaurant
+  | Hotel
+  | Shop
+  | TouristicPlace
+
+
 type alias PI =
   { title : String
   , description : String
+  , address : String
   , images : List Image
   , audios : List Audio
   , tags : List Tag
+  , typespi : List TypePI
   }
 
 type alias Model =
@@ -89,7 +98,7 @@ model0 key state = { key = key
              , files = []
              , navbarState = state
              , listPI = []
-             , currentPI = PI "" "" [] [] []
+             , currentPI = PI "" "" "" [] [] [] []
              }
 
 fakeModel0 key state =
@@ -348,6 +357,38 @@ viewTagPI tag =
       ]
       [text "On Going"]
 
+viewTypePI : TypePI -> Html Msg
+viewTypePI typepi =
+  case typepi of
+  Restaurant ->
+    img
+      [ class "d-block mx-auto img-fluid m-3 rounded"
+      , style "width" "40px"
+      , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
+      ]
+      []
+  Shop ->
+    img
+      [ class "d-block mx-auto img-fluid m-3 rounded"
+      , style "width" "40px"
+      , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
+      ]
+      []
+  Hotel ->
+    img
+      [ class "d-block mx-auto img-fluid m-3 rounded"
+      , style "width" "40px"
+      , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
+      ]
+      []
+  TouristicPlace ->
+    img
+      [ class "d-block mx-auto img-fluid m-3 rounded"
+      , style "width" "40px"
+      , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
+      ]
+      []
+
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
   div
@@ -383,8 +424,12 @@ viewSimplePILink pi =
     , Grid.row
       [ Row.middleXs ]
       [ Grid.col
-        [ Col.sm3 ]
-        []
+        [ Col.sm3, Col.textAlign Text.alignXsCenter ]
+        [ div
+          [ class "text-center py-3 d-flex justify-content-around"
+          ]
+          (List.map viewTypePI pi.typespi)
+        ]
       , Grid.col
         [ Col.sm6 ]
         [ div
