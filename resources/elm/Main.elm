@@ -609,7 +609,7 @@ simpleViewDashboard pi =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged ViewDashboard)
+          , Button.onClick (ViewChanged (ViewDashboard pi))
           ]
           [ text "Exit view"
           , img
