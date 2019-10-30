@@ -743,43 +743,74 @@ decodeAudioContent =
   (field "path" string)
   (field "delete" string)
 
-type alias AudiolistEdit =
-  { url : String
-  }
 
-type alias AudioEdit =
-  { url : String
-  }
-
-extractAudiolistEdit : OcapData -> Maybe AudiolistEdit
-extractAudiolistEdit ocap =
-  if ocap.jsonType == "ocap" && ocap.ocapType == "AudioListEdit" then
-  Just <| AudiolistEdit ocap.url
-  else
-  Nothing
-
-extractAudioEdit : OcapData -> Maybe AudioEdit
-extractAudioEdit ocap =
-  if ocap.jsonType == "ocap" && ocap.ocapType == "AudioEdit" then
-  Just <| AudioEdit ocap.url
-  else
-  Nothing
+imageDecoder : Decoder Image
+imageDecoder =
+  D.map Image
+  (field "url" string)
 
 
-getNewAudiolistEdit : Cmd Msg
-getNewAudiolistEdit =
-  Http.post
-  { url = "/api/audiolist"
-  , expect = Http.expectJson GotNewAudiolistEdit decodeOcap
-  , body = Http.emptyBody
-  }
+tagDecoder : Decoder Tag
+tagDecoder =
+  D.string
+    |> D.andThen (\str ->
+      case str of
+        "free" ->
+          D.succeed Free
 
-type alias AudioList =
-  { jsontype : String
-  , viewfacet : String
-  , update : String
-  , contents : List OcapData
-  }
+        "paying" ->
+          D.succeed Paying
+
+        "on going" ->
+          D.succeed OnGoing
+
+        "not reserved" ->
+          D.succeed NotReserved
+
+        somethingElse ->
+          D.fail <| "Unknown tag: " ++ somethingElse
+    )
+
+
+typePIDecoder : Decoder TypePI
+typePIDecoder =
+  D.string
+    |> D.andThen (\str ->
+      case str of
+        "restaurant" ->
+          D.succeed Restaurant
+
+        "hotel" ->
+          D.succeed Hotel
+
+        "shop" ->
+          D.succeed Shop
+
+        "touristicPlace" ->
+          D.succeed TouristicPlace
+
+        somethingElse ->
+          D.fail <| "Unknown tag: " ++ somethingElse
+    )
+
+
+piDecoder : Decoder PI
+piDecoder =
+  D.map7 PI
+  (field "title" string)
+  (field "description" string)
+  (field "address" string)
+  (field "images" (D.list imageDecoder))
+  (field "audios" (D.list decodeAudioContent))
+  (field "tags" (D.list tagDecoder))
+  (field "typespi" (D.list typePIDecoder))
+
+getPIfromUrl : String -> Cmd Msg
+getPIfromUrl ocapUrl =
+  Http.get
+    { url = ocapUrl
+    , expect = Http.expectJson GotPI piDecoder
+    }
 
 type alias Audio =
   { jsontype : String
