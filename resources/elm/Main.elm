@@ -149,45 +149,46 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | ViewChanged CurrentView
-  | GotFiles (List File)
-  | GetNewAudiolistEdit
-  | GotNewAudioEdit (Result Http.Error OcapData)
-  | GotNewAudiolistEdit (Result Http.Error OcapData)
-  | GotNewAudioContent (Result Http.Error Audio)
+  | GotPI (Result Http.Error PI)
   | UpdateNavbar Navbar.State
   | CloseModal
   | ShowModal
   | CarouselMsg Carousel.Msg
 
 type Route
-  = RouteDashboard
-  | RouteAudiolistEdit (Maybe String)
+  = RouteListPI
+  | RoutePI (Maybe String)
 
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
-  [ P.map RouteDashboard <| P.s "elm"
-  , P.map RouteAudiolistEdit <| P.s "elm" </> P.s "aledit" </> P.fragment identity
+  [ P.map RouteListPI <| P.s "elm"
+  , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
   ]
 
-updateFromUrl : Model -> Url.Url -> Model
-updateFromUrl model url =
+updateFromUrl : Model -> Url.Url -> Cmd Msg -> ( Model, Cmd Msg )
+updateFromUrl model url commonCmd =
   case P.parse router url of
   Nothing ->
-    model
+    ( model, commonCmd )
 
   Just route ->
     case route of
-    RouteDashboard ->
-      { model | currentView = ViewDashboard model.currentPI }
+    RouteListPI ->
+      ( { model | currentView = ViewListPIDashboard }, commonCmd )
 
-    RouteAudiolistEdit data ->
+    RoutePI data ->
       case data of
       Nothing ->
-        { model | currentView = ViewDashboard model.currentPI }
+        ( model, commonCmd )
 
       Just ocapUrl ->
-        { model | currentView = ViewAudiolistEdit <| AudiolistEdit ocapUrl}
+        ( model
+        , Cmd.batch
+          [ commonCmd
+          , getPIfromUrl ocapUrl
+          ]
+        )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
