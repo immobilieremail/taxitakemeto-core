@@ -25,6 +25,8 @@ import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 import Color
+import Process
+import Task
 
 
 
@@ -422,12 +424,15 @@ viewSimplePILink pi =
         ]
         , Grid.col
         [ Col.xs2, Col.textAlign Text.alignXsCenter ]
-        [ Button.button
-          [ Button.roleLink, Button.onClick (ViewChanged (ViewDashboard pi)) ]
+        [ Button.linkButton
+          [ Button.roleLink
+          , Button.attrs
+            [ href ("/elm/pi#" ++ (getFakePath pi)) ] ]
           [ img
             [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Antu_arrow-right.svg/1024px-Antu_arrow-right.svg.png"
             , style "max-width" "40px"
             , class "img-fluid"
+            , href "/elm/pi/1"
             ]
             []
           ]
@@ -763,10 +768,99 @@ piDecoder =
   (field "tags" (D.list tagDecoder))
   (field "typespi" (D.list typePIDecoder))
 
+-- getPIfromUrl : String -> Cmd Msg
+-- getPIfromUrl ocapUrl =
+--   Http.get
+--     { url = ocapUrl
+--     , expect = Http.expectJson GotPI piDecoder
+--     }
+
+
+--- Temporary fake getPIfromUrl
+
 getPIfromUrl : String -> Cmd Msg
 getPIfromUrl ocapUrl =
-  Http.get
-    { url = ocapUrl
-    , expect = Http.expectJson GotPI piDecoder
+  Process.sleep 10000
+    |> Task.perform (\_ ->
+      GotPI (Ok (fakePI ocapUrl))
+    )
+
+fakePI : String -> PI
+fakePI ocapUrl =
+  case ocapUrl of
+  "1" ->
+    { title = "Meenakshi Amman Temple - India"
+    , description = "मीनाक्षी सुन्दरेश्वरर मन्दिर या मीनाक्षी अम्मां मन्दिर या केवल मीनाक्षी मन्दिर (तमिल: மீனாக்ஷி அம்மன் கோவில்) भारत के तमिल नाडु राज्य के मदुरई नगर, में स्थित एक ऐतिहासिक मन्दिर है। यह हिन्दू देवता शिव (“‘सुन्दरेश्वरर”’ या सुन्दर ईश्वर के रूप में) एवं उनकी भार्या देवी पार्वती (मीनाक्षी या मछली के आकार की आंख वाली देवी के रूप में) दोनो को समर्पित है। यह . I love it."
+    , address = "9 Boulevard de la Canopée"
+    , images = [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+      , Image "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
+      , Image "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
+    , audios = [ Audio "" "Hindi" "india" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
+    , tags = [ Free ]
+    , typespi = [ TouristicPlace ]
     }
 
+  "2" ->
+    { title = "Food Festival - Singapour"
+    , description = "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses."
+    , address = "666 Rue de l'Enfer"
+    , images = [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+      , Image "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+      , Image "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+    , audios = [ Audio "" "Chinese" "china" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
+    , tags = [ Paying ]
+    , typespi = [ Restaurant, TouristicPlace ]
+    }
+
+  "3" ->
+    { title = "Hôtel F1 - Bordeaux"
+    , description = "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life."
+    , address = "Le Paradis (lieu-dit)"
+    , images = [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+      , Image "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+      , Image "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+    , audios = [ Audio "" "English" "united-kingdom" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+    , tags = [ Paying, NotReserved ]
+    , typespi = [ Hotel ]
+    }
+
+  "4" ->
+    { title = "Souk Rabais Bazar - Marrakech"
+    , description = " لسوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية"
+    , address = "Rue du Marchand"
+    , images = [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+      , Image "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+      , Image "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+    , audios = [ Audio "" "Langue du Zouk" "mali" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+    , tags = [ OnGoing ]
+    , typespi = [ Shop, TouristicPlace, Restaurant ]
+    }
+
+  _ ->
+    { title = ""
+    , description = ""
+    , address = ""
+    , images = []
+    , audios = []
+    , tags = []
+    , typespi = []
+    }
+
+
+getFakePath : PI -> String
+getFakePath pi =
+  case pi.title of
+  "Meenakshi Amman Temple - India" ->
+    "1"
+
+  "Food Festival - Singapour" ->
+    "2"
+
+  "Hôtel F1 - Bordeaux" ->
+    "3"
+
+  "Souk Rabais Bazar - Marrakech" ->
+    "4"
+
+  _ ->
+    "quedalle"
