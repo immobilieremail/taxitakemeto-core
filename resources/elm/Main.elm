@@ -24,6 +24,7 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
+import Loading exposing ( LoaderType(..), defaultConfig, render )
 import Color
 import Process
 import Task
@@ -52,6 +53,7 @@ type CurrentView
   = ViewListPIDashboard
   | ViewDashboard PI
   | SimpleViewDashboard PI
+  | LoadingPage
 
 
 type Tag
@@ -195,7 +197,7 @@ updateFromUrl model url commonCmd =
         ( model, commonCmd )
 
       Just ocapUrl ->
-        ( model
+        ( { model | currentView = LoadingPage }
         , Cmd.batch
           [ commonCmd
           , getPIfromUrl ocapUrl
@@ -263,7 +265,8 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListPIDashboard model.listPI ]
+          , viewListPIDashboard model.listPI
+          ]
 
       ViewDashboard pi ->
         div
@@ -273,6 +276,15 @@ view model =
 
       SimpleViewDashboard pi ->
         simpleViewDashboard pi
+
+      LoadingPage ->
+        div
+          []
+          [ Loading.render
+            Spinner -- LoaderType
+            { defaultConfig | color = "#333", size = 75 } -- Config
+            Loading.On -- LoadingState
+          ]
     ]
   }
 
@@ -432,7 +444,6 @@ viewSimplePILink pi =
             [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Antu_arrow-right.svg/1024px-Antu_arrow-right.svg.png"
             , style "max-width" "40px"
             , class "img-fluid"
-            , href "/elm/pi/1"
             ]
             []
           ]
@@ -780,7 +791,7 @@ piDecoder =
 
 getPIfromUrl : String -> Cmd Msg
 getPIfromUrl ocapUrl =
-  Process.sleep 10000
+  Process.sleep 2000
     |> Task.perform (\_ ->
       GotPI (Ok (fakePI ocapUrl))
     )
