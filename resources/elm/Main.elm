@@ -22,6 +22,8 @@ import Bootstrap.Button as Button
 import Bootstrap.ListGroup as Listgroup
 import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
+import Bootstrap.Carousel as Carousel
+import Bootstrap.Carousel.Slide as Slide
 import Color
 
 
@@ -91,6 +93,7 @@ type alias Model =
   , listPI : List PI
   , currentPI : PI
   , modalVisibility : Modal.Visibility
+  , carouselState : Carousel.State
   }
 
 model0 key state = { key = key
@@ -103,6 +106,7 @@ model0 key state = { key = key
              , listPI = []
              , currentPI = PI "" "" "" [] [] [] []
              , modalVisibility = Modal.hidden
+             , carouselState = Carousel.initialState
              }
 
 fakeModel0 key state =
@@ -138,6 +142,7 @@ type Msg
   | UpdateNavbar Navbar.State
   | CloseModal
   | ShowModal
+  | CarouselMsg Carousel.Msg
 
 type Route
   = RouteDashboard
@@ -259,13 +264,18 @@ update msg model =
   ShowModal ->
     ( { model | modalVisibility = Modal.shown } , Cmd.none )
 
+  CarouselMsg subMsg ->
+    ({ model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
 
 -- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Navbar.subscriptions model.navbarState UpdateNavbar
+  Sub.batch [
+    Navbar.subscriptions model.navbarState UpdateNavbar
+    , Carousel.subscriptions model.carouselState CarouselMsg
+  ]
 
 
 
@@ -276,8 +286,7 @@ view : Model -> Browser.Document Msg
 view model =
   { title = "TaxiTakeMeTo"
   , body =
-    [ viewModal model
-    , case model.currentView of
+    [ case model.currentView of
       ViewListPIDashboard ->
         div
           []
@@ -288,7 +297,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewDashboard pi ]
+          , viewDashboard pi model.modalVisibility model.carouselState]
 
       SimpleViewDashboard pi ->
         simpleViewDashboard pi
@@ -329,13 +338,23 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewModal : Model -> Html Msg
-viewModal model =
+-- slideImage : Image ->
+slideImage image =
+  Slide.config [] (Slide.image [] image.url )
+
+viewModal : Modal.Visibility -> Carousel.State -> List Image -> Html Msg
+viewModal modalVisibility carouselState images =
   div []
     [ Modal.config CloseModal
-      |> Modal.small
+      |> Modal.large
       |> Modal.hideOnBackdropClick True
-      |> Modal.body [] [ p [] [ text "This is a modal for you !"] ]
+      |> Modal.body [] [
+        Carousel.config CarouselMsg []
+          |> Carousel.withControls
+          |> Carousel.withIndicators
+          |> Carousel.slides
+            (List.map slideImage images)
+          |> Carousel.view carouselState ]
       |> Modal.footer []
         [ Button.button
           [ Button.outlinePrimary
@@ -344,7 +363,7 @@ viewModal model =
           ]
           [ text "Close" ]
         ]
-      |> Modal.view model.modalVisibility
+      |> Modal.view modalVisibility
     ]
 
 
@@ -519,8 +538,8 @@ viewListPIDashboard listPI =
       ]
     ]
 
-viewDashboard : PI -> Html Msg
-viewDashboard pi =
+viewDashboard : PI -> Modal.Visibility -> Carousel.State -> Html Msg
+viewDashboard pi modalVisibility carouselState =
   div
     []
     [ h1
@@ -597,6 +616,7 @@ viewDashboard pi =
           ]
         ]
       ]
+    , viewModal modalVisibility carouselState pi.images
     ]
 
 simpleViewDashboard : PI -> Html Msg
