@@ -64,6 +64,16 @@ type alias Image =
   }
 
 
+type alias Audio =
+  { jsontype : String
+  , language : String
+  , flagLang : String
+  , viewfacet : String
+  , path : String
+  , deleteAudio : String
+  }
+
+
 type TypePI
   = Restaurant
   | Hotel
@@ -760,11 +770,3 @@ getPIfromUrl ocapUrl =
     , expect = Http.expectJson GotPI piDecoder
     }
 
-type alias Audio =
-  { jsontype : String
-  , language : String
-  , flagLang : String
-  , viewfacet : String
-  , path : String
-  , deleteAudio : String
-  }
