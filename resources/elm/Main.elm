@@ -138,7 +138,7 @@ init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let (state, cmd) = Navbar.initialState UpdateNavbar
       model = fakeModel0 key state
-  in ( updateFromUrl model url, cmd )
+  in updateFromUrl model url cmd
 
 
 
@@ -196,80 +196,24 @@ update msg model =
   LinkClicked urlRequest ->
     case urlRequest of
     Browser.Internal url ->
-      ( updateFromUrl model url, Nav.pushUrl model.key (Url.toString url) )
+      updateFromUrl model url (Nav.pushUrl model.key (Url.toString url))
 
     Browser.External href ->
       ( model, Nav.load href )
 
   UrlChanged url ->
-    ( updateFromUrl model url
-    , Cmd.none
-    )
+    updateFromUrl model url Cmd.none
+
+  GotPI result ->
+    case result of
+    Ok pi ->
+      ( { model | currentView = ViewDashboard pi }, Cmd.none )
+
+    Err _ ->
+      ( model, Cmd.none )
 
   ViewChanged newView ->
     ( { model | currentView = newView }, Cmd.none )
-
-  GetNewAudiolistEdit ->
-    ( model, getNewAudiolistEdit )
-
-  GotFiles inputFiles ->
-    ( model, Http.request
-        { method = "POST"
-          , url = "/api/audio"
-          , headers = []
-          , body = Http.multipartBody (List.map (Http.filePart "audio") inputFiles)
-          , expect = Http.expectJson GotNewAudioEdit decodeOcap
-          , timeout = Nothing
-          , tracker = Just "upload"
-          }
-    )
-
-  GotNewAudiolistEdit data ->
-    case data of
-    Ok ocap ->
-      case extractAudiolistEdit ocap of
-      Nothing ->
-        ( { model
-        | ocaps = model.ocaps ++ [ocap] }, Cmd.none )
-
-      Just aledit ->
-        ( { model
-        | audiolistEdits = model.audiolistEdits ++ [aledit]
-        , ocaps = model.ocaps ++ [ocap] }, Cmd.none )
-
-    Err _ ->
-      ( model, Cmd.none )
-
-  GotNewAudioEdit data ->
-    case data of
-    Ok ocap ->
-      case extractAudioEdit ocap of
-      Nothing ->
-        ( model, Cmd.none )
-
-      Just audioedit ->
-        ( model, Http.request
-          { method = "GET"
-            , url = audioedit.url
-            , headers = []
-            , body = Http.emptyBody
-            , expect = Http.expectJson GotNewAudioContent decodeAudioContent
-            , timeout = Nothing
-            , tracker = Just "play"
-          }
-        )
-
-    Err _ ->
-      ( model, Cmd.none )
-
-  GotNewAudioContent data ->
-    case data of
-    Ok ocap ->
-      ( { model
-        | audioContent = model.audioContent ++ [ocap] }, Cmd.none )
-
-    Err _ ->
-      ( model, Cmd.none )
 
   UpdateNavbar state ->
     ( { model | navbarState = state }, Cmd.none)
