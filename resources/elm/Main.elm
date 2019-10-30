@@ -271,7 +271,7 @@ viewNavbar model =
     |> Navbar.withAnimation
     |> Navbar.collapseMedium
     |> Navbar.brand
-      [ onClick (ViewChanged ViewListPIDashboard) ]
+      [ href "/elm" ]
       [ img
         [ src "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
         , class " align-middle d-inline-block rounded align-top img-thumbnails "
@@ -402,16 +402,16 @@ viewSimplePILink pi =
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
-        [ Col.xs3 ]
+        [ Col.xs2 ]
         []
       , Grid.col
-        [ Col.xs6, Col.textAlign Text.alignXsCenter  ]
+        [ Col.xs8, Col.textAlign Text.alignXsCenter  ]
         [ h3
             [ onClick (ViewChanged (ViewDashboard pi)) ]
             [ text pi.title ]
         ]
         , Grid.col
-        [ Col.xs3, Col.textAlign Text.alignXsCenter ]
+        [ Col.xs2, Col.textAlign Text.alignXsCenter ]
         [ Button.button
           [ Button.roleLink, Button.onClick (ViewChanged (ViewDashboard pi)) ]
           [ img
@@ -424,7 +424,7 @@ viewSimplePILink pi =
         ]
       ]
     , Grid.row
-      [ Row.middleXs ]
+      [ Row.middleXs, Row.attrs [ style "background-color" "#eeeeec", class "rounded" ] ]
       [ Grid.col
         [ Col.sm3, Col.textAlign Text.alignXsCenter ]
         [ div
@@ -451,11 +451,14 @@ viewListPIDashboard listPI =
     []
     [ h1
       [ class "text-center pt-4" ]
-      [ text "My list of PIs" ]
+      [ text "My Points of Interest list" ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
       (List.map viewSimplePILink listPI)
+    , h1
+      [ class "text-center pt-4" ]
+      [ text "Contact" ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
