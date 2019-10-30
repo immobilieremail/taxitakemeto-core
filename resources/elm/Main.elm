@@ -50,7 +50,6 @@ type CurrentView
   = ViewListPIDashboard
   | ViewDashboard PI
   | SimpleViewDashboard PI
-  | ViewAudiolistEdit AudiolistEdit
 
 
 type Tag
@@ -84,11 +83,7 @@ type alias PI =
 
 type alias Model =
   { key : Nav.Key
-  , ocaps : List OcapData -- kept for debugging
-  , audiolistEdits :  List AudiolistEdit
   , currentView : CurrentView
-  , audioContent : List Audio
-  , files : List File
   , navbarState : Navbar.State
   , listPI : List PI
   , currentPI : PI
@@ -97,11 +92,7 @@ type alias Model =
   }
 
 model0 key state = { key = key
-             , ocaps = []
-             , audiolistEdits = []
              , currentView = ViewListPIDashboard
-             , audioContent = []
-             , files = []
              , navbarState = state
              , listPI = []
              , currentPI = PI "" "" "" [] [] [] []
@@ -325,9 +316,6 @@ view model =
 
       SimpleViewDashboard pi ->
         simpleViewDashboard pi
-
-      ViewAudiolistEdit aledit ->
-        text "AudioLists"
     ]
   }
 
@@ -743,49 +731,7 @@ viewAudioLanguage audio =
     ]
 
 
-linkAudiolistEdit : AudiolistEdit -> Html Msg
-linkAudiolistEdit aledit =
-  li []
-  [ a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
-  ]
-
-linkAudioEdit : Audio -> Html Msg
-linkAudioEdit audio =
-  li []
-  [ -- a [ href <| "/elm/aledit#" ++ aledit.url ] [ text aledit.url ]
-    Html.audio [controls True] [ Html.source [src audio.path, type_ "audio/mpeg"] [] ]
-  ]
-
-viewOcap : OcapData -> Html Msg
-viewOcap ocap =
-  dl [ style "border" "solid" ]
-  [ dt [] [ text "type" ]
-  , dd [] [ text ocap.jsonType ]
-  , dt [] [ text "ocapType" ]
-  , dd [] [ text ocap.ocapType ]
-  , dt [] [ text "url" ]
-  , dd [] [ text ocap.url ]
-  ]
-
-
 -- JSON API
-
-filesDecoder : D.Decoder (List File)
-filesDecoder =
-  D.at ["target","files"] (D.list File.decoder)
-
-type alias OcapData =
-  { jsonType : String
-  , ocapType : String
-  , url : String
-  }
-
-decodeOcap : Decoder OcapData
-decodeOcap =
-  D.map3 OcapData
-  (field "type" string)
-  (field "ocapType" string)
-  (field "url" string)
 
 decodeAudioContent : Decoder Audio
 decodeAudioContent =
