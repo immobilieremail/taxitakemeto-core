@@ -435,27 +435,10 @@ viewSimplePILink pi =
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
-        [ Col.xs2 ]
-        []
-      , Grid.col
-        [ Col.xs8, Col.textAlign Text.alignXsCenter  ]
-        [ h3
+        [ Col.xs12, Col.textAlign Text.alignXsCenter  ]
+        [ h5
             []
             [ text pi.title ]
-        ]
-        , Grid.col
-        [ Col.xs2, Col.textAlign Text.alignXsCenter ]
-        [ Button.linkButton
-          [ Button.roleLink
-          , Button.attrs
-            [ href ("/elm/pi#" ++ (getFakePath pi)) ] ]
-          [ img
-            [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Antu_arrow-right.svg/1024px-Antu_arrow-right.svg.png"
-            , style "max-width" "40px"
-            , class "img-fluid"
-            ]
-            []
-          ]
         ]
       ]
     , Grid.row
