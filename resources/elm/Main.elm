@@ -480,9 +480,9 @@ viewListPIDashboard : Accordion.State -> Modal.Visibility -> Carousel.State -> L
 viewListPIDashboard accordionState modalVisibility carouselState listPI =
   div
     []
-    [ h1
+    [ h2
       [ class "text-center pt-4" ]
-      [ text "My Points of Interest list" ]
+      [ text "My Points of Interest" ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
@@ -493,7 +493,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
          ( List.map (accordionCard accordionState modalVisibility carouselState) listPI )
         |> Accordion.view accordionState
       ]
-    , h1
+    , h2
       [ class "text-center pt-4" ]
       [ text "Contact" ]
     , Grid.container
