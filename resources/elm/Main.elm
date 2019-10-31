@@ -12,6 +12,7 @@ import Json.Decode as D exposing (Decoder,map4, map3, field, string, int, list)
 import Url
 import Url.Parser as P
 import Url.Parser exposing ((</>))
+import Bootstrap.Accordion as Accordion
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
@@ -103,6 +104,7 @@ type alias Model =
   , currentPI : PI
   , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
+  , accordionState : Accordion.State
   }
 
 model0 key state = { key = key
@@ -112,6 +114,7 @@ model0 key state = { key = key
              , currentPI = PI "" "" "" [] [] [] []
              , modalVisibility = Modal.hidden
              , carouselState = Carousel.initialState
+             , accordionState = Accordion.initialState
              }
 
 fakeModel0 key state =
@@ -168,6 +171,8 @@ type Msg
   | CloseModal
   | ShowModal
   | CarouselMsg Carousel.Msg
+  | AccordionMsg Accordion.State
+
 
 type Route
   = RouteListPI
@@ -241,6 +246,9 @@ update msg model =
   CarouselMsg subMsg ->
     ({ model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
 
+  AccordionMsg state ->
+    ( { model | accordionState = state }, Cmd.none )
+
 -- SUBSCRIPTIONS
 
 
@@ -249,6 +257,7 @@ subscriptions model =
   Sub.batch [
     Navbar.subscriptions model.navbarState UpdateNavbar
     , Carousel.subscriptions model.carouselState CarouselMsg
+    , Accordion.subscriptions model.accordionState AccordionMsg
   ]
 
 
@@ -265,7 +274,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListPIDashboard model.listPI
+          , viewListPIDashboard model.accordionState model.modalVisibility model.carouselState model.listPI
           ]
 
       ViewDashboard pi ->
@@ -431,7 +440,7 @@ viewSimplePILink pi =
       , Grid.col
         [ Col.xs8, Col.textAlign Text.alignXsCenter  ]
         [ h3
-            [ onClick (ViewChanged (ViewDashboard pi)) ]
+            []
             [ text pi.title ]
         ]
         , Grid.col
@@ -468,11 +477,24 @@ viewSimplePILink pi =
         [ Col.sm3 ]
         []
       ]
-    , hr [] []
     ]
 
-viewListPIDashboard : List PI -> Html Msg
-viewListPIDashboard listPI =
+
+accordionCard : Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
+accordionCard modalVisibility carouselState pointInteret =
+  Accordion.card
+    { id = pointInteret.title
+    , options = [ Card.attrs [ style "border" "none"]]
+    , header =
+      Accordion.header [class "mb-4", style "border-bottom" "none"] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none" ] [ viewSimplePILink pointInteret ]
+    , blocks =
+      [ Accordion.block []
+        [ Block.text [] [ viewDashboard pointInteret modalVisibility carouselState ] ]
+      ]
+    }
+
+viewListPIDashboard : Accordion.State -> Modal.Visibility -> Carousel.State -> List PI -> Html Msg
+viewListPIDashboard accordionState modalVisibility carouselState listPI =
   div
     []
     [ h1
@@ -481,7 +503,13 @@ viewListPIDashboard listPI =
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
-      (List.map viewSimplePILink listPI)
+      [ Accordion.config AccordionMsg
+        |> Accordion.onlyOneOpen
+        |> Accordion.withAnimation
+        |> Accordion.cards
+         ( List.map (accordionCard modalVisibility carouselState) listPI )
+        |> Accordion.view accordionState
+      ]
     , h1
       [ class "text-center pt-4" ]
       [ text "Contact" ]
