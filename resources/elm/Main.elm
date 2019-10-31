@@ -567,23 +567,20 @@ viewPI pi modalVisibility carouselState =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ img
-            [ class "d-block mx-auto img-fluid m-3 rounded"
-            , style "width" "400px"
-            , onClick ShowModal
-            , case List.head pi.images of
-              Just image ->
-                src image.url
-              Nothing ->
-                src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg"
-            ]
-            []
-          ]
+          [ Carousel.config CarouselMsg [ onClick ShowModal ]
+            |> Carousel.withControls
+            |> Carousel.withIndicators
+            |> Carousel.slides
+              (List.map slideImage pi.images)
+            |> Carousel.view carouselState ]
         , Grid.col
           [ Col.sm6 ]
-          [ div
+          [ h5
+            []
+            [text pi.title]
+          , div
             [ class "text-justify"]
-            [text pi.description]
+            [ text pi.description]
           ]
         ]
       , Grid.row
