@@ -281,7 +281,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewPI pi model.modalVisibility model.carouselState]
+          , viewPI pi model.modalVisibility model.carouselState model.accordionState]
 
       SimpleViewPI pi ->
         simpleViewPI pi
@@ -463,8 +463,8 @@ viewSimplePILink pi =
     ]
 
 
-accordionCard : Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
-accordionCard modalVisibility carouselState pointInteret =
+accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
+accordionCard accordionState modalVisibility carouselState pointInteret =
   Accordion.card
     { id = pointInteret.title
     , options = [ Card.attrs [ style "border" "none"]]
@@ -472,7 +472,7 @@ accordionCard modalVisibility carouselState pointInteret =
       Accordion.header [class "mb-4", style "border-bottom" "none"] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none" ] [ viewSimplePILink pointInteret ]
     , blocks =
       [ Accordion.block []
-        [ Block.text [] [ viewPI pointInteret modalVisibility carouselState ] ]
+        [ Block.text [] [ viewPI pointInteret modalVisibility carouselState accordionState ] ]
       ]
     }
 
@@ -490,7 +490,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-         ( List.map (accordionCard modalVisibility carouselState) listPI )
+         ( List.map (accordionCard accordionState modalVisibility carouselState) listPI )
         |> Accordion.view accordionState
       ]
     , h1
@@ -535,14 +535,11 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
       ]
     ]
 
-viewPI : PI -> Modal.Visibility -> Carousel.State -> Html Msg
-viewPI pi modalVisibility carouselState =
+viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> Html Msg
+viewPI pi modalVisibility carouselState accordionState =
   div
-    []
-    [ h1
-      [ class "text-center pt-4"]
-      [ text pi.title ]
-    , Grid.container
+    [] <|
+    [ Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray"
       ]
@@ -610,8 +607,12 @@ viewPI pi modalVisibility carouselState =
           ]
         ]
       ]
-    , viewModal modalVisibility carouselState pi.images
     ]
+    ++
+    if Accordion.isOpen pi.title accordionState then
+      [ viewModal modalVisibility carouselState pi.images ]
+    else
+      []
 
 simpleViewPI : PI -> Html Msg
 simpleViewPI pi =
