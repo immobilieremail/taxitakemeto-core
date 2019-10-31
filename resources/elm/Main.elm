@@ -52,8 +52,8 @@ main =
 
 type CurrentView
   = ViewListPIDashboard
-  | ViewDashboard PI
-  | SimpleViewDashboard PI
+  | ViewPI PI
+  | SimpleViewPI PI
   | LoadingPage
 
 
@@ -226,7 +226,7 @@ update msg model =
   GotPI result ->
     case result of
     Ok pi ->
-      ( { model | currentView = ViewDashboard pi }, Cmd.none )
+      ( { model | currentView = ViewPI pi }, Cmd.none )
 
     Err _ ->
       ( model, Cmd.none )
@@ -277,14 +277,14 @@ view model =
           , viewListPIDashboard model.accordionState model.modalVisibility model.carouselState model.listPI
           ]
 
-      ViewDashboard pi ->
+      ViewPI pi ->
         div
           []
           [ viewNavbar model
-          , viewDashboard pi model.modalVisibility model.carouselState]
+          , viewPI pi model.modalVisibility model.carouselState]
 
-      SimpleViewDashboard pi ->
-        simpleViewDashboard pi
+      SimpleViewPI pi ->
+        simpleViewPI pi
 
       LoadingPage ->
         div
@@ -489,7 +489,7 @@ accordionCard modalVisibility carouselState pointInteret =
       Accordion.header [class "mb-4", style "border-bottom" "none"] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none" ] [ viewSimplePILink pointInteret ]
     , blocks =
       [ Accordion.block []
-        [ Block.text [] [ viewDashboard pointInteret modalVisibility carouselState ] ]
+        [ Block.text [] [ viewPI pointInteret modalVisibility carouselState ] ]
       ]
     }
 
@@ -552,8 +552,8 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
       ]
     ]
 
-viewDashboard : PI -> Modal.Visibility -> Carousel.State -> Html Msg
-viewDashboard pi modalVisibility carouselState =
+viewPI : PI -> Modal.Visibility -> Carousel.State -> Html Msg
+viewPI pi modalVisibility carouselState =
   div
     []
     [ h1
@@ -618,7 +618,7 @@ viewDashboard pi modalVisibility carouselState =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged (SimpleViewDashboard pi))
+          , Button.onClick (ViewChanged (SimpleViewPI pi))
           ]
           [ text "Simple view"
           , img
@@ -633,8 +633,8 @@ viewDashboard pi modalVisibility carouselState =
     , viewModal modalVisibility carouselState pi.images
     ]
 
-simpleViewDashboard : PI -> Html Msg
-simpleViewDashboard pi =
+simpleViewPI : PI -> Html Msg
+simpleViewPI pi =
   div
     []
     [ h1
@@ -683,7 +683,7 @@ simpleViewDashboard pi =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged (ViewDashboard pi))
+          , Button.onClick (ViewChanged (ViewPI pi))
           ]
           [ text "Exit view"
           , img
