@@ -72,7 +72,6 @@ type alias Image =
 type alias Audio =
   { jsontype : String
   , language : String
-  , flagLang : String
   , viewfacet : String
   , path : String
   , deleteAudio : String
@@ -120,32 +119,32 @@ model0 key state = { key = key
 fakeModel0 key state =
   let model = model0 key state
   in { model | listPI =
-      [ PI "Meenakshi Amman Temple - India" "मीनाक्षी सुन्दरेश्वरर मन्दिर या मीनाक्षी अम्मां मन्दिर या केवल मीनाक्षी मन्दिर (तमिल: மீனாக்ஷி அம்மன் கோவில்) भारत के तमिल नाडु राज्य के मदुरई नगर, में स्थित एक ऐतिहासिक मन्दिर है। यह हिन्दू देवता शिव (“‘सुन्दरेश्वरर”’ या सुन्दर ईश्वर के रूप में) एवं उनकी भार्या देवी पार्वती (मीनाक्षी या मछली के आकार की आंख वाली देवी के रूप में) दोनो को समर्पित है। यह . I love it." "9 Boulevard de la Canopée"
+      [ PI "Meenakshi Amman Temple - India" ". I love it." "9 Boulevard de la Canopée"
         [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
         , Image "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
         , Image "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
-        [ Audio "" "Hindi" "india" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
+        [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
         [ Free ]
         [ TouristicPlace ]
       , PI "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
         , Image "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
         , Image "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg"]
-        [ Audio "" "Chinese" "china" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
+        [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
         [ Paying ]
         [ Restaurant, TouristicPlace ]
       , PI "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
         [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
         , Image "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
         , Image "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg"]
-        [ Audio "" "English" "united-kingdom" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+        [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
         [ Paying, NotReserved ]
         [ Hotel ]
       , PI "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
         [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
         , Image "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
         , Image "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg"]
-        [ Audio "" "Langue du Zouk" "mali" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+        [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
         [ OnGoing ]
         [ Shop, TouristicPlace, Restaurant ]
     ]
@@ -683,22 +682,13 @@ viewAudioLanguage audio =
   Grid.row
     [ Row.middleXs ]
     [ Grid.col
-      [ Col.xs5 ]
+      [ Col.xs6 ]
       [ h3
         [ class "text-center"]
         [text audio.language]
       ]
     , Grid.col
-      [ Col.xs2 ]
-      [ img
-        [ class "d-block mx-auto img-fluid"
-        , style "max-width" "35px"
-        , src ("http://localhost:8000/storage/flags/" ++ audio.flagLang ++ ".png")
-        ]
-        []
-      ]
-    , Grid.col
-      [ Col.sm5, Col.textAlign Text.alignXsCenter ]
+      [ Col.sm6, Col.textAlign Text.alignXsCenter ]
       [ Html.audio
         [ controls True
         , style "width" "100%"
@@ -718,10 +708,9 @@ viewAudioLanguage audio =
 
 decodeAudioContent : Decoder Audio
 decodeAudioContent =
-  D.map6 Audio
+  D.map5 Audio
   (field "type" string)
   (field "language" string)
-  (field "flagLang" string)
   (field "view_facet" string)
   (field "path" string)
   (field "delete" string)
@@ -809,13 +798,15 @@ fakePI : String -> PI
 fakePI ocapUrl =
   case ocapUrl of
   "1" ->
-    { title = "Meenakshi Amman Temple - India"
-    , description = "मीनाक्षी सुन्दरेश्वरर मन्दिर या मीनाक्षी अम्मां मन्दिर या केवल मीनाक्षी मन्दिर (तमिल: மீனாக்ஷி அம்மன் கோவில்) भारत के तमिल नाडु राज्य के मदुरई नगर, में स्थित एक ऐतिहासिक मन्दिर है। यह हिन्दू देवता शिव (“‘सुन्दरेश्वरर”’ या सुन्दर ईश्वर के रूप में) एवं उनकी भार्या देवी पार्वती (मीनाक्षी या मछली के आकार की आंख वाली देवी के रूप में) दोनो को समर्पित है। यह . I love it."
+    { title = "Wat Phra Kaew Temple - Thaïland"
+    , description = ". I love it."
     , address = "9 Boulevard de la Canopée"
-    , images = [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
-      , Image "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
-      , Image "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
-    , audios = [ Audio "" "Hindi" "india" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
+    , images = [ Image "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg"
+      , Image "https://bangkokmonamour.files.wordpress.com/2015/09/vue-generale-temple.jpg"
+      , Image "https://upload.wikimedia.org/wikipedia/commons/c/c1/Wat_Phra_Kaew_by_Ninara_TSP_edit_crop.jpg" ]
+    , audios = [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ Free ]
     , typespi = [ TouristicPlace ]
     }
@@ -827,7 +818,9 @@ fakePI ocapUrl =
     , images = [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
       , Image "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
       , Image "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
-    , audios = [ Audio "" "Chinese" "china" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
+    , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ Paying ]
     , typespi = [ Restaurant, TouristicPlace ]
     }
@@ -839,7 +832,8 @@ fakePI ocapUrl =
     , images = [ Image "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
       , Image "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
       , Image "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
-    , audios = [ Audio "" "English" "united-kingdom" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+    , audios = [ Audio "" "French" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" ""
+      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ Paying, NotReserved ]
     , typespi = [ Hotel ]
     }
@@ -851,7 +845,9 @@ fakePI ocapUrl =
     , images = [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
       , Image "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
       , Image "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
-    , audios = [ Audio "" "Langue du Zouk" "mali" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+    , audios = [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" ""
+      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ OnGoing ]
     , typespi = [ Shop, TouristicPlace, Restaurant ]
     }
