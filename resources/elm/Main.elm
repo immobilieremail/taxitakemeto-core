@@ -102,7 +102,6 @@ type alias Model =
   , currentView : CurrentView
   , navbarState : Navbar.State
   , listPI : List PI
-  , currentPI : PI
   , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
   , accordionState : Accordion.State
@@ -112,7 +111,6 @@ model0 key state = { key = key
              , currentView = ViewListPIDashboard
              , navbarState = state
              , listPI = []
-             , currentPI = PI "" "" "" [] [] [] []
              , modalVisibility = Modal.hidden
              , carouselState = Carousel.initialState
              , accordionState = Accordion.initialState
