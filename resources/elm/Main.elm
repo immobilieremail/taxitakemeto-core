@@ -124,7 +124,7 @@ fakeModel0 key state =
         , Image "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
         , Image "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
         [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
-        [ Free ]
+        [ Free, Paying ]
         [ TouristicPlace ]
       , PI "http://localhost:8000/api/media/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
@@ -138,14 +138,14 @@ fakeModel0 key state =
         , Image "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
         , Image "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg"]
         [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
-        [ Paying, NotReserved ]
-        [ Hotel ]
+        [ Paying, NotReserved, OnGoing, Free ]
+        [ Hotel, Shop, TouristicPlace, Restaurant ]
       , PI "http://localhost:8000/api/media/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
         [ Image "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
         , Image "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
         , Image "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg"]
         [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
-        [ OnGoing ]
+        [ OnGoing, Free, NotReserved ]
         [ Shop, TouristicPlace, Restaurant ]
     ]
   }
