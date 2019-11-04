@@ -363,48 +363,48 @@ viewTagPI tag =
     Grid.col
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
-      [ Button.small
+        [ Button.small
         , Button.attrs [ style "width" "120px", style "height" "30px" ]
-      , Button.outlineSuccess
+        , Button.outlineSuccess
         , (Button.disabled True)
-      ]
-      [text "Free"]
+        ]
+        [text "Free"]
       ]
 
   Paying ->
     Grid.col
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
-      [ Button.small
-      , Button.attrs [ style "width" "120px", style "height" "30px" ]
-      , Button.outlineWarning
+        [ Button.small
+        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.outlineWarning
         , (Button.disabled True)
-      ]
-      [text "Paying"]
+        ]
+        [text "Paying"]
       ]
 
   NotReserved ->
     Grid.col
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
-      [ Button.small
-      , Button.attrs [ style "width" "120px", style "height" "30px" ]
-      , Button.outlineDanger
+        [ Button.small
+        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.outlineDanger
         , (Button.disabled True)
-      ]
-      [text "Not Reserved"]
+        ]
+        [text "Not Reserved"]
       ]
 
   OnGoing ->
     Grid.col
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
-      [ Button.small
-      , Button.attrs [ style "width" "120px", style "height" "30px" ]
-      , Button.outlinePrimary
+        [ Button.small
+        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.outlinePrimary
         , (Button.disabled True)
-      ]
-      [text "On Going"]
+        ]
+        [text "On Going"]
       ]
 
 viewTypePI : TypePI -> Grid.Column Msg
@@ -416,9 +416,9 @@ viewTypePI typepi =
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
-      , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
-      ]
-      []
+        , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
+        ]
+        []
       ]
 
   Shop ->
@@ -427,9 +427,9 @@ viewTypePI typepi =
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
-      , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
-      ]
-      []
+        , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
+        ]
+        []
       ]
 
   Hotel ->
@@ -438,9 +438,9 @@ viewTypePI typepi =
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
-      , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
-      ]
-      []
+        , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
+        ]
+        []
       ]
 
   TouristicPlace ->
@@ -449,9 +449,9 @@ viewTypePI typepi =
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
-      , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
-      ]
-      []
+        , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
+        ]
+        []
       ]
 
 viewSimplePILink : PI -> Html Msg
@@ -461,9 +461,9 @@ viewSimplePILink pi =
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsCenter  ]
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ h5
-            []
+            [ style "overflow-wrap" "break-word" ]
             [ text pi.title ]
         ]
       ]
@@ -515,7 +515,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-         ( List.map (accordionCard accordionState modalVisibility carouselState) listPI )
+          (List.map (accordionCard accordionState modalVisibility carouselState) listPI)
         |> Accordion.view accordionState
       ]
     , h2
@@ -534,7 +534,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
           [ div
             [ class "text-center py-3 d-flex justify-content-around" ]
             [ Button.button
-              [Button.roleLink]
+              [ Button.roleLink ]
               [ img
                 [ src "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
                 , style "max-width" "70px"
@@ -543,7 +543,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
                 []
               ]
             , Button.button
-              [Button.roleLink]
+              [ Button.roleLink ]
               [ img
                 [ src "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
                 , style "max-width" "70px"
@@ -582,7 +582,7 @@ viewPI pi modalVisibility carouselState accordionState =
           [ Col.sm6 ]
           [ h5
             []
-            [text pi.title]
+            [ text pi.title ]
           , div
             [ class "text-justify"]
             [ text pi.description]
@@ -708,8 +708,8 @@ viewAudioLanguage audio =
   Grid.row
     [ Row.middleXs ]
     [ Grid.col
-      [ Col.xs6 ]
-      [ h3
+      [ Col.sm6 ]
+      [ h4
         [ class "text-center"]
         [text audio.language]
       ]
