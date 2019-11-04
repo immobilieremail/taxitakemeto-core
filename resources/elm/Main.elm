@@ -465,7 +465,7 @@ viewSimplePILink pi =
 accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
 accordionCard accordionState modalVisibility carouselState pointInteret =
   Accordion.card
-    { id = pointInteret.title
+    { id = pointInteret.swissNumber
     , options = [ Card.attrs [ style "border" "none"]]
     , header =
       Accordion.header [class "mb-4", style "border-bottom" "none"] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none" ] [ viewSimplePILink pointInteret ]
