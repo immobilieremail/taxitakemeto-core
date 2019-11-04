@@ -16,3 +16,4 @@ yarn-error.log
 /coverage
 /elm-stuff
 /public
+package-lock.json
