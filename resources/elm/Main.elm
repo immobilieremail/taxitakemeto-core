@@ -868,21 +868,3 @@ fakePI ocapUrl =
     , typespi = []
     }
 
-
-getFakePath : PI -> String
-getFakePath pi =
-  case pi.title of
-  "Meenakshi Amman Temple - India" ->
-    "1"
-
-  "Food Festival - Singapour" ->
-    "2"
-
-  "Hôtel F1 - Bordeaux" ->
-    "3"
-
-  "Souk Rabais Bazar - Marrakech" ->
-    "4"
-
-  _ ->
-    "quedalle"
