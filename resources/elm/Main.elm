@@ -356,76 +356,103 @@ viewModal modalVisibility carouselState images =
     ]
 
 
-viewTagPI : Tag -> Html Msg
+viewTagPI : Tag -> Grid.Column Msg
 viewTagPI tag =
   case tag of
   Free ->
-    Button.button
+    Grid.col
+      [ Col.attrs [ class "py-1" ] ]
+      [ Button.button
       [ Button.small
-      , Button.attrs [ style "width" "120px", style "height" "30px"]
+        , Button.attrs [ style "width" "120px", style "height" "30px" ]
       , Button.outlineSuccess
-      , (Button.disabled False)
+        , (Button.disabled True)
       ]
       [text "Free"]
+      ]
 
   Paying ->
-    Button.button
+    Grid.col
+      [ Col.attrs [ class "py-1" ] ]
+      [ Button.button
       [ Button.small
       , Button.attrs [ style "width" "120px", style "height" "30px" ]
       , Button.outlineWarning
-      , (Button.disabled False)
+        , (Button.disabled True)
       ]
       [text "Paying"]
+      ]
 
   NotReserved ->
-    Button.button
+    Grid.col
+      [ Col.attrs [ class "py-1" ] ]
+      [ Button.button
       [ Button.small
       , Button.attrs [ style "width" "120px", style "height" "30px" ]
       , Button.outlineDanger
-      , (Button.disabled False)
+        , (Button.disabled True)
       ]
       [text "Not Reserved"]
+      ]
 
   OnGoing ->
-    Button.button
+    Grid.col
+      [ Col.attrs [ class "py-1" ] ]
+      [ Button.button
       [ Button.small
       , Button.attrs [ style "width" "120px", style "height" "30px" ]
       , Button.outlinePrimary
-      , (Button.disabled False)
+        , (Button.disabled True)
       ]
       [text "On Going"]
+      ]
 
-viewTypePI : TypePI -> Html Msg
+viewTypePI : TypePI -> Grid.Column Msg
 viewTypePI typepi =
   case typepi of
   Restaurant ->
-    img
-      [ class "d-block  img-fluid m-3 rounded"
-      , style "width" "40px"
+    Grid.col
+      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ img
+        [ class "d-block rounded"
+        , style "width" "30px"
       , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
       ]
       []
+      ]
+
   Shop ->
-    img
-      [ class "d-block img-fluid m-3 rounded"
-      , style "width" "40px"
+    Grid.col
+      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ img
+        [ class "d-block rounded"
+        , style "width" "30px"
       , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
       ]
       []
+      ]
+
   Hotel ->
-    img
-      [ class "d-block img-fluid m-3 rounded"
-      , style "width" "40px"
+    Grid.col
+      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ img
+        [ class "d-block rounded"
+        , style "width" "30px"
       , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
       ]
       []
+      ]
+
   TouristicPlace ->
-    img
-      [ class "d-block img-fluid m-3 rounded"
-      , style "width" "40px"
+    Grid.col
+      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ img
+        [ class "d-block rounded"
+        , style "width" "30px"
       , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
       ]
       []
+      ]
 
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
@@ -444,15 +471,14 @@ viewSimplePILink pi =
       [ Row.middleXs, Row.attrs [ style "background-color" "#eeeeec", class "rounded" ] ]
       [ Grid.col
         [ Col.sm3 ]
-        [ div
-          [ class "text-center d-flex justify-content-start"
-          ]
+        [ Grid.row
+          []
           (List.map viewTypePI pi.typespi)
         ]
       , Grid.col
         [ Col.sm6 ]
-        [ div
-          [ class "text-center py-3 d-flex justify-content-around" ]
+        [ Grid.row
+          [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
           (List.map viewTagPI pi.tags)
         ]
       , Grid.col
@@ -463,15 +489,15 @@ viewSimplePILink pi =
 
 
 accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
-accordionCard accordionState modalVisibility carouselState pointInteret =
+accordionCard accordionState modalVisibility carouselState pi =
   Accordion.card
-    { id = pointInteret.swissNumber
-    , options = [ Card.attrs [ style "border" "none"]]
+    { id = pi.swissNumber
+    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
     , header =
-      Accordion.header [class "mb-4", style "border-bottom" "none"] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none" ] [ viewSimplePILink pointInteret ]
+      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none", style "white-space" "normal" ] [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block []
-        [ Block.text [] [ viewPI pointInteret modalVisibility carouselState accordionState ] ]
+        [ Block.text [] [ viewPI pi modalVisibility carouselState accordionState ] ]
       ]
     }
 
@@ -569,8 +595,8 @@ viewPI pi modalVisibility carouselState accordionState =
           []
         , Grid.col
           [ Col.sm6 ]
-          [ div
-            [ class "text-center py-3 d-flex justify-content-around" ]
+          [ Grid.row
+            [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
             (List.map viewTagPI pi.tags)
           ]
         , Grid.col
