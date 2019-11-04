@@ -663,7 +663,7 @@ simpleViewPI pi =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged (ViewPI pi))
+          , Button.onClick (ViewChanged ViewListPIDashboard)
           ]
           [ text "Exit view"
           , img
