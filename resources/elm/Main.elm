@@ -60,6 +60,7 @@ type CurrentView
 type Tag
   = Free
   | Paying
+  | Reserved
   | NotReserved
   | OnGoing
 
@@ -119,12 +120,12 @@ model0 key state = { key = key
 fakeModel0 key state =
   let model = model0 key state
   in { model | listPI =
-      [ PI "http://localhost:8000/api/media/1" "Meenakshi Amman Temple - India" ". I love it." "9 Boulevard de la Canopée"
+      [ PI "http://localhost:8000/api/media/1" "Meenakshi Amman Temple - India" "This is a description. I love it." "9 Boulevard de la Canopée"
         [ Image "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
         , Image "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
         , Image "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
         [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
-        [ Free, Paying ]
+        [ Free, Reserved ]
         [ TouristicPlace ]
       , PI "http://localhost:8000/api/media/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Image "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
@@ -381,6 +382,18 @@ viewTagPI tag =
         , (Button.disabled True)
         ]
         [text "Paying"]
+      ]
+
+  Reserved ->
+    Grid.col
+      [ Col.attrs [ class "py-1" ] ]
+      [ Button.button
+        [ Button.small
+        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.outlineInfo
+        , (Button.disabled True)
+        ]
+        [ text "Reserved" ]
       ]
 
   NotReserved ->
