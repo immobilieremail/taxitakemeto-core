@@ -711,15 +711,50 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ div
-            []
-            [ Carousel.config CarouselMsg []
-              |> Carousel.slides
-                (List.map slideImage pi.medias)
-              |> Carousel.view carouselState
-            , viewCarouselButtonPrev mouseOver
-            , viewCarouselButtonNext mouseOver
-            ]
+          [ case Accordion.isOpen pi.swissNumber accordionState of
+            True ->
+              div
+                []
+                [ Carousel.config CarouselMsg []
+                  |> Carousel.slides
+                    (List.map slideImage pi.medias)
+                  |> Carousel.view carouselState
+                , viewCarouselButtonPrev mouseOver
+                , viewCarouselButtonNext mouseOver
+                ]
+
+            False ->
+              div
+                []
+                [ case (List.head pi.medias) of
+                  Just media ->
+                    case media.mediaType of
+                    ImageType ->
+                      img
+                        [ src media.url ]
+                        []
+
+                    VideoType ->
+                      video
+                        []
+                        [ source
+                          [ src media.url ]
+                          []
+                        ]
+
+                    AudioType ->
+                      audio
+                        []
+                        [ source
+                          [ src media.url ]
+                          []
+                        ]
+
+                  Nothing ->
+                    img
+                      [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+                      []
+                ]
           ]
         , Grid.col
           [ Col.sm6 ]
