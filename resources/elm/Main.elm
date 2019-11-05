@@ -93,6 +93,11 @@ type TypePI
   | TouristicPlace
 
 
+type OverButton
+  = CarouselPrevButton
+  | CarouselNextButton
+
+
 type alias PI =
   { swissNumber : SwissNumber
   , title : String
@@ -112,6 +117,7 @@ type alias Model =
   , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
   , accordionState : Accordion.State
+  , mouseOver : List OverButton
   }
 
 model0 key state = { key = key
@@ -121,15 +127,16 @@ model0 key state = { key = key
              , modalVisibility = Modal.hidden
              , carouselState = Carousel.initialState
              , accordionState = Accordion.initialState
+             , mouseOver = []
              }
 
 fakeModel0 key state =
   let model = model0 key state
   in { model | listPI =
-      [ PI "http://localhost:8000/api/media/1" "Meenakshi Amman Temple - India" "This is a description. I love it." "9 Boulevard de la Canopée"
-        [ Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+      [ PI "http://localhost:8000/api/media/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
+        [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
+        , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
         , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
-        , Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
         , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
         [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
         [ Free, Reserved ]
@@ -179,6 +186,10 @@ type Msg
   | ShowModal
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
+  | CarouselPrev
+  | CarouselNext
+  | MouseOver OverButton
+  | MouseOut OverButton
 
 
 type Route
@@ -256,6 +267,24 @@ update msg model =
   AccordionMsg state ->
     ( { model | accordionState = state }, Cmd.none )
 
+  CarouselPrev ->
+    ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
+
+  CarouselNext ->
+    ( { model | carouselState = Carousel.next model.carouselState }, Cmd.none )
+
+  MouseOver overButton ->
+    case (List.member overButton model.mouseOver) of
+    True ->
+      (model, Cmd.none)
+
+    False ->
+      ( { model | mouseOver = overButton :: model.mouseOver }, Cmd.none )
+
+  MouseOut overButton ->
+    ( { model | mouseOver = List.filter (\n -> n /= overButton) model.mouseOver }, Cmd.none )
+
+
 -- SUBSCRIPTIONS
 
 
@@ -281,14 +310,15 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListPIDashboard model.accordionState model.modalVisibility model.carouselState model.listPI
+          , viewListPIDashboard model.accordionState model.modalVisibility model.carouselState model.mouseOver model.listPI
           ]
 
       ViewPI pi ->
         div
           []
           [ viewNavbar model
-          , viewPI pi model.modalVisibility model.carouselState model.accordionState]
+          , viewPI pi model.modalVisibility model.carouselState model.accordionState model.mouseOver
+          ]
 
       SimpleViewPI pi ->
         simpleViewPI pi
@@ -543,8 +573,8 @@ viewSimplePILink pi =
     ]
 
 
-accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> PI -> Accordion.Card Msg
-accordionCard accordionState modalVisibility carouselState pi =
+accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> List OverButton -> PI -> Accordion.Card Msg
+accordionCard accordionState modalVisibility carouselState mouseOver pi =
   Accordion.card
     { id = pi.swissNumber
     , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
@@ -552,12 +582,12 @@ accordionCard accordionState modalVisibility carouselState pi =
       Accordion.header [ class "mb-4", style "border-bottom" "none" ] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none", style "white-space" "normal" ] [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block []
-        [ Block.text [] [ viewPI pi modalVisibility carouselState accordionState ] ]
+        [ Block.text [] [ viewPI pi modalVisibility carouselState accordionState mouseOver ] ]
       ]
     }
 
-viewListPIDashboard : Accordion.State -> Modal.Visibility -> Carousel.State -> List PI -> Html Msg
-viewListPIDashboard accordionState modalVisibility carouselState listPI =
+viewListPIDashboard : Accordion.State -> Modal.Visibility -> Carousel.State -> List OverButton -> List PI -> Html Msg
+viewListPIDashboard accordionState modalVisibility carouselState mouseOver listPI =
   div
     []
     [ h2
@@ -570,7 +600,7 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (accordionCard accordionState modalVisibility carouselState) listPI)
+          (List.map (accordionCard accordionState modalVisibility carouselState mouseOver) listPI)
         |> Accordion.view accordionState
       ]
     , h2
@@ -615,8 +645,62 @@ viewListPIDashboard accordionState modalVisibility carouselState listPI =
       ]
     ]
 
-viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> Html Msg
-viewPI pi modalVisibility carouselState accordionState =
+viewCarouselButtonPrev : List OverButton -> Html Msg
+viewCarouselButtonPrev mouseOver =
+  Button.button
+    [ Button.roleLink
+    , Button.onClick CarouselPrev
+    , Button.attrs
+      [ style "position" "absolute"
+      , style "top" "30%"
+      , style "bottom" "30%"
+      , style "left" "0"
+      , style "height" "40%"
+      ]
+    ]
+    [ span
+      [ class "carousel-control-prev-icon"
+      , onMouseOver (MouseOver CarouselPrevButton)
+      , onMouseOut (MouseOut CarouselPrevButton)
+      , case (List.member CarouselPrevButton mouseOver) of
+        False ->
+          style "opacity" ".5"
+
+        True ->
+          style "opacity" ".9"
+      ]
+      []
+    ]
+
+viewCarouselButtonNext : List OverButton -> Html Msg
+viewCarouselButtonNext mouseOver =
+  Button.button
+    [ Button.roleLink
+    , Button.onClick CarouselNext
+    , Button.attrs
+      [ style "position" "absolute"
+      , style "top" "30%"
+      , style "bottom" "30%"
+      , style "right" "0"
+      , style "height" "40%"
+      ]
+    ]
+    [ span
+      [ class "carousel-control-next-icon"
+      , onMouseOver (MouseOver CarouselNextButton)
+      , onMouseOut (MouseOut CarouselNextButton)
+      , case (List.member CarouselNextButton mouseOver) of
+        False ->
+          style "opacity" ".5"
+
+        True ->
+          style "opacity" ".9"
+      ]
+      []
+    ]
+
+viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
+viewPI pi modalVisibility carouselState accordionState mouseOver =
   div
     [] <|
     [ Grid.container
@@ -627,12 +711,16 @@ viewPI pi modalVisibility carouselState accordionState =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ Carousel.config CarouselMsg [ {- onClick ShowModal -} ]
-            |> Carousel.withControls
-            |> Carousel.withIndicators
-            |> Carousel.slides
-              (List.map slideImage pi.medias)
-            |> Carousel.view carouselState ]
+          [ div
+            []
+            [ Carousel.config CarouselMsg []
+              |> Carousel.slides
+                (List.map slideImage pi.medias)
+              |> Carousel.view carouselState
+            , viewCarouselButtonPrev mouseOver
+            , viewCarouselButtonNext mouseOver
+            ]
+          ]
         , Grid.col
           [ Col.sm6 ]
           [ h5
