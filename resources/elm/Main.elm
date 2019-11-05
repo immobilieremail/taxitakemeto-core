@@ -263,7 +263,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [
     Navbar.subscriptions model.navbarState UpdateNavbar
-    , Carousel.subscriptions model.carouselState CarouselMsg
+    , Carousel.subscriptions (Carousel.pause model.carouselState) CarouselMsg
     , Accordion.subscriptions model.accordionState AccordionMsg
   ]
 
