@@ -123,15 +123,15 @@ type alias Model =
 
 model0 key state =
   { key = key
-             , currentView = ViewListPIDashboard
-             , navbarState = state
+  , currentView = ViewListPIDashboard
+  , navbarState = state
   , currentPI = PI "" "" "" "" [] [] [] []
-             , listPI = []
-             , modalVisibility = Modal.hidden
-             , carouselState = Carousel.initialState
-             , accordionState = Accordion.initialState
-             , mouseOver = []
-             }
+  , listPI = []
+  , modalVisibility = Modal.hidden
+  , carouselState = Carousel.initialState
+  , accordionState = Accordion.initialState
+  , mouseOver = []
+  }
 
 fakeModel0 key state =
   let model = model0 key state
@@ -274,7 +274,7 @@ update msg model =
     ( { model | modalVisibility = Modal.shown } , Cmd.none )
 
   CarouselMsg subMsg ->
-    ({ model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
+    ( { model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
 
   AccordionMsg state ->
     ( { model | accordionState = state }, Cmd.none )
@@ -342,13 +342,13 @@ view model =
 
 viewLoading : Html Msg
 viewLoading =
-        div
-          []
-          [ Loading.render
-            Spinner -- LoaderType
-            { defaultConfig | color = "#333", size = 75 } -- Config
-            Loading.On -- LoadingState
-          ]
+  div
+    []
+    [ Loading.render
+      Spinner -- LoaderType
+      { defaultConfig | color = "#333", size = 75 } -- Config
+      Loading.On -- LoadingState
+    ]
 
 viewNavbar : Model -> Html Msg
 viewNavbar model =
@@ -763,7 +763,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
                       img
                       [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
                           []
-                      
+
                   Nothing ->
                     img
                       [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
