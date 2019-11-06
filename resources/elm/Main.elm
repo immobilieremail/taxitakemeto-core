@@ -136,7 +136,7 @@ model0 key state =
 fakeModel0 key state =
   let model = model0 key state
   in { model | listPI =
-      [ PI "http://localhost:8000/api/media/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
+      [ PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
         [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
         , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
         , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
@@ -144,21 +144,21 @@ fakeModel0 key state =
         [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
         [ Free, Reserved ]
         [ TouristicPlace ]
-      , PI "http://localhost:8000/api/media/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
+      , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
         , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
         , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg"]
         [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
         [ Paying ]
         [ Restaurant, TouristicPlace ]
-      , PI "http://localhost:8000/api/media/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
+      , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
         [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
         , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
         , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg"]
         [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
         [ Paying, NotReserved, OnGoing, Free ]
         [ Hotel, Shop, TouristicPlace, Restaurant ]
-      , PI "http://localhost:8000/api/media/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
+      , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
         [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
         , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
         , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg"]
@@ -1054,7 +1054,7 @@ getPIfromUrl ocapUrl =
 fakePI : String -> PI
 fakePI ocapUrl =
   case ocapUrl of
-  "http://localhost:8000/api/media/1" ->
+  "http://localhost:8000/api/obj/1" ->
     { swissNumber = "http://localhost:8000/api/obj/1"
     , title = "Wat Phra Kaew Temple - Thaïland"
     , description = ". I love it."
@@ -1069,7 +1069,7 @@ fakePI ocapUrl =
     , typespi = [ TouristicPlace ]
     }
 
-  "http://localhost:8000/api/media/2" ->
+  "http://localhost:8000/api/obj/2" ->
     { swissNumber = "http://localhost:8000/api/obj/2"
     , title = "Food Festival - Singapour"
     , description = "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses."
@@ -1077,14 +1077,14 @@ fakePI ocapUrl =
     , medias = [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
       , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
       , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
-    , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+    , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ Paying ]
     , typespi = [ Restaurant, TouristicPlace ]
     }
 
-  "http://localhost:8000/api/media/3" ->
+  "http://localhost:8000/api/obj/3" ->
     { swissNumber = "http://localhost:8000/api/obj/3"
     , title = "Hôtel F1 - Bordeaux"
     , description = "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life."
@@ -1098,7 +1098,7 @@ fakePI ocapUrl =
     , typespi = [ Hotel ]
     }
 
-  "http://localhost:8000/api/media/4" ->
+  "http://localhost:8000/api/obj/4" ->
     { swissNumber = "http://localhost:8000/api/obj/4"
     , title = "Souk Rabais Bazar - Marrakech"
     , description = " لسوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية"
