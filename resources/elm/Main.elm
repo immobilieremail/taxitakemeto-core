@@ -113,6 +113,7 @@ type alias Model =
   { key : Nav.Key
   , currentView : CurrentView
   , navbarState : Navbar.State
+  , currentPI : PI
   , listPI : List PI
   , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
@@ -120,9 +121,11 @@ type alias Model =
   , mouseOver : List OverButton
   }
 
-model0 key state = { key = key
+model0 key state =
+  { key = key
              , currentView = ViewListPIDashboard
              , navbarState = state
+  , currentPI = PI "" "" "" "" [] [] [] []
              , listPI = []
              , modalVisibility = Modal.hidden
              , carouselState = Carousel.initialState
@@ -180,6 +183,7 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | ViewChanged CurrentView
+  | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
   | UpdateNavbar Navbar.State
   | CloseModal
@@ -220,7 +224,7 @@ updateFromUrl model url commonCmd =
         ( model, commonCmd )
 
       Just ocapUrl ->
-        ( { model | currentView = LoadingPage }
+        ( model
         , Cmd.batch
           [ commonCmd
           , getPIfromUrl ocapUrl
@@ -241,10 +245,18 @@ update msg model =
   UrlChanged url ->
     updateFromUrl model url Cmd.none
 
+  GetPI swissNumber ->
+    ( model, getPIfromUrl swissNumber )
+
   GotPI result ->
     case result of
     Ok pi ->
-      ( { model | currentView = ViewPI pi }, Cmd.none )
+      case pi /= model.currentPI of
+      True ->
+        ( { model | currentPI = pi, accordionState = Accordion.initialState }, Cmd.none )
+
+      False ->
+        ( model, Cmd.none )
 
     Err _ ->
       ( model, Cmd.none )
@@ -310,7 +322,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListPIDashboard model.accordionState model.modalVisibility model.carouselState model.mouseOver model.listPI
+          , viewListPIDashboard model model.listPI
           ]
 
       ViewPI pi ->
@@ -324,6 +336,12 @@ view model =
         simpleViewPI pi
 
       LoadingPage ->
+        viewLoading
+    ]
+  }
+
+viewLoading : Html Msg
+viewLoading =
         div
           []
           [ Loading.render
@@ -331,8 +349,6 @@ view model =
             { defaultConfig | color = "#333", size = 75 } -- Config
             Loading.On -- LoadingState
           ]
-    ]
-  }
 
 viewNavbar : Model -> Html Msg
 viewNavbar model =
@@ -529,8 +545,10 @@ viewTypePI typepi =
 
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
-  div
-    []
+  a
+    [ href ("/elm/pi#" ++ pi.swissNumber)
+    , style "text-decoration" "none"
+    ]
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
@@ -561,8 +579,8 @@ viewSimplePILink pi =
     ]
 
 
-accordionCard : Accordion.State -> Modal.Visibility -> Carousel.State -> List OverButton -> PI -> Accordion.Card Msg
-accordionCard accordionState modalVisibility carouselState mouseOver pi =
+accordionCard : Model -> PI -> Accordion.Card Msg
+accordionCard model pi =
   Accordion.card
     { id = pi.swissNumber
     , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
@@ -570,12 +588,21 @@ accordionCard accordionState modalVisibility carouselState mouseOver pi =
       Accordion.header [ class "mb-4", style "border-bottom" "none" ] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none", style "white-space" "normal" ] [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block []
-        [ Block.text [] [ viewPI pi modalVisibility carouselState accordionState mouseOver ] ]
+        [ Block.text
+          []
+          [ case pi.swissNumber == model.currentPI.swissNumber of
+            True ->
+              viewPI model.currentPI model.modalVisibility model.carouselState model.accordionState model.mouseOver
+
+            False ->
+              viewLoading
+          ]
+        ]
       ]
     }
 
-viewListPIDashboard : Accordion.State -> Modal.Visibility -> Carousel.State -> List OverButton -> List PI -> Html Msg
-viewListPIDashboard accordionState modalVisibility carouselState mouseOver listPI =
+viewListPIDashboard : Model -> List PI -> Html Msg
+viewListPIDashboard model listPI =
   div
     []
     [ h2
@@ -588,8 +615,8 @@ viewListPIDashboard accordionState modalVisibility carouselState mouseOver listP
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (accordionCard accordionState modalVisibility carouselState mouseOver) listPI)
-        |> Accordion.view accordionState
+          (List.map (accordionCard model) listPI)
+        |> Accordion.view model.accordionState
       ]
     , h2
       [ class "text-center pt-4" ]
