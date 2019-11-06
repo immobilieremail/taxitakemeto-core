@@ -350,6 +350,11 @@ viewLoading =
       Loading.On -- LoadingState
     ]
 
+navbarItem url content =
+  Navbar.itemLink
+    [ href url ]
+    [ text content ]
+
 viewNavbar : Model -> Html Msg
 viewNavbar model =
   Navbar.config UpdateNavbar
@@ -365,18 +370,10 @@ viewNavbar model =
         []
       ]
     |> Navbar.items
-      [ Navbar.itemLink
-        [href "#"]
-        [ text "Item 1"]
-      , Navbar.itemLink
-        [href "#"]
-        [ text "Item 2"]
-      , Navbar.itemLink
-        [href "#"]
-        [ text "Item 3"]
-      , Navbar.itemLink
-        [href "#"]
-        [ text "Item 4"]
+      [ navbarItem "#" "Item 1"
+      , navbarItem "#" "Item 2"
+      , navbarItem "#" "Item 3"
+      , navbarItem "#" "Item 4"
       ]
     |> Navbar.view model.navbarState
 
