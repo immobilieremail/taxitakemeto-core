@@ -387,20 +387,8 @@ slideImage media =
         )
       )
 
-  AudioType ->
-    Slide.config
-      []
-      (Slide.customContent
-        (audio
-          [ controls True ]
-          [ source
-            [ src media.url
-            , type_ "audio/mpeg"
-            ]
-            []
-          ]
-        )
-      )
+  _ ->
+    Slide.config [] (Slide.image [] "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg")
 
 viewModal : Modal.Visibility -> Carousel.State -> List Media -> Html Msg
 viewModal modalVisibility carouselState medias =
@@ -744,13 +732,10 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
                           []
                         ]
 
-                    AudioType ->
-                      audio
-                      []
-                        [ source
-                          [ src media.url ]
+                    _ ->
+                      img
+                      [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
                           []
-                        ]
                       
                   Nothing ->
                     img
