@@ -725,7 +725,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
 
             False ->
               div
-                []
+                [ class "d-flex" ]
                 [ case (List.head pi.medias) of
                   Just media ->
                     case media.mediaType of
@@ -744,12 +744,12 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
 
                     AudioType ->
                       audio
-                        []
+                      []
                         [ source
                           [ src media.url ]
                           []
                         ]
-
+                      
                   Nothing ->
                     img
                       [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
