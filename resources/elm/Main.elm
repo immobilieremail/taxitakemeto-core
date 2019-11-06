@@ -736,9 +736,11 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
 
                     VideoType ->
                       video
-                        []
+                        [ controls True ]
                         [ source
-                          [ src media.url ]
+                          [ src media.url
+                          , type_ "video/mp4"
+                          ]
                           []
                         ]
 
