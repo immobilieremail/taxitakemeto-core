@@ -831,17 +831,36 @@ simpleViewPI pi =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ img
-            [ style "width" "100%"
-            , style "max-width" "150px"
-            , class "d-block mx-auto img-fluid m-3 rounded"
-            , case (Array.get 0 (Array.fromList pi.medias)) of
-              Just image ->
-                src image.url
+          [ div
+            [ class "d-flex" ]
+            [ case (List.head pi.medias) of
+              Just media ->
+                case media.mediaType of
+                ImageType ->
+                  img
+                    [ src media.url ]
+                    []
+
+                VideoType ->
+                  video
+                    [ controls True ]
+                    [ source
+                      [ src media.url
+                      , type_ "video/mp4"
+                      ]
+                      []
+                    ]
+
+                _ ->
+                  img
+                  [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+                  []
+
               Nothing ->
-                src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg"
+                img
+                  [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+                  []
             ]
-            []
           ]
         , Grid.col
           [ Col.sm6 ]
