@@ -711,34 +711,23 @@ viewCarouselButtonNext mouseOver =
       []
     ]
 
-viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
-viewPI pi modalVisibility carouselState accordionState mouseOver =
-  div
-    [] <|
-    [ Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray"
-      ]
-      [ Grid.row
-        [ Row.middleXs ]
-        [ Grid.col
-          [ Col.sm6 ]
-          [ case Accordion.isOpen pi.swissNumber accordionState of
-            True ->
+viewCarousel : List Media -> Carousel.State -> List OverButton -> Html Msg
+viewCarousel medias carouselState mouseOver =
               div
                 []
                 [ Carousel.config CarouselMsg []
                   |> Carousel.slides
-                    (List.map slideImage pi.medias)
+        (List.map slideImage medias)
                   |> Carousel.view carouselState
                 , viewCarouselButtonPrev mouseOver
                 , viewCarouselButtonNext mouseOver
                 ]
 
-            False ->
+viewFirstPIMedia : List Media -> Html Msg
+viewFirstPIMedia medias =
               div
                 [ class "d-flex" ]
-                [ case (List.head pi.medias) of
+    [ case (List.head medias) of
                   Just media ->
                     case media.mediaType of
                     ImageType ->
@@ -766,6 +755,25 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
                       [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
                       []
                 ]
+
+viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
+viewPI pi modalVisibility carouselState accordionState mouseOver =
+  div
+    [] <|
+    [ Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray"
+          ]
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.sm6 ]
+          [ case Accordion.isOpen pi.swissNumber accordionState of
+            True ->
+              viewCarousel pi.medias carouselState mouseOver
+
+            False ->
+              viewFirstPIMedia pi.medias
           ]
         , Grid.col
           [ Col.sm6 ]
@@ -842,36 +850,7 @@ simpleViewPI pi =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ div
-            [ class "d-flex" ]
-            [ case (List.head pi.medias) of
-              Just media ->
-                case media.mediaType of
-                ImageType ->
-                  img
-                    [ src media.url ]
-                    []
-
-                VideoType ->
-                  video
-                    [ controls True ]
-                    [ source
-                      [ src media.url
-                      , type_ "video/mp4"
-                      ]
-                      []
-                    ]
-
-                _ ->
-                  img
-                  [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-                  []
-
-              Nothing ->
-                img
-                  [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-                  []
-            ]
+          [ viewFirstPIMedia pi.medias
           ]
         , Grid.col
           [ Col.sm6 ]
