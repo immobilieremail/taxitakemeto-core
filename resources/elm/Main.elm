@@ -333,7 +333,7 @@ view model =
           ]
 
       SimpleViewPI pi ->
-        simpleViewPI pi
+        simpleViewPI pi model.carouselState model.mouseOver
 
       LoadingPage ->
         viewLoading
@@ -843,8 +843,8 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
     else
       []
 
-simpleViewPI : PI -> Html Msg
-simpleViewPI pi =
+simpleViewPI : PI -> Carousel.State -> List OverButton -> Html Msg
+simpleViewPI pi carouselState mouseOver =
   div
     []
     [ h1
@@ -857,7 +857,7 @@ simpleViewPI pi =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ viewFirstPIMedia pi.medias
+          [ viewCarousel pi.medias carouselState mouseOver
           ]
         , Grid.col
           [ Col.sm6 ]
