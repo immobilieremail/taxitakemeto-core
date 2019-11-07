@@ -253,7 +253,7 @@ update msg model =
     Ok pi ->
       case pi /= model.currentPI of
       True ->
-        ( { model | currentPI = pi, accordionState = Accordion.initialState }, Cmd.none )
+        ( { model | currentPI = pi, accordionState = Accordion.initialStateCardOpen pi.swissNumber }, Cmd.none )
 
       False ->
         ( model, Cmd.none )
