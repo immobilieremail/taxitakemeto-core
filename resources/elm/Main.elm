@@ -147,21 +147,21 @@ fakeModel0 key state =
       , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
         , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-        , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg"]
+        , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
         [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
         [ Paying ]
         [ Restaurant, TouristicPlace ]
       , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
         [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
         , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-        , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg"]
+        , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
         [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
         [ Paying, NotReserved, OnGoing, Free ]
         [ Hotel, Shop, TouristicPlace, Restaurant ]
       , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
         [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
         , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-        , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg"]
+        , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
         [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
         [ OnGoing, Free, NotReserved ]
         [ Shop, TouristicPlace, Restaurant ]
@@ -442,7 +442,7 @@ viewTagPI tag =
         , Button.outlineSuccess
         , (Button.disabled True)
         ]
-        [text "Free"]
+        [ text "Free" ]
       ]
 
   Paying ->
@@ -454,7 +454,7 @@ viewTagPI tag =
         , Button.outlineWarning
         , (Button.disabled True)
         ]
-        [text "Paying"]
+        [ text "Paying" ]
       ]
 
   Reserved ->
@@ -478,7 +478,7 @@ viewTagPI tag =
         , Button.outlineDanger
         , (Button.disabled True)
         ]
-        [text "Not Reserved"]
+        [ text "Not Reserved" ]
       ]
 
   OnGoing ->
@@ -490,7 +490,7 @@ viewTagPI tag =
         , Button.outlinePrimary
         , (Button.disabled True)
         ]
-        [text "On Going"]
+        [ text "On Going" ]
       ]
 
 viewTypePI : TypePI -> Grid.Column Msg
@@ -582,7 +582,13 @@ accordionCard model pi =
     { id = pi.swissNumber
     , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
     , header =
-      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <| Accordion.toggle [ class "btn-block", style "text-decoration" "none", style "white-space" "normal" ] [ viewSimplePILink pi ]
+      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <|
+      Accordion.toggle
+        [ class "btn-block"
+        , style "text-decoration" "none"
+        , style "white-space" "normal"
+        ]
+        [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block []
         [ Block.text
@@ -713,48 +719,48 @@ viewCarouselButtonNext mouseOver =
 
 viewCarousel : List Media -> Carousel.State -> List OverButton -> Html Msg
 viewCarousel medias carouselState mouseOver =
-              div
-                []
-                [ Carousel.config CarouselMsg []
-                  |> Carousel.slides
+  div
+    []
+    [ Carousel.config CarouselMsg []
+      |> Carousel.slides
         (List.map slideImage medias)
-                  |> Carousel.view carouselState
-                , viewCarouselButtonPrev mouseOver
-                , viewCarouselButtonNext mouseOver
-                ]
+      |> Carousel.view carouselState
+    , viewCarouselButtonPrev mouseOver
+    , viewCarouselButtonNext mouseOver
+    ]
 
 viewFirstPIMedia : List Media -> Html Msg
 viewFirstPIMedia medias =
-              div
-                [ class "d-flex" ]
+  div
+    [ class "d-flex" ]
     [ case (List.head medias) of
-                  Just media ->
-                    case media.mediaType of
-                    ImageType ->
-                      img
-                        [ src media.url ]
-                        []
+      Just media ->
+        case media.mediaType of
+        ImageType ->
+          img
+            [ src media.url ]
+            []
 
-                    VideoType ->
-                      video
-                        [ controls True ]
-                        [ source
-                          [ src media.url
-                          , type_ "video/mp4"
-                          ]
-                          []
-                        ]
+        VideoType ->
+          video
+            [ controls True ]
+            [ source
+              [ src media.url
+              , type_ "video/mp4"
+              ]
+              []
+            ]
 
-                    _ ->
-                      img
-                      [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-                          []
+        _ ->
+          img
+          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+              []
 
-                  Nothing ->
-                    img
-                      [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-                      []
-                ]
+      Nothing ->
+        img
+          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+          []
+    ]
 
 viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
 viewPI pi modalVisibility carouselState accordionState mouseOver =
@@ -763,7 +769,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
     [ Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray"
-          ]
+      ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
@@ -781,8 +787,8 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
             []
             [ text pi.title ]
           , div
-            [ class "text-justify"]
-            [ text pi.description]
+            [ class "text-justify" ]
+            [ text pi.description ]
           ]
         ]
       , Grid.row
@@ -801,16 +807,16 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
           []
         ]
       , hr
-        [class "pt-4 pb-2"]
+        [ class "pt-4 pb-2" ]
         []
       , h2
-        [ class "text-center"]
+        [ class "text-center" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
         (List.map viewAudioLanguage pi.audios)
       , hr
-        [class "pt-4 pb-3"]
+        [ class "pt-4 pb-3" ]
         []
       , div
         [ class "text-center" ]
@@ -841,7 +847,7 @@ simpleViewPI pi =
   div
     []
     [ h1
-      [ class "text-center pt-4"]
+      [ class "text-center pt-4" ]
       [ text pi.title ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
@@ -855,21 +861,21 @@ simpleViewPI pi =
         , Grid.col
           [ Col.sm6 ]
           [ h4
-            [class "text-center "]
-            [text pi.address]
+            [ class "text-center " ]
+            [ text pi.address ]
           ]
         ]
       , hr
-        [class "pt-4"]
+        [ class "pt-4" ]
         []
       , h2
-        [ class "text-center"]
+        [ class "text-center" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
         (List.map viewAudioLanguage pi.audios)
       , hr
-        [class "pt-4 pb-3"]
+        [ class "pt-4 pb-3" ]
         []
       , div
         [ class "text-center" ]
@@ -897,8 +903,8 @@ viewAudioLanguage audio =
     [ Grid.col
       [ Col.sm6 ]
       [ h4
-        [ class "text-center"]
-        [text audio.language]
+        [ class "text-center" ]
+        [ text audio.language ]
       ]
     , Grid.col
       [ Col.sm6, Col.textAlign Text.alignXsCenter ]
