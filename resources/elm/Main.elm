@@ -545,6 +545,7 @@ viewSimplePILink pi =
   a
     [ href ("/elm/pi#" ++ pi.swissNumber)
     , style "text-decoration" "none"
+    , style "outline" "none"
     ]
     [ Grid.row
       [ Row.middleXs ]
