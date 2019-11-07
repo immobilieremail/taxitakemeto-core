@@ -27,6 +27,6 @@ class CreateFacetOcapListTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('listables');
+        Schema::dropIfExists('facet_ocap_list');
     }
 }
