@@ -1,7 +1,7 @@
 module PI exposing (
   Tag, TypePI, PI,
   viewTagPI, viewTypePI,
-  tagDecoder, typePIDecoder,
+  tagDecoder, typePIDecoder, piDecoder,
   free, paying, reserved, notReserved, onGoing, restaurant, hotel, shop, touristicPlace)
 
 import Html exposing (..)
@@ -257,3 +257,16 @@ typePIDecoder =
         somethingElse ->
           D.fail <| "Unknown tag: " ++ somethingElse
     )
+
+
+piDecoder : Decoder PI
+piDecoder =
+  D.map8 PI
+  (field "swiss_number" string)
+  (field "title" string)
+  (field "description" string)
+  (field "address" string)
+  (field "medias" (D.list mediaDecoder))
+  (field "audios" (D.list decodeAudioContent))
+  (field "tags" (D.list tagDecoder))
+  (field "typespi" (D.list typePIDecoder))
