@@ -1,12 +1,7 @@
 module Media exposing (
-  MediaType,
-  Media,
-  Audio,
-  carouselSlide,
-  viewFirstMedia,
-  viewAudioLanguage,
-  decodeAudioContent,
-  mediaDecoder,
+  MediaType, Media, Audio,
+  carouselSlide, viewFirstMedia, viewAudioLanguage,
+  decodeAudioContent, mediaDecoder,
   videoType, audioType, imageType)
 
 import Html exposing (..)
