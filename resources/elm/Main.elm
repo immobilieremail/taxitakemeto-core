@@ -186,6 +186,8 @@ type Msg
   | ViewChanged CurrentView
   | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
+  | GetTravel SwissNumber
+  | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CloseModal
   | ShowModal
@@ -200,12 +202,14 @@ type Msg
 type Route
   = RouteListPI
   | RoutePI (Maybe String)
+  | RouteTravel (Maybe String)
 
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
   [ P.map RouteListPI <| P.s "elm"
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
+  , P.map RouteTravel <| P.s "elm" </> P.s "travel" </> P.fragment identity
   ]
 
 updateFromUrl : Model -> Url.Url -> Cmd Msg -> ( Model, Cmd Msg )
@@ -232,6 +236,19 @@ updateFromUrl model url commonCmd =
           ]
         )
 
+    RouteTravel data ->
+      case data of
+      Nothing ->
+        ( model, commonCmd )
+
+      Just ocapUrl ->
+        ( model
+        , Cmd.batch
+          [ commonCmd
+          , getTravelfromUrl ocapUrl
+          ]
+        )
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
@@ -255,6 +272,22 @@ update msg model =
       case pi /= model.currentPI of
       True ->
         ( { model | currentPI = pi, accordionState = Accordion.initialStateCardOpen pi.swissNumber }, Cmd.none )
+
+      False ->
+        ( model, Cmd.none )
+
+    Err _ ->
+      ( model, Cmd.none )
+
+  GetTravel swissNumber ->
+    ( model, getTravelfromUrl swissNumber )
+
+  GotTravel result ->
+    case result of
+    Ok travel ->
+      case travel /= model.currentTravel of
+      True ->
+        ( { model | currentTravel = travel, accordionState = Accordion.initialStateCardOpen travel.swissNumber }, Cmd.none )
 
       False ->
         ( model, Cmd.none )
@@ -948,8 +981,14 @@ piDecoder =
 --     , expect = Http.expectJson GotPI piDecoder
 --     }
 
+-- getTravelfromUrl : SwissNumber -> Cmd Msg
+-- getTravelfromUrl ocapUrl =
+--   Http.get
+--     { url = ocapUrl
+--     , except = Http.exceptJson GotTravel travelDecoder
+--     }
 
---- Temporary fake getPIfromUrl
+--- Temporary fakers
 
 getPIfromUrl : String -> Cmd Msg
 getPIfromUrl ocapUrl =
@@ -958,7 +997,14 @@ getPIfromUrl ocapUrl =
       GotPI (Ok (fakePI ocapUrl))
     )
 
-fakePI : String -> PI
+getTravelfromUrl : SwissNumber -> Cmd Msg
+getTravelfromUrl ocapUrl =
+  Process.sleep 2000
+    |> Task.perform (\_ ->
+      GotTravel (Ok (fakeTravel ocapUrl))
+    )
+
+fakePI : SwissNumber -> PI
 fakePI ocapUrl =
   case ocapUrl of
   "http://localhost:8000/api/obj/1" ->
@@ -1031,3 +1077,48 @@ fakePI ocapUrl =
     , typespi = []
     }
 
+
+fakeTravel : SwissNumber -> Travel
+fakeTravel ocapUrl =
+  case ocapUrl of
+  "http://localhost:8000/api/obj/unvoyage" ->
+    { swissNumber = "http://localhost:8000/api/obj/unvoyage"
+    , title = "Paris - Dakar - Namek"
+    , listPI = [
+        PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
+          [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
+          , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+          , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
+          , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
+          [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
+          [ PI.free, PI.reserved ]
+          [ PI.touristicPlace ]
+        , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
+          [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+          , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+          , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+          [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
+          [ PI.paying ]
+          [ PI.restaurant, PI.touristicPlace ]
+        , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
+          [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+          , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+          , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+          [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+          [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
+          [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
+        , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
+          [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+          , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+          , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+          [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+          [ PI.onGoing, PI.free, PI.notReserved ]
+          [ PI.shop, PI.touristicPlace, PI.restaurant ]
+        ]
+    }
+
+  _ ->
+    { swissNumber = ""
+    , title = ""
+    , listPI = []
+    }
