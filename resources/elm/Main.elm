@@ -742,7 +742,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
-        (List.map viewAudioLanguage pi.audios)
+        (List.map Media.viewAudioLanguage pi.audios)
       , hr
         [ class "pt-4 pb-3" ]
         []
@@ -801,7 +801,7 @@ simpleViewPI pi carouselState mouseOver =
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
-        (List.map viewAudioLanguage pi.audios)
+        (List.map Media.viewAudioLanguage pi.audios)
       , hr
         [ class "pt-4 pb-3" ]
         []
@@ -820,32 +820,6 @@ simpleViewPI pi carouselState mouseOver =
             ]
             []
           ]
-        ]
-      ]
-    ]
-
-viewAudioLanguage : Audio -> Html.Html msg
-viewAudioLanguage audio =
-  Grid.row
-    [ Row.middleXs ]
-    [ Grid.col
-      [ Col.sm6 ]
-      [ h4
-        [ class "text-center" ]
-        [ text audio.language ]
-      ]
-    , Grid.col
-      [ Col.sm6, Col.textAlign Text.alignXsCenter ]
-      [ Html.audio
-        [ controls True
-        , style "width" "100%"
-        , style "max-width" "300px"
-        ]
-        [ Html.source
-          [ src audio.path
-          , type_ "audio/mpeg"
-          ]
-          []
         ]
       ]
     ]
