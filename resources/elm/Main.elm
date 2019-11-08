@@ -31,7 +31,9 @@ import Process
 import Task
 import PI exposing (..)
 import Media exposing (..)
-import SwissNumber as SN
+import SwissNumber exposing (SwissNumber)
+import OverButton as OB exposing (..)
+import ViewLoading as Loading exposing (view)
 
 
 
@@ -61,13 +63,8 @@ type CurrentView
   | LoadingPage
 
 
-type OverButton
-  = CarouselPrevButton
-  | CarouselNextButton
-
-
 type alias Travel =
-  { swissNumber : SN.SwissNumber
+  { swissNumber : SwissNumber
   , title : String
   , listPI : List PI
   }
@@ -165,9 +162,9 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | ViewChanged CurrentView
-  | GetPI SN.SwissNumber
+  | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
-  | GetTravel SN.SwissNumber
+  | GetTravel SwissNumber
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CloseModal
@@ -358,22 +355,12 @@ view model =
         simpleViewPI model.currentPI model.carouselState model.mouseOver
 
       LoadingPage ->
-        viewLoading
+        Loading.view
     ]
   }
 
 
-viewLoading : Html Msg
-viewLoading =
-  div
-    []
-    [ Loading.render
-      Spinner -- LoaderType
-      { defaultConfig | color = "#333", size = 75 } -- Config
-      Loading.On -- LoadingState
-    ]
-
-
+navbarItem : String -> String -> Navbar.Item Msg
 navbarItem url content =
   Navbar.itemLink
     [ href url ]
@@ -469,7 +456,7 @@ travelAccordionCard model travel =
               viewListPIDashboard model model.currentTravel
 
             False ->
-              viewLoading
+              Loading.view
           ]
         ]
       ]
@@ -558,7 +545,7 @@ piAccordionCard model pi =
               viewPI model.currentPI model.modalVisibility model.carouselState model.accordionState model.mouseOver
 
             False ->
-              viewLoading
+              Loading.view
           ]
         ]
       ]
@@ -638,9 +625,9 @@ viewCarouselButtonPrev mouseOver =
     ]
     [ span
       [ class "carousel-control-prev-icon"
-      , onMouseOver (MouseOver CarouselPrevButton)
-      , onMouseOut (MouseOut CarouselPrevButton)
-      , case (List.member CarouselPrevButton mouseOver) of
+      , onMouseOver (MouseOver OB.carouselPrevButton)
+      , onMouseOut (MouseOut OB.carouselPrevButton)
+      , case (List.member OB.carouselPrevButton mouseOver) of
         False ->
           style "opacity" ".5"
 
@@ -665,8 +652,8 @@ viewCarouselButtonNext mouseOver =
     ]
     [ span
       [ class "carousel-control-next-icon"
-      , onMouseOver (MouseOver CarouselNextButton)
-      , onMouseOut (MouseOut CarouselNextButton)
+      , onMouseOver (MouseOver OB.carouselNextButton)
+      , onMouseOut (MouseOut OB.carouselNextButton)
       , case (List.member CarouselNextButton mouseOver) of
         False ->
           style "opacity" ".5"
@@ -844,7 +831,7 @@ decodeAudioContent =
 --     , expect = Http.expectJson GotPI piDecoder
 --     }
 
--- getTravelfromUrl : SN.SwissNumber -> Cmd Msg
+-- getTravelfromUrl : SwissNumber -> Cmd Msg
 -- getTravelfromUrl ocapUrl =
 --   Http.get
 --     { url = ocapUrl
@@ -860,14 +847,14 @@ getPIfromUrl ocapUrl =
       GotPI (Ok (fakePI ocapUrl))
     )
 
-getTravelfromUrl : SN.SwissNumber -> Cmd Msg
+getTravelfromUrl : SwissNumber -> Cmd Msg
 getTravelfromUrl ocapUrl =
   Process.sleep 2000
     |> Task.perform (\_ ->
       GotTravel (Ok (fakeTravel ocapUrl))
     )
 
-fakePI : SN.SwissNumber -> PI
+fakePI : SwissNumber -> PI
 fakePI ocapUrl =
   case ocapUrl of
   "http://localhost:8000/api/obj/1" ->
@@ -941,7 +928,7 @@ fakePI ocapUrl =
     }
 
 
-fakeTravel : SN.SwissNumber -> Travel
+fakeTravel : SwissNumber -> Travel
 fakeTravel ocapUrl =
   case ocapUrl of
   "http://localhost:8000/api/obj/unvoyage" ->
