@@ -1,5 +1,5 @@
 module PI exposing (
-  Tag, TypePI,
+  Tag, TypePI, PI,
   viewTagPI, viewTypePI,
   tagDecoder, typePIDecoder,
   free, paying, reserved, notReserved, onGoing, restaurant, hotel, shop, touristicPlace)
@@ -11,6 +11,8 @@ import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Button as Button
+import Media exposing (..)
+import SwissNumber as SN exposing (SwissNumber)
 
 
 
@@ -32,8 +34,20 @@ type TypePI
   | TouristicPlace
 
 
+type alias PI =
+  { swissNumber : SN.SwissNumber
+  , title : String
+  , description : String
+  , address : String
+  , medias : List Media.Media
+  , audios : List Media.Audio
+  , tags : List Tag
+  , typespi : List TypePI
+  }
 
--- CONSTRUCTORS
+
+
+-- CONSTRUCTORS (used to fake PI)
 
 
 free : Tag
