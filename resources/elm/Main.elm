@@ -30,6 +30,8 @@ import Color
 import Process
 import Task
 import PI exposing (..)
+import Media exposing (..)
+import SwissNumber as SN
 
 
 
@@ -59,47 +61,13 @@ type CurrentView
   | LoadingPage
 
 
-type alias SwissNumber = String
-
-type MediaType
-  = ImageType
-  | AudioType
-  | VideoType
-
-type alias Media =
-  { mediaType : MediaType
-  , url : String
-  }
-
-
-type alias Audio =
-  { jsontype : String
-  , language : String
-  , viewfacet : String
-  , path : String
-  , deleteAudio : String
-  }
-
-
 type OverButton
   = CarouselPrevButton
   | CarouselNextButton
 
 
-type alias PI =
-  { swissNumber : SwissNumber
-  , title : String
-  , description : String
-  , address : String
-  , medias : List Media
-  , audios : List Audio
-  , tags : List PI.Tag
-  , typespi : List PI.TypePI
-  }
-
-
 type alias Travel =
-  { swissNumber : SwissNumber
+  { swissNumber : SN.SwissNumber
   , title : String
   , listPI : List PI
   }
@@ -117,6 +85,7 @@ type alias Model =
   , accordionState : Accordion.State
   , mouseOver : List OverButton
   }
+
 
 model0 key state =
   { key = key
@@ -138,17 +107,17 @@ fakeModel0 key state =
         "http://localhost:8000/api/obj/unvoyage"
         "Paris - Dakar - Namek"
         [ PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
-          [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
-          , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
-          , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
-          , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
+          [ Media Media.videoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
+          , Media Media.imageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+          , Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
+          , Media Media.imageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
           [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
           [ PI.free, PI.reserved ]
           [ PI.touristicPlace ]
         , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
-          [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-          , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-          , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+          [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+          , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+          , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
           [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
           [ PI.paying ]
           [ PI.restaurant, PI.touristicPlace ]
@@ -158,26 +127,26 @@ fakeModel0 key state =
         "http://localhost:8000/api/obj/unvoyage"
         "Paris - Dakar - Namek"
         [ PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
-          [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-          , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-          , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+          [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+          , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+          , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
           [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
           [ PI.paying ]
           [ PI.restaurant, PI.touristicPlace ]
         , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
-          [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
-          , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-          , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
-          [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
-          [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
-          [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
-        , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
-          [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
-          , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-          , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
-          [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
-          [ PI.onGoing, PI.free, PI.notReserved ]
-          [ PI.shop, PI.touristicPlace, PI.restaurant ]
+            [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+            , Media Media.imageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+            , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+            [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+            [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
+            [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
+          , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
+            [ Media Media.imageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+            , Media Media.imageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+            , Media Media.imageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+            [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+            [ PI.onGoing, PI.free, PI.notReserved ]
+            [ PI.shop, PI.touristicPlace, PI.restaurant ]
         ]
   }
 
@@ -196,9 +165,9 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | ViewChanged CurrentView
-  | GetPI SwissNumber
+  | GetPI SN.SwissNumber
   | GotPI (Result Http.Error PI)
-  | GetTravel SwissNumber
+  | GetTravel SN.SwissNumber
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CloseModal
@@ -393,6 +362,7 @@ view model =
     ]
   }
 
+
 viewLoading : Html Msg
 viewLoading =
   div
@@ -402,6 +372,7 @@ viewLoading =
       { defaultConfig | color = "#333", size = 75 } -- Config
       Loading.On -- LoadingState
     ]
+
 
 navbarItem url content =
   Navbar.itemLink
@@ -431,31 +402,6 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-slideImage : Media -> Slide.Config Msg
-slideImage media =
-  case media.mediaType of
-  ImageType ->
-    Slide.config [] (Slide.image [] media.url)
-
-  VideoType ->
-    Slide.config
-      []
-      (Slide.customContent
-        (video
-          [ controls True
-          , style "width" "100%" ]
-          [ source
-            [ src media.url
-            , type_ "video/mp4"
-            ]
-            []
-          ]
-        )
-      )
-
-  _ ->
-    Slide.config [] (Slide.image [] "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg")
-
 viewModal : Modal.Visibility -> Carousel.State -> List Media -> Html Msg
 viewModal modalVisibility carouselState medias =
   div []
@@ -468,7 +414,7 @@ viewModal modalVisibility carouselState medias =
           |> Carousel.withControls
           |> Carousel.withIndicators
           |> Carousel.slides
-            (List.map slideImage medias)
+            (List.map Media.carouselSlide medias)
           |> Carousel.view carouselState
         ]
       |> Modal.footer []
@@ -550,7 +496,7 @@ viewListTravelDashboard model listTravel =
         |> Accordion.cards
           (List.map (travelAccordionCard model) listTravel)
         |> Accordion.view model.accordionState
-    ]
+      ]
     ]
 
 
@@ -737,44 +683,12 @@ viewCarousel medias carouselState mouseOver =
     []
     [ Carousel.config CarouselMsg []
       |> Carousel.slides
-        (List.map slideImage medias)
+        (List.map Media.carouselSlide medias)
       |> Carousel.view carouselState
     , viewCarouselButtonPrev mouseOver
     , viewCarouselButtonNext mouseOver
     ]
 
-viewFirstPIMedia : List Media -> Html Msg
-viewFirstPIMedia medias =
-  div
-    [ class "d-flex" ]
-    [ case (List.head medias) of
-      Just media ->
-        case media.mediaType of
-        ImageType ->
-          img
-            [ src media.url ]
-            []
-
-        VideoType ->
-          video
-            [ controls True ]
-            [ source
-              [ src media.url
-              , type_ "video/mp4"
-              ]
-              []
-            ]
-
-        _ ->
-          img
-          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-              []
-
-      Nothing ->
-        img
-          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-          []
-    ]
 
 viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
 viewPI pi modalVisibility carouselState accordionState mouseOver =
@@ -793,7 +707,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
               viewCarousel pi.medias carouselState mouseOver
 
             False ->
-              viewFirstPIMedia pi.medias
+              Media.viewFirstMedia pi.medias
           ]
         , Grid.col
           [ Col.sm6 ]
@@ -949,31 +863,6 @@ decodeAudioContent =
   (field "delete" string)
 
 
-mediaTypeDecoder : Decoder MediaType
-mediaTypeDecoder =
-  D.string
-    |> D.andThen (\str ->
-      case str of
-        "image" ->
-          D.succeed ImageType
-
-        "video" ->
-          D.succeed VideoType
-
-        "audio" ->
-          D.succeed AudioType
-
-        somethingElse ->
-          D.fail <| "Unknown mediaType: " ++ somethingElse
-    )
-
-mediaDecoder : Decoder Media
-mediaDecoder =
-  D.map2 Media
-  (field "mediaType" mediaTypeDecoder)
-  (field "url" string)
-
-
 piDecoder : Decoder PI
 piDecoder =
   D.map8 PI
@@ -993,7 +882,7 @@ piDecoder =
 --     , expect = Http.expectJson GotPI piDecoder
 --     }
 
--- getTravelfromUrl : SwissNumber -> Cmd Msg
+-- getTravelfromUrl : SN.SwissNumber -> Cmd Msg
 -- getTravelfromUrl ocapUrl =
 --   Http.get
 --     { url = ocapUrl
@@ -1009,14 +898,14 @@ getPIfromUrl ocapUrl =
       GotPI (Ok (fakePI ocapUrl))
     )
 
-getTravelfromUrl : SwissNumber -> Cmd Msg
+getTravelfromUrl : SN.SwissNumber -> Cmd Msg
 getTravelfromUrl ocapUrl =
   Process.sleep 2000
     |> Task.perform (\_ ->
       GotTravel (Ok (fakeTravel ocapUrl))
     )
 
-fakePI : SwissNumber -> PI
+fakePI : SN.SwissNumber -> PI
 fakePI ocapUrl =
   case ocapUrl of
   "http://localhost:8000/api/obj/1" ->
@@ -1024,9 +913,9 @@ fakePI ocapUrl =
     , title = "Wat Phra Kaew Temple - Thaïland"
     , description = ". I love it."
     , address = "9 Boulevard de la Canopée"
-    , medias = [ Media ImageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg"
-      , Media ImageType "https://bangkokmonamour.files.wordpress.com/2015/09/vue-generale-temple.jpg"
-      , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/c/c1/Wat_Phra_Kaew_by_Ninara_TSP_edit_crop.jpg" ]
+    , medias = [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg"
+      , Media Media.imageType "https://bangkokmonamour.files.wordpress.com/2015/09/vue-generale-temple.jpg"
+      , Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/c/c1/Wat_Phra_Kaew_by_Ninara_TSP_edit_crop.jpg" ]
     , audios = [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
@@ -1039,9 +928,9 @@ fakePI ocapUrl =
     , title = "Food Festival - Singapour"
     , description = "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses."
     , address = "666 Rue de l'Enfer"
-    , medias = [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-      , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-      , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+    , medias = [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+      , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+      , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
     , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
@@ -1054,9 +943,9 @@ fakePI ocapUrl =
     , title = "Hôtel F1 - Bordeaux"
     , description = "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life."
     , address = "Le Paradis (lieu-dit)"
-    , medias = [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
-      , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-      , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+    , medias = [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+      , Media Media.imageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+      , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
     , audios = [ Audio "" "French" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
     , tags = [ PI.paying, PI.notReserved ]
@@ -1068,9 +957,9 @@ fakePI ocapUrl =
     , title = "Souk Rabais Bazar - Marrakech"
     , description = " لسوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية"
     , address = "Rue du Marchand"
-    , medias = [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
-      , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-      , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+    , medias = [ Media Media.imageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+      , Media Media.imageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+      , Media Media.imageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
     , audios = [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
@@ -1090,7 +979,7 @@ fakePI ocapUrl =
     }
 
 
-fakeTravel : SwissNumber -> Travel
+fakeTravel : SN.SwissNumber -> Travel
 fakeTravel ocapUrl =
   case ocapUrl of
   "http://localhost:8000/api/obj/unvoyage" ->
@@ -1098,31 +987,31 @@ fakeTravel ocapUrl =
     , title = "Paris - Dakar - Namek"
     , listPI = [
         PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
-          [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
-          , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
-          , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
-          , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
+          [ Media Media.videoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
+          , Media Media.imageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+          , Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
+          , Media Media.imageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
           [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
           [ PI.free, PI.reserved ]
           [ PI.touristicPlace ]
         , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
-          [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-          , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-          , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+          [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+          , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+          , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
           [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
           [ PI.paying ]
           [ PI.restaurant, PI.touristicPlace ]
         , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
-          [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
-          , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-          , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+          [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+          , Media Media.imageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+          , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
           [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
           [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
           [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
         , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
-          [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
-          , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-          , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+          [ Media Media.imageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+          , Media Media.imageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+          , Media Media.imageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
           [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
           [ PI.onGoing, PI.free, PI.notReserved ]
           [ PI.shop, PI.touristicPlace, PI.restaurant ]
