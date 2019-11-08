@@ -29,6 +29,7 @@ import Loading exposing ( LoaderType(..), defaultConfig, render )
 import Color
 import Process
 import Task
+import PI exposing (..)
 
 
 
@@ -57,13 +58,6 @@ type CurrentView
   | LoadingPage
 
 
-type Tag
-  = Free
-  | Paying
-  | Reserved
-  | NotReserved
-  | OnGoing
-
 type alias SwissNumber = String
 
 type MediaType
@@ -86,13 +80,6 @@ type alias Audio =
   }
 
 
-type TypePI
-  = Restaurant
-  | Hotel
-  | Shop
-  | TouristicPlace
-
-
 type OverButton
   = CarouselPrevButton
   | CarouselNextButton
@@ -105,8 +92,8 @@ type alias PI =
   , address : String
   , medias : List Media
   , audios : List Audio
-  , tags : List Tag
-  , typespi : List TypePI
+  , tags : List PI.Tag
+  , typespi : List PI.TypePI
   }
 
 type alias Model =
@@ -142,29 +129,29 @@ fakeModel0 key state =
         , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
         , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
         [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
-        [ Free, Reserved ]
-        [ TouristicPlace ]
+        [ PI.free, PI.reserved ]
+        [ PI.touristicPlace ]
       , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
         [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
         , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
         , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
         [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
-        [ Paying ]
-        [ Restaurant, TouristicPlace ]
+        [ PI.paying ]
+        [ PI.restaurant, PI.touristicPlace ]
       , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
         [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
         , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
         , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
         [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
-        [ Paying, NotReserved, OnGoing, Free ]
-        [ Hotel, Shop, TouristicPlace, Restaurant ]
+        [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
+        [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
       , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
         [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
         , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
         , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
         [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
-        [ OnGoing, Free, NotReserved ]
-        [ Shop, TouristicPlace, Restaurant ]
+        [ PI.onGoing, PI.free, PI.notReserved ]
+        [ PI.shop, PI.touristicPlace, PI.restaurant ]
     ]
   }
 
@@ -430,116 +417,6 @@ viewModal modalVisibility carouselState medias =
     ]
 
 
-viewTagPI : Tag -> Grid.Column Msg
-viewTagPI tag =
-  case tag of
-  Free ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
-        , Button.outlineSuccess
-        , (Button.disabled True)
-        ]
-        [ text "Free" ]
-      ]
-
-  Paying ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
-        , Button.outlineWarning
-        , (Button.disabled True)
-        ]
-        [ text "Paying" ]
-      ]
-
-  Reserved ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
-        , Button.outlineInfo
-        , (Button.disabled True)
-        ]
-        [ text "Reserved" ]
-      ]
-
-  NotReserved ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
-        , Button.outlineDanger
-        , (Button.disabled True)
-        ]
-        [ text "Not Reserved" ]
-      ]
-
-  OnGoing ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
-        , Button.outlinePrimary
-        , (Button.disabled True)
-        ]
-        [ text "On Going" ]
-      ]
-
-viewTypePI : TypePI -> Grid.Column Msg
-viewTypePI typepi =
-  case typepi of
-  Restaurant ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
-      [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
-        , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
-        ]
-        []
-      ]
-
-  Shop ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
-      [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
-        , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
-        ]
-        []
-      ]
-
-  Hotel ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
-      [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
-        , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
-        ]
-        []
-      ]
-
-  TouristicPlace ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
-      [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
-        , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
-        ]
-        []
-      ]
-
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
   a
@@ -562,13 +439,13 @@ viewSimplePILink pi =
         [ Col.sm3 ]
         [ Grid.row
           []
-          (List.map viewTypePI pi.typespi)
+          (List.map PI.viewTypePI pi.typespi)
         ]
       , Grid.col
         [ Col.sm6 ]
         [ Grid.row
           [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
-          (List.map viewTagPI pi.tags)
+          (List.map PI.viewTagPI pi.tags)
         ]
       , Grid.col
         [ Col.sm3 ]
@@ -801,7 +678,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
           [ Col.sm6 ]
           [ Grid.row
             [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
-            (List.map viewTagPI pi.tags)
+            (List.map PI.viewTagPI pi.tags)
           ]
         , Grid.col
           [ Col.sm3 ]
@@ -961,50 +838,6 @@ mediaDecoder =
   (field "url" string)
 
 
-tagDecoder : Decoder Tag
-tagDecoder =
-  D.string
-    |> D.andThen (\str ->
-      case str of
-        "free" ->
-          D.succeed Free
-
-        "paying" ->
-          D.succeed Paying
-
-        "on going" ->
-          D.succeed OnGoing
-
-        "not reserved" ->
-          D.succeed NotReserved
-
-        somethingElse ->
-          D.fail <| "Unknown tag: " ++ somethingElse
-    )
-
-
-typePIDecoder : Decoder TypePI
-typePIDecoder =
-  D.string
-    |> D.andThen (\str ->
-      case str of
-        "restaurant" ->
-          D.succeed Restaurant
-
-        "hotel" ->
-          D.succeed Hotel
-
-        "shop" ->
-          D.succeed Shop
-
-        "touristicPlace" ->
-          D.succeed TouristicPlace
-
-        somethingElse ->
-          D.fail <| "Unknown tag: " ++ somethingElse
-    )
-
-
 piDecoder : Decoder PI
 piDecoder =
   D.map8 PI
@@ -1048,8 +881,8 @@ fakePI ocapUrl =
     , audios = [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ Free ]
-    , typespi = [ TouristicPlace ]
+    , tags = [ PI.free ]
+    , typespi = [ PI.touristicPlace ]
     }
 
   "http://localhost:8000/api/obj/2" ->
@@ -1063,8 +896,8 @@ fakePI ocapUrl =
     , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ Paying ]
-    , typespi = [ Restaurant, TouristicPlace ]
+    , tags = [ PI.paying ]
+    , typespi = [ PI.restaurant, PI.touristicPlace ]
     }
 
   "http://localhost:8000/api/obj/3" ->
@@ -1077,8 +910,8 @@ fakePI ocapUrl =
       , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
     , audios = [ Audio "" "French" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ Paying, NotReserved ]
-    , typespi = [ Hotel ]
+    , tags = [ PI.paying, PI.notReserved ]
+    , typespi = [ PI.hotel ]
     }
 
   "http://localhost:8000/api/obj/4" ->
@@ -1092,8 +925,8 @@ fakePI ocapUrl =
     , audios = [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ OnGoing ]
-    , typespi = [ Shop, TouristicPlace, Restaurant ]
+    , tags = [ PI.onGoing ]
+    , typespi = [ PI.shop, PI.touristicPlace, PI.restaurant ]
     }
 
   _ ->
