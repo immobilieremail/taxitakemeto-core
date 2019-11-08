@@ -52,9 +52,10 @@ main =
 -- MODEL
 
 type CurrentView
-  = ViewListPIDashboard
-  | ViewPI PI
-  | SimpleViewPI PI
+  = ViewListTravelDashboard
+  | ViewListPIDashboard
+  | ViewPI
+  | SimpleViewPI
   | LoadingPage
 
 
@@ -96,12 +97,21 @@ type alias PI =
   , typespi : List PI.TypePI
   }
 
+
+type alias Travel =
+  { swissNumber : SwissNumber
+  , title : String
+  , pis : List PI
+  }
+
+
 type alias Model =
   { key : Nav.Key
   , currentView : CurrentView
   , navbarState : Navbar.State
+  , currentTravel : Travel
   , currentPI : PI
-  , listPI : List PI
+  , listTravel : List Travel
   , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
   , accordionState : Accordion.State
@@ -110,10 +120,11 @@ type alias Model =
 
 model0 key state =
   { key = key
-  , currentView = ViewListPIDashboard
+  , currentView = ViewListTravelDashboard
   , navbarState = state
+  , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
-  , listPI = []
+  , listTravel = []
   , modalVisibility = Modal.hidden
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
@@ -122,37 +133,40 @@ model0 key state =
 
 fakeModel0 key state =
   let model = model0 key state
-  in { model | listPI =
-      [ PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
-        [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
-        , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
-        , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
-        , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
-        [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
-        [ PI.free, PI.reserved ]
-        [ PI.touristicPlace ]
-      , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
-        [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-        , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-        , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
-        [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
-        [ PI.paying ]
-        [ PI.restaurant, PI.touristicPlace ]
-      , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
-        [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
-        , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-        , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
-        [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
-        [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
-        [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
-      , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
-        [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
-        , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-        , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
-        [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
-        [ PI.onGoing, PI.free, PI.notReserved ]
-        [ PI.shop, PI.touristicPlace, PI.restaurant ]
-    ]
+  in { model | currentTravel =
+      Travel
+        "http://localhost:8000/api/obj/unvoyage"
+        "Paris - Dakar - Namek"
+        [ PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "This is a description of Meenakshi Amman Temple." "9 Boulevard de la Canopée"
+          [ Media VideoType "http://localhost:8000/storage/converts/GpCcKj6Rb9@V_eoeFO4oIQ==.mp4"
+          , Media ImageType "https://static.nationalgeographic.fr/files/meenakshi-amman-temple-india.jpg"
+          , Media ImageType "https://upload.wikimedia.org/wikipedia/commons/7/7c/Temple_de_M%C3%AEn%C3%A2ksh%C3%AE01.jpg"
+          , Media ImageType "https://www.ancient-origins.net/sites/default/files/field/image/Meenakshi-Amman-Temple.jpg" ]
+          [ Audio "" "Hindi" "" "http://localhost:8000/storage/converts/yrXFohm5kSzWqgE2d14LCg==.mp3" "" ]
+          [ PI.free, PI.reserved ]
+          [ PI.touristicPlace ]
+        , PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
+          [ Media ImageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
+          , Media ImageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
+          , Media ImageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
+          [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
+          [ PI.paying ]
+          [ PI.restaurant, PI.touristicPlace ]
+        , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
+          [ Media ImageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
+          , Media ImageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
+          , Media ImageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
+          [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
+          [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
+          [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
+        , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
+          [ Media ImageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
+          , Media ImageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
+          , Media ImageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
+          [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
+          [ PI.onGoing, PI.free, PI.notReserved ]
+          [ PI.shop, PI.touristicPlace, PI.restaurant ]
+        ]
   }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -203,7 +217,7 @@ updateFromUrl model url commonCmd =
   Just route ->
     case route of
     RouteListPI ->
-      ( { model | currentView = ViewListPIDashboard }, commonCmd )
+      ( { model | currentView = ViewListTravelDashboard }, commonCmd )
 
     RoutePI data ->
       case data of
@@ -305,22 +319,29 @@ view model =
   { title = "TaxiTakeMeTo"
   , body =
     [ case model.currentView of
+      ViewListTravelDashboard ->
+        div
+          []
+          [ viewNavbar model
+          , viewListTravelDashboard model.listTravel
+          ]
+
       ViewListPIDashboard ->
         div
           []
           [ viewNavbar model
-          , viewListPIDashboard model model.listPI
+          , viewListPIDashboard model model.currentTravel
           ]
 
-      ViewPI pi ->
+      ViewPI ->
         div
           []
           [ viewNavbar model
-          , viewPI pi model.modalVisibility model.carouselState model.accordionState model.mouseOver
+          , viewPI model.currentPI model.modalVisibility model.carouselState model.accordionState model.mouseOver
           ]
 
-      SimpleViewPI pi ->
-        simpleViewPI pi model.carouselState model.mouseOver
+      SimpleViewPI ->
+        simpleViewPI model.currentPI model.carouselState model.mouseOver
 
       LoadingPage ->
         viewLoading
@@ -416,6 +437,20 @@ viewModal modalVisibility carouselState medias =
       |> Modal.view modalVisibility
     ]
 
+viewListTravelDashboard : List Travel -> Html Msg
+viewListTravelDashboard listTravel =
+  div
+    []
+    [ h2
+      [ class "text-center pt-4" ]
+      [ text "My Travels" ]
+    , Button.button
+      [ Button.outlinePrimary
+      , Button.onClick (ViewChanged ViewListPIDashboard)
+      ]
+      [ text "Go to ListPIDashboard" ]
+    ]
+
 
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
@@ -482,13 +517,13 @@ accordionCard model pi =
       ]
     }
 
-viewListPIDashboard : Model -> List PI -> Html Msg
-viewListPIDashboard model listPI =
+viewListPIDashboard : Model -> Travel -> Html Msg
+viewListPIDashboard model travel =
   div
     []
     [ h2
       [ class "text-center pt-4" ]
-      [ text "My Points of Interest" ]
+      [ text travel.title ]
     , Grid.container
       [ class "p-4 mb-4 rounded"
       , style "box-shadow" "0px 0px 50px 1px lightgray" ]
@@ -496,7 +531,7 @@ viewListPIDashboard model listPI =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (accordionCard model) listPI)
+          (List.map (accordionCard model) travel.pis)
         |> Accordion.view model.accordionState
       ]
     , h2
@@ -701,7 +736,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged (SimpleViewPI pi))
+          , Button.onClick (ViewChanged SimpleViewPI)
           ]
           [ text "Simple view"
           , img
