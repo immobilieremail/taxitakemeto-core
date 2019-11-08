@@ -118,30 +118,9 @@ fakeModel0 key state =
         ]
     ], currentTravel =
       Travel
-        "http://localhost:8000/api/obj/unvoyage"
+        "http://localhost:8000/api/obj/empty-travel"
         "Paris - Dakar - Namek"
-        [ PI "http://localhost:8000/api/obj/2" "Food Festival - Singapour" "It’s no secret that Singaporeans are united in their love for great food. And nowhere is this more evident than at the annual Singapore Food Festival (SFF), which celebrated its 26th anniversary in 2019. Every year, foodies have savoured wonderful delicacies, created by the city-state’s brightest culinary talents in a true feast for the senses." "666 rue de l'Enfer"
-          [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
-          , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
-          , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
-          [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/e2HMlOMqsJzfzNSVSkGiJQ==.mp3" "" ]
-          [ PI.paying ]
-          [ PI.restaurant, PI.touristicPlace ]
-        , PI "http://localhost:8000/api/obj/3" "Hôtel F1 - Bordeaux" "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor. Souvent proche des axes de transport, hotelF1 propose une offre hôtelière super-économique et diversifiée, et axe son expérience autour du concept. Fin décembre 2018, hotelF1 compte 172 hôtels en France. The best hotel i have ever seen in my whole life." "Le Paradis (lieu-dit)"
-            [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
-            , Media Media.imageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
-            , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
-            [ Audio "" "English" "" "http://localhost:8000/storage/converts/@r4pNRIQkBKk4Jn7H_nvlg==.mp3" "" ]
-            [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
-            [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
-          , PI "http://localhost:8000/api/obj/4" "Souk Rabais Bazar - Marrakech" " السوق التقليدي أو السوقة،[1] منطقة بيع وشراء في المدن العربية التقليدية. إن كافة المدن في أسواق والمدن الكبيرة منها فيها أكثر من سوق. معظم الأسواق دائمة ومفتوحة يوميا إلا أن بعض الأسواق موسمية" "Rue du Marchand"
-            [ Media Media.imageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
-            , Media Media.imageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
-            , Media Media.imageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
-            [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/m03@H3yVB@tuuJyt7FZKyg==.mp3" "" ]
-            [ PI.onGoing, PI.free, PI.notReserved ]
-            [ PI.shop, PI.touristicPlace, PI.restaurant ]
-        ]
+        []
   }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
