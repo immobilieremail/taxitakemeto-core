@@ -101,7 +101,7 @@ type alias PI =
 type alias Travel =
   { swissNumber : SwissNumber
   , title : String
-  , pis : List PI
+  , listPI : List PI
   }
 
 
@@ -323,7 +323,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListTravelDashboard model.listTravel
+          , viewListTravelDashboard model model.listTravel
           ]
 
       ViewListPIDashboard ->
@@ -437,18 +437,75 @@ viewModal modalVisibility carouselState medias =
       |> Modal.view modalVisibility
     ]
 
-viewListTravelDashboard : List Travel -> Html Msg
-viewListTravelDashboard listTravel =
+
+viewSimpleTravelLink : Travel -> Html Msg
+viewSimpleTravelLink travel =
+  a
+    [ href ("/elm/travel#" ++ travel.swissNumber)
+    , style "text-decoration" "none"
+    , style "outline" "none"
+    ]
+    [ Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ h5
+            [ style "overflow-wrap" "break-word" ]
+            [ text travel.title ]
+        ]
+      ]
+    ]
+
+travelAccordionCard : Model -> Travel -> Accordion.Card Msg
+travelAccordionCard model travel =
+  Accordion.card
+    { id = travel.swissNumber
+    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
+    , header =
+      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <|
+      Accordion.toggle
+        [ class "btn-block"
+        , style "text-decoration" "none"
+        , style "white-space" "normal"
+        ]
+        [ viewSimpleTravelLink travel ]
+    , blocks =
+      [ Accordion.block []
+        [ Block.text
+          []
+          [ case travel.swissNumber == model.currentTravel.swissNumber of
+            True ->
+              viewListPIDashboard model model.currentTravel
+
+            False ->
+              viewLoading
+          ]
+        ]
+      ]
+    }
+
+viewListTravelDashboard : Model -> List Travel -> Html Msg
+viewListTravelDashboard model listTravel =
   div
     []
     [ h2
       [ class "text-center pt-4" ]
       [ text "My Travels" ]
     , Button.button
-      [ Button.outlinePrimary
+      [ Button.primary
       , Button.onClick (ViewChanged ViewListPIDashboard)
       ]
       [ text "Go to ListPIDashboard" ]
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ Accordion.config AccordionMsg
+        |> Accordion.onlyOneOpen
+        |> Accordion.withAnimation
+        |> Accordion.cards
+          (List.map (travelAccordionCard model) listTravel)
+        |> Accordion.view model.accordionState
+    ]
     ]
 
 
@@ -488,9 +545,8 @@ viewSimplePILink pi =
       ]
     ]
 
-
-accordionCard : Model -> PI -> Accordion.Card Msg
-accordionCard model pi =
+piAccordionCard : Model -> PI -> Accordion.Card Msg
+piAccordionCard model pi =
   Accordion.card
     { id = pi.swissNumber
     , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
@@ -531,7 +587,7 @@ viewListPIDashboard model travel =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (accordionCard model) travel.pis)
+          (List.map (piAccordionCard model) travel.listPI)
         |> Accordion.view model.accordionState
       ]
     , h2
