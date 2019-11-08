@@ -25,7 +25,6 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
-import Loading exposing ( LoaderType(..), defaultConfig, render )
 import Color
 import Process
 import Task
@@ -77,7 +76,6 @@ type alias Model =
   , currentTravel : Travel
   , currentPI : PI
   , listTravel : List Travel
-  , modalVisibility : Modal.Visibility
   , carouselState : Carousel.State
   , accordionState : Accordion.State
   , mouseOver : List OverButton
@@ -91,7 +89,6 @@ model0 key state =
   , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
   , listTravel = []
-  , modalVisibility = Modal.hidden
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
   , mouseOver = []
@@ -167,8 +164,6 @@ type Msg
   | GetTravel SwissNumber
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
-  | CloseModal
-  | ShowModal
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
   | CarouselPrev
@@ -279,12 +274,6 @@ update msg model =
   UpdateNavbar state ->
     ( { model | navbarState = state }, Cmd.none)
 
-  CloseModal ->
-    ( { model | modalVisibility = Modal.hidden } , Cmd.none )
-
-  ShowModal ->
-    ( { model | modalVisibility = Modal.shown } , Cmd.none )
-
   CarouselMsg subMsg ->
     ( { model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
 
@@ -348,7 +337,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewPI model.currentPI model.modalVisibility model.carouselState model.accordionState model.mouseOver
+          , viewPI model.currentPI model.carouselState model.accordionState model.mouseOver
           ]
 
       SimpleViewPI ->
@@ -387,33 +376,6 @@ viewNavbar model =
       , navbarItem "#" "Item 4"
       ]
     |> Navbar.view model.navbarState
-
-
-viewModal : Modal.Visibility -> Carousel.State -> List Media -> Html Msg
-viewModal modalVisibility carouselState medias =
-  div []
-    [ Modal.config CloseModal
-      |> Modal.large
-      |> Modal.hideOnBackdropClick True
-      |> Modal.body
-        []
-        [ Carousel.config CarouselMsg []
-          |> Carousel.withControls
-          |> Carousel.withIndicators
-          |> Carousel.slides
-            (List.map Media.carouselSlide medias)
-          |> Carousel.view carouselState
-        ]
-      |> Modal.footer []
-        [ Button.button
-          [ Button.outlinePrimary
-          , Button.attrs
-            [ onClick CloseModal ]
-          ]
-          [ text "Close" ]
-        ]
-      |> Modal.view modalVisibility
-    ]
 
 
 viewSimpleTravelLink : Travel -> Html Msg
@@ -523,8 +485,8 @@ viewSimplePILink pi =
       ]
     ]
 
-piAccordionCard : Model -> PI -> Accordion.Card Msg
-piAccordionCard model pi =
+piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> PI -> Accordion.Card Msg
+piAccordionCard currentPI carouselState accordionState mouseOver pi =
   Accordion.card
     { id = pi.swissNumber
     , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
@@ -540,9 +502,9 @@ piAccordionCard model pi =
       [ Accordion.block []
         [ Block.text
           []
-          [ case pi.swissNumber == model.currentPI.swissNumber of
+          [ case pi.swissNumber == currentPI.swissNumber of
             True ->
-              viewPI model.currentPI model.modalVisibility model.carouselState model.accordionState model.mouseOver
+              viewPI currentPI carouselState accordionState mouseOver
 
             False ->
               Loading.view
@@ -565,7 +527,7 @@ viewListPIDashboard model travel =
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (piAccordionCard model) travel.listPI)
+          (List.map (piAccordionCard model.currentPI model.carouselState model.accordionState model.mouseOver) travel.listPI)
         |> Accordion.view model.accordionState
       ]
     , h2
@@ -677,8 +639,8 @@ viewCarousel medias carouselState mouseOver =
     ]
 
 
-viewPI : PI -> Modal.Visibility -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
-viewPI pi modalVisibility carouselState accordionState mouseOver =
+viewPI : PI -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
+viewPI pi carouselState accordionState mouseOver =
   div
     [] <|
     [ Grid.container
@@ -751,11 +713,7 @@ viewPI pi modalVisibility carouselState accordionState mouseOver =
         ]
       ]
     ]
-    ++
-    if Accordion.isOpen pi.swissNumber accordionState then
-      [ viewModal modalVisibility carouselState pi.medias ]
-    else
-      []
+
 
 simpleViewPI : PI -> Carousel.State -> List OverButton -> Html Msg
 simpleViewPI pi carouselState mouseOver =
