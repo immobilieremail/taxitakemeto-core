@@ -1,6 +1,23 @@
+a {
+    text-decoration: none !important;
+    outline: currentcolor none medium !important;
+}
+
+h5 {
+    overflow-wrap: break-word !important;
+}
+
 .box-shadow {
     box-shadow: 0px 0px 50px 1px lightgray;
     padding: 1.5rem !important;
     margin-bottom: 1.5rem !important;
     border-radius: .25rem !important;
+}
+
+.card-button {
+    text-decoration: none;
+    white-space: normal;
+    // bootstrap .btn-block
+    display: block;
+    width: 100%;
 }

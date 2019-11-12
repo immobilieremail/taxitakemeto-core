@@ -346,7 +346,8 @@ viewNavbar model =
       [ img
         [ src "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
         , class " align-middle d-inline-block rounded align-top img-thumbnails "
-        , style "width" "60px" ]
+        , style "width" "60px"
+        ]
         []
       ]
     |> Navbar.items
@@ -361,10 +362,7 @@ viewNavbar model =
 viewTravel : Travel -> Html Msg
 viewTravel travel =
   a
-    [ href ("/elm/travel#" ++ travel.swissNumber)
-    , style "text-decoration" "none"
-    , style "outline" "none"
-    ]
+    [ href ("/elm/travel#" ++ travel.swissNumber) ]
     [ div
       [ class "p-4 mb-4 rounded card-header"
       , style "border-bottom" "none"
@@ -374,7 +372,7 @@ viewTravel travel =
         [ Grid.col
           [ Col.xs12, Col.textAlign Text.alignXsCenter ]
           [ h5
-              [ style "overflow-wrap" "break-word" ]
+              []
               [ text travel.title ]
           ]
         ]
@@ -413,16 +411,13 @@ viewListTravelDashboard model listTravel =
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
   a
-    [ href ("/elm/pi#" ++ pi.swissNumber)
-    , style "text-decoration" "none"
-    , style "outline" "none"
-    ]
+    [ href ("/elm/pi#" ++ pi.swissNumber) ]
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ h5
-            [ style "overflow-wrap" "break-word" ]
+            []
             [ text pi.title ]
         ]
       ]
@@ -454,10 +449,7 @@ piAccordionCard currentPI carouselState accordionState mouseOver pi =
     , header =
       Accordion.header [ class "mb-4", style "border-bottom" "none" ] <|
       Accordion.toggle
-        [ class "btn-block"
-        , style "text-decoration" "none"
-        , style "white-space" "normal"
-        ]
+        [ class "card-button" ]
         [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block []
