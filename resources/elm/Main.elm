@@ -351,23 +351,23 @@ viewNavbar model =
 
 viewTravel : Travel -> Html Msg
 viewTravel travel =
-  Grid.container
-    [ class "p-4 mb-4 rounded"
-    , style "box-shadow" "0px 0px 50px 1px lightgray"
+  a
+    [ href ("/elm/travel#" ++ travel.swissNumber)
+    , style "text-decoration" "none"
+    , style "outline" "none"
     ]
-    [ a
-      [ href ("/elm/travel#" ++ travel.swissNumber)
-      , style "text-decoration" "none"
-      , style "outline" "none"
+    [ Grid.row
+      [ Row.middleXs
+      , Row.attrs
+        [ class "p-4 mb-4 rounded card-header"
+        , style "border-bottom" "none"
+        ]
       ]
-      [ Grid.row
-        [ Row.middleXs ]
-        [ Grid.col
-          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-          [ h5
-              [ style "overflow-wrap" "break-word" ]
-              [ text travel.title ]
-          ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ h5
+            [ style "overflow-wrap" "break-word" ]
+            [ text travel.title ]
         ]
       ]
     ]
@@ -380,8 +380,10 @@ viewListTravelDashboard model listTravel =
     [ h2
       [ class "text-center pt-4" ]
       [ text "My Travels" ]
-    , div
-      []
+    , Grid.container
+      [ class "p-4 mb-4 rounded"
+      , style "box-shadow" "0px 0px 50px 1px lightgray"
+      ]
       (List.map viewTravel listTravel)
     ]
 
