@@ -30,6 +30,7 @@ import Process
 import Task
 import PI exposing (..)
 import Media exposing (..)
+import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
 import ViewLoading as Loading exposing (view)
@@ -60,13 +61,6 @@ type CurrentView
   | ViewPI
   | SimpleViewPI
   | LoadingPage
-
-
-type alias Travel =
-  { swissNumber : SwissNumber
-  , title : String
-  , listPI : List PI
-  }
 
 
 type alias Model =
