@@ -404,8 +404,7 @@ viewListTravelDashboard model listTravel =
       [ class "text-center pt-4" ]
       [ text "My Travels" ]
     , Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray"
+      [ class "box-shadow"
       ]
       (List.map viewTravel listTravel)
     ]
@@ -483,8 +482,7 @@ viewListPIDashboard model travel =
       [ class "text-center pt-4" ]
       [ text travel.title ]
     , Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ class "box-shadow" ]
       [ Accordion.config AccordionMsg
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
@@ -496,8 +494,7 @@ viewListPIDashboard model travel =
       [ class "text-center pt-4" ]
       [ text "Contact" ]
     , Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ class "box-shadow" ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
@@ -606,8 +603,7 @@ viewPI pi carouselState accordionState mouseOver =
   div
     [] <|
     [ Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray"
+      [ class "box-shadow"
       ]
       [ Grid.row
         [ Row.middleXs ]
@@ -685,8 +681,7 @@ simpleViewPI pi carouselState mouseOver =
       [ class "text-center pt-4" ]
       [ text pi.title ]
     , Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
+      [ class "box-shadow" ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
