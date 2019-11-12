@@ -365,18 +365,32 @@ viewTravel travel =
     , style "text-decoration" "none"
     , style "outline" "none"
     ]
-    [ Grid.row
-      [ Row.middleXs
-      , Row.attrs
-        [ class "p-4 mb-4 rounded card-header"
-        , style "border-bottom" "none"
-        ]
+    [ div
+      [ class "p-4 mb-4 rounded card-header"
+      , style "border-bottom" "none"
       ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h5
-            [ style "overflow-wrap" "break-word" ]
-            [ text travel.title ]
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+          [ h5
+              [ style "overflow-wrap" "break-word" ]
+              [ text travel.title ]
+          ]
+        ]
+      , Grid.row
+        [ Row.middleXs
+        , Row.attrs
+          [ class "row align-items-center rounded pt-3 pb-3"
+          , style "background-color" "rgb(238, 238, 236)"
+          ]
+        ]
+        [ Grid.col
+          [ Col.xs6, Col.textAlign Text.alignXsCenter ]
+          [ text (travel.startDate.day ++ "/" ++ travel.startDate.month ++ "/" ++ travel.startDate.year) ]
+        , Grid.col
+          [ Col.xs6, Col.textAlign Text.alignXsCenter ]
+          [ text (travel.endDate.day ++ "/" ++ travel.endDate.month ++ "/" ++ travel.endDate.year) ]
         ]
       ]
     ]
