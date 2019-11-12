@@ -194,7 +194,7 @@ updateFromUrl model url commonCmd =
         ( model, commonCmd )
 
       Just ocapUrl ->
-        ( model
+        ( { model | currentView = LoadingPage }
         , Cmd.batch
           [ commonCmd
           , getTravelfromUrl ocapUrl
@@ -239,10 +239,10 @@ update msg model =
     Ok travel ->
       case travel /= model.currentTravel of
       True ->
-        ( { model | currentTravel = travel, accordionState = Accordion.initialStateCardOpen travel.swissNumber }, Cmd.none )
+        ( { model | currentTravel = travel, currentView = ViewListPIDashboard }, Cmd.none )
 
       False ->
-        ( model, Cmd.none )
+        ( { model | currentView = ViewListPIDashboard }, Cmd.none )
 
     Err _ ->
       ( model, Cmd.none )
@@ -323,7 +323,11 @@ view model =
         simpleViewPI model.currentPI model.carouselState model.mouseOver
 
       LoadingPage ->
-        Loading.view
+        div
+          []
+          [ viewNavbar model
+          , Loading.view
+    ]
     ]
   }
 
@@ -357,51 +361,29 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewSimpleTravelLink : Travel -> Html Msg
-viewSimpleTravelLink travel =
-  a
-    [ href ("/elm/travel#" ++ travel.swissNumber)
-    , style "text-decoration" "none"
-    , style "outline" "none"
+viewTravel : Travel -> Html Msg
+viewTravel travel =
+  Grid.container
+    [ class "p-4 mb-4 rounded"
+    , style "box-shadow" "0px 0px 50px 1px lightgray"
     ]
-    [ Grid.row
-      [ Row.middleXs ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h5
-            [ style "overflow-wrap" "break-word" ]
-            [ text travel.title ]
-        ]
+    [ a
+      [ href ("/elm/travel#" ++ travel.swissNumber)
+      , style "text-decoration" "none"
+      , style "outline" "none"
       ]
-    ]
-
-travelAccordionCard : Model -> Travel -> Accordion.Card Msg
-travelAccordionCard model travel =
-  Accordion.card
-    { id = travel.swissNumber
-    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
-    , header =
-      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <|
-      Accordion.toggle
-        [ class "btn-block"
-        , style "text-decoration" "none"
-        , style "white-space" "normal"
-        ]
-        [ viewSimpleTravelLink travel ]
-    , blocks =
-      [ Accordion.block []
-        [ Block.text
-          []
-          [ case travel.swissNumber == model.currentTravel.swissNumber of
-            True ->
-              viewListPIDashboard model model.currentTravel
-
-            False ->
-              Loading.view
+      [ Grid.row
+        [ Row.middleXs ]
+        [ Grid.col
+          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+          [ h5
+              [ style "overflow-wrap" "break-word" ]
+              [ text travel.title ]
           ]
         ]
       ]
-    }
+    ]
+
 
 viewListTravelDashboard : Model -> List Travel -> Html Msg
 viewListTravelDashboard model listTravel =
@@ -410,22 +392,10 @@ viewListTravelDashboard model listTravel =
     [ h2
       [ class "text-center pt-4" ]
       [ text "My Travels" ]
-    , Button.button
-      [ Button.primary
-      , Button.onClick (ViewChanged ViewListPIDashboard)
+    , div
+      []
+      (List.map viewTravel listTravel)
       ]
-      [ text "Go to ListPIDashboard" ]
-    , Grid.container
-      [ class "p-4 mb-4 rounded"
-      , style "box-shadow" "0px 0px 50px 1px lightgray" ]
-      [ Accordion.config AccordionMsg
-        |> Accordion.onlyOneOpen
-        |> Accordion.withAnimation
-        |> Accordion.cards
-          (List.map (travelAccordionCard model) listTravel)
-        |> Accordion.view model.accordionState
-      ]
-    ]
 
 
 viewSimplePILink : PI -> Html Msg
