@@ -71,6 +71,7 @@ type alias Model =
   , currentTravel : Travel
   , currentPI : PI
   , listTravel : List Travel
+  , listProposedTravel : List Travel
   , carouselState : Carousel.State
   , accordionState : Accordion.State
   , mouseOver : List OverButton
@@ -84,6 +85,7 @@ model0 key state =
   , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
   , listTravel = []
+  , listProposedTravel = []
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
   , mouseOver = []
@@ -93,21 +95,22 @@ fakeModel0 key state =
   let model = model0 key state
   in { model | listTravel =
     [ Travel
-        "http://localhost:8000/api/obj/parisdakar"
-        "Paris - Dakar"
-        []
+      "http://localhost:8000/api/obj/parisdakar"
+      "Paris - Dakar"
+      []
     , Travel
-        "http://localhost:8000/api/obj/voyagebirmanie"
-        "Petit voyage en Birmanie"
-        []
+      "http://localhost:8000/api/obj/voyagebirmanie"
+      "Petit voyage en Birmanie"
+      []
     , Travel
-        "http://localhost:8000/api/obj/sejourtadjikistan"
-        "Séjour au Tadjikistan"
-        []
-    , Travel
-        "http://localhost:8000/api/obj/vacancesmontagne"
-        "Vacances à la montagne"
-        []
+      "http://localhost:8000/api/obj/sejourtadjikistan"
+      "Séjour au Tadjikistan"
+      []
+    ], listProposedTravel =
+    [ Travel
+      "http://localhost:8000/api/obj/vacancesmontagne"
+      "Vacances à la montagne"
+      []
     ]
   }
 
