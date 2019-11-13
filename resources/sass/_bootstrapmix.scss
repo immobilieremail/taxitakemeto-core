@@ -11,6 +11,16 @@
     text-align: center;
 }
 
+@mixin d-flex {
+    display: -ms-flexbox;
+    display: flex !important;
+}
+
+@mixin py-3 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
 @mixin row {
     display: -ms-flexbox;
     display: flex;

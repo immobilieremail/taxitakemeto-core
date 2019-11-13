@@ -427,7 +427,7 @@ viewSimplePILink pi =
       , Grid.col
         [ Col.sm6 ]
         [ Grid.row
-          [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
+          [ Row.attrs [ class "pi-tags" ] ]
           (List.map PI.viewTagPI pi.tags)
         ]
       , Grid.col
@@ -490,7 +490,7 @@ viewListPIDashboard model travel =
         , Grid.col
           [ Col.sm6 ]
           [ div
-            [ class "text-center py-3 d-flex justify-content-around" ]
+            [ class "pi-tags" ]
             [ Button.button
               [ Button.roleLink ]
               [ img
@@ -609,7 +609,7 @@ viewPI pi carouselState accordionState mouseOver =
         , Grid.col
           [ Col.sm6 ]
           [ Grid.row
-            [ Row.attrs [ class "text-center py-3 d-flex justify-content-around" ] ]
+            [ Row.attrs [ class "pi-tags" ] ]
             (List.map PI.viewTagPI pi.tags)
           ]
         , Grid.col

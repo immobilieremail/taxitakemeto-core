@@ -79,9 +79,16 @@ h5 {
 
 .travel-body {
     @include row;
+    @include py-3;
     @include rounded;
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
     background-color: rgb(238, 238, 236);
     align-items: center !important;
+}
+
+.pi-tags {
+    @include py-3;
+    @include d-flex;
+    @include rounded;
+    -ms-flex-pack: distribute !important;
+    justify-content: space-around !important;
 }
