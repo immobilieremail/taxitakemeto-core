@@ -28,3 +28,19 @@ h5 {
     height: auto;
 }
 
+@mixin carousel-button {
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    height: 40%;
+}
+
+.carousel-button-prev {
+    @include carousel-button;
+    left: 0;
+}
+
+.carousel-button-next {
+    @include carousel-button;
+    right: 0;
+}

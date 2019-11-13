@@ -527,12 +527,7 @@ viewCarouselButtonPrev mouseOver =
     [ Button.roleLink
     , Button.onClick CarouselPrev
     , Button.attrs
-      [ style "position" "absolute"
-      , style "top" "30%"
-      , style "bottom" "30%"
-      , style "left" "0"
-      , style "height" "40%"
-      ]
+      [ class "carousel-button-prev" ]
     ]
     [ span
       [ class "carousel-control-prev-icon"
@@ -554,12 +549,7 @@ viewCarouselButtonNext mouseOver =
     [ Button.roleLink
     , Button.onClick CarouselNext
     , Button.attrs
-      [ style "position" "absolute"
-      , style "top" "30%"
-      , style "bottom" "30%"
-      , style "right" "0"
-      , style "height" "40%"
-      ]
+      [ class "carousel-button-next" ]
     ]
     [ span
       [ class "carousel-control-next-icon"
