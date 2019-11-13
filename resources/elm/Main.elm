@@ -372,8 +372,8 @@ viewTravel travel =
         [ Grid.col
           [ Col.xs12, Col.textAlign Text.alignXsCenter ]
           [ h5
-              []
-              [ text travel.title ]
+            []
+            [ text travel.title ]
           ]
         ]
       , Grid.row
@@ -399,7 +399,7 @@ viewListTravelDashboard model listTravel =
   div
     []
     [ h2
-      [ class "text-center pt-4" ]
+      [ class "title" ]
       [ text "My Travels" ]
     , Grid.container
       [ class "box-shadow"
@@ -417,8 +417,8 @@ viewSimplePILink pi =
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ h5
-            []
-            [ text pi.title ]
+          []
+          [ text pi.title ]
         ]
       ]
     , Grid.row
@@ -471,7 +471,7 @@ viewListPIDashboard model travel =
   div
     []
     [ h2
-      [ class "text-center pt-4" ]
+      [ class "title" ]
       [ text travel.title ]
     , Grid.container
       [ class "box-shadow" ]
@@ -483,7 +483,7 @@ viewListPIDashboard model travel =
         |> Accordion.view model.accordionState
       ]
     , h2
-      [ class "text-center pt-4" ]
+      [ class "title" ]
       [ text "Contact" ]
     , Grid.container
       [ class "box-shadow" ]
@@ -625,7 +625,7 @@ viewPI pi carouselState accordionState mouseOver =
         [ class "pt-4 pb-2" ]
         []
       , h2
-        [ class "text-center" ]
+        [ class "title" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
@@ -658,7 +658,7 @@ simpleViewPI pi carouselState mouseOver =
   div
     []
     [ h1
-      [ class "text-center pt-4" ]
+      [ class "title" ]
       [ text pi.title ]
     , Grid.container
       [ class "box-shadow" ]
@@ -671,7 +671,7 @@ simpleViewPI pi carouselState mouseOver =
         , Grid.col
           [ Col.sm6 ]
           [ h4
-            [ class "text-center " ]
+            [ class "title" ]
             [ text pi.address ]
           ]
         ]
@@ -679,7 +679,7 @@ simpleViewPI pi carouselState mouseOver =
         [ class "pt-4" ]
         []
       , h2
-        [ class "text-center" ]
+        [ class "title" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
