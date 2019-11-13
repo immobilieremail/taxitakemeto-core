@@ -21,3 +21,10 @@ h5 {
     display: block;
     width: 100%;
 }
+
+.little-image {
+    max-width: 70px;
+    // bootstrap img-fluid (without width: 100%;)
+    height: auto;
+}
+
