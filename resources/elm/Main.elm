@@ -73,6 +73,7 @@ type alias Model =
   , navbarState : Navbar.State
   , currentTravel : Travel
   , currentPI : PI
+  , proposals : List PI
   , listTravel : List Travel
   , listProposedTravel : List Travel
   , carouselState : Carousel.State
@@ -83,10 +84,11 @@ type alias Model =
 
 model0 key state =
   { key = key
-  , currentView = ViewListTravelDashboard
+  , currentView = ViewSearchPI
   , navbarState = state
   , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
+  , proposals = []
   , listTravel = []
   , listProposedTravel = []
   , carouselState = Carousel.initialState
@@ -114,6 +116,19 @@ fakeModel0 key state =
       "http://localhost:8000/api/obj/vacancesmontagne"
       "Vacances à la montagne"
       []
+    ], proposals =
+    [ PI
+      "http://localhost:8000/api/obj/1"
+      "Wat Phra Kaew Temple - Thaïland"
+      "This is a description of Meenakshi Amman Temple."
+      "9 Boulevard de la Canopée"
+      [] [] [] []
+    , PI
+      "http://localhost:8000/api/obj/3"
+      "Hôtel F1 - Bordeaux"
+      "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor."
+      "Le Paradis (lieu-dit)"
+      [] [] [] []
     ]
   }
 
@@ -332,7 +347,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewSearchPI
+          , viewSearchPI model.proposals
           ]
     ]
   }
@@ -409,7 +424,7 @@ viewListTravelDashboard listTravel listProposedTravel =
 viewSearchBar : Html Msg
 viewSearchBar =
   Grid.row
-    [ Row.attrs [ class "pt-4" ] ]
+    [ Row.attrs [ class "pt-4 pb-4" ] ]
     [ Grid.col [ Col.lg6 ]
       [ InputGroup.config
           ( InputGroup.text [ Input.placeholder "Search PI" ] )
@@ -426,18 +441,46 @@ viewSearchBar =
           |> InputGroup.successors
               [ InputGroup.button
                 [ Button.secondary ]
-                [ text "Search"]
+                [ text "Search" ]
               ]
           |> InputGroup.view
       ]
     ]
 
+viewProposal : PI -> Html Msg
+viewProposal proposal =
+  Grid.row
+    [ Row.attrs [ class "pt-3" ] ]
+    [ Grid.col
+      [ Col.xs4, Col.textAlign Text.alignXsCenter ]
+      [ Media.viewFirstMedia proposal.medias ]
+    , Grid.col
+      [ Col.xs8, Col.textAlign Text.alignXsCenter ]
+      [ h4
+        [ class "text-left" ]
+        [ text proposal.title ]
+      ]
+    ]
 
-viewSearchPI : Html Msg
-viewSearchPI =
+viewSearchPI : List PI -> Html Msg
+viewSearchPI listProposal =
   Grid.container
     []
     [ viewSearchBar
+    , Grid.row
+      []
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ img
+          [ src "https://www.numerama.com/content/uploads/2018/08/google-maps-terre-sphere.jpg"
+          , class "basic-image"
+          ]
+          []
+        ]
+      ]
+    , div
+      []
+      (List.map viewProposal listProposal)
     ]
 
 

@@ -92,3 +92,8 @@ h5 {
     -ms-flex-pack: distribute !important;
     justify-content: space-around !important;
 }
+
+.basic-image {
+    @include rounded;
+    width: 100%;
+}
