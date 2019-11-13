@@ -7,6 +7,10 @@
     border-radius: .25rem !important;
 }
 
+@mixin text-center {
+    text-align: center;
+}
+
 @mixin carousel-button {
     position: absolute;
     top: 30%;
@@ -24,7 +28,7 @@ h5 {
 }
 
 .title {
-    text-align: center;
+    @include text-center;
     padding-top: 1.5rem !important;
 }
 
