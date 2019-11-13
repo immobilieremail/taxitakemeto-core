@@ -293,7 +293,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListTravelDashboard model model.listTravel
+          , viewListTravelDashboard model.listTravel model.listProposedTravel
           ]
 
       ViewListPIDashboard ->
@@ -371,8 +371,8 @@ viewTravel travel =
     ]
 
 
-viewListTravelDashboard : Model -> List Travel -> Html Msg
-viewListTravelDashboard model listTravel =
+viewListTravelDashboard : List Travel -> List Travel -> Html Msg
+viewListTravelDashboard listTravel listProposedTravel =
   div
     []
     [ h2
@@ -382,6 +382,13 @@ viewListTravelDashboard model listTravel =
       [ class "box-shadow"
       ]
       (List.map viewTravel listTravel)
+    , h2
+      [ class "title" ]
+      [ text "Received proposals" ]
+    , Grid.container
+      [ class "box-shadow"
+      ]
+      (List.map viewTravel listProposedTravel)
     ]
 
 
