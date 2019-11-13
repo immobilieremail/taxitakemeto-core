@@ -1,0 +1,12 @@
+@mixin img-fluid {
+    height: auto;
+    max-width: 100%;
+}
+
+@mixin rounded {
+    border-radius: .25rem !important;
+}
+
+@mixin text-center {
+    text-align: center;
+}
