@@ -31,7 +31,6 @@ import Task
 import PI exposing (..)
 import Fake exposing (..)
 import Media exposing (..)
-import Date exposing (Date)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
@@ -82,7 +81,7 @@ model0 key state =
   { key = key
   , currentView = ViewListTravelDashboard
   , navbarState = state
-  , currentTravel = Travel "" "" [] (Date "" "" "") (Date "" "" "")
+  , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
   , listTravel = []
   , carouselState = Carousel.initialState
@@ -97,26 +96,18 @@ fakeModel0 key state =
         "http://localhost:8000/api/obj/parisdakar"
         "Paris - Dakar"
         []
-        (Date "01" "05" "2018")
-        (Date "02" "01" "2021")
     , Travel
         "http://localhost:8000/api/obj/voyagebirmanie"
         "Petit voyage en Birmanie"
         []
-        (Date "01" "01" "1970")
-        (Date "30" "06" "2005")
     , Travel
         "http://localhost:8000/api/obj/sejourtadjikistan"
         "Séjour au Tadjikistan"
         []
-        (Date "19" "07" "2019")
-        (Date "06" "12" "2019")
     , Travel
         "http://localhost:8000/api/obj/vacancesmontagne"
         "Vacances à la montagne"
         []
-        (Date "26" "09" "2040")
-        (Date "13" "04" "2042")
     ]
   }
 
@@ -372,18 +363,6 @@ viewTravel travel =
             []
             [ text travel.title ]
           ]
-        ]
-      , Grid.row
-        [ Row.middleXs
-        , Row.attrs
-          [ class "travel-body" ]
-        ]
-        [ Grid.col
-          [ Col.xs6, Col.textAlign Text.alignXsCenter ]
-          [ text (travel.startDate.day ++ "/" ++ travel.startDate.month ++ "/" ++ travel.startDate.year) ]
-        , Grid.col
-          [ Col.xs6, Col.textAlign Text.alignXsCenter ]
-          [ text (travel.endDate.day ++ "/" ++ travel.endDate.month ++ "/" ++ travel.endDate.year) ]
         ]
       ]
     ]

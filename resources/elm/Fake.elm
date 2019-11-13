@@ -2,7 +2,6 @@ module Fake exposing (..)
 
 import SwissNumber exposing (SwissNumber)
 import Travel exposing (Travel)
-import Date exposing (Date)
 import Media exposing (..)
 import PI exposing (PI)
 
@@ -108,8 +107,6 @@ travel ocapUrl =
           [ PI.onGoing, PI.free, PI.notReserved ]
           [ PI.shop, PI.touristicPlace, PI.restaurant ]
         ]
-    , startDate = Date "01" "05" "2018"
-    , endDate = Date "02" "01" "2021"
     }
 
   "http://localhost:8000/api/obj/voyagebirmanie" ->
@@ -127,8 +124,6 @@ travel ocapUrl =
         [ PI.free, PI.reserved ]
         [ PI.touristicPlace ]
       ]
-    , startDate = Date "1" "01" "1970"
-    , endDate = Date "30" "06" "2005"
     }
 
   "http://localhost:8000/api/obj/sejourtadjikistan" ->
@@ -146,8 +141,6 @@ travel ocapUrl =
         [ PI.paying ]
         [ PI.restaurant, PI.touristicPlace ]
       ]
-    , startDate = Date "19" "07" "2019"
-    , endDate = Date "06" "12" "2019"
     }
 
   "http://localhost:8000/api/obj/vacancesmontagne" ->
@@ -170,14 +163,10 @@ travel ocapUrl =
         [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
         [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
       ]
-    , startDate = Date "26" "09" "2040"
-    , endDate = Date "13" "04" "2042"
     }
 
   _ ->
     { swissNumber = ""
     , title = ""
     , listPI = []
-    , startDate = Date "" "" ""
-    , endDate = Date "" "" ""
     }
