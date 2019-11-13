@@ -642,8 +642,7 @@ viewPI pi carouselState accordionState mouseOver =
           ]
           [ text "Simple view"
           , img
-            [ class "mx-auto img-fluid pl-3 rounded"
-            , style "width" "60px"
+            [ class "pi-view-button"
             , src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png"
             ]
             []
@@ -696,8 +695,7 @@ simpleViewPI pi carouselState mouseOver =
           ]
           [ text "Exit view"
           , img
-            [ class "mx-auto img-fluid pl-3 rounded"
-            , style "width" "60px"
+            [ class "pi-view-button"
             , src "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Ic_exit_to_app_48px.svg/1024px-Ic_exit_to_app_48px.svg.png"
             ]
             []

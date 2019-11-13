@@ -1,3 +1,19 @@
+@mixin img-fluid {
+    height: auto;
+    max-width: 100%;
+}
+
+@mixin rounded {
+    border-radius: .25rem !important;
+}
+
+@mixin carousel-button {
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    height: 40%;
+}
+
 a {
     text-decoration: none !important;
     outline: currentcolor none medium !important;
@@ -13,10 +29,10 @@ h5 {
 }
 
 .box-shadow {
+    @include rounded;
     box-shadow: 0px 0px 50px 1px lightgray;
     padding: 1.5rem !important;
     margin-bottom: 1.5rem !important;
-    border-radius: .25rem !important;
 }
 
 .card-button {
@@ -28,16 +44,17 @@ h5 {
 }
 
 .little-image {
-    max-width: 70px;
-    // bootstrap img-fluid (without width: 100%;)
-    height: auto;
+    @include img-fluid;
+    max-width: 70px !important;
 }
 
-@mixin carousel-button {
-    position: absolute;
-    top: 30%;
-    bottom: 30%;
-    height: 40%;
+.pi-view-button {
+    @include rounded;
+    @include img-fluid;
+    padding-left: 1rem !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    width: 60px;
 }
 
 .carousel-button-prev {
