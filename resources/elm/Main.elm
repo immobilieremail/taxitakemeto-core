@@ -345,8 +345,7 @@ viewNavbar model =
       [ href "/elm" ]
       [ img
         [ src "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
-        , class " align-middle d-inline-block rounded align-top img-thumbnails "
-        , style "width" "60px"
+        , class "navbar-icon"
         ]
         []
       ]
@@ -364,9 +363,7 @@ viewTravel travel =
   a
     [ href ("/elm/travel#" ++ travel.swissNumber) ]
     [ div
-      [ class "p-4 mb-4 rounded card-header"
-      , style "border-bottom" "none"
-      ]
+      [ class "travel-header" ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
@@ -379,9 +376,7 @@ viewTravel travel =
       , Grid.row
         [ Row.middleXs
         , Row.attrs
-          [ class "row align-items-center rounded pt-3 pb-3"
-          , style "background-color" "rgb(238, 238, 236)"
-          ]
+          [ class "travel-body" ]
         ]
         [ Grid.col
           [ Col.xs6, Col.textAlign Text.alignXsCenter ]
