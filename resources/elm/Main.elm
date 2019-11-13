@@ -25,6 +25,8 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.InputGroup as InputGroup
 import Color
 import Process
 import Task
@@ -62,6 +64,7 @@ type CurrentView
   | ViewPI
   | SimpleViewPI
   | LoadingPage
+  | ViewSearchPI
 
 
 type alias Model =
@@ -143,14 +146,16 @@ type Msg
 
 
 type Route
-  = RouteListPI
+  = RouteHome
+  | RouteSearch
   | RoutePI (Maybe String)
   | RouteTravel (Maybe String)
 
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
-  [ P.map RouteListPI <| P.s "elm"
+  [ P.map RouteHome <| P.s "elm"
+  , P.map RouteSearch <| P.s "elm" </> P.s "search"
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
   , P.map RouteTravel <| P.s "elm" </> P.s "travel" </> P.fragment identity
   ]
@@ -163,8 +168,11 @@ updateFromUrl model url commonCmd =
 
   Just route ->
     case route of
-    RouteListPI ->
+    RouteHome ->
       ( { model | currentView = ViewListTravelDashboard }, commonCmd )
+
+    RouteSearch ->
+      ( { model | currentView = ViewSearchPI }, commonCmd )
 
     RoutePI data ->
       case data of
@@ -319,6 +327,13 @@ view model =
           [ viewNavbar model
           , Loading.view
           ]
+
+      ViewSearchPI ->
+        div
+          []
+          [ viewNavbar model
+          , viewSearchPI
+          ]
     ]
   }
 
@@ -344,7 +359,7 @@ viewNavbar model =
         []
       ]
     |> Navbar.items
-      [ navbarItem "#" "Item 1"
+      [ navbarItem "/elm/search" "Search PI"
       , navbarItem "#" "Item 2"
       , navbarItem "#" "Item 3"
       , navbarItem "#" "Item 4"
@@ -370,7 +385,6 @@ viewTravel travel =
       ]
     ]
 
-
 viewListTravelDashboard : List Travel -> List Travel -> Html Msg
 viewListTravelDashboard listTravel listProposedTravel =
   div
@@ -389,6 +403,41 @@ viewListTravelDashboard listTravel listProposedTravel =
       [ class "box-shadow"
       ]
       (List.map viewTravel listProposedTravel)
+    ]
+
+
+viewSearchBar : Html Msg
+viewSearchBar =
+  Grid.row
+    [ Row.attrs [ class "pt-4" ] ]
+    [ Grid.col [ Col.lg6 ]
+      [ InputGroup.config
+          ( InputGroup.text [ Input.placeholder "Search PI" ] )
+          |> InputGroup.predecessors
+            [ InputGroup.span
+              []
+              [ img
+                [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Magnifying_glass_icon.svg/490px-Magnifying_glass_icon.svg.png"
+                , style "max-width" "20px"
+                ]
+                []
+              ]
+            ]
+          |> InputGroup.successors
+              [ InputGroup.button
+                [ Button.secondary ]
+                [ text "Search"]
+              ]
+          |> InputGroup.view
+      ]
+    ]
+
+
+viewSearchPI : Html Msg
+viewSearchPI =
+  Grid.container
+    []
+    [ viewSearchBar
     ]
 
 
