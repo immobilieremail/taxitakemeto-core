@@ -450,28 +450,29 @@ viewSearchBar =
 
 viewProposal : PI -> Html Msg
 viewProposal proposal =
-  Grid.row
-    [ Row.attrs [ class "pt-3" ] ]
-    [ Grid.col
-      [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+  label
+    [ class "row pt-3"
+    , id "checkout"
+    ]
+    [ div
+      [ class "col-12 text-center" ]
       [ hr
         []
         []
       ]
-    , Grid.col
-      [ Col.xs4, Col.textAlign Text.alignXsCenter ]
-      [ Media.viewFirstMedia proposal.medias ]
-    , Grid.col
-      [ Col.xs6, Col.textAlign Text.alignXsCenter ]
+    , div
+      [ class "col-4 text-center" ]
+      [ Media.viewFirstMedia [ style "max-width" "150px", class "text-center" ] proposal.medias ]
+    , div
+      [ class "col-6 text-left" ]
       [ h4
-        [ class "text-left" ]
+        [ class "resize-text" ]
         [ text proposal.title ]
       ]
-    , Grid.col
-      [ Col.xs2, Col.textAlign Text.alignXsCenter ]
-      [ Checkbox.checkbox [ Checkbox.id "checkout" ] ""
+    , div
+      [ class "col-2 text-center" ]
+      [ Checkbox.checkbox [ Checkbox.id "checkout" ] "" ]
       ]
-    ]
 
 viewSearchPI : List PI -> Html Msg
 viewSearchPI listProposal =
