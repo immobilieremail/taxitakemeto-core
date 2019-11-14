@@ -125,6 +125,12 @@ fakeModel0 key state =
       "9 Boulevard de la Canopée"
       [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg" ] [] [] []
     , PI
+      "http://localhost:8000/api/obj/2"
+      "Food Festival - Singapour"
+      "It’s no secret that Singaporeans are united in their love for great food."
+      "666 Rue de l'Enfer"
+      [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg" ] [] [] []
+    , PI
       "http://localhost:8000/api/obj/3"
       "Hôtel F1 - Bordeaux"
       "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor."
