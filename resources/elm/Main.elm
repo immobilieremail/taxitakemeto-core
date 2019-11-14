@@ -26,6 +26,7 @@ import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
 import Bootstrap.Form.Input as Input
+import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.InputGroup as InputGroup
 import Color
 import Process
@@ -461,10 +462,14 @@ viewProposal proposal =
       [ Col.xs4, Col.textAlign Text.alignXsCenter ]
       [ Media.viewFirstMedia proposal.medias ]
     , Grid.col
-      [ Col.xs8, Col.textAlign Text.alignXsCenter ]
+      [ Col.xs6, Col.textAlign Text.alignXsCenter ]
       [ h4
         [ class "text-left" ]
         [ text proposal.title ]
+      ]
+    , Grid.col
+      [ Col.xs2, Col.textAlign Text.alignXsCenter ]
+      [ Checkbox.checkbox [ Checkbox.id "checkout" ] ""
       ]
     ]
 
