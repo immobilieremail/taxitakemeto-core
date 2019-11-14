@@ -19,7 +19,7 @@ pi ocapUrl =
     , audios = [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ PI.free ]
+    , tags = [ PI.free, PI.reserved ]
     , typespi = [ PI.touristicPlace ]
     }
 
@@ -48,7 +48,7 @@ pi ocapUrl =
       , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
     , audios = [ Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ PI.paying, PI.notReserved ]
+    , tags = [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
     , typespi = [ PI.hotel ]
     }
 
@@ -63,7 +63,7 @@ pi ocapUrl =
     , audios = [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
       , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
-    , tags = [ PI.onGoing ]
+    , tags = [ PI.onGoing, PI.free, PI.notReserved ]
     , typespi = [ PI.shop, PI.touristicPlace, PI.restaurant ]
     }
 
