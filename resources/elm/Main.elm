@@ -474,6 +474,24 @@ viewProposal proposal =
       [ Checkbox.checkbox [ Checkbox.id "checkout" ] "" ]
       ]
 
+viewSearchAddToList : String -> Html Msg
+viewSearchAddToList str =
+  Grid.row
+    [ Row.attrs [ class "pt-4 pb-2" ] ]
+    [ Grid.col
+      [ Col.xs8, Col.textAlign Text.alignXsLeft ]
+      [ h4
+        []
+        [ text str ]
+      ]
+    , Grid.col
+      [ Col.xs4, Col.textAlign Text.alignXsRight ]
+      [ Button.button
+        [ Button.success ]
+        [ text "+" ]
+      ]
+    ]
+
 viewSearchPI : List PI -> Html Msg
 viewSearchPI listProposal =
   Grid.container
@@ -493,6 +511,8 @@ viewSearchPI listProposal =
     , div
       []
       (List.map viewProposal listProposal)
+    , viewSearchAddToList "Add to 'Paris - Dakar' travel"
+    , viewSearchAddToList "Create a new travel"
     ]
 
 
