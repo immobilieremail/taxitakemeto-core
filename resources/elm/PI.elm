@@ -107,7 +107,7 @@ viewTagPI tag =
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
         [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.attrs [ class "pi-tag" ]
         , Button.outlineSuccess
         , (Button.disabled True)
         ]
@@ -119,7 +119,7 @@ viewTagPI tag =
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
         [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.attrs [ class "pi-tag" ]
         , Button.outlineWarning
         , (Button.disabled True)
         ]
@@ -131,7 +131,7 @@ viewTagPI tag =
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
         [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.attrs [ class "pi-tag" ]
         , Button.outlineInfo
         , (Button.disabled True)
         ]
@@ -143,7 +143,7 @@ viewTagPI tag =
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
         [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.attrs [ class "pi-tag" ]
         , Button.outlineDanger
         , (Button.disabled True)
         ]
@@ -155,7 +155,7 @@ viewTagPI tag =
       [ Col.attrs [ class "py-1" ] ]
       [ Button.button
         [ Button.small
-        , Button.attrs [ style "width" "120px", style "height" "30px" ]
+        , Button.attrs [ class "pi-tag" ]
         , Button.outlinePrimary
         , (Button.disabled True)
         ]
@@ -168,7 +168,7 @@ viewTypePI typepi =
   case typepi of
   Restaurant ->
     Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
@@ -179,7 +179,7 @@ viewTypePI typepi =
 
   Shop ->
     Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
@@ -190,7 +190,7 @@ viewTypePI typepi =
 
   Hotel ->
     Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
         [ class "d-block rounded"
         , style "width" "30px"
@@ -201,7 +201,7 @@ viewTypePI typepi =
 
   TouristicPlace ->
     Grid.col
-      [ Col.xs3, Col.attrs [ style "min-width" "50px", class "mt-2" ] ]
+      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
         [ class "d-block rounded"
         , style "width" "30px"

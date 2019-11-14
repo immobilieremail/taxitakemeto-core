@@ -85,10 +85,21 @@ h5 {
     align-items: center !important;
 }
 
+.pi-type {
+    min-width: 50px;
+    margin-top: .5rem !important;
+}
+
+.pi-tag {
+    width: 120px;
+    height: 30px;
+}
+
 .pi-tags {
     @include py-3;
     @include d-flex;
     @include rounded;
+    @include text-center;
     -ms-flex-pack: distribute !important;
     justify-content: space-around !important;
 }
