@@ -426,7 +426,8 @@ viewSearchBar : Html Msg
 viewSearchBar =
   Grid.row
     [ Row.attrs [ class "pt-4 pb-4" ] ]
-    [ Grid.col [ Col.lg6 ]
+    [ Grid.col
+      [ Col.lg12 ]
       [ InputGroup.config
           ( InputGroup.text [ Input.placeholder "Search PI" ] )
           |> InputGroup.predecessors
@@ -461,13 +462,14 @@ viewProposal proposal =
         []
       ]
     , div
-      [ class "col-4 text-center" ]
-      [ Media.viewFirstMedia [ style "max-width" "150px", class "text-center" ] proposal.medias ]
+      [ class "col-md-2 col-4 text-center" ]
+      [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] proposal.medias ]
     , div
-      [ class "col-6 text-left" ]
+      [ class "col-md-8 col-6 text-left" ]
       [ h4
         [ class "resize-text" ]
         [ text proposal.title ]
+      , text proposal.address
       ]
     , div
       [ class "col-2 text-center" ]
@@ -495,24 +497,27 @@ viewSearchAddToList str =
 viewSearchPI : List PI -> Html Msg
 viewSearchPI listProposal =
   Grid.container
-    []
+    [ class "mt-4" ]
     [ viewSearchBar
     , Grid.row
       []
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ img
-          [ src "https://www.numerama.com/content/uploads/2018/08/google-maps-terre-sphere.jpg"
-          , class "basic-image"
+          [ src "https://image.noelshack.com/fichiers/2019/46/4/1573745503-capture-d-ecran-du-2019-11-14-16-29-54.png"
+          , class "streamer-image"
           ]
           []
         ]
       ]
     , div
+      [ class "proposals" ]
+      [ div
       []
       (List.map viewProposal listProposal)
     , viewSearchAddToList "Add to 'Paris - Dakar' travel"
     , viewSearchAddToList "Create a new travel"
+    ]
     ]
 
 
@@ -702,7 +707,7 @@ viewPI pi carouselState accordionState mouseOver =
               viewCarousel pi.medias carouselState mouseOver
 
             False ->
-              Media.viewFirstMedia pi.medias
+              Media.viewFirstMedia [] pi.medias
           ]
         , Grid.col
           [ Col.sm6 ]

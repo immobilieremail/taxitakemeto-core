@@ -88,8 +88,8 @@ carouselSlide media =
     Slide.config [] (Slide.image [] "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg")
 
 
-viewFirstMedia : List Media -> Html msg
-viewFirstMedia medias =
+viewFirstMedia : List (Html.Attribute msg) -> List Media -> Html msg
+viewFirstMedia attributes medias =
   div
     [ class "d-flex" ]
     [ case (List.head medias) of
@@ -97,7 +97,7 @@ viewFirstMedia medias =
         case media.mediaType of
         ImageType ->
           img
-            [ src media.url ]
+            ([ src media.url ] ++ attributes)
             []
 
         VideoType ->
