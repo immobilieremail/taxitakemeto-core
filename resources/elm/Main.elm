@@ -122,13 +122,13 @@ fakeModel0 key state =
       "Wat Phra Kaew Temple - Thaïland"
       "This is a description of Meenakshi Amman Temple."
       "9 Boulevard de la Canopée"
-      [] [] [] []
+      [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg" ] [] [] []
     , PI
       "http://localhost:8000/api/obj/3"
       "Hôtel F1 - Bordeaux"
       "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor."
       "Le Paradis (lieu-dit)"
-      [] [] [] []
+      [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg" ] [] [] []
     ]
   }
 
