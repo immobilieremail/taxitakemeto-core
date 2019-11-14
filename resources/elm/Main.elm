@@ -452,6 +452,12 @@ viewProposal proposal =
   Grid.row
     [ Row.attrs [ class "pt-3" ] ]
     [ Grid.col
+      [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+      [ hr
+        []
+        []
+      ]
+    , Grid.col
       [ Col.xs4, Col.textAlign Text.alignXsCenter ]
       [ Media.viewFirstMedia proposal.medias ]
     , Grid.col
