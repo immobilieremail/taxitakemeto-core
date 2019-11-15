@@ -766,11 +766,8 @@ simpleViewPI : PI -> Carousel.State -> List OverButton -> Html Msg
 simpleViewPI pi carouselState mouseOver =
   div
     []
-    [ h1
-      [ class "title" ]
-      [ text pi.title ]
-    , Grid.container
-      []
+    [ Grid.container
+      [ class "pt-3" ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
@@ -779,13 +776,16 @@ simpleViewPI pi carouselState mouseOver =
           ]
         , Grid.col
           [ Col.sm6 ]
-          [ h4
+          [ h1
+            [ class "title" ]
+            [ text pi.title ]
+          , h4
             [ class "title" ]
             [ text pi.address ]
           ]
         ]
       , hr
-        [ class "pt-4" ]
+        []
         []
       , h2
         [ class "title" ]
@@ -794,10 +794,10 @@ simpleViewPI pi carouselState mouseOver =
         [ class "p-4" ]
         (List.map Media.viewAudioLanguage pi.audios)
       , hr
-        [ class "pt-4 pb-3" ]
+        [ class "pt-2" ]
         []
       , div
-        [ class "text-center" ]
+        [ class "text-center mb-4" ]
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
