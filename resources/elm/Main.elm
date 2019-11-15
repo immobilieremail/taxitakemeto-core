@@ -85,7 +85,7 @@ type alias Model =
 
 model0 key state =
   { key = key
-  , currentView = ViewSearchPI
+  , currentView = ViewListTravelDashboard
   , navbarState = state
   , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
@@ -458,7 +458,7 @@ viewSearchBar =
 viewProposal : PI -> Html Msg
 viewProposal proposal =
   label
-    [ class "row pt-3"
+    [ class "row pb-2"
     , id "checkout"
     ]
     [ div
@@ -485,7 +485,7 @@ viewProposal proposal =
 viewSearchAddToList : String -> Html Msg
 viewSearchAddToList str =
   Grid.row
-    [ Row.attrs [ class "pt-4 pb-2" ] ]
+    [ Row.attrs [ class "pt-2 pb-2" ] ]
     [ Grid.col
       [ Col.xs8, Col.textAlign Text.alignXsLeft ]
       [ h4
@@ -517,7 +517,7 @@ viewSearchPI listProposal =
         ]
       ]
     , div
-      [ class "proposals" ]
+      [ class "proposals mb-4" ]
       [ div
       []
       (List.map viewProposal listProposal)
