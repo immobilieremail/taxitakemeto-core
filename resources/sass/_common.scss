@@ -37,11 +37,17 @@ h5 {
     padding-top: 1.5rem !important;
 }
 
-.box-shadow {
-    @include rounded;
-    box-shadow: 0px 0px 50px 1px lightgray;
-    padding: 1.5rem !important;
-    margin-bottom: 1.5rem !important;
+.lightgrey-background {
+    background: #f7f7f7;
+    border-radius: .25rem;
+}
+
+.test {
+    border: solid #f7f7f7;
+    border-top: none;
+    padding: 0rem !important;
+    border-bottom-left-radius: .25rem !important;
+    border-bottom-right-radius: .25rem !important;
 }
 
 .card-button {

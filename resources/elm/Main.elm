@@ -415,15 +415,13 @@ viewListTravelDashboard listTravel listProposedTravel =
       [ class "title" ]
       [ text "My Travels" ]
     , Grid.container
-      [ class "box-shadow"
-      ]
+      []
       (List.map viewTravel listTravel)
     , h2
       [ class "title" ]
       [ text "Received proposals" ]
     , Grid.container
-      [ class "box-shadow"
-      ]
+      []
       (List.map viewTravel listProposedTravel)
     ]
 
@@ -485,7 +483,7 @@ viewProposal proposal =
 viewSearchAddToList : String -> Html Msg
 viewSearchAddToList str =
   Grid.row
-    [ Row.attrs [ class "pt-2 pb-2" ] ]
+    [ Row.attrs [ class "pt-2 pb-2 lightgrey-background mb-2" ] ]
     [ Grid.col
       [ Col.xs8, Col.textAlign Text.alignXsLeft ]
       [ h4
@@ -564,14 +562,14 @@ piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> 
 piAccordionCard currentPI carouselState accordionState mouseOver pi =
   Accordion.card
     { id = pi.swissNumber
-    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%" ] ]
+    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%", style "margin-bottom" "1.5rem" ] ]
     , header =
-      Accordion.header [ class "mb-4", style "border-bottom" "none" ] <|
+      Accordion.header [ style "border-bottom" "none" ] <|
       Accordion.toggle
         [ class "card-button" ]
         [ viewSimplePILink pi ]
     , blocks =
-      [ Accordion.block []
+      [ Accordion.block [ Block.attrs [ class "test" ] ]
         [ Block.text
           []
           [ case pi.swissNumber == currentPI.swissNumber of
@@ -589,32 +587,29 @@ viewListPIDashboard : Model -> Travel -> Html Msg
 viewListPIDashboard model travel =
   div
     []
-    [ h2
-      [ class "title" ]
-      [ text travel.title ]
-    , Grid.container
-      [ class "box-shadow" ]
-      [ Accordion.config AccordionMsg
+    [ Grid.container
+      []
+      [ h2
+        [ class "title" ]
+        [ text travel.title ]
+      , Accordion.config AccordionMsg
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
           (List.map (piAccordionCard model.currentPI model.carouselState model.accordionState model.mouseOver) travel.listPI)
         |> Accordion.view model.accordionState
       ]
-    , h2
-      [ class "title" ]
-      [ text "Contact" ]
     , Grid.container
-      [ class "box-shadow" ]
-      [ Grid.row
+      [ class "mb-4" ]
+      [ h2
+        [ class "text-center" ]
+        [ text "Contact" ]
+      , Grid.row
         [ Row.middleXs ]
         [ Grid.col
-          [ Col.sm3 ]
-          []
-        , Grid.col
-          [ Col.sm6 ]
+          [ Col.xs12 ]
           [ div
-            [ class "pi-tags" ]
+            [ class "pi-tags lightgrey-background" ]
             [ Button.button
               [ Button.roleLink ]
               [ img
@@ -633,9 +628,6 @@ viewListPIDashboard model travel =
               ]
             ]
           ]
-        , Grid.col
-          [ Col.sm3 ]
-          []
         ]
       ]
     ]
@@ -700,10 +692,9 @@ viewCarousel medias carouselState mouseOver =
 viewPI : PI -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
 viewPI pi carouselState accordionState mouseOver =
   div
-    [] <|
+    []
     [ Grid.container
-      [ class "box-shadow"
-      ]
+      [ class "pt-3" ]
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
@@ -741,7 +732,7 @@ viewPI pi carouselState accordionState mouseOver =
           []
         ]
       , hr
-        [ class "pt-4 pb-2" ]
+        []
         []
       , h2
         [ class "title" ]
@@ -750,10 +741,10 @@ viewPI pi carouselState accordionState mouseOver =
         [ class "p-4" ]
         (List.map Media.viewAudioLanguage pi.audios)
       , hr
-        [ class "pt-4 pb-3" ]
+        [ class "pt-2" ]
         []
       , div
-        [ class "text-center" ]
+        [ class "text-center mb-4" ]
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
@@ -779,7 +770,7 @@ simpleViewPI pi carouselState mouseOver =
       [ class "title" ]
       [ text pi.title ]
     , Grid.container
-      [ class "box-shadow" ]
+      []
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
