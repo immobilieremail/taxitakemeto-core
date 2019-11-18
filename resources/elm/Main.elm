@@ -500,11 +500,10 @@ viewUserDashboard model =
         ]
       , Grid.col
         [ Col.xs12 ]
-        [ Accordion.config AccordionMsg
-          |> Accordion.withAnimation
-          |> Accordion.cards
-            [ viewUserDashboardAccordion model ]
-          |> Accordion.view model.accordionState
+        [ accordionView
+          AccordionMsg
+          model.accordionState
+          [ viewUserDashboardAccordion model ]
         ]
       ]
     ]
@@ -693,18 +692,25 @@ piAccordionCard currentPI carouselState accordionState mouseOver pi =
       ]
     }
 
+accordionView : (Accordion.State -> Msg) -> Accordion.State -> List (Accordion.Card Msg) -> Html Msg
+accordionView msg state cards =
+  Accordion.config msg
+    |> Accordion.onlyOneOpen
+    |> Accordion.withAnimation
+    |> Accordion.cards
+      cards
+    |> Accordion.view state
+
 viewListPIDashboard : Model -> Travel -> Html Msg
 viewListPIDashboard model travel =
   div
     []
     [ Grid.container
       []
-      [ Accordion.config TravelAccordionMsg
-        |> Accordion.onlyOneOpen
-        |> Accordion.withAnimation
-        |> Accordion.cards
-          (List.map (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
-        |> Accordion.view travel.accordionState
+      [ accordionView
+        TravelAccordionMsg
+        travel.accordionState
+        (List.map (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
       ]
     , Grid.container
       [ class "mb-4" ]
