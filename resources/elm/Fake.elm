@@ -1,5 +1,6 @@
 module Fake exposing (..)
 
+import Bootstrap.Accordion as Accordion
 import SwissNumber exposing (SwissNumber)
 import Travel exposing (Travel)
 import Media exposing (..)
@@ -107,6 +108,7 @@ travel ocapUrl =
           [ PI.onGoing, PI.free, PI.notReserved ]
           [ PI.shop, PI.touristicPlace, PI.restaurant ]
         ]
+    , accordionState = Accordion.initialState
     }
 
   "http://localhost:8000/api/obj/voyagebirmanie" ->
@@ -124,6 +126,7 @@ travel ocapUrl =
         [ PI.free, PI.reserved ]
         [ PI.touristicPlace ]
       ]
+    , accordionState = Accordion.initialState
     }
 
   "http://localhost:8000/api/obj/sejourtadjikistan" ->
@@ -141,6 +144,7 @@ travel ocapUrl =
         [ PI.paying ]
         [ PI.restaurant, PI.touristicPlace ]
       ]
+    , accordionState = Accordion.initialState
     }
 
   "http://localhost:8000/api/obj/vacancesmontagne" ->
@@ -163,10 +167,12 @@ travel ocapUrl =
         [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
         [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
       ]
+    , accordionState = Accordion.initialState
     }
 
   _ ->
     { swissNumber = ""
     , title = ""
     , listPI = []
+    , accordionState = Accordion.initialState
     }

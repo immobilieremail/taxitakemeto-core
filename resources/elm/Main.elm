@@ -87,7 +87,7 @@ model0 key state =
   { key = key
   , currentView = ViewUserDashboard
   , navbarState = state
-  , currentTravel = Travel "" "" []
+  , currentTravel = Travel "" "" [] Accordion.initialState
   , currentPI = PI "" "" "" "" [] [] [] []
   , proposals = []
   , listTravel = []
@@ -103,14 +103,17 @@ fakeModel0 key state =
       "http://localhost:8000/api/obj/parisdakar"
       "Paris - Dakar"
       []
+      Accordion.initialState
     , Travel
       "http://localhost:8000/api/obj/voyagebirmanie"
       "Petit voyage en Birmanie"
       []
+      Accordion.initialState
     , Travel
       "http://localhost:8000/api/obj/sejourtadjikistan"
       "Séjour au Tadjikistan"
       []
+      Accordion.initialState
     ], proposals =
     [ PI
       "http://localhost:8000/api/obj/1"
@@ -150,6 +153,7 @@ fakeModel0 key state =
           [ PI.free, PI.reserved ]
           [ PI.touristicPlace ]
         ]
+        Accordion.initialState
   }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -174,6 +178,7 @@ type Msg
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
+  | TravelAccordionMsg Accordion.State
   | CarouselPrev
   | CarouselNext
   | MouseOver OverButton
@@ -257,7 +262,11 @@ update msg model =
     Ok pi ->
       case pi /= model.currentPI of
       True ->
-        ( { model | currentPI = pi, accordionState = Accordion.initialStateCardOpen pi.swissNumber }, Cmd.none )
+        ( { model |
+          currentPI = pi,
+          currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen pi.swissNumber) model.currentTravel
+          }
+        , Cmd.none )
 
       False ->
         ( model, Cmd.none )
@@ -293,6 +302,9 @@ update msg model =
   AccordionMsg state ->
     ( { model | accordionState = state }, Cmd.none )
 
+  TravelAccordionMsg state ->
+    ( { model | currentTravel = (Travel.updateAccordionState state model.currentTravel) }, Cmd.none )
+
   CarouselPrev ->
     ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
 
@@ -320,6 +332,7 @@ subscriptions model =
     Navbar.subscriptions model.navbarState UpdateNavbar
     , Carousel.subscriptions (Carousel.pause model.carouselState) CarouselMsg
     , Accordion.subscriptions model.accordionState AccordionMsg
+    , Accordion.subscriptions model.currentTravel.accordionState TravelAccordionMsg
   ]
 
 
@@ -634,16 +647,16 @@ viewListPIDashboard model travel =
     []
     [ Grid.container
       []
-      [ Accordion.config AccordionMsg
+      [ Accordion.config TravelAccordionMsg
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
-          (List.map (piAccordionCard model.currentPI model.carouselState model.accordionState model.mouseOver) travel.listPI)
-        |> Accordion.view model.accordionState
+          (List.map (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
+        |> Accordion.view travel.accordionState
       ]
     , Grid.container
       [ class "mb-4" ]
-      [ h2
+      [ h3
         [ class "text-center" ]
         [ text "Contact" ]
       , Grid.row
