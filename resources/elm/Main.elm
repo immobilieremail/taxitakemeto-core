@@ -518,7 +518,7 @@ viewTravel travel =
       [ Grid.row
         [ Row.middleXs ]
         [ Grid.col
-          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+          [ Col.xs12, Col.textAlign Text.alignXsLeft ]
           [ h5
             []
             [ text travel.title ]
