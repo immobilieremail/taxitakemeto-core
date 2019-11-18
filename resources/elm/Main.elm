@@ -130,7 +130,26 @@ fakeModel0 key state =
       "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor."
       "Le Paradis (lieu-dit)"
       [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg" ] [] [] []
-    ]
+    ], currentTravel =
+      Travel
+        "http://localhost:8000/api/obj/parisdakar"
+        "Paris - Dakar"
+        [ PI
+          "http://localhost:8000/api/obj/1"
+          "Wat Phra Kaew Temple - Thaïland"
+          "This is a description of Meenakshi Amman Temple."
+          "9 Boulevard de la Canopée"
+          [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg"
+          , Media Media.imageType "https://bangkokmonamour.files.wordpress.com/2015/09/vue-generale-temple.jpg"
+          , Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/c/c1/Wat_Phra_Kaew_by_Ninara_TSP_edit_crop.jpg"
+          ]
+          [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+          , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+          , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
+          ]
+          [ PI.free, PI.reserved ]
+          [ PI.touristicPlace ]
+        ]
   }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -447,8 +466,8 @@ viewTravel travel =
 viewListTravelDashboard : List Travel -> Html Msg
 viewListTravelDashboard listTravel =
   Grid.container
-      []
-      (List.map viewTravel listTravel)
+    []
+    (List.map viewTravel listTravel)
 
 
 
