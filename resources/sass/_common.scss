@@ -58,6 +58,16 @@ h5 {
     width: 100%;
 }
 
+.card-option {
+    border: none !important;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.accordion-header {
+    border-bottom: none !important;
+}
+
 .little-image {
     @include img-fluid;
     max-width: 70px !important;

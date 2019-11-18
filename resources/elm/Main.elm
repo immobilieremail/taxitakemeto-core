@@ -438,11 +438,11 @@ viewUserDashboardAccordionToggle accordionState =
     [ Grid.col
       [ Col.xs8 ]
       [ h5
-        [ style "text-align" "left" ]
+        [ class "text-left" ]
         [ text "Other Travels" ]
       ]
     , Grid.col
-      [ Col.xs4, Col.attrs [ style "text-align" "right" ] ]
+      [ Col.xs4, Col.textAlign Text.alignXsRight ]
       [ case Accordion.isOpen "card1" accordionState of
         True ->
           img
@@ -464,9 +464,9 @@ viewUserDashboardAccordion : Model -> Accordion.Card Msg
 viewUserDashboardAccordion model =
   Accordion.card
     { id = "card1"
-    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%", style "margin-bottom" "1.5rem" ] ]
+    , options = [ Card.attrs [ class "card-option" ] ]
     , header =
-      Accordion.header [ style "border-bottom" "none" ] <|
+      Accordion.header [ class "accordion-header" ] <|
       Accordion.toggle
         [ style "text-decoration" "none", style "width" "100%" ]
         [ viewUserDashboardAccordionToggle model.accordionState ]
@@ -672,9 +672,9 @@ piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> 
 piAccordionCard currentPI carouselState accordionState mouseOver pi =
   Accordion.card
     { id = pi.swissNumber
-    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%", style "margin-bottom" "1.5rem" ] ]
+    , options = [ Card.attrs [ class "card-option" ] ]
     , header =
-      Accordion.header [ style "border-bottom" "none" ] <|
+      Accordion.header [ class "accordion-header" ] <|
       Accordion.toggle
         [ class "card-button" ]
         [ viewSimplePILink pi ]
