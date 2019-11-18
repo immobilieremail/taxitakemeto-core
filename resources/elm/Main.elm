@@ -76,7 +76,6 @@ type alias Model =
   , currentPI : PI
   , proposals : List PI
   , listTravel : List Travel
-  , listProposedTravel : List Travel
   , carouselState : Carousel.State
   , accordionState : Accordion.State
   , mouseOver : List OverButton
@@ -91,7 +90,6 @@ model0 key state =
   , currentPI = PI "" "" "" "" [] [] [] []
   , proposals = []
   , listTravel = []
-  , listProposedTravel = []
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
   , mouseOver = []
@@ -111,11 +109,6 @@ fakeModel0 key state =
     , Travel
       "http://localhost:8000/api/obj/sejourtadjikistan"
       "Séjour au Tadjikistan"
-      []
-    ], listProposedTravel =
-    [ Travel
-      "http://localhost:8000/api/obj/vacancesmontagne"
-      "Vacances à la montagne"
       []
     ], proposals =
     [ PI
@@ -323,7 +316,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewListTravelDashboard model.listTravel model.listProposedTravel
+          , viewListTravelDashboard "My Travels" model.listTravel
           ]
 
       ViewListPIDashboard ->
@@ -407,22 +400,16 @@ viewTravel travel =
       ]
     ]
 
-viewListTravelDashboard : List Travel -> List Travel -> Html Msg
-viewListTravelDashboard listTravel listProposedTravel =
+viewListTravelDashboard : String -> List Travel -> Html Msg
+viewListTravelDashboard title listTravel =
   div
     []
     [ h2
       [ class "title" ]
-      [ text "My Travels" ]
+      [ text title ]
     , Grid.container
       []
       (List.map viewTravel listTravel)
-    , h2
-      [ class "title" ]
-      [ text "Received proposals" ]
-    , Grid.container
-      []
-      (List.map viewTravel listProposedTravel)
     ]
 
 
