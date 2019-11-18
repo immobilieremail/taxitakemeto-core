@@ -209,7 +209,7 @@ updateFromUrl model url commonCmd =
         ( model, commonCmd )
 
       Just ocapUrl ->
-        ( { model | currentView = LoadingPage }
+        ( model
         , Cmd.batch
           [ commonCmd
           , getTravelfromUrl ocapUrl
@@ -254,10 +254,10 @@ update msg model =
     Ok travel ->
       case travel /= model.currentTravel of
       True ->
-        ( { model | currentTravel = travel, currentView = ViewListPIDashboard }, Cmd.none )
+        ( { model | currentTravel = travel }, Cmd.none )
 
       False ->
-        ( { model | currentView = ViewListPIDashboard }, Cmd.none )
+        ( model, Cmd.none )
 
     Err _ ->
       ( model, Cmd.none )
@@ -824,7 +824,7 @@ simpleViewPI pi carouselState mouseOver =
         [ Button.button
           [ Button.large
           , Button.outlineSecondary
-          , Button.onClick (ViewChanged ViewListPIDashboard)
+          , Button.onClick (ViewChanged ViewUserDashboard)
           ]
           [ text "Exit view"
           , img
