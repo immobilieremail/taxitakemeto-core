@@ -60,7 +60,8 @@ main =
 -- MODEL
 
 type CurrentView
-  = ViewListTravelDashboard
+  = ViewUserDashboard
+  | ViewListTravelDashboard
   | ViewListPIDashboard
   | ViewPI
   | SimpleViewPI
@@ -84,7 +85,7 @@ type alias Model =
 
 model0 key state =
   { key = key
-  , currentView = ViewListTravelDashboard
+  , currentView = ViewUserDashboard
   , navbarState = state
   , currentTravel = Travel "" "" []
   , currentPI = PI "" "" "" "" [] [] [] []
@@ -184,7 +185,7 @@ updateFromUrl model url commonCmd =
   Just route ->
     case route of
     RouteHome ->
-      ( { model | currentView = ViewListTravelDashboard }, commonCmd )
+      ( { model | currentView = ViewUserDashboard }, commonCmd )
 
     RouteSearch ->
       ( { model | currentView = ViewSearchPI }, commonCmd )
@@ -312,11 +313,21 @@ view model =
   { title = "TaxiTakeMeTo"
   , body =
     [ case model.currentView of
+      ViewUserDashboard ->
+        div
+          []
+          [ viewNavbar model
+          , viewUserDashboard model
+          ]
+
       ViewListTravelDashboard ->
         div
           []
           [ viewNavbar model
-          , viewListTravelDashboard "My Travels" model.listTravel
+          , h2
+            [ class "title" ]
+            [ text "My Travels" ]
+          , viewListTravelDashboard model.listTravel
           ]
 
       ViewListPIDashboard ->
@@ -382,6 +393,39 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
+viewUserDashboard : Model -> Html Msg
+viewUserDashboard model =
+  Grid.container
+    []
+    [ Grid.row
+      []
+      [ Grid.col
+        [ Col.xs12 ]
+        [ h2
+          [ class "title" ]
+          [ text "Current Travel" ]
+        , h3
+          [ class "text-center" ]
+          [ text model.currentTravel.title ]
+        , viewListPIDashboard model model.currentTravel
+        ]
+      , Grid.col
+        [ Col.xs12 ]
+        [ hr
+          []
+          []
+        ]
+      , Grid.col
+        [ Col.xs12 ]
+        [ h2
+          [ class "title" ]
+          [ text "Other Travels" ]
+        , viewListTravelDashboard model.listTravel
+        ]
+      ]
+    ]
+
+
 viewTravel : Travel -> Html Msg
 viewTravel travel =
   a
@@ -400,17 +444,12 @@ viewTravel travel =
       ]
     ]
 
-viewListTravelDashboard : String -> List Travel -> Html Msg
-viewListTravelDashboard title listTravel =
-  div
-    []
-    [ h2
-      [ class "title" ]
-      [ text title ]
-    , Grid.container
+viewListTravelDashboard : List Travel -> Html Msg
+viewListTravelDashboard listTravel =
+  Grid.container
       []
       (List.map viewTravel listTravel)
-    ]
+
 
 
 viewSearchBar : Html Msg
@@ -576,10 +615,7 @@ viewListPIDashboard model travel =
     []
     [ Grid.container
       []
-      [ h2
-        [ class "title" ]
-        [ text travel.title ]
-      , Accordion.config AccordionMsg
+      [ Accordion.config AccordionMsg
         |> Accordion.onlyOneOpen
         |> Accordion.withAnimation
         |> Accordion.cards
