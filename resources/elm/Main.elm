@@ -425,6 +425,57 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
+viewBlockTravel : Travel -> Block.Item Msg
+viewBlockTravel travel =
+  Block.text
+    []
+    [ viewTravel travel ]
+
+viewUserDashboardAccordionToggle : Accordion.State -> Html Msg
+viewUserDashboardAccordionToggle accordionState =
+  Grid.row
+    []
+    [ Grid.col
+      [ Col.xs8 ]
+      [ h5
+        [ style "text-align" "left" ]
+        [ text "Other Travels" ]
+      ]
+    , Grid.col
+      [ Col.xs4, Col.attrs [ style "text-align" "right" ] ]
+      [ case Accordion.isOpen "card1" accordionState of
+        True ->
+          img
+            [ src "https://image.noelshack.com/fichiers/2019/47/1/1574075725-arrow-up.png"
+            , style "max-width" "20px"
+            ]
+            [ text "/\\" ]
+
+        False ->
+          img
+            [ src "https://image.noelshack.com/fichiers/2019/47/1/1574075721-arrow-down.png"
+            , style "max-width" "20px"
+            ]
+            [ text "\\/" ]
+      ]
+    ]
+
+viewUserDashboardAccordion : Model -> Accordion.Card Msg
+viewUserDashboardAccordion model =
+  Accordion.card
+    { id = "card1"
+    , options = [ Card.attrs [ style "border" "none", style "max-width" "100%", style "margin-bottom" "1.5rem" ] ]
+    , header =
+      Accordion.header [ style "border-bottom" "none" ] <|
+      Accordion.toggle
+        [ style "text-decoration" "none", style "width" "100%" ]
+        [ viewUserDashboardAccordionToggle model.accordionState ]
+    , blocks =
+      [ Accordion.block []
+        (List.map viewBlockTravel model.listTravel)
+      ]
+    }
+
 viewUserDashboard : Model -> Html Msg
 viewUserDashboard model =
   Grid.container
@@ -449,10 +500,11 @@ viewUserDashboard model =
         ]
       , Grid.col
         [ Col.xs12 ]
-        [ h2
-          [ class "title" ]
-          [ text "Other Travels" ]
-        , viewListTravelDashboard model.listTravel
+        [ Accordion.config AccordionMsg
+          |> Accordion.withAnimation
+          |> Accordion.cards
+            [ viewUserDashboardAccordion model ]
+          |> Accordion.view model.accordionState
         ]
       ]
     ]
