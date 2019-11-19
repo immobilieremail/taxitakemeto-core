@@ -701,6 +701,17 @@ accordionView msg state cards =
       cards
     |> Accordion.view state
 
+viewContactButton : String -> Html Msg
+viewContactButton source =
+  Button.button
+    [ Button.roleLink ]
+    [ img
+      [ src source
+      , class "little-image"
+      ]
+      []
+    ]
+
 viewListPIDashboard : Model -> Travel -> Html Msg
 viewListPIDashboard model travel =
   div
@@ -723,22 +734,8 @@ viewListPIDashboard model travel =
           [ Col.xs12 ]
           [ div
             [ class "pi-tags lightgrey-background" ]
-            [ Button.button
-              [ Button.roleLink ]
-              [ img
-                [ src "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
-                , class "little-image"
-                ]
-                []
-              ]
-            , Button.button
-              [ Button.roleLink ]
-              [ img
-                [ src "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
-                , class "little-image"
-                ]
-                []
-              ]
+            [ viewContactButton "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
+            , viewContactButton "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
             ]
           ]
         ]
