@@ -425,10 +425,10 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewBlockTravel : Travel -> Block.Item Msg
-viewBlockTravel travel =
+viewBlockTravel : SwissNumber -> Travel -> Block.Item Msg
+viewBlockTravel swissNumber travel =
   Block.text
-    []
+    [ if swissNumber == travel.swissNumber then class "lightgrey-background" else class "" ]
     [ viewTravel travel ]
 
 viewUserDashboardAccordionToggle : Accordion.State -> Html Msg
@@ -473,7 +473,7 @@ viewUserDashboardAccordion model =
     , blocks =
       [ Accordion.block
         [ Block.attrs [ class "user-accordion-body-padding" ] ]
-        (List.map viewBlockTravel model.listTravel)
+        (List.map (viewBlockTravel model.currentTravel.swissNumber) model.listTravel)
       ]
     }
 
