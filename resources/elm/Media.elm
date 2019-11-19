@@ -136,8 +136,7 @@ viewAudioLanguage audio =
       [ Col.sm6, Col.textAlign Text.alignXsCenter ]
       [ Html.audio
         [ controls True
-        , style "width" "100%"
-        , style "max-width" "300px"
+        , class "audio-size"
         ]
         [ Html.source
           [ src audio.path
