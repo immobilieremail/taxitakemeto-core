@@ -802,6 +802,24 @@ viewCarousel medias carouselState mouseOver =
     ]
 
 
+piChangeViewButton : String -> Msg -> Html Msg
+piChangeViewButton txt msg =
+  div
+    [ class "text-center mb-4" ]
+    [ Button.button
+      [ Button.large
+      , Button.outlineSecondary
+      , Button.onClick msg
+      ]
+      [ text txt
+      , img
+        [ class "pi-view-button"
+        , src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png"
+        ]
+        []
+      ]
+    ]
+
 viewPI : PI -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
 viewPI pi carouselState accordionState mouseOver =
   div
@@ -856,21 +874,7 @@ viewPI pi carouselState accordionState mouseOver =
       , hr
         [ class "pt-2" ]
         []
-      , div
-        [ class "text-center mb-4" ]
-        [ Button.button
-          [ Button.large
-          , Button.outlineSecondary
-          , Button.onClick (ViewChanged SimpleViewPI)
-          ]
-          [ text "Simple view"
-          , img
-            [ class "pi-view-button"
-            , src "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/PICOL_icon_View.svg/1024px-PICOL_icon_View.svg.png"
-            ]
-            []
-          ]
-        ]
+      , piChangeViewButton "Simple view" (ViewChanged SimpleViewPI)
       ]
     ]
 
@@ -909,21 +913,7 @@ simpleViewPI pi carouselState mouseOver =
       , hr
         [ class "pt-2" ]
         []
-      , div
-        [ class "text-center mb-4" ]
-        [ Button.button
-          [ Button.large
-          , Button.outlineSecondary
-          , Button.onClick (ViewChanged ViewUserDashboard)
-          ]
-          [ text "Exit view"
-          , img
-            [ class "pi-view-button"
-            , src "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Ic_exit_to_app_48px.svg/1024px-Ic_exit_to_app_48px.svg.png"
-            ]
-            []
-          ]
-        ]
+      , piChangeViewButton "Exit view" (ViewChanged ViewUserDashboard)
       ]
     ]
 
