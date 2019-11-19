@@ -471,7 +471,8 @@ viewUserDashboardAccordion model =
         [ style "text-decoration" "none", style "width" "100%" ]
         [ viewUserDashboardAccordionToggle model.accordionState ]
     , blocks =
-      [ Accordion.block []
+      [ Accordion.block
+        [ Block.attrs [ class "user-accordion-body-padding" ] ]
         (List.map viewBlockTravel model.listTravel)
       ]
     }
