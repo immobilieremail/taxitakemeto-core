@@ -170,8 +170,7 @@ viewTypePI typepi =
     Grid.col
       [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
+        [ class "pi-type-icon"
         , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
         ]
         []
@@ -181,8 +180,7 @@ viewTypePI typepi =
     Grid.col
       [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
+        [ class "pi-type-icon"
         , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
         ]
         []
@@ -192,8 +190,7 @@ viewTypePI typepi =
     Grid.col
       [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
+        [ class "pi-type-icon"
         , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
         ]
         []
@@ -203,8 +200,7 @@ viewTypePI typepi =
     Grid.col
       [ Col.xs3, Col.attrs [ class "pi-type" ] ]
       [ img
-        [ class "d-block rounded"
-        , style "width" "30px"
+        [ class "pi-type-icon"
         , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
         ]
         []

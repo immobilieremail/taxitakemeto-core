@@ -122,6 +122,13 @@ h5 {
     margin-top: .5rem !important;
 }
 
+.pi-type-icon {
+    @include rounded;
+    // bootstrap .d-block
+    display: block !important;
+    width: 30px;
+}
+
 .pi-tag {
     width: 120px;
     height: 30px;
