@@ -712,6 +712,26 @@ viewContactButton source =
       []
     ]
 
+viewContact : Html Msg
+viewContact =
+  Grid.container
+    [ class "mb-4" ]
+    [ h3
+      [ class "text-center" ]
+      [ text "Contact" ]
+    , Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs12 ]
+        [ div
+          [ class "pi-tags lightgrey-background" ]
+          [ viewContactButton "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
+          , viewContactButton "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
+          ]
+        ]
+      ]
+    ]
+
 viewListPIDashboard : Model -> Travel -> Html Msg
 viewListPIDashboard model travel =
   div
@@ -723,23 +743,7 @@ viewListPIDashboard model travel =
         travel.accordionState
         (List.map (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
       ]
-    , Grid.container
-      [ class "mb-4" ]
-      [ h3
-        [ class "text-center" ]
-        [ text "Contact" ]
-      , Grid.row
-        [ Row.middleXs ]
-        [ Grid.col
-          [ Col.xs12 ]
-          [ div
-            [ class "pi-tags lightgrey-background" ]
-            [ viewContactButton "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
-            , viewContactButton "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
-            ]
-          ]
-        ]
-      ]
+    , viewContact
     ]
 
 viewCarouselButtonPrev : List OverButton -> Html Msg
