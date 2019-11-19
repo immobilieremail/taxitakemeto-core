@@ -390,7 +390,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewSearchPI model.proposals
+          , viewSearchPI model.currentTravel model.proposals
           ]
     ]
   }
@@ -608,8 +608,8 @@ viewSearchAddToList str =
       ]
     ]
 
-viewSearchPI : List PI -> Html Msg
-viewSearchPI listProposal =
+viewSearchPI : Travel -> List PI -> Html Msg
+viewSearchPI currentTravel listProposal =
   Grid.container
     [ class "mt-4" ]
     [ viewSearchBar
@@ -629,7 +629,7 @@ viewSearchPI listProposal =
       [ div
       []
       (List.map viewProposal listProposal)
-    , viewSearchAddToList "Add to 'Paris - Dakar' travel"
+    , viewSearchAddToList ("Add to '" ++ currentTravel.title ++ "' travel")
     , viewSearchAddToList "Create a new travel"
     ]
     ]
