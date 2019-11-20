@@ -25,6 +25,7 @@ import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
 import Bootstrap.Carousel.Slide as Slide
+import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.InputGroup as InputGroup
@@ -66,6 +67,7 @@ type CurrentView
   | SimpleViewPI
   | LoadingPage
   | ViewSearchPI
+  | ViewNewTravel
 
 
 type alias Model =
@@ -422,6 +424,13 @@ view model =
           [ viewNavbar model
           , viewSearchPI model
           ]
+
+      ViewNewTravel ->
+        div
+          []
+          [ viewNavbar model
+          , viewCreateNewTravel model
+          ]
     ]
   }
 
@@ -535,6 +544,32 @@ viewUserDashboard model =
           AccordionMsg
           model.accordionState
           [ viewUserDashboardAccordion model ]
+        ]
+      ]
+    ]
+
+
+viewCreateNewTravel : Model -> Html Msg
+viewCreateNewTravel model =
+  Grid.container
+    []
+    [ Grid.row
+      []
+      [ Grid.col
+        [ Col.xs12 ]
+        [ h2
+          [ class "title" ]
+          [ text "Create new Travel" ]
+        , Form.form
+          []
+          [ Form.group
+            []
+            [ h4
+              []
+              [ text "Title" ]
+            , Input.text [ Input.attrs [ placeholder "My Travel title" ] ]
+            ]
+          ]
         ]
       ]
     ]
@@ -668,7 +703,7 @@ viewSearchPI model =
         []
         (List.map (viewProposal model.checked) model.proposals)
       , viewSearchAddToList ("Add to '" ++ model.currentTravel.title ++ "' travel") (AddCheckedToTravel model.currentTravel.swissNumber)
-      , viewSearchAddToList "Create a new travel" (AddCheckedToTravel model.currentTravel.swissNumber)
+      , viewSearchAddToList "Create a new travel" (ViewChanged ViewNewTravel)
       ]
     ]
 
