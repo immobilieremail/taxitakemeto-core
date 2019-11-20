@@ -76,6 +76,7 @@ type alias Model =
   , currentTravel : Travel
   , currentPI : PI
   , proposals : List PI
+  , checked : List PI
   , listTravel : List Travel
   , carouselState : Carousel.State
   , accordionState : Accordion.State
@@ -90,6 +91,7 @@ model0 key state =
   , currentTravel = Travel "" "" [] Accordion.initialState
   , currentPI = PI "" "" "" "" [] [] [] []
   , proposals = []
+  , checked = []
   , listTravel = []
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
@@ -183,6 +185,7 @@ type Msg
   | CarouselNext
   | MouseOver OverButton
   | MouseOut OverButton
+  | AddToCheck PI Bool
 
 
 type Route
@@ -322,6 +325,13 @@ update msg model =
   MouseOut overButton ->
     ( { model | mouseOver = List.filter (\n -> n /= overButton) model.mouseOver }, Cmd.none )
 
+  AddToCheck pi bool ->
+    case bool of
+      True ->
+        ( { model | checked = (List.filter (\x -> x.swissNumber /= pi.swissNumber) model.checked) ++ [ pi ] }, Cmd.none )
+
+      False ->
+        ( { model | checked = (List.filter (\x -> x.swissNumber /= pi.swissNumber) model.checked) }, Cmd.none )
 
 -- SUBSCRIPTIONS
 
@@ -390,7 +400,7 @@ view model =
         div
           []
           [ viewNavbar model
-          , viewSearchPI model.currentTravel model.proposals
+          , viewSearchPI model
           ]
     ]
   }
@@ -563,8 +573,8 @@ viewSearchBar =
       ]
     ]
 
-viewProposal : PI -> Html Msg
-viewProposal proposal =
+viewProposal : List PI -> PI -> Html Msg
+viewProposal checked proposal =
   label
     [ class "row pb-2"
     , id "checkout"
@@ -587,7 +597,13 @@ viewProposal proposal =
       ]
     , div
       [ class "col-2 text-center" ]
-      [ Checkbox.checkbox [ Checkbox.id "checkout" ] "" ]
+      [ Checkbox.checkbox
+        [ Checkbox.id "checkout"
+        , Checkbox.onCheck (AddToCheck proposal)
+        , Checkbox.checked (List.member proposal checked)
+        ]
+        ""
+      ]
       ]
 
 viewSearchAddToList : String -> Html Msg
@@ -608,8 +624,8 @@ viewSearchAddToList str =
       ]
     ]
 
-viewSearchPI : Travel -> List PI -> Html Msg
-viewSearchPI currentTravel listProposal =
+viewSearchPI : Model -> Html Msg
+viewSearchPI model =
   Grid.container
     [ class "mt-4" ]
     [ viewSearchBar
@@ -628,9 +644,7 @@ viewSearchPI currentTravel listProposal =
       [ class "proposals mb-4" ]
       [ div
       []
-      (List.map viewProposal listProposal)
-    , viewSearchAddToList ("Add to '" ++ currentTravel.title ++ "' travel")
-    , viewSearchAddToList "Create a new travel"
+        (List.map (viewProposal model.checked) model.proposals)
     ]
     ]
 
