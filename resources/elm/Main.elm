@@ -63,7 +63,6 @@ type CurrentView
   = ViewUserDashboard
   | ViewListTravelDashboard
   | ViewListPIDashboard
-  | ViewPI
   | SimpleViewPI
   | LoadingPage
   | ViewSearchPI
@@ -266,11 +265,16 @@ update msg model =
     Ok pi ->
       case pi /= model.currentPI of
       True ->
-        ( { model |
-          currentPI = pi,
-          currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen pi.swissNumber) model.currentTravel
-          }
-        , Cmd.none )
+        let
+          indexList = List.range 0 (List.length model.currentTravel.listPI)
+          indexPI = List.sum (List.filter (\index -> Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList)
+          accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
+        in
+          ( { model |
+            currentPI = pi,
+            currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+            }
+          , Cmd.none )
 
       False ->
         ( model, Cmd.none )
@@ -402,15 +406,8 @@ view model =
           , viewListPIDashboard model model.currentTravel
           ]
 
-      ViewPI ->
-        div
-          []
-          [ viewNavbar model
-          , viewPI model.currentPI model.carouselState model.accordionState model.mouseOver
-          ]
-
       SimpleViewPI ->
-        simpleViewPI model.currentPI model.carouselState model.mouseOver
+        simpleViewPI model.carouselState model.mouseOver model.currentPI
 
       LoadingPage ->
         div
@@ -709,10 +706,10 @@ viewSimplePILink pi =
       ]
     ]
 
-piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> PI -> Accordion.Card Msg
-piAccordionCard currentPI carouselState accordionState mouseOver pi =
+piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> Int -> PI -> Accordion.Card Msg
+piAccordionCard currentPI carouselState accordionState mouseOver index pi =
   Accordion.card
-    { id = pi.swissNumber
+    { id = pi.swissNumber ++ "#" ++ String.fromInt index
     , options = [ Card.attrs [ class "card-option" ] ]
     , header =
       Accordion.header [ class "accordion-header" ] <|
@@ -725,7 +722,7 @@ piAccordionCard currentPI carouselState accordionState mouseOver pi =
           []
           [ case pi.swissNumber == currentPI.swissNumber of
             True ->
-              viewPI currentPI carouselState accordionState mouseOver
+              viewPI carouselState accordionState mouseOver index currentPI
 
             False ->
               Loading.view
@@ -783,7 +780,7 @@ viewListPIDashboard model travel =
       [ accordionView
         TravelAccordionMsg
         travel.accordionState
-        (List.map (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
+        (List.indexedMap (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
       ]
     , viewContact
     ]
@@ -863,8 +860,8 @@ piChangeViewButton txt msg =
       ]
     ]
 
-viewPI : PI -> Carousel.State -> Accordion.State -> List OverButton -> Html Msg
-viewPI pi carouselState accordionState mouseOver =
+viewPI : Carousel.State -> Accordion.State -> List OverButton -> Int -> PI -> Html Msg
+viewPI carouselState accordionState mouseOver index pi =
   div
     []
     [ Grid.container
@@ -873,7 +870,7 @@ viewPI pi carouselState accordionState mouseOver =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ case Accordion.isOpen pi.swissNumber accordionState of
+          [ case Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) accordionState of
             True ->
               viewCarousel pi.medias carouselState mouseOver
 
@@ -922,8 +919,8 @@ viewPI pi carouselState accordionState mouseOver =
     ]
 
 
-simpleViewPI : PI -> Carousel.State -> List OverButton -> Html Msg
-simpleViewPI pi carouselState mouseOver =
+simpleViewPI : Carousel.State -> List OverButton -> PI -> Html Msg
+simpleViewPI carouselState mouseOver pi =
   div
     []
     [ Grid.container
