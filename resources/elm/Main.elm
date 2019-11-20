@@ -186,6 +186,7 @@ type Msg
   | MouseOver OverButton
   | MouseOut OverButton
   | AddToCheck PI Bool
+  | AddCheckedToTravel SwissNumber
 
 
 type Route
@@ -332,6 +333,36 @@ update msg model =
 
       False ->
         ( { model | checked = (List.filter (\x -> x.swissNumber /= pi.swissNumber) model.checked) }, Cmd.none )
+
+  AddCheckedToTravel swissNumber ->
+    case model.currentTravel.swissNumber == swissNumber of
+      True ->
+        let
+          oldCurrentTravel = model.currentTravel
+          newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
+
+          oldListTravel = model.listTravel
+          filteredListTravel = (List.filter (\x -> x.swissNumber /= swissNumber) oldListTravel)
+          newListTravel = (List.map (\x -> if x.swissNumber == swissNumber then { x | listPI = x.listPI ++ model.checked } else x) filteredListTravel)
+        in
+          ( { model
+            | currentTravel = newCurrentTravel
+            , listTravel = newListTravel
+            , checked = []
+            }, Cmd.none )
+
+      False ->
+        let
+          oldListTravel = model.listTravel
+          filteredListTravel = (List.filter (\x -> x.swissNumber /= swissNumber) oldListTravel)
+          newListTravel = (List.map (\x -> if x.swissNumber == swissNumber then { x | listPI = x.listPI ++ model.checked } else x) filteredListTravel)
+        in
+          ( { model
+            | listTravel = newListTravel
+            , checked = []
+            }, Cmd.none )
+
+
 
 -- SUBSCRIPTIONS
 
@@ -604,10 +635,10 @@ viewProposal checked proposal =
         ]
         ""
       ]
-      ]
+    ]
 
-viewSearchAddToList : String -> Html Msg
-viewSearchAddToList str =
+viewSearchAddToList : String -> Msg -> Html Msg
+viewSearchAddToList str msg =
   Grid.row
     [ Row.attrs [ class "pt-2 pb-2 lightgrey-background mb-2" ] ]
     [ Grid.col
@@ -619,7 +650,9 @@ viewSearchAddToList str =
     , Grid.col
       [ Col.xs4, Col.textAlign Text.alignXsRight ]
       [ Button.button
-        [ Button.success ]
+        [ Button.success
+        , Button.onClick msg
+        ]
         [ text "+" ]
       ]
     ]
@@ -643,9 +676,11 @@ viewSearchPI model =
     , div
       [ class "proposals mb-4" ]
       [ div
-      []
+        []
         (List.map (viewProposal model.checked) model.proposals)
-    ]
+      , viewSearchAddToList ("Add to '" ++ model.currentTravel.title ++ "' travel") (AddCheckedToTravel model.currentTravel.swissNumber)
+      , viewSearchAddToList "Create a new travel" (AddCheckedToTravel model.currentTravel.swissNumber)
+      ]
     ]
 
 
