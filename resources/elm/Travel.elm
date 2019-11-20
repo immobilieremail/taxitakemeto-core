@@ -11,6 +11,23 @@ type alias Travel =
   , accordionState : Accordion.State
   }
 
+
+
+swissNumberIsNotEqual : SwissNumber -> Travel -> Bool
+swissNumberIsNotEqual swissNumber travel =
+  travel.swissNumber /= swissNumber
+
+
+updateListPI : SwissNumber -> List PI -> Travel -> Travel
+updateListPI swissNumber list travel =
+  case travel.swissNumber == swissNumber of
+    True ->
+      { travel | listPI = travel.listPI ++ list }
+
+    False ->
+      travel
+
+
 updateAccordionState : Accordion.State -> Travel -> Travel
 updateAccordionState state travel =
   { swissNumber = travel.swissNumber

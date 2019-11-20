@@ -1,8 +1,4 @@
-module PI exposing (
-  Tag, TypePI, PI,
-  viewTagPI, viewTypePI,
-  tagDecoder, typePIDecoder, piDecoder,
-  free, paying, reserved, notReserved, onGoing, restaurant, hotel, shop, touristicPlace)
+module PI exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -45,6 +41,11 @@ type alias PI =
   , typespi : List TypePI
   }
 
+
+
+swissNumberIsNotEqual : SwissNumber -> PI -> Bool
+swissNumberIsNotEqual swissNumber pi =
+  pi.swissNumber /= swissNumber
 
 
 -- CONSTRUCTORS (used to fake PI)

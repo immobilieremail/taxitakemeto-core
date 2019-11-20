@@ -329,38 +329,30 @@ update msg model =
   AddToCheck pi bool ->
     case bool of
       True ->
-        ( { model | checked = (List.filter (\x -> x.swissNumber /= pi.swissNumber) model.checked) ++ [ pi ] }, Cmd.none )
+        ( { model
+          | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked) ++ [ pi ]
+          }, Cmd.none )
 
       False ->
-        ( { model | checked = (List.filter (\x -> x.swissNumber /= pi.swissNumber) model.checked) }, Cmd.none )
+        ( { model
+          | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked)
+          }, Cmd.none )
 
   AddCheckedToTravel swissNumber ->
-    case model.currentTravel.swissNumber == swissNumber of
-      True ->
-        let
-          oldCurrentTravel = model.currentTravel
-          newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
+    let
+      oldListTravel = model.listTravel
+      newListTravel = (List.map (Travel.updateListPI swissNumber model.checked) oldListTravel)
+    in
+      case model.currentTravel.swissNumber == swissNumber of
+        True ->
+          let
+            oldCurrentTravel = model.currentTravel
+            newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
+          in
+            ( { model | currentTravel = newCurrentTravel, listTravel = newListTravel, checked = [] }, Cmd.none )
 
-          oldListTravel = model.listTravel
-          filteredListTravel = (List.filter (\x -> x.swissNumber /= swissNumber) oldListTravel)
-          newListTravel = (List.map (\x -> if x.swissNumber == swissNumber then { x | listPI = x.listPI ++ model.checked } else x) filteredListTravel)
-        in
-          ( { model
-            | currentTravel = newCurrentTravel
-            , listTravel = newListTravel
-            , checked = []
-            }, Cmd.none )
-
-      False ->
-        let
-          oldListTravel = model.listTravel
-          filteredListTravel = (List.filter (\x -> x.swissNumber /= swissNumber) oldListTravel)
-          newListTravel = (List.map (\x -> if x.swissNumber == swissNumber then { x | listPI = x.listPI ++ model.checked } else x) filteredListTravel)
-        in
-          ( { model
-            | listTravel = newListTravel
-            , checked = []
-            }, Cmd.none )
+        False ->
+          ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
 
 
 
