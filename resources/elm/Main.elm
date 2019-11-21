@@ -82,6 +82,7 @@ type alias Model =
   , carouselState : Carousel.State
   , accordionState : Accordion.State
   , mouseOver : List OverButton
+  , formTitle : String
   }
 
 
@@ -97,6 +98,7 @@ model0 key state =
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
   , mouseOver = []
+  , formTitle = ""
   }
 
 fakeModel0 key state =
@@ -188,6 +190,9 @@ type Msg
   | MouseOut OverButton
   | AddToCheck PI Bool
   | AddCheckedToTravel SwissNumber
+  | CreateNewTravel
+  | GotNewTravel (Result Http.Error Travel)
+  | SetTitle String
 
 
 type Route
@@ -359,6 +364,20 @@ update msg model =
 
         False ->
           ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
+
+  CreateNewTravel ->
+    ( model, createNewTravel model.formTitle model.checked )
+
+  GotNewTravel result ->
+    case result of
+      Ok travel ->
+        ( { model | currentTravel = travel, listTravel = model.listTravel ++ [ travel ] }, Cmd.none )
+
+      Err _ ->
+        ( model, Cmd.none )
+
+  SetTitle title ->
+    ( { model | formTitle = title }, Cmd.none )
 
 
 
@@ -549,6 +568,42 @@ viewUserDashboard model =
     ]
 
 
+viewOneLinePI : PI -> Html Msg
+viewOneLinePI pi =
+  div
+    [ class "row lightgray-background mb-3" ]
+    [ div
+      [ class "col-md-2 col-4 text-center" ]
+      [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] pi.medias ]
+    , div
+      [ class "col-md-8 col-6 text-left" ]
+      [ h4
+        [ class "resize-text" ]
+        [ text pi.title ]
+      , text pi.address
+      ]
+    , div
+      [ class "col-2 text-center" ]
+      [ Button.button
+        [ Button.small
+        , Button.onClick (AddToCheck pi False)
+        ]
+        [ img
+          [ class "icon-image"
+          , src "https://image.flaticon.com/icons/png/512/53/53891.png"
+          ]
+          []
+        ]
+      ]
+    ]
+
+viewCheckedPI : PI -> Html Msg
+viewCheckedPI pi =
+  Grid.container
+    []
+    [ viewOneLinePI pi
+    ]
+
 viewCreateNewTravel : Model -> Html Msg
 viewCreateNewTravel model =
   Grid.container
@@ -560,17 +615,31 @@ viewCreateNewTravel model =
         [ h2
           [ class "title" ]
           [ text "Create new Travel" ]
-        , Form.form
-          []
-          [ Form.group
-            []
-            [ h4
-              []
-              [ text "Title" ]
-            , Input.text [ Input.attrs [ placeholder "My Travel title" ] ]
+        , Form.formInline
+          [ onSubmit CreateNewTravel ]
+          [ Input.text
+            [ Input.attrs [ placeholder "My Travel title" ]
+            , Input.onInput SetTitle
             ]
+          , Button.button
+            [ Button.primary
+            , Button.attrs [ class "ml-sm-2 my-2" ]
+            ]
+            [ text "Create" ]
           ]
         ]
+      ]
+    , Grid.row
+      []
+      [ Grid.col
+        [ Col.xs12 ]
+        [ hr
+          []
+          []
+        ]
+      , Grid.col
+        [ Col.xs12 ]
+        (List.map viewCheckedPI model.checked)
       ]
     ]
 
@@ -1019,6 +1088,15 @@ decodeAudioContent =
 --     , except = Http.exceptJson GotTravel travelDecoder
 --     }
 
+-- createNewTravel : String -> List PI -> Cmd Msg
+-- createNewTravel title listPI =
+--   Http.post
+--     { url = "http://localhost:8000/api/travel"
+--     , body = []
+--     , except = Http.expectJson GotNewTravel travelDecoder
+--     }
+
+
 --- Temporary fakers
 
 getPIfromUrl : String -> Cmd Msg
@@ -1033,5 +1111,12 @@ getTravelfromUrl ocapUrl =
   Process.sleep 2000
     |> Task.perform (\_ ->
       GotTravel (Ok (Fake.travel ocapUrl))
+    )
+
+createNewTravel : String -> List PI -> Cmd Msg
+createNewTravel title listPI =
+  Process.sleep 2000
+    |> Task.perform (\_ ->
+      GotNewTravel (Ok (Travel "http://localhost:8000/api/obj/newtravel" title listPI Accordion.initialState))
     )
 

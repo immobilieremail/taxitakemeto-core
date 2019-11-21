@@ -38,8 +38,14 @@ h5 {
 }
 
 .lightgrey-background {
+    @include rounded;
     background: #f7f7f7;
-    border-radius: .25rem;
+}
+
+.lightgray-background {
+    @include rounded;
+    padding: .75rem 1.25rem;
+    background-color: rgba(0, 0, 0, .03);
 }
 
 .test {
@@ -76,6 +82,11 @@ h5 {
 .little-image {
     @include img-fluid;
     max-width: 70px !important;
+}
+
+.icon-image {
+    @include img-fluid;
+    max-width: 20px !important;
 }
 
 .pi-view-button {
