@@ -48,6 +48,7 @@ swissNumberIsNotEqual swissNumber pi =
   pi.swissNumber /= swissNumber
 
 
+
 -- CONSTRUCTORS (used to fake PI)
 
 
