@@ -213,171 +213,171 @@ router =
 updateFromUrl : Model -> Url.Url -> Cmd Msg -> ( Model, Cmd Msg )
 updateFromUrl model url commonCmd =
   case P.parse router url of
-  Nothing ->
-    ( model, commonCmd )
+    Nothing ->
+      ( model, commonCmd )
 
-  Just route ->
-    case route of
-    RouteHome ->
-      ( { model | currentView = ViewUserDashboard }, commonCmd )
+    Just route ->
+      case route of
+        RouteHome ->
+          ( { model | currentView = ViewUserDashboard }, commonCmd )
 
-    RouteSearch ->
-      ( { model | currentView = ViewSearchPI }, commonCmd )
+        RouteSearch ->
+          ( { model | currentView = ViewSearchPI }, commonCmd )
 
-    RoutePI data ->
-      case data of
-      Nothing ->
-        ( model, commonCmd )
+        RoutePI data ->
+          case data of
+            Nothing ->
+              ( model, commonCmd )
 
-      Just ocapUrl ->
-        ( model
-        , Cmd.batch
-          [ commonCmd
-          , getPIfromUrl ocapUrl
-          ]
-        )
+            Just ocapUrl ->
+              ( model
+              , Cmd.batch
+                [ commonCmd
+                , getPIfromUrl ocapUrl
+                ]
+              )
 
-    RouteTravel data ->
-      case data of
-      Nothing ->
-        ( model, commonCmd )
+        RouteTravel data ->
+          case data of
+            Nothing ->
+              ( model, commonCmd )
 
-      Just ocapUrl ->
-        ( model
-        , Cmd.batch
-          [ commonCmd
-          , getTravelfromUrl ocapUrl
-          ]
-        )
+            Just ocapUrl ->
+              ( model
+              , Cmd.batch
+                [ commonCmd
+                , getTravelfromUrl ocapUrl
+                ]
+              )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
-  LinkClicked urlRequest ->
-    case urlRequest of
-    Browser.Internal url ->
-      updateFromUrl model url (Nav.pushUrl model.key (Url.toString url))
+    LinkClicked urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          updateFromUrl model url (Nav.pushUrl model.key (Url.toString url))
 
-    Browser.External href ->
-      ( model, Nav.load href )
+        Browser.External href ->
+          ( model, Nav.load href )
 
-  UrlChanged url ->
-    updateFromUrl model url Cmd.none
+    UrlChanged url ->
+      updateFromUrl model url Cmd.none
 
-  GetPI swissNumber ->
-    ( model, getPIfromUrl swissNumber )
+    GetPI swissNumber ->
+      ( model, getPIfromUrl swissNumber )
 
-  GotPI result ->
-    case result of
-    Ok pi ->
-      case pi /= model.currentPI of
-      True ->
-        let
-          indexList = List.range 0 (List.length model.currentTravel.listPI)
-          indexPI = List.sum (List.filter (\index -> Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList)
-          accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
-        in
-          ( { model |
-            currentPI = pi,
-            currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
-            }
-          , Cmd.none )
+    GotPI result ->
+      case result of
+        Ok pi ->
+          case pi /= model.currentPI of
+            True ->
+              let
+                indexList = List.range 0 (List.length model.currentTravel.listPI)
+                indexPI = List.sum (List.filter (\index -> Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList)
+                accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
+              in
+                ( { model |
+                  currentPI = pi,
+                  currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+                  }
+                , Cmd.none )
 
-      False ->
-        ( model, Cmd.none )
+            False ->
+              ( model, Cmd.none )
 
-    Err _ ->
-      ( model, Cmd.none )
+        Err _ ->
+          ( model, Cmd.none )
 
-  GetTravel swissNumber ->
-    ( model, getTravelfromUrl swissNumber )
+    GetTravel swissNumber ->
+      ( model, getTravelfromUrl swissNumber )
 
-  GotTravel result ->
-    case result of
-    Ok travel ->
-      case travel /= model.currentTravel of
-      True ->
-        ( { model | currentTravel = travel }, Cmd.none )
+    GotTravel result ->
+      case result of
+        Ok travel ->
+          case travel /= model.currentTravel of
+            True ->
+              ( { model | currentTravel = travel }, Cmd.none )
 
-      False ->
-        ( model, Cmd.none )
+            False ->
+              ( model, Cmd.none )
 
-    Err _ ->
-      ( model, Cmd.none )
+        Err _ ->
+          ( model, Cmd.none )
 
-  ViewChanged newView ->
-    ( { model | currentView = newView }, Cmd.none )
+    ViewChanged newView ->
+      ( { model | currentView = newView }, Cmd.none )
 
-  UpdateNavbar state ->
-    ( { model | navbarState = state }, Cmd.none)
+    UpdateNavbar state ->
+      ( { model | navbarState = state }, Cmd.none)
 
-  CarouselMsg subMsg ->
-    ( { model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
+    CarouselMsg subMsg ->
+      ( { model | carouselState = Carousel.update subMsg model.carouselState }, Cmd.none )
 
-  AccordionMsg state ->
-    ( { model | accordionState = state }, Cmd.none )
+    AccordionMsg state ->
+      ( { model | accordionState = state }, Cmd.none )
 
-  TravelAccordionMsg state ->
-    ( { model | currentTravel = (Travel.updateAccordionState state model.currentTravel) }, Cmd.none )
+    TravelAccordionMsg state ->
+      ( { model | currentTravel = (Travel.updateAccordionState state model.currentTravel) }, Cmd.none )
 
-  CarouselPrev ->
-    ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
+    CarouselPrev ->
+      ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
 
-  CarouselNext ->
-    ( { model | carouselState = Carousel.next model.carouselState }, Cmd.none )
+    CarouselNext ->
+      ( { model | carouselState = Carousel.next model.carouselState }, Cmd.none )
 
-  MouseOver overButton ->
-    case (List.member overButton model.mouseOver) of
-    True ->
-      (model, Cmd.none)
-
-    False ->
-      ( { model | mouseOver = overButton :: model.mouseOver }, Cmd.none )
-
-  MouseOut overButton ->
-    ( { model | mouseOver = List.filter (\n -> n /= overButton) model.mouseOver }, Cmd.none )
-
-  AddToCheck pi bool ->
-    case bool of
-      True ->
-        ( { model
-          | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked) ++ [ pi ]
-          }, Cmd.none )
-
-      False ->
-        ( { model
-          | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked)
-          }, Cmd.none )
-
-  AddCheckedToTravel swissNumber ->
-    let
-      oldListTravel = model.listTravel
-      newListTravel = (List.map (Travel.updateListPI swissNumber model.checked) oldListTravel)
-    in
-      case model.currentTravel.swissNumber == swissNumber of
+    MouseOver overButton ->
+      case (List.member overButton model.mouseOver) of
         True ->
-          let
-            oldCurrentTravel = model.currentTravel
-            newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
-          in
-            ( { model | currentTravel = newCurrentTravel, listTravel = newListTravel, checked = [] }, Cmd.none )
+          (model, Cmd.none)
 
         False ->
-          ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
+          ( { model | mouseOver = overButton :: model.mouseOver }, Cmd.none )
 
-  CreateNewTravel ->
-    ( model, createNewTravel model.formTitle model.checked )
+    MouseOut overButton ->
+      ( { model | mouseOver = List.filter (\n -> n /= overButton) model.mouseOver }, Cmd.none )
 
-  GotNewTravel result ->
-    case result of
-      Ok travel ->
-        ( { model | currentTravel = travel, listTravel = model.listTravel ++ [ travel ] }, Cmd.none )
+    AddToCheck pi bool ->
+      case bool of
+        True ->
+          ( { model
+            | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked) ++ [ pi ]
+            }, Cmd.none )
 
-      Err _ ->
-        ( model, Cmd.none )
+        False ->
+          ( { model
+            | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked)
+            }, Cmd.none )
 
-  SetTitle title ->
-    ( { model | formTitle = title }, Cmd.none )
+    AddCheckedToTravel swissNumber ->
+      let
+        oldListTravel = model.listTravel
+        newListTravel = (List.map (Travel.updateListPI swissNumber model.checked) oldListTravel)
+      in
+        case model.currentTravel.swissNumber == swissNumber of
+          True ->
+            let
+              oldCurrentTravel = model.currentTravel
+              newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
+            in
+              ( { model | currentTravel = newCurrentTravel, listTravel = newListTravel, checked = [] }, Cmd.none )
+
+          False ->
+            ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
+
+    CreateNewTravel ->
+      ( model, createNewTravel model.formTitle model.checked )
+
+    GotNewTravel result ->
+      case result of
+        Ok travel ->
+          ( { model | currentTravel = travel, listTravel = model.listTravel ++ [ travel ] }, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
+
+    SetTitle title ->
+      ( { model | formTitle = title }, Cmd.none )
 
 
 
