@@ -251,7 +251,15 @@ updateFromUrl model url commonCmd =
               ( model, commonCmd )
 
             Just ocapUrl ->
-              ( model
+              ( { model | currentTravel =
+                case (List.head (List.filter (\travel -> travel.swissNumber == ocapUrl) model.listTravel)) of
+                  Just travel ->
+                    travel
+
+                  Nothing ->
+                    model.currentTravel
+
+                }
               , Cmd.batch
                 [ commonCmd
                 , getTravelfromUrl ocapUrl
