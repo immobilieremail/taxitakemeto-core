@@ -125,19 +125,28 @@ fakeModel0 key state =
       "Wat Phra Kaew Temple - Thaïland"
       "This is a description of Meenakshi Amman Temple."
       "9 Boulevard de la Canopée"
-      [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg" ] [] [] []
+      [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg" ]
+      []
+      [ PI.free, PI.reserved ]
+      [ PI.touristicPlace ]
     , PI
       "http://localhost:8000/api/obj/2"
       "Food Festival - Singapour"
       "It’s no secret that Singaporeans are united in their love for great food."
       "666 Rue de l'Enfer"
-      [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg" ] [] [] []
+      [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg" ]
+      []
+      [ PI.paying ]
+      [ PI.restaurant, PI.touristicPlace ]
     , PI
       "http://localhost:8000/api/obj/3"
       "Hôtel F1 - Bordeaux"
       "HotelF1 est une marque hôtelière 1 étoile filiale du groupe Accor."
       "Le Paradis (lieu-dit)"
-      [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg" ] [] [] []
+      [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg" ]
+      []
+      [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
+      [ PI.hotel ]
     ], currentTravel =
       Travel
         "http://localhost:8000/api/obj/parisdakar"
