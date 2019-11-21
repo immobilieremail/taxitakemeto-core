@@ -87,7 +87,7 @@ travel ocapUrl =
     { swissNumber = "http://localhost:8000/api/obj/parisdakar"
     , title = "Paris - Dakar"
     , listPI = [
-        PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "" ""
+        PI "http://localhost:8000/api/obj/1" "Wat Phra Kaew Temple - Thaïland" "" ""
           []
           []
           [ PI.free, PI.reserved ]
@@ -120,7 +120,7 @@ travel ocapUrl =
         []
         [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
         [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
-      , PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "" ""
+      , PI "http://localhost:8000/api/obj/1" "Wat Phra Kaew Temple - Thaïland" "" ""
         []
         []
         [ PI.free, PI.reserved ]
@@ -151,7 +151,7 @@ travel ocapUrl =
     { swissNumber = "http://localhost:8000/api/obj/vacancesmontagne"
     , title = "Vacances à la montagne"
     , listPI = [
-      PI "http://localhost:8000/api/obj/1" "Meenakshi Amman Temple - India" "" ""
+      PI "http://localhost:8000/api/obj/1" "Wat Phra Kaew Temple - Thaïland" "" ""
         []
         []
         [ PI.free, PI.reserved ]
