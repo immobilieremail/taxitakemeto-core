@@ -187,7 +187,6 @@ type Msg
   | ViewChanged CurrentView
   | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
-  | GetTravel SwissNumber
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
@@ -301,9 +300,6 @@ update msg model =
 
         Err _ ->
           ( model, Cmd.none )
-
-    GetTravel swissNumber ->
-      ( model, getTravelfromUrl swissNumber )
 
     GotTravel result ->
       case result of
