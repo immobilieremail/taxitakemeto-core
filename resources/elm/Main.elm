@@ -572,40 +572,47 @@ viewUserDashboard model =
     ]
 
 
-viewOneLinePI : PI -> Html Msg
-viewOneLinePI pi =
-  div
-    [ class "row lightgray-background mb-3" ]
-    [ div
-      [ class "col-md-2 col-4 text-center" ]
-      [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] pi.medias ]
-    , div
-      [ class "col-md-8 col-6 text-left" ]
-      [ h4
-        [ class "resize-text" ]
-        [ text pi.title ]
-      , text pi.address
-      ]
-    , div
-      [ class "col-2 text-center" ]
-      [ Button.button
-        [ Button.small
-        , Button.onClick (AddToCheck pi False)
-        ]
-        [ img
-          [ class "icon-image"
-          , src "https://image.flaticon.com/icons/png/512/53/53891.png"
-          ]
-          []
-        ]
-      ]
+iconRemove : Html Msg
+iconRemove =
+  img
+    [ class "icon-image"
+    , src "https://image.flaticon.com/icons/png/512/53/53891.png"
     ]
+    []
 
 viewCheckedPI : PI -> Html Msg
 viewCheckedPI pi =
   Grid.container
     []
-    [ viewOneLinePI pi
+    [ Grid.row
+      [ Row.attrs [ class "lightgray-background mb-3" ] ]
+      [ Grid.col
+        [ Col.md2
+        , Col.xs4
+        , Col.textAlign Text.alignXsCenter
+        ]
+      [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] pi.medias ]
+      , Grid.col
+        [ Col.md8
+        , Col.xs6
+        , Col.textAlign Text.alignXsLeft
+        ]
+      [ h4
+        [ class "resize-text" ]
+        [ text pi.title ]
+      , text pi.address
+      ]
+      , Grid.col
+        [ Col.xs2
+        , Col.textAlign Text.alignXsCenter
+        ]
+      [ Button.button
+        [ Button.small
+        , Button.onClick (AddToCheck pi False)
+        ]
+          [ iconRemove ]
+      ]
+    ]
     ]
 
 viewCreateNewTravel : Model -> Html Msg
@@ -619,8 +626,10 @@ viewCreateNewTravel model =
         [ h2
           [ class "title" ]
           [ text "Create new Travel" ]
-        , Form.formInline
-          [ onSubmit CreateNewTravel ]
+        , Form.form
+          [ onSubmit CreateNewTravel
+          , class "text-right"
+          ]
           [ Input.text
             [ Input.attrs [ placeholder "My Travel title" ]
             , Input.onInput SetTitle
@@ -637,10 +646,7 @@ viewCreateNewTravel model =
       []
       [ Grid.col
         [ Col.xs12 ]
-        [ hr
-          []
-          []
-        ]
+        [ hr [] [] ]
       , Grid.col
         [ Col.xs12 ]
         (List.map viewCheckedPI model.checked)
