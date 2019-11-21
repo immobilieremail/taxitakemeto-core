@@ -591,28 +591,28 @@ viewCheckedPI pi =
         , Col.xs4
         , Col.textAlign Text.alignXsCenter
         ]
-      [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] pi.medias ]
+        [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] pi.medias ]
       , Grid.col
         [ Col.md8
         , Col.xs6
         , Col.textAlign Text.alignXsLeft
         ]
-      [ h4
-        [ class "resize-text" ]
-        [ text pi.title ]
-      , text pi.address
-      ]
+        [ h4
+          [ class "resize-text" ]
+          [ text pi.title ]
+        , text pi.address
+        ]
       , Grid.col
         [ Col.xs2
         , Col.textAlign Text.alignXsCenter
         ]
-      [ Button.button
-        [ Button.small
-        , Button.onClick (AddToCheck pi False)
-        ]
+        [ Button.button
+          [ Button.small
+          , Button.onClick (AddToCheck pi False)
+          ]
           [ iconRemove ]
+        ]
       ]
-    ]
     ]
 
 viewCreateNewTravel : Model -> Html Msg
@@ -760,6 +760,30 @@ viewSearchAddToList str msg =
       ]
     ]
 
+viewOneLinePI : PI -> Html Msg
+viewOneLinePI pi =
+  Grid.row
+    [ Row.attrs [ class "lightgrey-background mb-2 p-2" ]
+    , Row.middleXs
+    ]
+    [ Grid.col
+      [ Col.xs9
+      , Col.textAlign Text.alignXsLeft
+      ]
+      [ span
+        [ style "font-size" "12px" ]
+        [ text pi.title ]
+      ]
+    , Grid.col
+      [ Col.xs3 ]
+      [ Button.button
+        [ Button.small
+        , Button.onClick (AddToCheck pi False)
+        ]
+        [ iconRemove ]
+      ]
+    ]
+
 viewSearchPI : Model -> Html Msg
 viewSearchPI model =
   Grid.container
@@ -781,6 +805,21 @@ viewSearchPI model =
       [ div
         []
         (List.map (viewProposal model.checked) model.proposals)
+      , case List.length model.checked > 0 of
+        True ->
+          div
+            []
+            [ h4
+              []
+              [ text "Selected PIs" ]
+            ]
+
+        False ->
+          div [] []
+
+      , div
+        [ class "mb-3" ]
+        (List.map viewOneLinePI model.checked)
       , viewSearchAddToList ("Add to '" ++ model.currentTravel.title ++ "' travel") (AddCheckedToTravel model.currentTravel.swissNumber)
       , viewSearchAddToList "Create a new travel" (ViewChanged ViewNewTravel)
       ]
