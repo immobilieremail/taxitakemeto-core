@@ -274,7 +274,11 @@ update msg model =
             True ->
               let
                 indexList = List.range 0 (List.length model.currentTravel.listPI)
-                indexPI = List.sum (List.filter (\index -> Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList)
+                indexPI =
+                  List.sum (
+                    List.filter (\index ->
+                      Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
+                  )
                 accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
               in
                 ( { model |
