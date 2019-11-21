@@ -430,7 +430,7 @@ view model =
           , h2
             [ class "title" ]
             [ text "My Travels" ]
-          , viewListTravelDashboard model.listTravel
+          , Travel.viewList model.listTravel
           ]
 
       ViewListPIDashboard ->
@@ -500,7 +500,7 @@ viewBlockTravel : SwissNumber -> Travel -> Block.Item Msg
 viewBlockTravel swissNumber travel =
   Block.text
     [ if swissNumber == travel.swissNumber then class "lightgrey-background" else class "" ]
-    [ viewTravel travel ]
+    [ Travel.view travel ]
 
 viewUserDashboardAccordionToggle : Accordion.State -> Html Msg
 viewUserDashboardAccordionToggle accordionState =
@@ -661,32 +661,6 @@ viewCreateNewTravel model =
         (List.map viewCheckedPI model.checked)
       ]
     ]
-
-
-viewTravel : Travel -> Html Msg
-viewTravel travel =
-  a
-    [ href ("/elm/travel#" ++ travel.swissNumber) ]
-    [ div
-      [ class "travel-header" ]
-      [ Grid.row
-        [ Row.middleXs ]
-        [ Grid.col
-          [ Col.xs12, Col.textAlign Text.alignXsLeft ]
-          [ h5
-            []
-            [ text travel.title ]
-          ]
-        ]
-      ]
-    ]
-
-viewListTravelDashboard : List Travel -> Html Msg
-viewListTravelDashboard listTravel =
-  Grid.container
-    []
-    (List.map viewTravel listTravel)
-
 
 
 viewSearchBar : Html Msg
