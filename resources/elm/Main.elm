@@ -38,6 +38,7 @@ import Media exposing (..)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
+import Message as Message exposing (..)
 import ViewLoading as Loading exposing (view)
 
 
@@ -83,6 +84,7 @@ type alias Model =
   , accordionState : Accordion.State
   , mouseOver : List OverButton
   , formTitle : String
+  , message : Maybe Message.Message
   }
 
 
@@ -99,6 +101,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
+  , message = Nothing
   }
 
 fakeModel0 key state =
@@ -259,6 +262,7 @@ updateFromUrl model url commonCmd =
                   Nothing ->
                     model.currentTravel
 
+                , message = Maybe.Just (Message.Message "This could be an old version of this travel." Message.userDashboardType)
                 }
               , Cmd.batch
                 [ commonCmd
@@ -312,9 +316,19 @@ update msg model =
     GotTravel result ->
       case result of
         Ok travel ->
-          case travel /= model.currentTravel of
+          case travel.swissNumber /= "" of
             True ->
-              ( { model | currentTravel = travel }, Cmd.none )
+              case travel /= model.currentTravel of
+                True ->
+                  let
+                    updatedTravel = { travel | accordionState = model.currentTravel.accordionState }
+                    mappedList = (
+                      List.map (\t -> if t.swissNumber == travel.swissNumber then travel else t) model.listTravel)
+                  in
+                    ( { model | currentTravel = updatedTravel, listTravel = mappedList, message = Nothing }, Cmd.none )
+
+                False ->
+                  ( { model | message = Nothing }, Cmd.none )
 
             False ->
               ( model, Cmd.none )
@@ -917,7 +931,14 @@ viewListPIDashboard model travel =
     []
     [ Grid.container
       []
-      [ accordionView
+      [ case model.message of
+          Just message ->
+            Message.view message Message.userDashboardType
+
+          Nothing ->
+            div [] []
+
+      , accordionView
         TravelAccordionMsg
         travel.accordionState
         (List.indexedMap (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
