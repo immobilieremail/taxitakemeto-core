@@ -402,7 +402,11 @@ update msg model =
     GotNewTravel result ->
       case result of
         Ok travel ->
-          ( { model | currentTravel = travel, listTravel = model.listTravel ++ [ travel ], checked = [] }, Cmd.none )
+          ( { model | currentTravel = travel
+            , listTravel = model.listTravel ++ [ travel ]
+            , checked = []
+            , currentView = ViewUserDashboard
+            }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
