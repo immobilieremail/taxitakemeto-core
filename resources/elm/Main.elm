@@ -189,7 +189,7 @@ init flags url key =
 type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
-  | ViewChanged CurrentView
+  | ViewChanged String
   | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
   | GotTravel (Result Http.Error Travel)
@@ -211,15 +211,25 @@ type Msg
 type Route
   = RouteHome
   | RouteSearch
+  | RouteNewTravel
   | RoutePI (Maybe String)
+  | RouteSimplePI (Maybe String)
   | RouteTravel (Maybe String)
+
+
+getRootUrl : String
+getRootUrl =
+  "http://localhost:8000"
+
 
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
   [ P.map RouteHome <| P.s "elm"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
+  , P.map RouteNewTravel <| P.s "elm" </> P.s "newtravel"
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
+  , P.map RouteSimplePI <| P.s "elm" </> P.s "pi" </> P.s "simpleview" </> P.fragment identity
   , P.map RouteTravel <| P.s "elm" </> P.s "travel" </> P.fragment identity
   ]
 
@@ -237,18 +247,37 @@ updateFromUrl model url commonCmd =
         RouteSearch ->
           ( { model | currentView = ViewSearchPI }, commonCmd )
 
+        RouteNewTravel ->
+          ( { model | currentView = ViewNewTravel }, commonCmd )
+
         RoutePI data ->
           case data of
             Nothing ->
               ( model, commonCmd )
 
             Just ocapUrl ->
-              ( { model | loading = True }
+              ( { model | loading = True, currentView = ViewUserDashboard }
               , Cmd.batch
                 [ commonCmd
                 , getPIfromUrl ocapUrl
                 ]
               )
+
+        RouteSimplePI data ->
+          case data of
+            Nothing ->
+              ( model, commonCmd )
+
+            Just ocapUrl ->
+              if ocapUrl == model.currentPI.swissNumber then
+                ( { model | currentView = SimpleViewPI }, commonCmd )
+              else
+                ( { model | currentView = SimpleViewPI }
+                , Cmd.batch
+                  [ commonCmd
+                  , getPIfromUrl ocapUrl
+                  ]
+                )
 
         RouteTravel data ->
           case data of
@@ -345,8 +374,13 @@ update msg model =
         Err _ ->
           ( model, Cmd.none )
 
-    ViewChanged newView ->
-      ( { model | currentView = newView }, Cmd.none )
+    ViewChanged maybeUrl ->
+      case Url.fromString maybeUrl of
+        Just url ->
+          updateFromUrl model url (Nav.pushUrl model.key maybeUrl)
+
+        Nothing ->
+          ( model, Cmd.none )
 
     UpdateNavbar state ->
       ( { model | navbarState = state }, Cmd.none)
@@ -411,6 +445,15 @@ update msg model =
     GotNewTravel result ->
       case result of
         Ok travel ->
+          case Url.fromString (getRootUrl ++ "/elm") of
+            Just url ->
+              updateFromUrl
+                { model | currentTravel = travel
+                , listTravel = model.listTravel ++ [ travel ]
+                , checked = []
+                } url (Nav.pushUrl model.key (Url.toString url))
+
+            Nothing ->
               ( { model | currentTravel = travel
                 , listTravel = model.listTravel ++ [ travel ]
                 , checked = []
@@ -851,7 +894,7 @@ viewSearchPI model =
         [ class "mb-3" ]
         (List.map viewOneLinePI model.checked)
       , viewSearchAddToList ("Add to '" ++ model.currentTravel.title ++ "' travel") (AddCheckedToTravel model.currentTravel.swissNumber)
-      , viewSearchAddToList "Create a new travel" (ViewChanged ViewNewTravel)
+      , viewSearchAddToList "Create a new travel" (ViewChanged (getRootUrl ++ "/elm/newtravel"))
       ]
     ]
 
@@ -1105,7 +1148,7 @@ viewPI carouselState accordionState mouseOver index pi =
       , hr
         [ class "pt-2" ]
         []
-      , piChangeViewButton "Simple view" (ViewChanged SimpleViewPI)
+      , piChangeViewButton "Simple view" (ViewChanged (getRootUrl ++ "/elm/pi/simpleview#" ++ pi.swissNumber))
       ]
     ]
 
@@ -1144,7 +1187,7 @@ simpleViewPI carouselState mouseOver pi =
       , hr
         [ class "pt-2" ]
         []
-      , piChangeViewButton "Exit view" (ViewChanged ViewUserDashboard)
+      , piChangeViewButton "Exit view" (ViewChanged (getRootUrl ++ "/elm/pi#" ++ pi.swissNumber))
       ]
     ]
 
