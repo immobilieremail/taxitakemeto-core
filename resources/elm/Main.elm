@@ -89,6 +89,7 @@ type alias Model =
   }
 
 
+model0 : Nav.Key -> Navbar.State -> Model
 model0 key state =
   { key = key
   , currentView = ViewUserDashboard
@@ -106,6 +107,7 @@ model0 key state =
   , loading = False
   }
 
+fakeModel0 : Nav.Key -> Navbar.State -> Model
 fakeModel0 key state =
   let model = model0 key state
   in { model | listTravel =
