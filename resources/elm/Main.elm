@@ -85,6 +85,7 @@ type alias Model =
   , mouseOver : List OverButton
   , formTitle : String
   , message : Maybe Message.Message
+  , loading : Bool
   }
 
 
@@ -102,6 +103,7 @@ model0 key state =
   , mouseOver = []
   , formTitle = ""
   , message = Nothing
+  , loading = False
   }
 
 fakeModel0 key state =
@@ -241,7 +243,7 @@ updateFromUrl model url commonCmd =
               ( model, commonCmd )
 
             Just ocapUrl ->
-              ( model
+              ( { model | loading = True }
               , Cmd.batch
                 [ commonCmd
                 , getPIfromUrl ocapUrl
@@ -263,6 +265,7 @@ updateFromUrl model url commonCmd =
                     model.currentTravel
 
                 , message = Maybe.Just (Message.Message "This could be an old version of this travel." Message.userDashboardType)
+                , loading = True
                 }
               , Cmd.batch
                 [ commonCmd
@@ -301,14 +304,14 @@ update msg model =
                   )
                 accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
               in
-                ( { model |
-                  currentPI = pi,
-                  currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+                ( { model | currentPI = pi
+                  , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+                  , loading = False
                   }
                 , Cmd.none )
 
             False ->
-              ( model, Cmd.none )
+              ( { model | loading = False }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -325,10 +328,16 @@ update msg model =
                     mappedList = (
                       List.map (\t -> if t.swissNumber == travel.swissNumber then travel else t) model.listTravel)
                   in
-                    ( { model | currentTravel = updatedTravel, listTravel = mappedList, message = Nothing }, Cmd.none )
+                    ( { model | currentTravel = updatedTravel
+                      , listTravel = mappedList
+                      , message = Nothing
+                      , loading = False
+                      }, Cmd.none )
 
                 False ->
-                  ( { model | message = Nothing }, Cmd.none )
+                  ( { model | message = Nothing
+                    , loading = False
+                    }, Cmd.none )
 
             False ->
               ( model, Cmd.none )
@@ -402,11 +411,10 @@ update msg model =
     GotNewTravel result ->
       case result of
         Ok travel ->
-          ( { model | currentTravel = travel
-            , listTravel = model.listTravel ++ [ travel ]
-            , checked = []
-            , currentView = ViewUserDashboard
-            }, Cmd.none )
+              ( { model | currentTravel = travel
+                , listTravel = model.listTravel ++ [ travel ]
+                , checked = []
+                }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -584,7 +592,24 @@ viewUserDashboard model =
         , h3
           [ class "text-center" ]
           [ text model.currentTravel.title ]
-        , viewListPIDashboard model model.currentTravel
+        , case (List.length model.currentTravel.listPI) > 0 of
+          True ->
+            viewListPIDashboard model model.currentTravel
+
+          False ->
+            case model.loading of
+              True ->
+                Loading.view
+
+              False ->
+                div
+                  [ class "text-center my-3" ]
+                  [ Button.linkButton
+                    [ Button.primary
+                    , Button.attrs [ href "/elm/search" ]
+                    ]
+                    [ text "Add Points of Interest" ]
+                  ]
         ]
       , Grid.col
         [ Col.xs12 ]
