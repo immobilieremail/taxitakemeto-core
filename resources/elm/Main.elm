@@ -442,7 +442,7 @@ update msg model =
             ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
 
     CreateNewTravel ->
-      ( model, createNewTravel model.formTitle model.checked )
+      ( { model | loading = True }, createNewTravel model.formTitle model.checked )
 
     GotNewTravel result ->
       case result of
