@@ -69,6 +69,8 @@ type CurrentView
   | LoadingPage
   | ViewSearchPI
   | ViewNewTravel
+  | ViewLogin
+  | ViewInvit
 
 
 type alias Model =
@@ -216,6 +218,8 @@ type Msg
 
 type Route
   = RouteHome
+  | RouteLogin
+  | RouteInvit
   | RouteSearch
   | RouteNewTravel
   | RoutePI (Maybe String)
@@ -249,6 +253,12 @@ updateFromUrl model url commonCmd =
       case route of
         RouteHome ->
           ( { model | currentView = ViewUserDashboard }, commonCmd )
+
+        RouteLogin ->
+          ( { model | currentView = ViewLogin }, Cmd.none )
+
+        RouteInvit ->
+          ( { model | currentView = ViewInvit }, Cmd.none )
 
         RouteSearch ->
           ( { model | currentView = ViewSearchPI }, commonCmd )
@@ -546,6 +556,16 @@ view model =
           [ viewNavbar model
           , viewCreateNewTravel model
           ]
+
+      ViewLogin ->
+        div
+          []
+          []
+
+      ViewInvit ->
+        div
+          []
+          []
     ]
   }
 
