@@ -742,20 +742,26 @@ viewCreateNewTravel model =
           , Button.button
             [ Button.primary
             , Button.attrs [ class "ml-sm-2 my-2" ]
+            , Button.disabled (model.loading || String.length model.formTitle == 0)
             ]
             [ text "Create" ]
           ]
         ]
       ]
-    , Grid.row
-      []
-      [ Grid.col
-        [ Col.xs12 ]
-        [ hr [] [] ]
-      , Grid.col
-        [ Col.xs12 ]
-        (List.map viewCheckedPI model.checked)
-      ]
+    , case model.loading of
+      True ->
+        Loading.view
+
+      False ->
+        Grid.row
+        []
+        [ Grid.col
+          [ Col.xs12 ]
+          [ hr [] [] ]
+        , Grid.col
+          [ Col.xs12 ]
+          (List.map viewCheckedPI model.checked)
+        ]
     ]
 
 
