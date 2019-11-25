@@ -453,12 +453,16 @@ update msg model =
                 { model | currentTravel = travel
                 , listTravel = model.listTravel ++ [ travel ]
                 , checked = []
+                , accordionState = Accordion.initialState
+                , loading = False
                 } url (Nav.pushUrl model.key (Url.toString url))
 
             Nothing ->
               ( { model | currentTravel = travel
                 , listTravel = model.listTravel ++ [ travel ]
                 , checked = []
+                , accordionState = Accordion.initialState
+                , loading = False
                 }, Cmd.none )
 
         Err _ ->
