@@ -3,6 +3,7 @@ module Travel exposing (..)
 import Html exposing (..)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
+import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
 import Bootstrap.Accordion as Accordion
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
@@ -76,3 +77,16 @@ viewList listTravel =
   Grid.container
     []
     (List.map view listTravel)
+
+
+
+-- JSON Decoders
+
+
+travelDecoder : Decoder Travel
+travelDecoder =
+  D.map4 Travel
+  (field "swiss_number" string)
+  (field "title" string)
+  (field "listPI" (D.list PI.piDecoder))
+  (D.null Accordion.initialState)
