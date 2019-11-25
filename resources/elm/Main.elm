@@ -94,7 +94,7 @@ model0 key state =
   { key = key
   , currentView = ViewUserDashboard
   , navbarState = state
-  , currentTravel = Travel "" "" [] Accordion.initialState
+  , currentTravel = Travel "" "" [] [] Accordion.initialState
   , currentPI = PI "" "" "" "" [] [] [] []
   , proposals = []
   , checked = []
@@ -115,15 +115,18 @@ fakeModel0 key state =
       "http://localhost:8000/api/obj/parisdakar"
       "Paris - Dakar"
       []
+      [ "+33 6 12 34 56 78", "foo@bar.com" ]
       Accordion.initialState
     , Travel
       "http://localhost:8000/api/obj/voyagebirmanie"
       "Petit voyage en Birmanie"
       []
+      []
       Accordion.initialState
     , Travel
       "http://localhost:8000/api/obj/sejourtadjikistan"
       "Séjour au Tadjikistan"
+      []
       []
       Accordion.initialState
     ], proposals =
@@ -174,6 +177,7 @@ fakeModel0 key state =
           [ PI.free, PI.reserved ]
           [ PI.touristicPlace ]
         ]
+        [ "+33 6 12 34 56 78", "foo@bar.com" ]
         Accordion.initialState
   }
 
@@ -976,18 +980,13 @@ accordionView msg state cards =
     |> Accordion.view state
 
 viewContactButton : String -> Html Msg
-viewContactButton source =
+viewContactButton contact =
   Button.button
     [ Button.roleLink ]
-    [ img
-      [ src source
-      , class "little-image"
-      ]
-      []
-    ]
+    [ text contact ]
 
-viewContact : Html Msg
-viewContact =
+viewContact : Travel -> Html Msg
+viewContact travel =
   Grid.container
     [ class "mb-4" ]
     [ h3
@@ -999,9 +998,7 @@ viewContact =
         [ Col.xs12 ]
         [ div
           [ class "pi-tags lightgrey-background" ]
-          [ viewContactButton "https://www.trzcacak.rs/myfile/full/15-159661_message-icon-png.png"
-          , viewContactButton "https://png.pngtree.com/svg/20170630/phone_call_1040996.png"
-          ]
+          (List.map viewContactButton travel.listContact)
         ]
       ]
     ]
@@ -1024,7 +1021,7 @@ viewListPIDashboard model travel =
         travel.accordionState
         (List.indexedMap (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
       ]
-    , viewContact
+    , if List.length travel.listContact > 0 then viewContact travel else div [] []
     ]
 
 
@@ -1256,6 +1253,6 @@ createNewTravel : String -> List PI -> Cmd Msg
 createNewTravel title listPI =
   Process.sleep 2000
     |> Task.perform (\_ ->
-      GotNewTravel (Ok (Travel "http://localhost:8000/api/obj/newtravel" title listPI Accordion.initialState))
+      GotNewTravel (Ok (Travel "http://localhost:8000/api/obj/newtravel" title listPI [] Accordion.initialState))
     )
 

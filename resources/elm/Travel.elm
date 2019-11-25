@@ -21,6 +21,7 @@ type alias Travel =
   { swissNumber : SwissNumber
   , title : String
   , listPI : List PI
+  , listContact : List SwissNumber
   , accordionState : Accordion.State
   }
 
@@ -46,6 +47,7 @@ updateAccordionState state travel =
   { swissNumber = travel.swissNumber
   , title = travel.title
   , listPI = travel.listPI
+  , listContact = travel.listContact
   , accordionState = state
   }
 
@@ -85,8 +87,9 @@ viewList listTravel =
 
 travelDecoder : Decoder Travel
 travelDecoder =
-  D.map4 Travel
+  D.map5 Travel
   (field "swiss_number" string)
   (field "title" string)
   (field "listPI" (D.list PI.piDecoder))
+  (field "listContact" (D.list string))
   (D.null Accordion.initialState)

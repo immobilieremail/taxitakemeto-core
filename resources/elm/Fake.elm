@@ -108,6 +108,7 @@ travel ocapUrl =
           [ PI.onGoing, PI.free, PI.notReserved ]
           [ PI.shop, PI.touristicPlace, PI.restaurant ]
         ]
+    , listContact = [ "+33 6 12 34 56 78", "foo@bar.com" ]
     , accordionState = Accordion.initialState
     }
 
@@ -126,6 +127,7 @@ travel ocapUrl =
         [ PI.free, PI.reserved ]
         [ PI.touristicPlace ]
       ]
+    , listContact = []
     , accordionState = Accordion.initialState
     }
 
@@ -144,6 +146,7 @@ travel ocapUrl =
         [ PI.paying ]
         [ PI.restaurant, PI.touristicPlace ]
       ]
+    , listContact = []
     , accordionState = Accordion.initialState
     }
 
@@ -167,6 +170,7 @@ travel ocapUrl =
         [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
         [ PI.hotel, PI.shop, PI.touristicPlace, PI.restaurant ]
       ]
+    , listContact = []
     , accordionState = Accordion.initialState
     }
 
@@ -174,5 +178,6 @@ travel ocapUrl =
     { swissNumber = ""
     , title = ""
     , listPI = []
+    , listContact = []
     , accordionState = Accordion.initialState
     }
