@@ -635,11 +635,8 @@ viewUserDashboard model =
       []
       [ Grid.col
         [ Col.xs12 ]
-        [ h2
+        [ h3
           [ class "title" ]
-          [ text "Current Travel" ]
-        , h3
-          [ class "text-center" ]
           [ text model.currentTravel.title ]
         , case (List.length model.currentTravel.listPI) > 0 of
           True ->
