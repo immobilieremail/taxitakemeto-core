@@ -236,6 +236,8 @@ router : P.Parser (Route -> a) a
 router =
   P.oneOf
   [ P.map RouteHome <| P.s "elm"
+  , P.map RouteLogin <| P.s "elm" </> P.s "login"
+  , P.map RouteInvit <| P.s "elm" </> P.s "invit"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
   , P.map RouteNewTravel <| P.s "elm" </> P.s "newtravel"
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
@@ -255,10 +257,10 @@ updateFromUrl model url commonCmd =
           ( { model | currentView = ViewUserDashboard }, commonCmd )
 
         RouteLogin ->
-          ( { model | currentView = ViewLogin }, Cmd.none )
+          ( { model | currentView = ViewLogin }, commonCmd )
 
         RouteInvit ->
-          ( { model | currentView = ViewInvit }, Cmd.none )
+          ( { model | currentView = ViewInvit }, commonCmd )
 
         RouteSearch ->
           ( { model | currentView = ViewSearchPI }, commonCmd )
@@ -565,7 +567,7 @@ view model =
       ViewInvit ->
         div
           []
-          []
+          [ viewInvit "John Doe" ]
     ]
   }
 
@@ -592,11 +594,44 @@ viewNavbar model =
       ]
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
-      , navbarItem "#" "Item 2"
-      , navbarItem "#" "Item 3"
+      , navbarItem "/elm/login" "Login page"
+      , navbarItem "/elm/invit" "Invitation"
       , navbarItem "#" "Item 4"
       ]
     |> Navbar.view model.navbarState
+
+
+viewLogin : Html Msg
+viewLogin =
+  Grid.container
+    []
+    [ Form.group []
+      [ Form.label [ for "myusername" ] [ text "Username" ]
+      , Input.text [ Input.id "myusername" ]
+      ]
+    , Form.group []
+      [ Form.label [ for "mypwd" ] [ text "Password" ]
+      , Input.password [ Input.id "mypwd" ]
+      ]
+    ]
+
+
+viewInvit : String -> Html Msg
+viewInvit name =
+  Grid.container
+    []
+    [ Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs12 ]
+        [ Form.label [ for "myusername" ] [ text "Your username" ]
+        , Input.text
+          [ Input.id "myusername"
+          , if name /= "" then Input.value name else Input.attrs []
+          ]
+        ]
+      ]
+    ]
 
 
 viewBlockTravel : SwissNumber -> Travel -> Block.Item Msg
