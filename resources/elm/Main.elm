@@ -86,6 +86,7 @@ type alias Model =
   , accordionState : Accordion.State
   , mouseOver : List OverButton
   , formTitle : String
+  , userName : String
   , message : Maybe Message.Message
   , loading : Bool
   }
@@ -105,6 +106,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
+  , userName = "John Doe"
   , message = Nothing
   , loading = False
   }
@@ -214,6 +216,7 @@ type Msg
   | CreateNewTravel
   | GotNewTravel (Result Http.Error Travel)
   | SetTitle String
+  | SetUserName String
 
 
 type Route
@@ -487,6 +490,9 @@ update msg model =
     SetTitle title ->
       ( { model | formTitle = title }, Cmd.none )
 
+    SetUserName username ->
+      ( { model | userName = username }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -567,7 +573,7 @@ view model =
       ViewInvit ->
         div
           []
-          [ viewInvit "John Doe" ]
+          [ viewInvit model.userName ]
     ]
   }
 
