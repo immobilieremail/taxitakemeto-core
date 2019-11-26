@@ -622,13 +622,55 @@ viewLogin =
     ]
 
 
+viewJanistorCard : Html Msg
+viewJanistorCard =
+  Grid.row
+    [ Row.middleXs
+    , Row.attrs
+      [ class "my-container" ]
+    ]
+    [ Grid.col
+      [ Col.xs12
+      , Col.textAlign Text.alignXsCenter
+      ]
+      [ h5
+        []
+        [ text "You have been invited by:" ]
+      , div
+        [ class "lightgrey-background py-3 px-4" ]
+        [ h3
+          [ class "mb-3" ]
+          [ text "Bob Butler" ]
+        , Grid.row
+          []
+          [ Grid.col
+            [ Col.xs4 ]
+            [ img
+              [ src "https://miro.medium.com/fit/c/160/160/0*7K7xu3sVR5U-fn9s.jpg"
+              , class "img-fluid rounded"
+              ]
+              []
+            ]
+          , Grid.col
+            [ Col.xs8
+            , Col.textAlign Text.alignXsLeft
+            ]
+            [ p
+              []
+              [ text "This text is a description of Bob Butler." ]
+            ]
+          ]
+        ]
+      ]
+    ]
+
 viewInvit : String -> Html Msg
 viewInvit name =
   Grid.container
     [ style "max-width" "100%" ]
     [ Grid.row
       [ Row.middleXs
-      , Row.attrs [ class "lightgrey-background py-2 mb-3" ]
+      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
       ]
       [ Grid.col
         [ Col.xs12 ]
@@ -640,10 +682,7 @@ viewInvit name =
     , Grid.row
       [ Row.middleXs
       , Row.attrs
-        [ style "max-width" "540px"
-        , style "margin-right" "auto"
-        , style "margin-left" "auto"
-        ]
+        [ class "my-container" ]
       ]
       [ Grid.col
         [ Col.xs12
@@ -663,6 +702,8 @@ viewInvit name =
           [ text "Create" ]
         ]
       ]
+    , hr [] []
+    , viewJanistorCard
     ]
 
 
@@ -778,7 +819,7 @@ viewCheckedPI pi =
   Grid.container
     []
     [ Grid.row
-      [ Row.attrs [ class "lightgray-background mb-3" ] ]
+      [ Row.attrs [ class "checked-pi mb-3" ] ]
       [ Grid.col
         [ Col.md2
         , Col.xs4

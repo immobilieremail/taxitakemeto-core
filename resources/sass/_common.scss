@@ -32,6 +32,12 @@ h5 {
     overflow-wrap: break-word !important;
 }
 
+.my-container {
+    max-width: 540px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
+
 .title {
     @include text-center;
     padding-top: 1.5rem !important;
@@ -42,7 +48,7 @@ h5 {
     background: #f7f7f7;
 }
 
-.lightgray-background {
+.checked-pi {
     @include rounded;
     padding: .75rem 1.25rem;
     background-color: rgba(0, 0, 0, .03);
