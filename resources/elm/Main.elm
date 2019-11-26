@@ -35,6 +35,7 @@ import Task
 import PI exposing (..)
 import Fake exposing (..)
 import Media exposing (..)
+import User exposing (User)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
@@ -73,11 +74,6 @@ type CurrentView
   | ViewInvit
 
 
-type alias User =
-  { name : String
-  }
-
-
 type alias Model =
   { key : Nav.Key
   , currentView : CurrentView
@@ -111,7 +107,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
-  , user = User "John Doe"
+  , user = User "John Doe" (Just (User.Email "john.doe@taxitakemeto.com"))
   , message = Nothing
   , loading = False
   }
@@ -495,8 +491,8 @@ update msg model =
     SetTitle title ->
       ( { model | formTitle = title }, Cmd.none )
 
-    SetUserName username ->
-      ( { model | user = User username }, Cmd.none )
+    SetUserName name ->
+      ( { model | user = User name model.user.contact }, Cmd.none )
 
 
 
