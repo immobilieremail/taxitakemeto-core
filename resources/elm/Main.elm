@@ -578,7 +578,7 @@ view model =
       ViewLogin ->
         div
           []
-          []
+          [ viewLogin model.user ]
 
       ViewInvit ->
         div
@@ -617,17 +617,20 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewLogin : Html Msg
-viewLogin =
+viewLogin : User -> Html Msg
+viewLogin user =
   Grid.container
     []
-    [ Form.group []
-      [ Form.label [ for "myusername" ] [ text "Username" ]
-      , Input.text [ Input.id "myusername" ]
-      ]
-    , Form.group []
-      [ Form.label [ for "mypwd" ] [ text "Password" ]
-      , Input.password [ Input.id "mypwd" ]
+    [ Form.group
+      []
+      [ Input.text
+        [ Input.id "myusername"
+        , Input.placeholder "My name"
+        ]
+      , Input.password
+        [ Input.id "mypwd"
+        , Input.placeholder "My password"
+        ]
       ]
     ]
 
