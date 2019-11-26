@@ -625,16 +625,42 @@ viewLogin =
 viewInvit : String -> Html Msg
 viewInvit name =
   Grid.container
-    []
+    [ style "max-width" "100%" ]
     [ Grid.row
-      [ Row.middleXs ]
+      [ Row.middleXs
+      , Row.attrs [ class "lightgrey-background py-2 mb-3" ]
+      ]
       [ Grid.col
         [ Col.xs12 ]
+        [ h3
+          [ class "title" ]
+          [ text "Hi traveller !" ]
+        ]
+      ]
+    , Grid.row
+      [ Row.middleXs
+      , Row.attrs
+        [ style "max-width" "540px"
+        , style "margin-right" "auto"
+        , style "margin-left" "auto"
+        ]
+      ]
+      [ Grid.col
+        [ Col.xs12
+        , Col.textAlign Text.alignXsRight
+        ]
         [ Form.label [ for "myusername" ] [ text "Your username" ]
         , Input.text
           [ Input.id "myusername"
           , if name /= "" then Input.value name else Input.attrs []
+          , Input.onInput SetUserName
           ]
+        , Button.button
+          [ Button.primary
+          , Button.attrs [ class "ml-sm-2 my-2" ]
+          , Button.disabled (String.length name == 0)
+          ]
+          [ text "Create" ]
         ]
       ]
     ]
