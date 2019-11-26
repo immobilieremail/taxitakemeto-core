@@ -107,7 +107,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
-  , user = User "John Doe" (Just (User.Email "john.doe@taxitakemeto.com"))
+  , user = User "John Doe" Nothing
   , message = Nothing
   , loading = False
   }
@@ -218,6 +218,7 @@ type Msg
   | GotNewTravel (Result Http.Error Travel)
   | SetTitle String
   | SetUserName String
+  | SetUserContact User.Contact String
 
 
 type Route
@@ -494,6 +495,14 @@ update msg model =
     SetUserName name ->
       ( { model | user = User name model.user.contact }, Cmd.none )
 
+    SetUserContact contactType contact ->
+      case contactType of
+        User.Email _ ->
+          ( { model | user = User model.user.name (Just (User.Email contact)) }, Cmd.none )
+
+        User.Phone _ ->
+          ( { model | user = User model.user.name (Just (User.Phone contact)) }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -688,13 +697,19 @@ viewInvitForm user =
     Form.form
       []
       [ Input.text nameOptions
-      , textInput "myemail" "My email address" (User.emailInputOption user)
+      , textInput
+        "myemail"
+        "My email address"
+        ((User.emailInputOption user) ++ [ Input.onInput (SetUserContact (User.Email "")) ])
       , h6 [ class "text-center my-1" ] [ text "OR" ]
-      , textInput "myphone" "My phone number" (User.phoneInputOption user)
+      , textInput
+        "myphone"
+        "My phone number"
+        ((User.phoneInputOption user) ++ [ Input.onInput (SetUserContact (User.Phone "")) ])
       , Button.button
         [ Button.primary
         , Button.attrs [ class "ml-sm-2 my-2" ]
-        , Button.disabled (String.length user.name == 0)
+        , Button.disabled (String.length user.name == 0 || user.contact == Nothing)
         , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
         ]
         [ text "Submit" ]
