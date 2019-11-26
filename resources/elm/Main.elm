@@ -636,7 +636,7 @@ viewJanistorCard =
       ]
       [ h5
         []
-        [ text "You have been invited by:" ]
+        [ text "You have been invited by" ]
       , div
         [ class "lightgrey-background py-3 px-4" ]
         [ h3
@@ -665,6 +665,41 @@ viewJanistorCard =
       ]
     ]
 
+textInput : String -> String -> List (Input.Option Msg) -> Html Msg
+textInput id txt options =
+  div
+    []
+    [ Input.text
+      ([ Input.id id
+      , Input.placeholder txt
+      ] ++ options)
+    ]
+
+viewInvitForm : User -> Html Msg
+viewInvitForm user =
+  let
+    nameOptions =
+      [ Input.id "myname"
+      , Input.onInput SetUserName
+      , Input.placeholder "My name"
+      , Input.attrs [ class "mb-4" ]
+      ] ++ if user.name /= "" then [ Input.value user.name ] else []
+  in
+    Form.form
+      []
+      [ Input.text nameOptions
+      , textInput "myemail" "My email address" (User.emailInputOption user)
+      , h6 [ class "text-center my-1" ] [ text "OR" ]
+      , textInput "myphone" "My phone number" (User.phoneInputOption user)
+      , Button.button
+        [ Button.primary
+        , Button.attrs [ class "ml-sm-2 my-2" ]
+        , Button.disabled (String.length user.name == 0)
+        , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
+        ]
+        [ text "Submit" ]
+      ]
+
 viewInvit : User -> Html Msg
 viewInvit user =
   Grid.container
@@ -681,28 +716,21 @@ viewInvit user =
         ]
       ]
     , Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ h5
+          []
+          [ text "Who are you ?" ]
+        ]
+      ]
+    , Grid.row
       [ Row.middleXs
-      , Row.attrs
-        [ class "my-container" ]
+      , Row.attrs [ class "my-container" ]
       ]
       [ Grid.col
-        [ Col.xs12
-        , Col.textAlign Text.alignXsRight
-        ]
-        [ Form.label [ for "myusername" ] [ text "Your username" ]
-        , Input.text
-          [ Input.id "myusername"
-          , if user.name /= "" then Input.value user.name else Input.attrs []
-          , Input.onInput SetUserName
-          ]
-        , Button.button
-          [ Button.primary
-          , Button.attrs [ class "ml-sm-2 my-2" ]
-          , Button.disabled (String.length user.name == 0)
-          , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
-          ]
-          [ text "Submit" ]
-        ]
+        [ Col.xs12, Col.textAlign Text.alignXsRight ]
+        [ viewInvitForm user ]
       ]
     , hr [] []
     , viewJanistorCard
