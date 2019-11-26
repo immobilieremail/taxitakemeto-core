@@ -73,6 +73,11 @@ type CurrentView
   | ViewInvit
 
 
+type alias User =
+  { name : String
+  }
+
+
 type alias Model =
   { key : Nav.Key
   , currentView : CurrentView
@@ -86,7 +91,7 @@ type alias Model =
   , accordionState : Accordion.State
   , mouseOver : List OverButton
   , formTitle : String
-  , userName : String
+  , user : User
   , message : Maybe Message.Message
   , loading : Bool
   }
@@ -106,7 +111,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
-  , userName = "John Doe"
+  , user = User "John Doe"
   , message = Nothing
   , loading = False
   }
@@ -491,7 +496,7 @@ update msg model =
       ( { model | formTitle = title }, Cmd.none )
 
     SetUserName username ->
-      ( { model | userName = username }, Cmd.none )
+      ( { model | user = User username }, Cmd.none )
 
 
 
@@ -573,7 +578,7 @@ view model =
       ViewInvit ->
         div
           []
-          [ viewInvit model.userName ]
+          [ viewInvit model.user ]
     ]
   }
 
@@ -664,8 +669,8 @@ viewJanistorCard =
       ]
     ]
 
-viewInvit : String -> Html Msg
-viewInvit name =
+viewInvit : User -> Html Msg
+viewInvit user =
   Grid.container
     [ style "max-width" "100%" ]
     [ Grid.row
@@ -691,15 +696,16 @@ viewInvit name =
         [ Form.label [ for "myusername" ] [ text "Your username" ]
         , Input.text
           [ Input.id "myusername"
-          , if name /= "" then Input.value name else Input.attrs []
+          , if user.name /= "" then Input.value user.name else Input.attrs []
           , Input.onInput SetUserName
           ]
         , Button.button
           [ Button.primary
           , Button.attrs [ class "ml-sm-2 my-2" ]
-          , Button.disabled (String.length name == 0)
+          , Button.disabled (String.length user.name == 0)
+          , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
           ]
-          [ text "Create" ]
+          [ text "Submit" ]
         ]
       ]
     , hr [] []
