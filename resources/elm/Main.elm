@@ -71,6 +71,7 @@ type CurrentView
   | ViewSearchPI
   | ViewNewTravel
   | ViewLogin
+  | ViewNewAccount
   | ViewInvit
 
 
@@ -224,6 +225,7 @@ type Msg
 type Route
   = RouteHome
   | RouteLogin
+  | RouteNewAccount
   | RouteInvit
   | RouteSearch
   | RouteNewTravel
@@ -242,6 +244,7 @@ router =
   P.oneOf
   [ P.map RouteHome <| P.s "elm"
   , P.map RouteLogin <| P.s "elm" </> P.s "login"
+  , P.map RouteNewAccount <| P.s "elm" </> P.s "newaccount"
   , P.map RouteInvit <| P.s "elm" </> P.s "invit"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
   , P.map RouteNewTravel <| P.s "elm" </> P.s "newtravel"
@@ -263,6 +266,9 @@ updateFromUrl model url commonCmd =
 
         RouteLogin ->
           ( { model | currentView = ViewLogin }, commonCmd )
+
+        RouteNewAccount ->
+          ( { model | currentView = ViewNewAccount }, commonCmd )
 
         RouteInvit ->
           ( { model | currentView = ViewInvit }, commonCmd )
@@ -579,6 +585,11 @@ view model =
         div
           []
           [ viewLogin model.user ]
+
+      ViewNewAccount ->
+        div
+          []
+          []
 
       ViewInvit ->
         div
