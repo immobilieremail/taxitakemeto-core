@@ -628,6 +628,24 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
+myInput : (List (Input.Option msg) -> Html Msg) -> String -> String -> List (Input.Option msg) -> Html Msg
+myInput input id txt options =
+  div
+    []
+    [ input
+      ([ Input.id id
+      , Input.placeholder txt
+      ] ++ options)
+    ]
+
+loginButton : String -> Msg -> List (Button.Option Msg) -> Html Msg
+loginButton txt click options =
+  Button.button
+    ([ Button.attrs [ style "width" "100%" ]
+    , Button.onClick click
+    ] ++ options)
+    [ text txt ]
+
 viewLogin : User -> Html Msg
 viewLogin user =
   Grid.container
@@ -651,34 +669,20 @@ viewLogin user =
         [ Col.xs12, Col.textAlign Text.alignXsRight ]
         [ Form.group
           []
-          [ Input.text
-            [ Input.id "myusername"
-            , Input.placeholder "My name"
-            , Input.attrs [ class "my-2" ]
-            ]
-          , Input.password
-            [ Input.id "mypwd"
-            , Input.placeholder "My password"
-            , Input.attrs [ class "my-2" ]
-            ]
-          , Button.button
+          [ myInput Input.text "myusername" "My name" [ Input.attrs [ class "my-2" ] ]
+          , myInput Input.password "mypwd" "My password" [ Input.attrs [ class "my-2" ] ]
+          , loginButton
+            "Sign In"
+            (ViewChanged (getRootUrl ++ "/elm"))
             [ Button.primary
-            , Button.attrs
-              [ style "width" "100%"
-              , class "mb-2 mt-4"
-              ]
-            , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
+            , Button.attrs [ class "mb-2 mt-4" ]
             ]
-            [ text "Sign In" ]
-          , Button.button
+          , loginButton
+            "Need an account ?"
+            (ViewChanged (getRootUrl ++ "/elm/newaccount"))
             [ Button.outlineSecondary
-            , Button.attrs
-              [ style "width" "100%"
-              , class "mb-2"
-              ]
-            , Button.onClick (ViewChanged (getRootUrl ++ "/elm/newaccount"))
+            , Button.attrs [ class "mb-2" ]
             ]
-            [ text "Need an account ?" ]
           ]
         ]
       ]
@@ -727,15 +731,6 @@ viewJanistorCard =
       ]
     ]
 
-textInput : String -> String -> List (Input.Option Msg) -> Html Msg
-textInput id txt options =
-  div
-    []
-    [ Input.text
-      ([ Input.id id
-      , Input.placeholder txt
-      ] ++ options)
-    ]
 
 viewInvitForm : User -> Html Msg
 viewInvitForm user =
@@ -750,12 +745,14 @@ viewInvitForm user =
     Form.form
       []
       [ Input.text nameOptions
-      , textInput
+      , myInput
+        Input.text
         "myemail"
         "My email address"
         ((User.emailInputOption user) ++ [ Input.onInput (SetUserContact (User.Email "")) ])
       , h6 [ class "text-center my-1" ] [ text "OR" ]
-      , textInput
+      , myInput
+        Input.text
         "myphone"
         "My phone number"
         ((User.phoneInputOption user) ++ [ Input.onInput (SetUserContact (User.Phone "")) ])
