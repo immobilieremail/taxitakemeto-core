@@ -648,45 +648,48 @@ loginButton txt click options =
 
 viewLogin : User -> Html Msg
 viewLogin user =
-  Grid.container
-    [ style "max-width" "100%" ]
-    [ Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
-      ]
-      [ Grid.col
-        [ Col.xs12 ]
-        [ h3
-          [ class "title" ]
-          [ text "Sign In" ]
+  let
+    nameOptions = if user.name /= "" then [ Input.value user.name ] else []
+  in
+    Grid.container
+      [ style "max-width" "100%" ]
+      [ Grid.row
+        [ Row.middleXs
+        , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
         ]
-      ]
-    , Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "my-container" ]
-      ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsRight ]
-        [ Form.group
-          []
-          [ myInput Input.text "myusername" "My name" [ Input.attrs [ class "my-2" ] ]
-          , myInput Input.password "mypwd" "My password" [ Input.attrs [ class "my-2" ] ]
-          , loginButton
-            "Sign In"
-            (ViewChanged (getRootUrl ++ "/elm"))
-            [ Button.primary
-            , Button.attrs [ class "mb-2 mt-4" ]
-            ]
-          , loginButton
-            "Need an account ?"
-            (ViewChanged (getRootUrl ++ "/elm/newaccount"))
-            [ Button.outlineSecondary
-            , Button.attrs [ class "mb-2" ]
+        [ Grid.col
+          [ Col.xs12 ]
+          [ h3
+            [ class "title" ]
+            [ text "Sign In" ]
+          ]
+        ]
+      , Grid.row
+        [ Row.middleXs
+        , Row.attrs [ class "my-container" ]
+        ]
+        [ Grid.col
+          [ Col.xs12, Col.textAlign Text.alignXsRight ]
+          [ Form.form
+            [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
+            [ myInput Input.text "myusername" "My name" ([ Input.attrs [ class "my-2" ] ] ++ nameOptions)
+            , myInput Input.password "mypwd" "My password" [ Input.attrs [ class "my-2" ] ]
+            , loginButton
+              "Sign In"
+              (ViewChanged (getRootUrl ++ "/elm"))
+              [ Button.primary
+              , Button.attrs [ class "mb-2 mt-4" ]
+              ]
+            , loginButton
+              "Need an account ?"
+              (ViewChanged (getRootUrl ++ "/elm/newaccount"))
+              [ Button.outlineSecondary
+              , Button.attrs [ class "mb-2" ]
+              ]
             ]
           ]
         ]
       ]
-    ]
 
 
 viewJanistorCard : Html Msg
