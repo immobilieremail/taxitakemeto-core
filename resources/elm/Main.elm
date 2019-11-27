@@ -620,16 +620,55 @@ viewNavbar model =
 viewLogin : User -> Html Msg
 viewLogin user =
   Grid.container
-    []
-    [ Form.group
-      []
-      [ Input.text
-        [ Input.id "myusername"
-        , Input.placeholder "My name"
+    [ style "max-width" "100%" ]
+    [ Grid.row
+      [ Row.middleXs
+      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
+      ]
+      [ Grid.col
+        [ Col.xs12 ]
+        [ h3
+          [ class "title" ]
+          [ text "Sign In" ]
         ]
-      , Input.password
-        [ Input.id "mypwd"
-        , Input.placeholder "My password"
+      ]
+    , Grid.row
+      [ Row.middleXs
+      , Row.attrs [ class "my-container" ]
+      ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsRight ]
+        [ Form.group
+          []
+          [ Input.text
+            [ Input.id "myusername"
+            , Input.placeholder "My name"
+            , Input.attrs [ class "my-2" ]
+            ]
+          , Input.password
+            [ Input.id "mypwd"
+            , Input.placeholder "My password"
+            , Input.attrs [ class "my-2" ]
+            ]
+          , Button.button
+            [ Button.primary
+            , Button.attrs
+              [ style "width" "100%"
+              , class "mb-2 mt-4"
+              ]
+            , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
+            ]
+            [ text "Sign In" ]
+          , Button.button
+            [ Button.outlineSecondary
+            , Button.attrs
+              [ style "width" "100%"
+              , class "mb-2"
+              ]
+            , Button.onClick (ViewChanged (getRootUrl ++ "/elm/newaccount"))
+            ]
+            [ text "Need an account ?" ]
+          ]
         ]
       ]
     ]
