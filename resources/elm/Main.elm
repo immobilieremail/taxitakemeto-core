@@ -658,6 +658,8 @@ viewNewAccount user =
     userConfirmPassword = case user.confirmPassword of
       Nothing -> ""
       Just pswd -> pswd
+    passwordOptions = if user.name /= "" then [ Input.value userPassword ] else []
+    confirmPasswordOptions = if user.name /= "" then [ Input.value userConfirmPassword ] else []
     signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
   in
     Grid.container
@@ -682,8 +684,8 @@ viewNewAccount user =
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
             [ myInput Input.text "myusername" "My name" nameOptions
-            , myInput Input.password "mypwd" "My password" [ Input.onInput SetUserPassword ]
-            , myInput Input.password "mypwdconfirm" "Confirm my password" [ Input.onInput SetUserConfirmPassword ]
+            , myInput Input.password "mypwd" "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
+            , myInput Input.password "mypwdconfirm" "Confirm my password" ([ Input.onInput SetUserConfirmPassword ] ++ confirmPasswordOptions)
             , loginButton
               "Sign Up"
               (ViewChanged (getRootUrl ++ "/elm"))
@@ -726,6 +728,11 @@ viewLogin : User -> Html Msg
 viewLogin user =
   let
     nameOptions = if user.name /= "" then [ Input.value user.name ] else []
+    userPassword = case user.password of
+      Nothing -> ""
+      Just pswd -> pswd
+    passwordOptions = if userPassword /= "" then [ Input.value userPassword ] else []
+    signinConditions = user.name /= "" && userPassword /= ""
   in
     Grid.container
       [ style "max-width" "100%" ]
@@ -748,13 +755,14 @@ viewLogin user =
           [ Col.xs12, Col.textAlign Text.alignXsRight ]
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
-            [ myInput Input.text "myusername" "My name" ([ Input.attrs [ class "my-2" ] ] ++ nameOptions)
-            , myInput Input.password "mypwd" "My password" [ Input.attrs [ class "my-2" ] ]
+            [ myInput Input.text "myusername" "My name" nameOptions
+            , myInput Input.password "mypwd" "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
             , loginButton
               "Sign In"
               (ViewChanged (getRootUrl ++ "/elm"))
               [ Button.primary
               , Button.attrs [ class "mb-2 mt-4" ]
+              , Button.disabled (signinConditions == False)
               ]
             , loginButton
               "Need an account ?"
