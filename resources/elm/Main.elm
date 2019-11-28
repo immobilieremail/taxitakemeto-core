@@ -97,7 +97,7 @@ type alias Model =
 model0 : Nav.Key -> Navbar.State -> Model
 model0 key state =
   { key = key
-  , currentView = ViewUserDashboard
+  , currentView = ViewLogin
   , navbarState = state
   , currentTravel = Travel "" "" [] [] Accordion.initialState
   , currentPI = PI "" "" "" "" [] [] [] []
@@ -641,8 +641,8 @@ viewNavbar model =
       ]
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
-      , navbarItem "/elm/login" "Login page"
       , navbarItem "/elm/invit" "Invitation"
+      , navbarItem "#" "Item 3"
       , navbarItem "#" "Item 4"
       ]
     |> Navbar.view model.navbarState
