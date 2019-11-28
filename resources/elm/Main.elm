@@ -609,7 +609,7 @@ view model =
       ViewNewAccount ->
         div
           []
-          [ viewNewAccount ]
+          [ viewNewAccount model.user ]
 
       ViewInvit ->
         div
@@ -648,48 +648,59 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewNewAccount : Html Msg
-viewNewAccount =
-  Grid.container
-    [ style "max-width" "100%" ]
-    [ Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
-      ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h3
-          [ class "title" ]
-          [ text "Create an account" ]
+viewNewAccount : User -> Html Msg
+viewNewAccount user =
+  let
+    nameOptions = if user.name /= "" then [ Input.value user.name ] else []
+    userPassword = case user.password of
+      Nothing -> ""
+      Just pswd -> pswd
+    userConfirmPassword = case user.confirmPassword of
+      Nothing -> ""
+      Just pswd -> pswd
+    signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
+  in
+    Grid.container
+      [ style "max-width" "100%" ]
+      [ Grid.row
+        [ Row.middleXs
+        , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
         ]
-      ]
-    , Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "my-container" ]
-      ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsRight ]
-        [ Form.form
-          [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
-          [ myInput Input.text "myusername" "My name" [ Input.attrs [ class "my-2" ] ]
-          , myInput Input.password "mypwd" "My password" [ Input.attrs [ class "my-2" ] ]
-          , myInput Input.password "mypwdconfirm" "Confirm my password" [ Input.attrs [ class "my-2" ] ]
-          , loginButton
-            "Sign Up"
-            (ViewChanged (getRootUrl ++ "/elm"))
-            [ Button.primary
-            , Button.attrs [ class "mb-2 mt-4" ]
-            ]
-          , loginButton
-            "Already have an account ?"
-            (ViewChanged (getRootUrl ++ "/elm/login"))
-            [ Button.outlineSecondary
-            , Button.attrs [ class "mb-2" ]
+        [ Grid.col
+          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+          [ h3
+            [ class "title" ]
+            [ text "Create an account" ]
+          ]
+        ]
+      , Grid.row
+        [ Row.middleXs
+        , Row.attrs [ class "my-container" ]
+        ]
+        [ Grid.col
+          [ Col.xs12, Col.textAlign Text.alignXsRight ]
+          [ Form.form
+            [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
+            [ myInput Input.text "myusername" "My name" nameOptions
+            , myInput Input.password "mypwd" "My password" [ Input.onInput SetUserPassword ]
+            , myInput Input.password "mypwdconfirm" "Confirm my password" [ Input.onInput SetUserConfirmPassword ]
+            , loginButton
+              "Sign Up"
+              (ViewChanged (getRootUrl ++ "/elm"))
+              [ Button.primary
+              , Button.attrs [ class "mb-2 mt-4" ]
+              , Button.disabled (signupConditions == False)
+              ]
+            , loginButton
+              "Already have an account ?"
+              (ViewChanged (getRootUrl ++ "/elm/login"))
+              [ Button.outlineSecondary
+              , Button.attrs [ class "mb-2" ]
+              ]
             ]
           ]
         ]
       ]
-    ]
 
 
 myInput : (List (Input.Option msg) -> Html Msg) -> String -> String -> List (Input.Option msg) -> Html Msg
@@ -699,6 +710,7 @@ myInput input id txt options =
     [ input
       ([ Input.id id
       , Input.placeholder txt
+      , Input.attrs [ class "my-2" ]
       ] ++ options)
     ]
 
