@@ -108,7 +108,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
-  , user = User "John Doe" Nothing
+  , user = User "John Doe" Nothing Nothing Nothing
   , message = Nothing
   , loading = False
   }
@@ -220,6 +220,8 @@ type Msg
   | SetTitle String
   | SetUserName String
   | SetUserContact User.Contact String
+  | SetUserPassword String
+  | SetUserConfirmPassword String
 
 
 type Route
@@ -498,16 +500,34 @@ update msg model =
     SetTitle title ->
       ( { model | formTitle = title }, Cmd.none )
 
+    SetUserPassword pswd ->
+      ( { model | user = User model.user.name model.user.contact (Just pswd) model.user.confirmPassword }, Cmd.none )
+
+    SetUserConfirmPassword pswd ->
+      ( { model | user = User model.user.name model.user.contact model.user.password (Just pswd) }, Cmd.none )
+
     SetUserName name ->
-      ( { model | user = User name model.user.contact }, Cmd.none )
+      ( { model | user = User name model.user.contact model.user.password model.user.confirmPassword }, Cmd.none )
 
     SetUserContact contactType contact ->
       case contactType of
         User.Email _ ->
-          ( { model | user = User model.user.name (Just (User.Email contact)) }, Cmd.none )
+          ( { model
+            | user = User
+              model.user.name
+              (Just (User.Email contact))
+              model.user.password
+              model.user.confirmPassword
+            }, Cmd.none )
 
         User.Phone _ ->
-          ( { model | user = User model.user.name (Just (User.Phone contact)) }, Cmd.none )
+          ( { model
+            | user = User
+              model.user.name
+              (Just (User.Phone contact))
+              model.user.password
+              model.user.confirmPassword
+            }, Cmd.none )
 
 
 

@@ -15,6 +15,8 @@ type Contact
 type alias User =
   { name : String
   , contact : Maybe Contact
+  , password : Maybe String
+  , confirmPassword : Maybe String
   }
 
 
