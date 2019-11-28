@@ -702,9 +702,9 @@ viewNewAccount user =
           [ Col.xs12, Col.textAlign Text.alignXsRight ]
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
-            [ myInput Input.text "myusername" "My name" nameOptions
-            , myInput Input.password "mypwd" "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
-            , myInput Input.password "mypwdconfirm" "Confirm my password" ([ Input.onInput SetUserConfirmPassword ] ++ confirmPasswordOptions)
+            [ myInput Input.text "My name" nameOptions
+            , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
+            , myInput Input.password "Confirm my password" ([ Input.onInput SetUserConfirmPassword ] ++ confirmPasswordOptions)
             , loginButton
               "Sign Up"
               (ViewChanged (getRootUrl ++ "/elm"))
@@ -724,13 +724,12 @@ viewNewAccount user =
       ]
 
 
-myInput : (List (Input.Option msg) -> Html Msg) -> String -> String -> List (Input.Option msg) -> Html Msg
-myInput input id txt options =
+myInput : (List (Input.Option msg) -> Html Msg) -> String -> List (Input.Option msg) -> Html Msg
+myInput input txt options =
   div
     []
     [ input
-      ([ Input.id id
-      , Input.placeholder txt
+      ([ Input.placeholder txt
       , Input.attrs [ class "my-2" ]
       ] ++ options)
     ]
@@ -774,8 +773,8 @@ viewLogin user =
           [ Col.xs12, Col.textAlign Text.alignXsRight ]
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
-            [ myInput Input.text "myusername" "My name" nameOptions
-            , myInput Input.password "mypwd" "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
+            [ myInput Input.text "My name" nameOptions
+            , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
             , loginButton
               "Sign In"
               (ViewChanged (getRootUrl ++ "/elm"))
@@ -853,13 +852,11 @@ viewInvitForm user =
       [ Input.text nameOptions
       , myInput
         Input.text
-        "myemail"
         "My email address"
         ((User.emailInputOption user) ++ [ Input.onInput (SetUserContact (User.Email "")) ])
       , h6 [ class "text-center my-1" ] [ text "OR" ]
       , myInput
         Input.text
-        "myphone"
         "My phone number"
         ((User.phoneInputOption user) ++ [ Input.onInput (SetUserContact (User.Phone "")) ])
       , Button.button
