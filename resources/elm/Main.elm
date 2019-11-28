@@ -655,7 +655,7 @@ viewNavbar model =
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
       , navbarItem "/elm/invit" "Invitation"
-      , navbarItem "/elm/account" "Account"
+      , navbarItem "/elm/account" "My account"
       ]
     |> Navbar.view model.navbarState
 
@@ -664,7 +664,33 @@ viewAccount : User -> Html Msg
 viewAccount user =
   Grid.container
     []
-    []
+    [ Grid.row
+      [ Row.middleXs ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ h3
+          [ class "title" ]
+          [ text "My account" ]
+        ]
+      ]
+    , Form.form
+      []
+      [ myInput Input.text "My name" [ Input.value user.name ]
+      , case user.contact of
+        Just contact ->
+          case contact of
+            User.Email email ->
+              myInput Input.email "My email" [ Input.value email ]
+
+            User.Phone phone ->
+              myInput Input.tel "My phone" [ Input.value phone ]
+
+        Nothing ->
+          Button.button
+            [ Button.primary ]
+            [ text "Add a contact" ]
+      ]
+    ]
 
 
 viewNewAccount : User -> Html Msg
