@@ -765,14 +765,14 @@ viewNewAccount user =
             [ myInput Input.text "My name" nameOptions
             , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
             , myInput Input.password "Confirm my password" ([ Input.onInput SetUserConfirmPassword ] ++ confirmPasswordOptions)
-            , loginButton
+            , longButton
               "Sign Up"
               (ViewChanged (getRootUrl ++ "/elm"))
               [ Button.primary
               , Button.attrs [ class "mb-2 mt-4" ]
               , Button.disabled (signupConditions == False)
               ]
-            , loginButton
+            , longButton
               "Already have an account ?"
               (ViewChanged (getRootUrl ++ "/elm/login"))
               [ Button.outlineSecondary
@@ -794,8 +794,8 @@ myInput input txt options =
       ] ++ options)
     ]
 
-loginButton : String -> Msg -> List (Button.Option Msg) -> Html Msg
-loginButton txt click options =
+longButton : String -> Msg -> List (Button.Option Msg) -> Html Msg
+longButton txt click options =
   Button.button
     ([ Button.attrs [ style "width" "100%" ]
     , Button.onClick click
@@ -835,14 +835,14 @@ viewLogin user =
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
             [ myInput Input.text "My name" nameOptions
             , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
-            , loginButton
+            , longButton
               "Sign In"
               (ViewChanged (getRootUrl ++ "/elm"))
               [ Button.primary
               , Button.attrs [ class "mb-2 mt-4" ]
               , Button.disabled (signinConditions == False)
               ]
-            , loginButton
+            , longButton
               "Need an account ?"
               (ViewChanged (getRootUrl ++ "/elm/newaccount"))
               [ Button.outlineSecondary
