@@ -629,6 +629,7 @@ viewNavbar model =
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
       , navbarItem "/elm/invit" "Invitation"
+      , navbarItem "/elm/login" "Login"
       , navbarItem "/elm/profile" "My profile"
       ]
     |> Navbar.view model.navbarState
@@ -681,6 +682,16 @@ viewProfile user =
       [ viewProfileLabel Input.text "My name" user.name [ Input.onInput SetUserName ]
       , inputContactEmail (User.getEmailFromContactList user.contact)
       , inputContactPhone (User.getPhoneFromContactList user.contact)
+      , case user.password of
+        Nothing ->
+          Form.group []
+            [ longButton "Create a password" (ViewChanged (getRootUrl ++ "/elm")) [ Button.primary ]
+            , Form.help []
+              [ text "Use password to log in the application" ]
+            ]
+
+        Just password ->
+          div [] []
       ]
     ]
 
