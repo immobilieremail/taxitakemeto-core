@@ -98,7 +98,7 @@ type alias Model =
 model0 : Nav.Key -> Navbar.State -> Model
 model0 key state =
   { key = key
-  , currentView = ViewLogin
+  , currentView = ViewUserDashboard
   , navbarState = state
   , currentTravel = Travel "" "" [] [] Accordion.initialState
   , currentPI = PI "" "" "" "" [] [] [] []
@@ -550,25 +550,21 @@ view model =
   , body =
     [ case model.currentView of
       ViewUserDashboard ->
-        div
-          []
+        div []
           [ viewNavbar model
           , viewUserDashboard model
           ]
 
       ViewListTravelDashboard ->
-        div
-          []
+        div []
           [ viewNavbar model
-          , h2
-            [ class "title" ]
+          , h2 [ class "title" ]
             [ text "My Travels" ]
           , Travel.viewList model.listTravel
           ]
 
       ViewListPIDashboard ->
-        div
-          []
+        div []
           [ viewNavbar model
           , viewListPIDashboard model model.currentTravel
           ]
@@ -577,44 +573,34 @@ view model =
         simpleViewPI model.carouselState model.mouseOver model.currentPI
 
       LoadingPage ->
-        div
-          []
+        div []
           [ viewNavbar model
           , Loading.view
           ]
 
       ViewSearchPI ->
-        div
-          []
+        div []
           [ viewNavbar model
           , viewSearchPI model
           ]
 
       ViewNewTravel ->
-        div
-          []
+        div []
           [ viewNavbar model
           , viewCreateNewTravel model
           ]
 
       ViewLogin ->
-        div
-          []
-          [ viewLogin model.user ]
+        div [] [ viewLogin model.user ]
 
       ViewNewAccount ->
-        div
-          []
-          [ viewNewAccount model.user ]
+        div [] [ viewNewAccount model.user ]
 
       ViewInvit ->
-        div
-          []
-          [ viewInvit model.user ]
+        div [] [ viewInvit model.user ]
 
       ViewProfile ->
-        div
-          []
+        div []
           [ viewNavbar model
           , viewProfile model.user
           ]
@@ -624,9 +610,7 @@ view model =
 
 navbarItem : String -> String -> Navbar.Item Msg
 navbarItem url content =
-  Navbar.itemLink
-    [ href url ]
-    [ text content ]
+  Navbar.itemLink [ href url ] [ text content ]
 
 viewNavbar : Model -> Html Msg
 viewNavbar model =
@@ -652,8 +636,8 @@ viewNavbar model =
 
 viewProfileLabel : (List (Input.Option Msg) -> Html Msg) -> String -> String -> List (Input.Option Msg) -> Html Msg
 viewProfileLabel input txt value options =
-  div
-    [ class "mb-3" ]
+  Form.group
+    [ Form.attrs [ class "mb-3" ] ]
     [ Form.label
       [ class "profile-label" ]
       [ text txt ]
@@ -707,8 +691,7 @@ getPhoneFromContactList contact =
 
 viewProfile : User -> Html Msg
 viewProfile user =
-  Grid.container
-    []
+  Grid.container []
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
@@ -718,8 +701,7 @@ viewProfile user =
           [ text "My profile" ]
         ]
       ]
-    , Form.form
-      []
+    , Form.form []
       [ viewProfileLabel Input.text "My name" user.name [ Input.onInput SetUserName ]
       , inputContactEmail (getEmailFromContactList user.contact)
       , inputContactPhone (getPhoneFromContactList user.contact)
@@ -786,8 +768,7 @@ viewNewAccount user =
 
 myInput : (List (Input.Option msg) -> Html Msg) -> String -> List (Input.Option msg) -> Html Msg
 myInput input txt options =
-  div
-    []
+  Form.group []
     [ input
       ([ Input.placeholder txt
       , Input.attrs [ class "my-2" ]
@@ -865,16 +846,13 @@ viewJanistorCard =
       [ Col.xs12
       , Col.textAlign Text.alignXsCenter
       ]
-      [ h5
-        []
-        [ text "You have been invited by" ]
+      [ h5 [] [ text "You have been invited by" ]
       , div
         [ class "lightgrey-background py-3 px-4" ]
         [ h3
           [ class "mb-3" ]
           [ text "Bob Butler" ]
-        , Grid.row
-          []
+        , Grid.row []
           [ Grid.col
             [ Col.xs4 ]
             [ img
@@ -887,14 +865,11 @@ viewJanistorCard =
             [ Col.xs8
             , Col.textAlign Text.alignXsLeft
             ]
-            [ p
-              []
-              [ text "This text is a description of Bob Butler." ]
+            [ p [] [ text "This text is a description of Bob Butler." ] ]
             ]
           ]
         ]
       ]
-    ]
 
 
 viewInvitForm : User -> Html Msg
@@ -907,8 +882,7 @@ viewInvitForm user =
       , Input.attrs [ class "mb-4" ]
       ] ++ if user.name /= "" then [ Input.value user.name ] else []
   in
-    Form.form
-      []
+    Form.form []
       [ Input.text nameOptions
       , myInput Input.text "My email address" [ Input.onInput (AddUserContact (User.Email "")) ]
       , h6 [ class "text-center my-1" ] [ text "OR" ]
@@ -941,9 +915,7 @@ viewInvit user =
       [ Row.middleXs ]
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h5
-          []
-          [ text "Who are you ?" ]
+        [ h5 [] [ text "Who are you ?" ]
         ]
       ]
     , Grid.row
@@ -967,8 +939,7 @@ viewBlockTravel swissNumber travel =
 
 viewUserDashboardAccordionToggle : Accordion.State -> Html Msg
 viewUserDashboardAccordionToggle accordionState =
-  Grid.row
-    []
+  Grid.row []
     [ Grid.col
       [ Col.xs8 ]
       [ h5
@@ -1013,10 +984,8 @@ viewUserDashboardAccordion model =
 
 viewUserDashboard : Model -> Html Msg
 viewUserDashboard model =
-  Grid.container
-    []
-    [ Grid.row
-      []
+  Grid.container []
+    [ Grid.row []
       [ Grid.col
         [ Col.xs12 ]
         [ h3
@@ -1043,10 +1012,7 @@ viewUserDashboard model =
         ]
       , Grid.col
         [ Col.xs12 ]
-        [ hr
-          []
-          []
-        ]
+        [ hr [] [] ]
       , Grid.col
         [ Col.xs12 ]
         [ accordionView
@@ -1068,8 +1034,7 @@ iconRemove =
 
 viewCheckedPI : PI -> Html Msg
 viewCheckedPI pi =
-  Grid.container
-    []
+  Grid.container []
     [ Grid.row
       [ Row.attrs [ class "checked-pi mb-3" ] ]
       [ Grid.col
@@ -1103,10 +1068,8 @@ viewCheckedPI pi =
 
 viewCreateNewTravel : Model -> Html Msg
 viewCreateNewTravel model =
-  Grid.container
-    []
-    [ Grid.row
-      []
+  Grid.container []
+    [ Grid.row []
       [ Grid.col
         [ Col.xs12 ]
         [ h2
@@ -1134,8 +1097,7 @@ viewCreateNewTravel model =
         Loading.view
 
       False ->
-        Grid.row
-        []
+        Grid.row []
         [ Grid.col
           [ Col.xs12 ]
           [ hr [] [] ]
@@ -1155,8 +1117,7 @@ viewSearchBar =
       [ InputGroup.config
           ( InputGroup.text [ Input.placeholder "Search PI" ] )
           |> InputGroup.predecessors
-            [ InputGroup.span
-              []
+            [ InputGroup.span []
               [ img
                 [ src "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Magnifying_glass_icon.svg/490px-Magnifying_glass_icon.svg.png"
                 , style "max-width" "20px"
@@ -1181,10 +1142,7 @@ viewProposal checked proposal =
     ]
     [ div
       [ class "col-12 text-center" ]
-      [ hr
-        []
-        []
-      ]
+      [ hr [] [] ]
     , div
       [ class "col-md-2 col-4 text-center" ]
       [ Media.viewFirstMedia [ style "max-width" "150px", class "rounded" ] proposal.medias ]
@@ -1212,10 +1170,7 @@ viewSearchAddToList str msg =
     [ Row.attrs [ class "pt-2 pb-2 lightgrey-background mb-2" ] ]
     [ Grid.col
       [ Col.xs8, Col.textAlign Text.alignXsLeft ]
-      [ h4
-        []
-        [ text str ]
-      ]
+      [ h4 [] [ text str ] ]
     , Grid.col
       [ Col.xs4, Col.textAlign Text.alignXsRight ]
       [ Button.button
@@ -1255,8 +1210,7 @@ viewSearchPI model =
   Grid.container
     [ class "mt-4" ]
     [ viewSearchBar
-    , Grid.row
-      []
+    , Grid.row []
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ img
@@ -1268,17 +1222,12 @@ viewSearchPI model =
       ]
     , div
       [ class "proposals mb-4" ]
-      [ div
-        []
+      [ div []
         (List.map (viewProposal model.checked) model.proposals)
       , case List.length model.checked > 0 of
         True ->
-          div
-            []
-            [ h4
-              []
-              [ text "Selected PIs" ]
-            ]
+          div []
+            [ h4 [] [ text "Selected PIs" ] ]
 
         False ->
           div [] []
@@ -1294,23 +1243,18 @@ viewSearchPI model =
 
 viewSimplePILink : PI -> Html Msg
 viewSimplePILink pi =
-  a
-    [ href ("/elm/pi#" ++ pi.swissNumber) ]
+  a [ href ("/elm/pi#" ++ pi.swissNumber) ]
     [ Grid.row
       [ Row.middleXs ]
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h5
-          []
-          [ text pi.title ]
-        ]
+        [ h5 [] [ text pi.title ] ]
       ]
     , Grid.row
       [ Row.middleXs, Row.attrs [ style "background-color" "#eeeeec", class "rounded" ] ]
       [ Grid.col
         [ Col.sm3 ]
-        [ Grid.row
-          []
+        [ Grid.row []
           (List.map PI.viewTypePI pi.typespi)
         ]
       , Grid.col
@@ -1319,9 +1263,7 @@ viewSimplePILink pi =
           [ Row.attrs [ class "pi-tags" ] ]
           (List.map PI.viewTagPI pi.tags)
         ]
-      , Grid.col
-        [ Col.sm3 ]
-        []
+      , Grid.col [ Col.sm3 ] []
       ]
     ]
 
@@ -1337,8 +1279,7 @@ piAccordionCard currentPI carouselState accordionState mouseOver index pi =
         [ viewSimplePILink pi ]
     , blocks =
       [ Accordion.block [ Block.attrs [ class "test" ] ]
-        [ Block.text
-          []
+        [ Block.text []
           [ case pi.swissNumber == currentPI.swissNumber of
             True ->
               viewPI carouselState accordionState mouseOver index currentPI
@@ -1385,10 +1326,8 @@ viewContact travel =
 
 viewListPIDashboard : Model -> Travel -> Html Msg
 viewListPIDashboard model travel =
-  div
-    []
-    [ Grid.container
-      []
+  div []
+    [ Grid.container []
       [ case model.message of
           Just message ->
             Message.view message Message.userDashboardType
@@ -1451,8 +1390,7 @@ viewCarouselButtonNext mouseOver =
 
 viewCarousel : List Media -> Carousel.State -> List OverButton -> Html Msg
 viewCarousel medias carouselState mouseOver =
-  div
-    []
+  div []
     [ Carousel.config CarouselMsg []
       |> Carousel.slides
         (List.map Media.carouselSlide medias)
@@ -1482,8 +1420,7 @@ piChangeViewButton txt msg =
 
 viewPI : Carousel.State -> Accordion.State -> List OverButton -> Int -> PI -> Html Msg
 viewPI carouselState accordionState mouseOver index pi =
-  div
-    []
+  div []
     [ Grid.container
       [ class "pt-3" ]
       [ Grid.row
@@ -1499,9 +1436,7 @@ viewPI carouselState accordionState mouseOver index pi =
           ]
         , Grid.col
           [ Col.sm6 ]
-          [ h5
-            []
-            [ text pi.title ]
+          [ h5 [] [ text pi.title ]
           , div
             [ class "text-justify" ]
             [ text pi.description ]
@@ -1509,31 +1444,23 @@ viewPI carouselState accordionState mouseOver index pi =
         ]
       , Grid.row
         [ Row.middleXs ]
-        [ Grid.col
-          [ Col.sm3 ]
-          []
+        [ Grid.col [ Col.sm3 ] []
         , Grid.col
           [ Col.sm6 ]
           [ Grid.row
             [ Row.attrs [ class "pi-tags" ] ]
             (List.map PI.viewTagPI pi.tags)
           ]
-        , Grid.col
-          [ Col.sm3 ]
-          []
+        , Grid.col [ Col.sm3 ] []
         ]
-      , hr
-        []
-        []
+      , hr [] []
       , h2
         [ class "title" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
         (List.map Media.viewAudioLanguage pi.audios)
-      , hr
-        [ class "pt-2" ]
-        []
+      , hr [ class "pt-2" ] []
       , piChangeViewButton "Simple view" (ViewChanged (getRootUrl ++ "/elm/pi/simpleview#" ++ pi.swissNumber))
       ]
     ]
@@ -1541,8 +1468,7 @@ viewPI carouselState accordionState mouseOver index pi =
 
 simpleViewPI : Carousel.State -> List OverButton -> PI -> Html Msg
 simpleViewPI carouselState mouseOver pi =
-  div
-    []
+  div []
     [ Grid.container
       [ class "pt-3" ]
       [ Grid.row
@@ -1561,18 +1487,14 @@ simpleViewPI carouselState mouseOver pi =
             [ text pi.address ]
           ]
         ]
-      , hr
-        []
-        []
+      , hr [] []
       , h2
         [ class "title" ]
         [ text "Audio language" ]
       , Grid.container
         [ class "p-4" ]
         (List.map Media.viewAudioLanguage pi.audios)
-      , hr
-        [ class "pt-2" ]
-        []
+      , hr [ class "pt-2" ] []
       , piChangeViewButton "Exit view" (ViewChanged (getRootUrl ++ "/elm/pi#" ++ pi.swissNumber))
       ]
     ]

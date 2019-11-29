@@ -69,8 +69,7 @@ carouselSlide media =
     Slide.config [] (Slide.image [] media.url)
 
   VideoType ->
-    Slide.config
-      []
+    Slide.config []
       (Slide.customContent
         (video
           [ controls True

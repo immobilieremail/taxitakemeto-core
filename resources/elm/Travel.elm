@@ -76,9 +76,7 @@ view travel =
 
 viewList : List Travel -> Html msg
 viewList listTravel =
-  Grid.container
-    []
-    (List.map view listTravel)
+  Grid.container [] (List.map view listTravel)
 
 
 

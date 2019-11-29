@@ -11,19 +11,19 @@ import Bootstrap.Alert as Alert
 
 
 type MessageType
-    = UserDashboard
+  = UserDashboard
 
 
 type alias Message =
-    { message : String
-    , type_ : MessageType
-    }
+  { message : String
+  , type_ : MessageType
+  }
 
 
 
 userDashboardType : MessageType
 userDashboardType =
-    UserDashboard
+  UserDashboard
 
 
 
@@ -32,16 +32,15 @@ userDashboardType =
 
 view : Message -> MessageType -> Html msg
 view message desiredMessageType =
-    case message.type_ of
-        UserDashboard ->
-            case UserDashboard == desiredMessageType of
-                True ->
-                    Alert.simpleWarning
-                        []
-                        [ span
-                            [ style "font-size" "12px" ]
-                            [ text message.message ]
-                        ]
+  case message.type_ of
+    UserDashboard ->
+      case UserDashboard == desiredMessageType of
+        True ->
+          Alert.simpleWarning []
+            [ span
+              [ style "font-size" "12px" ]
+              [ text message.message ]
+            ]
 
-                False ->
-                    div [] []
+        False ->
+          div [] []
