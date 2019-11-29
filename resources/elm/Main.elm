@@ -73,7 +73,7 @@ type CurrentView
   | ViewLogin
   | ViewNewAccount
   | ViewInvit
-  | ViewAccount
+  | ViewProfile
 
 
 type alias Model =
@@ -228,7 +228,7 @@ type Msg
 type Route
   = RouteHome
   | RouteLogin
-  | RouteAccount
+  | RouteProfile
   | RouteNewAccount
   | RouteInvit
   | RouteSearch
@@ -248,7 +248,7 @@ router =
   P.oneOf
   [ P.map RouteHome <| P.s "elm"
   , P.map RouteLogin <| P.s "elm" </> P.s "login"
-  , P.map RouteAccount <| P.s "elm" </> P.s "account"
+  , P.map RouteProfile <| P.s "elm" </> P.s "profile"
   , P.map RouteNewAccount <| P.s "elm" </> P.s "newaccount"
   , P.map RouteInvit <| P.s "elm" </> P.s "invit"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
@@ -272,8 +272,8 @@ updateFromUrl model url commonCmd =
         RouteLogin ->
           ( { model | currentView = ViewLogin }, commonCmd )
 
-        RouteAccount ->
-          ( { model | currentView = ViewAccount }, commonCmd )
+        RouteProfile ->
+          ( { model | currentView = ViewProfile }, commonCmd )
 
         RouteNewAccount ->
           ( { model | currentView = ViewNewAccount }, commonCmd )
@@ -622,11 +622,11 @@ view model =
           []
           [ viewInvit model.user ]
 
-      ViewAccount ->
+      ViewProfile ->
         div
           []
           [ viewNavbar model
-          , viewAccount model.user
+          , viewProfile model.user
           ]
     ]
   }
@@ -655,13 +655,13 @@ viewNavbar model =
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
       , navbarItem "/elm/invit" "Invitation"
-      , navbarItem "/elm/account" "My account"
+      , navbarItem "/elm/profile" "My profile"
       ]
     |> Navbar.view model.navbarState
 
 
-viewAccount : User -> Html Msg
-viewAccount user =
+viewProfile : User -> Html Msg
+viewProfile user =
   Grid.container
     []
     [ Grid.row
