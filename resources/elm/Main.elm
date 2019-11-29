@@ -736,7 +736,8 @@ viewProfile user modalVisibility =
 
       , h4 [ class "title" ] [ text "Contact" ]
       , if List.length user.contact == 0 then
-        Alert.simpleWarning [] [ text "You should add a contact information" ]
+        Message.viewWarningMessage
+          "You should add a contact information to help you interact with people."
       else
         div [] []
       , inputContactEmail (User.getEmailFromContactList user.contact)
