@@ -660,6 +660,17 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
+viewProfileLabel : (List (Input.Option Msg) -> Html Msg) -> String -> String -> Html Msg
+viewProfileLabel input txt value =
+  div
+    [ class "mb-3" ]
+    [ Form.label
+      [ class "profile-label" ]
+      [ text txt ]
+    , input
+      [ Input.value value ]
+    ]
+
 viewProfile : User -> Html Msg
 viewProfile user =
   Grid.container
@@ -675,15 +686,15 @@ viewProfile user =
       ]
     , Form.form
       []
-      [ myInput Input.text "My name" [ Input.value user.name ]
+      [ viewProfileLabel Input.text "My name" user.name
       , case user.contact of
         Just contact ->
           case contact of
             User.Email email ->
-              myInput Input.email "My email" [ Input.value email ]
+              viewProfileLabel Input.email "My email address" email
 
             User.Phone phone ->
-              myInput Input.tel "My phone" [ Input.value phone ]
+              viewProfileLabel Input.tel "My phone number" phone
 
         Nothing ->
           Button.button
