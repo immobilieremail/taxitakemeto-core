@@ -518,13 +518,25 @@ update msg model =
       ( { model | formTitle = title }, Cmd.none )
 
     SetUserPassword pswd ->
-      ( { model | user = User model.user.name model.user.contact (Just pswd) model.user.confirmPassword }, Cmd.none )
+      let
+        oldUser = model.user
+        newUser = { oldUser | password = if pswd /= "" then (Just pswd) else Nothing }
+      in
+        ( { model | user = newUser }, Cmd.none )
 
     SetUserConfirmPassword pswd ->
-      ( { model | user = User model.user.name model.user.contact model.user.password (Just pswd) }, Cmd.none )
+      let
+        oldUser = model.user
+        newUser = { oldUser | confirmPassword = if pswd /= "" then (Just pswd) else Nothing }
+      in
+        ( { model | user = newUser }, Cmd.none )
 
     SetUserName name ->
-      ( { model | user = User name model.user.contact model.user.password model.user.confirmPassword }, Cmd.none )
+      let
+        oldUser = model.user
+        newUser = { oldUser | name = name }
+      in
+        ( { model | user = newUser }, Cmd.none )
 
     AddUserContact contactType contact ->
       let
@@ -532,7 +544,7 @@ update msg model =
         filteredContactList = List.filter (User.filterContactType contactType) model.user.contact
 
         oldUser = model.user
-        newUser = { oldUser | contact = filteredContactList ++ [ newContact ] }
+        newUser = { oldUser | contact = filteredContactList ++ if contact /= "" then [ newContact ] else [] }
       in
         ( { model | user = newUser }, Cmd.none )
 
