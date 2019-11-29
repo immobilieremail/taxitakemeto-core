@@ -20,6 +20,16 @@ type alias User =
   }
 
 
+getPasswordValue : Maybe String -> String
+getPasswordValue password =
+  case password of
+    Just pswd ->
+      pswd
+
+    Nothing ->
+      ""
+
+
 getContactType : Contact -> ( String -> Contact )
 getContactType contact =
   case contact of
@@ -38,7 +48,6 @@ getContactValue contact =
 
     Email value ->
       value
-
 
 
 filterContactType : Contact -> Contact -> Bool
