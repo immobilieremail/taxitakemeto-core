@@ -51,3 +51,28 @@ filterContactType comparable contact =
     else
       True
 
+
+getEmailFromContactList : List Contact -> String
+getEmailFromContactList contactList =
+  let
+    filteredContact = List.filter (filterContactType (Phone "")) contactList
+  in
+    case List.head filteredContact of
+      Just email ->
+        getContactValue email
+
+      Nothing ->
+        ""
+
+
+getPhoneFromContactList : List Contact -> String
+getPhoneFromContactList contact =
+  let
+    filteredContact = List.filter (filterContactType (Email "")) contact
+  in
+    case List.head filteredContact of
+      Just phone ->
+        getContactValue phone
+
+      Nothing ->
+        ""

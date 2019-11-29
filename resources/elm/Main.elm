@@ -665,30 +665,6 @@ inputContactPhone phone =
     , Input.id "myphone"
     ]
 
-getEmailFromContactList : List User.Contact -> String
-getEmailFromContactList contactList =
-  let
-    filteredContact = List.filter (User.filterContactType (User.Phone "")) contactList
-  in
-    case List.head filteredContact of
-      Just email ->
-        User.getContactValue email
-
-      Nothing ->
-        ""
-
-getPhoneFromContactList : List User.Contact -> String
-getPhoneFromContactList contact =
-  let
-    filteredContact = List.filter (User.filterContactType (User.Email "")) contact
-  in
-    case List.head filteredContact of
-      Just phone ->
-        User.getContactValue phone
-
-      Nothing ->
-        ""
-
 viewProfile : User -> Html Msg
 viewProfile user =
   Grid.container []
@@ -703,8 +679,8 @@ viewProfile user =
       ]
     , Form.form []
       [ viewProfileLabel Input.text "My name" user.name [ Input.onInput SetUserName ]
-      , inputContactEmail (getEmailFromContactList user.contact)
-      , inputContactPhone (getPhoneFromContactList user.contact)
+      , inputContactEmail (User.getEmailFromContactList user.contact)
+      , inputContactPhone (User.getPhoneFromContactList user.contact)
       ]
     ]
 
