@@ -87,6 +87,7 @@ type alias Model =
   , listTravel : List Travel
   , carouselState : Carousel.State
   , accordionState : Accordion.State
+  , modalVisibility : Modal.Visibility
   , mouseOver : List OverButton
   , formTitle : String
   , user : User
@@ -107,6 +108,7 @@ model0 key state =
   , listTravel = []
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
+  , modalVisibility = Modal.hidden
   , mouseOver = []
   , formTitle = ""
   , user = User "John Doe" [] Nothing Nothing
@@ -210,6 +212,8 @@ type Msg
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
   | TravelAccordionMsg Accordion.State
+  | CloseModal
+  | ShowModal
   | CarouselPrev
   | CarouselNext
   | MouseOver OverButton
@@ -431,6 +435,12 @@ update msg model =
     TravelAccordionMsg state ->
       ( { model | currentTravel = (Travel.updateAccordionState state model.currentTravel) }, Cmd.none )
 
+    ShowModal ->
+      ( { model | modalVisibility = Modal.shown } , Cmd.none )
+
+    CloseModal ->
+      ( { model | modalVisibility = Modal.hidden } , Cmd.none )
+
     CarouselPrev ->
       ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
 
@@ -602,7 +612,7 @@ view model =
       ViewProfile ->
         div []
           [ viewNavbar model
-          , viewProfile model.user
+          , viewProfile model.user model.modalVisibility
           ]
     ]
   }
@@ -633,6 +643,17 @@ viewNavbar model =
       , navbarItem "/elm/profile" "My profile"
       ]
     |> Navbar.view model.navbarState
+
+
+viewModal : Modal.Visibility -> String -> Html Msg -> Html Msg -> Html Msg
+viewModal modalVisibility title body footer =
+  Modal.config CloseModal
+    |> Modal.small
+    |> Modal.hideOnBackdropClick True
+    |> Modal.h3 [] [ text title ]
+    |> Modal.body [] [ body ]
+    |> Modal.footer [] [ footer ]
+    |> Modal.view modalVisibility
 
 
 viewProfileLabel : (List (Input.Option Msg) -> Html Msg) -> String -> String -> List (Input.Option Msg) -> Html Msg
@@ -666,8 +687,8 @@ inputContactPhone phone =
     , Input.id "myphone"
     ]
 
-viewProfile : User -> Html Msg
-viewProfile user =
+viewProfile : User -> Modal.Visibility -> Html Msg
+viewProfile user modalVisibility =
   Grid.container []
     [ Grid.row
       [ Row.middleXs ]
@@ -683,7 +704,7 @@ viewProfile user =
       , case user.password of
         Nothing ->
           Form.group []
-            [ longButton "Create a password" (ViewChanged (getRootUrl ++ "/elm")) [ Button.primary ]
+            [ longButton "Create a password" (ShowModal) [ Button.primary ]
             , Form.help []
               [ text "Connect to the application using a password" ]
             ]
