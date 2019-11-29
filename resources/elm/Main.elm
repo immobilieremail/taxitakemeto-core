@@ -680,18 +680,21 @@ viewProfile user =
       ]
     , Form.form []
       [ viewProfileLabel Input.text "My name" user.name [ Input.onInput SetUserName ]
-      , inputContactEmail (User.getEmailFromContactList user.contact)
-      , inputContactPhone (User.getPhoneFromContactList user.contact)
       , case user.password of
         Nothing ->
           Form.group []
             [ longButton "Create a password" (ViewChanged (getRootUrl ++ "/elm")) [ Button.primary ]
             , Form.help []
-              [ text "Use password to log in the application" ]
+              [ text "Connect to the application using a password" ]
             ]
 
         Just password ->
           div [] []
+
+      , h4 [ class "title" ]
+        [ text "Contact" ]
+      , inputContactEmail (User.getEmailFromContactList user.contact)
+      , inputContactPhone (User.getPhoneFromContactList user.contact)
       ]
     ]
 
