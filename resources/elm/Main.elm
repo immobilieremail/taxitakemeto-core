@@ -699,8 +699,8 @@ viewProfile user =
     ]
 
 
-viewNewAccountFormPassword : String -> String -> List (Input.Option Msg) -> Html Msg
-viewNewAccountFormPassword placehold feedback options  =
+viewSingleFormPassword : String -> String -> List (Input.Option Msg) -> Html Msg
+viewSingleFormPassword placehold feedback options  =
   Form.group []
     [ Input.password
       ([ Input.placeholder placehold
@@ -711,38 +711,39 @@ viewNewAccountFormPassword placehold feedback options  =
       [ text feedback ]
     ]
 
-viewNewAccountForm : User -> Html Msg
-viewNewAccountForm user =
+viewCompleteFormPassword : User -> Html Msg
+viewCompleteFormPassword user =
   let
-    userPassword = case user.password of
-      Nothing -> ""
-      Just pswd -> pswd
-    userConfirmPassword = case user.confirmPassword of
-      Nothing -> ""
-      Just pswd -> pswd
-
+    userPassword = User.getPasswordValue user.password
     passwordCondition = String.length userPassword < 12
     passwordOptions = if passwordCondition then [ Input.danger ] else []
 
+    userConfirmPassword = User.getPasswordValue user.confirmPassword
     confirmPasswordCondition = userConfirmPassword /= userPassword || passwordCondition
     confirmPasswordOptions = if confirmPasswordCondition then [ Input.danger ] else []
+  in
+    div []
+      [ viewSingleFormPassword
+        "My password"
+        "Password must be at least 12 characters long"
+        passwordOptions
+      , viewSingleFormPassword
+        "Confirm my password"
+        "Must be the same as password"
+        confirmPasswordOptions
+      ]
 
+viewNewAccountForm : User -> Html Msg
+viewNewAccountForm user =
+  let
+    userPassword = User.getPasswordValue user.password
+    userConfirmPassword = User.getPasswordValue user.confirmPassword
     signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
   in
     Form.form
       [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
       [ myInput Input.text "My name" []
-
-      , viewNewAccountFormPassword
-        "My password"
-        "Password must be at least 12 characters long"
-        passwordOptions
-
-      , viewNewAccountFormPassword
-        "Confirm my password"
-        "Must be the same as password"
-        confirmPasswordOptions
-
+      , viewCompleteFormPassword user
       , longButton "Sign Up"
         (ViewChanged (getRootUrl ++ "/elm"))
         [ Button.primary
