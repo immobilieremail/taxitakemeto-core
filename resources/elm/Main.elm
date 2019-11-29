@@ -690,7 +690,15 @@ inputContactPhone phone =
 viewProfile : User -> Modal.Visibility -> Html Msg
 viewProfile user modalVisibility =
   Grid.container []
-    [ Grid.row
+    [ viewModal
+      modalVisibility
+      "Create my password"
+      (viewCompleteFormPassword user)
+      (Button.button
+        [ Button.primary ]
+        [ text "Submit" ]
+      )
+    , Grid.row
       [ Row.middleXs ]
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
