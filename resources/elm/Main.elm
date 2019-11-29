@@ -29,6 +29,7 @@ import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.InputGroup as InputGroup
+import Bootstrap.Alert as Alert
 import Color
 import Process
 import Task
@@ -718,10 +719,14 @@ viewProfile user modalVisibility =
             ]
 
         Just password ->
-          div [] []
+          Form.group []
+            [ longButton "Reset my password" (ShowModal) [ Button.primary ] ]
 
-      , h4 [ class "title" ]
-        [ text "Contact" ]
+      , h4 [ class "title" ] [ text "Contact" ]
+      , if List.length user.contact == 0 then
+        Alert.simpleWarning [] [ text "You should add a contact information" ]
+      else
+        div [] []
       , inputContactEmail (User.getEmailFromContactList user.contact)
       , inputContactPhone (User.getPhoneFromContactList user.contact)
       ]
