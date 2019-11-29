@@ -36,11 +36,15 @@ view message desiredMessageType =
     UserDashboard ->
       case UserDashboard == desiredMessageType of
         True ->
-          Alert.simpleWarning []
-            [ span
-              [ style "font-size" "12px" ]
-              [ text message.message ]
-            ]
+          viewWarningMessage message.message
 
         False ->
           div [] []
+
+viewWarningMessage : String -> Html msg
+viewWarningMessage message =
+  Alert.simpleWarning []
+    [ span
+      [ style "font-size" "12px" ]
+      [ text message ]
+    ]
