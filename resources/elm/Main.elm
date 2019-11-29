@@ -109,7 +109,7 @@ model0 key state =
   , accordionState = Accordion.initialState
   , mouseOver = []
   , formTitle = ""
-  , user = User "John Doe" Nothing Nothing Nothing
+  , user = User "John Doe" [] Nothing Nothing
   , message = Nothing
   , loading = False
   }
@@ -220,7 +220,7 @@ type Msg
   | GotNewTravel (Result Http.Error Travel)
   | SetTitle String
   | SetUserName String
-  | SetUserContact User.Contact String
+  | AddUserContact User.Contact String
   | SetUserPassword String
   | SetUserConfirmPassword String
 
@@ -515,25 +515,15 @@ update msg model =
     SetUserName name ->
       ( { model | user = User name model.user.contact model.user.password model.user.confirmPassword }, Cmd.none )
 
-    SetUserContact contactType contact ->
-      case contactType of
-        User.Email _ ->
-          ( { model
-            | user = User
-              model.user.name
-              (Just (User.Email contact))
-              model.user.password
-              model.user.confirmPassword
-            }, Cmd.none )
+    AddUserContact contactType contact ->
+      let
+        newContact = (User.getContactType contactType) contact
+        filteredContactList = List.filter (User.filterContactType contactType) model.user.contact
 
-        User.Phone _ ->
-          ( { model
-            | user = User
-              model.user.name
-              (Just (User.Phone contact))
-              model.user.password
-              model.user.confirmPassword
-            }, Cmd.none )
+        oldUser = model.user
+        newUser = { oldUser | contact = filteredContactList ++ [ newContact ] }
+      in
+        ( { model | user = newUser }, Cmd.none )
 
 
 
@@ -660,16 +650,60 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewProfileLabel : (List (Input.Option Msg) -> Html Msg) -> String -> String -> Html Msg
-viewProfileLabel input txt value =
+viewProfileLabel : (List (Input.Option Msg) -> Html Msg) -> String -> String -> List (Input.Option Msg) -> Html Msg
+viewProfileLabel input txt value options =
   div
     [ class "mb-3" ]
     [ Form.label
       [ class "profile-label" ]
       [ text txt ]
     , input
-      [ Input.value value ]
+      ([ Input.value value ] ++ options)
     ]
+
+inputContactEmail : String -> Html Msg
+inputContactEmail email =
+  viewProfileLabel
+    Input.email
+    "My email address"
+    email
+    [ Input.onInput (AddUserContact (User.Email ""))
+    , Input.id "myemail"
+    ]
+
+inputContactPhone : String -> Html Msg
+inputContactPhone phone =
+  viewProfileLabel
+    Input.text
+    "My phone number"
+    phone
+    [ Input.onInput (AddUserContact (User.Phone ""))
+    , Input.id "myphone"
+    ]
+
+getEmailFromContactList : List User.Contact -> String
+getEmailFromContactList contactList =
+  let
+    filteredContact = List.filter (User.filterContactType (User.Phone "")) contactList
+  in
+    case List.head filteredContact of
+      Just email ->
+        User.getContactValue email
+
+      Nothing ->
+        ""
+
+getPhoneFromContactList : List User.Contact -> String
+getPhoneFromContactList contact =
+  let
+    filteredContact = List.filter (User.filterContactType (User.Email "")) contact
+  in
+    case List.head filteredContact of
+      Just phone ->
+        User.getContactValue phone
+
+      Nothing ->
+        ""
 
 viewProfile : User -> Html Msg
 viewProfile user =
@@ -681,25 +715,14 @@ viewProfile user =
         [ Col.xs12, Col.textAlign Text.alignXsCenter ]
         [ h3
           [ class "title" ]
-          [ text "My account" ]
+          [ text "My profile" ]
         ]
       ]
     , Form.form
       []
-      [ viewProfileLabel Input.text "My name" user.name
-      , case user.contact of
-        Just contact ->
-          case contact of
-            User.Email email ->
-              viewProfileLabel Input.email "My email address" email
-
-            User.Phone phone ->
-              viewProfileLabel Input.tel "My phone number" phone
-
-        Nothing ->
-          Button.button
-            [ Button.primary ]
-            [ text "Add a contact" ]
+      [ viewProfileLabel Input.text "My name" user.name [ Input.onInput SetUserName ]
+      , inputContactEmail (getEmailFromContactList user.contact)
+      , inputContactPhone (getPhoneFromContactList user.contact)
       ]
     ]
 
@@ -887,19 +910,13 @@ viewInvitForm user =
     Form.form
       []
       [ Input.text nameOptions
-      , myInput
-        Input.text
-        "My email address"
-        ((User.emailInputOption user) ++ [ Input.onInput (SetUserContact (User.Email "")) ])
+      , myInput Input.text "My email address" [ Input.onInput (AddUserContact (User.Email "")) ]
       , h6 [ class "text-center my-1" ] [ text "OR" ]
-      , myInput
-        Input.text
-        "My phone number"
-        ((User.phoneInputOption user) ++ [ Input.onInput (SetUserContact (User.Phone "")) ])
+      , myInput Input.text "My phone number" [ Input.onInput (AddUserContact (User.Phone "")) ]
       , Button.button
         [ Button.primary
         , Button.attrs [ class "ml-sm-2 my-2" ]
-        , Button.disabled (String.length user.name == 0 || user.contact == Nothing)
+        , Button.disabled (String.length user.name == 0 || user.contact == [])
         , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
         ]
         [ text "Submit" ]
