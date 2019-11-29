@@ -720,16 +720,20 @@ viewProfile user modalVisibility =
     ]
 
 
-viewSingleFormPassword : String -> String -> List (Input.Option Msg) -> Html Msg
-viewSingleFormPassword placehold feedback options  =
+viewSingleFormPassword : String -> (String -> Msg) -> (Bool, String) -> List (Input.Option Msg) -> Html Msg
+viewSingleFormPassword placehold message feedback options  =
   Form.group []
     [ Input.password
       ([ Input.placeholder placehold
       , Input.attrs [ class "my-2" ]
-      , Input.onInput SetUserPassword
+      , Input.onInput message
       ] ++ options)
-    , Form.invalidFeedback []
-      [ text feedback ]
+    , if (Tuple.first feedback) then
+      Form.invalidFeedback []
+        [ text (Tuple.second feedback) ]
+    else
+      Form.validFeedback []
+        [ text "OK" ]
     ]
 
 viewCompleteFormPassword : User -> Html Msg
@@ -740,17 +744,19 @@ viewCompleteFormPassword user =
     passwordOptions = if passwordCondition then [ Input.danger ] else []
 
     userConfirmPassword = User.getPasswordValue user.confirmPassword
-    confirmPasswordCondition = userConfirmPassword /= userPassword || passwordCondition
+    confirmPasswordCondition = userConfirmPassword /= userPassword
     confirmPasswordOptions = if confirmPasswordCondition then [ Input.danger ] else []
   in
     div []
       [ viewSingleFormPassword
         "My password"
-        "Password must be at least 12 characters long"
+        SetUserPassword
+        (passwordCondition, "Password must be at least 12 characters long")
         passwordOptions
       , viewSingleFormPassword
         "Confirm my password"
-        "Must be the same as password"
+        SetUserConfirmPassword
+        (confirmPasswordCondition, "Must be the same as password")
         confirmPasswordOptions
       ]
 
