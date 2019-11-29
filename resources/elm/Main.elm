@@ -696,61 +696,87 @@ viewProfile user =
     ]
 
 
-viewNewAccount : User -> Html Msg
-viewNewAccount user =
+viewNewAccountFormPassword : String -> String -> List (Input.Option Msg) -> Html Msg
+viewNewAccountFormPassword placehold feedback options  =
+  Form.group []
+    [ Input.password
+      ([ Input.placeholder placehold
+      , Input.attrs [ class "my-2" ]
+      , Input.onInput SetUserPassword
+      ] ++ options)
+    , Form.invalidFeedback []
+      [ text feedback ]
+    ]
+
+viewNewAccountForm : User -> Html Msg
+viewNewAccountForm user =
   let
-    nameOptions = if user.name /= "" then [ Input.value user.name ] else []
     userPassword = case user.password of
       Nothing -> ""
       Just pswd -> pswd
     userConfirmPassword = case user.confirmPassword of
       Nothing -> ""
       Just pswd -> pswd
-    passwordOptions = if user.name /= "" then [ Input.value userPassword ] else []
-    confirmPasswordOptions = if user.name /= "" then [ Input.value userConfirmPassword ] else []
+
+    passwordCondition = String.length userPassword < 12
+    passwordOptions = if passwordCondition then [ Input.danger ] else []
+
+    confirmPasswordCondition = userConfirmPassword /= userPassword || passwordCondition
+    confirmPasswordOptions = if confirmPasswordCondition then [ Input.danger ] else []
+
     signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
   in
-    Grid.container
-      [ style "max-width" "100%" ]
-      [ Grid.row
-        [ Row.middleXs
-        , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
+    Form.form
+      [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
+      [ myInput Input.text "My name" []
+
+      , viewNewAccountFormPassword
+        "My password"
+        "Password must be at least 12 characters long"
+        passwordOptions
+
+      , viewNewAccountFormPassword
+        "Confirm my password"
+        "Must be the same as password"
+        confirmPasswordOptions
+
+      , longButton "Sign Up"
+        (ViewChanged (getRootUrl ++ "/elm"))
+        [ Button.primary
+        , Button.attrs [ class "mb-2 mt-4" ]
+        , Button.disabled (signupConditions == False)
         ]
-        [ Grid.col
-          [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-          [ h3
-            [ class "title" ]
-            [ text "Create an account" ]
-          ]
-        ]
-      , Grid.row
-        [ Row.middleXs
-        , Row.attrs [ class "my-container" ]
-        ]
-        [ Grid.col
-          [ Col.xs12, Col.textAlign Text.alignXsRight ]
-          [ Form.form
-            [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
-            [ myInput Input.text "My name" nameOptions
-            , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
-            , myInput Input.password "Confirm my password" ([ Input.onInput SetUserConfirmPassword ] ++ confirmPasswordOptions)
-            , longButton
-              "Sign Up"
-              (ViewChanged (getRootUrl ++ "/elm"))
-              [ Button.primary
-              , Button.attrs [ class "mb-2 mt-4" ]
-              , Button.disabled (signupConditions == False)
-              ]
-            , longButton
-              "Already have an account ?"
-              (ViewChanged (getRootUrl ++ "/elm/login"))
-              [ Button.outlineSecondary
-              , Button.attrs [ class "mb-2" ]
-              ]
-            ]
-          ]
+      , longButton "Already have an account ?"
+        (ViewChanged (getRootUrl ++ "/elm/login"))
+        [ Button.outlineSecondary
+        , Button.attrs [ class "mb-2" ]
         ]
       ]
+
+viewNewAccount : User -> Html Msg
+viewNewAccount user =
+  Grid.container
+    [ style "max-width" "100%" ]
+    [ Grid.row
+      [ Row.middleXs
+      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
+      ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
+        [ h3
+          [ class "title" ]
+          [ text "Create an account" ]
+        ]
+      ]
+    , Grid.row
+      [ Row.middleXs
+      , Row.attrs [ class "my-container" ]
+      ]
+      [ Grid.col
+        [ Col.xs12, Col.textAlign Text.alignXsRight ]
+        [ viewNewAccountForm user ]
+      ]
+    ]
 
 
 myInput : (List (Input.Option msg) -> Html Msg) -> String -> List (Input.Option msg) -> Html Msg
@@ -803,15 +829,13 @@ viewLogin user =
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
             [ myInput Input.text "My name" nameOptions
             , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
-            , longButton
-              "Sign In"
+            , longButton "Sign In"
               (ViewChanged (getRootUrl ++ "/elm"))
               [ Button.primary
               , Button.attrs [ class "mb-2 mt-4" ]
               , Button.disabled (signinConditions == False)
               ]
-            , longButton
-              "Need an account ?"
+            , longButton "Need an account ?"
               (ViewChanged (getRootUrl ++ "/elm/newaccount"))
               [ Button.outlineSecondary
               , Button.attrs [ class "mb-2" ]
@@ -857,7 +881,6 @@ viewJanistorCard =
           ]
         ]
       ]
-
 
 viewInvitForm : User -> Html Msg
 viewInvitForm user =
