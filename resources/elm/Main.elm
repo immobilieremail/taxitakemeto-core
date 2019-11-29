@@ -91,6 +91,8 @@ type alias Model =
   , modalVisibility : Modal.Visibility
   , mouseOver : List OverButton
   , formTitle : String
+  , tmpPassword : String
+  , tmpConfirmPassword : String
   , user : User
   , message : Maybe Message.Message
   , loading : Bool
@@ -112,7 +114,9 @@ model0 key state =
   , modalVisibility = Modal.hidden
   , mouseOver = []
   , formTitle = ""
-  , user = User "John Doe" [] Nothing Nothing
+  , tmpPassword = ""
+  , tmpConfirmPassword = ""
+  , user = User "John Doe" [] Nothing
   , message = Nothing
   , loading = False
   }
@@ -226,8 +230,9 @@ type Msg
   | SetTitle String
   | SetUserName String
   | AddUserContact User.Contact String
-  | SetUserPassword String
-  | SetUserConfirmPassword String
+  | SetTmpPassword String
+  | SetTmpConfirmPassword String
+  | SetUserPassword Msg
 
 
 type Route
@@ -517,19 +522,11 @@ update msg model =
     SetTitle title ->
       ( { model | formTitle = title }, Cmd.none )
 
-    SetUserPassword pswd ->
-      let
-        oldUser = model.user
-        newUser = { oldUser | password = if pswd /= "" then (Just pswd) else Nothing }
-      in
-        ( { model | user = newUser }, Cmd.none )
+    SetTmpPassword pswd ->
+      ( { model | tmpPassword = pswd }, Cmd.none )
 
-    SetUserConfirmPassword pswd ->
-      let
-        oldUser = model.user
-        newUser = { oldUser | confirmPassword = if pswd /= "" then (Just pswd) else Nothing }
-      in
-        ( { model | user = newUser }, Cmd.none )
+    SetTmpConfirmPassword pswd ->
+      ( { model | tmpConfirmPassword = pswd }, Cmd.none )
 
     SetUserName name ->
       let
@@ -545,6 +542,13 @@ update msg model =
 
         oldUser = model.user
         newUser = { oldUser | contact = filteredContactList ++ if contact /= "" then [ newContact ] else [] }
+      in
+        ( { model | user = newUser }, Cmd.none )
+
+    SetUserPassword message ->
+      let
+        oldUser = model.user
+        newUser = { oldUser | password = if String.length model.tmpPassword >= 12 && model.tmpPassword == model.tmpConfirmPassword then (Just model.tmpPassword) else Nothing }
       in
         ( { model | user = newUser }, Cmd.none )
 
@@ -617,7 +621,7 @@ view model =
         div [] [ viewLogin model.user ]
 
       ViewNewAccount ->
-        div [] [ viewNewAccount model.user ]
+        div [] [ viewNewAccount model.user model.tmpPassword model.tmpConfirmPassword ]
 
       ViewInvit ->
         div [] [ viewInvit model.user ]
@@ -625,7 +629,7 @@ view model =
       ViewProfile ->
         div []
           [ viewNavbar model
-          , viewProfile model.user model.modalVisibility
+          , viewProfile model.user model.tmpPassword model.tmpConfirmPassword model.modalVisibility
           ]
     ]
   }
@@ -700,13 +704,13 @@ inputContactPhone phone =
     , Input.id "myphone"
     ]
 
-viewProfile : User -> Modal.Visibility -> Html Msg
-viewProfile user modalVisibility =
+viewProfile : User -> String -> String -> Modal.Visibility -> Html Msg
+viewProfile user tmpPassword tmpConfirmPassword modalVisibility =
   Grid.container []
     [ viewModal
       modalVisibility
       "Create my password"
-      (viewCompleteFormPassword user)
+      (viewCompleteFormPassword tmpPassword tmpConfirmPassword)
       (Button.button
         [ Button.primary ]
         [ text "Submit" ]
@@ -762,41 +766,40 @@ viewSingleFormPassword placehold message feedback options  =
         [ text "OK" ]
     ]
 
-viewCompleteFormPassword : User -> Html Msg
-viewCompleteFormPassword user =
+viewCompleteFormPassword : String -> String -> Html Msg
+viewCompleteFormPassword tmpPassword tmpConfirmPassword =
   let
-    userPassword = User.getPasswordValue user.password
+    userPassword = tmpPassword
     passwordCondition = String.length userPassword < 12
     passwordOptions = if passwordCondition then [ Input.danger ] else []
 
-    userConfirmPassword = User.getPasswordValue user.confirmPassword
+    userConfirmPassword = tmpConfirmPassword
     confirmPasswordCondition = userConfirmPassword /= userPassword
     confirmPasswordOptions = if confirmPasswordCondition then [ Input.danger ] else []
   in
     div []
       [ viewSingleFormPassword
         "My password"
-        SetUserPassword
+        SetTmpPassword
         (passwordCondition, "Password must be at least 12 characters long")
         passwordOptions
       , viewSingleFormPassword
         "Confirm my password"
-        SetUserConfirmPassword
+        SetTmpConfirmPassword
         (confirmPasswordCondition, "Must be the same as password")
         confirmPasswordOptions
       ]
 
-viewNewAccountForm : User -> Html Msg
-viewNewAccountForm user =
+viewNewAccountForm : User -> String -> String -> Html Msg
+viewNewAccountForm user tmpPassword tmpConfirmPassword =
   let
-    userPassword = User.getPasswordValue user.password
-    userConfirmPassword = User.getPasswordValue user.confirmPassword
+    userPassword = tmpPassword
+    userConfirmPassword = tmpConfirmPassword
     signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
   in
-    Form.form
-      [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
+    Form.form []
       [ myInput Input.text "My name" []
-      , viewCompleteFormPassword user
+      , viewCompleteFormPassword tmpPassword tmpConfirmPassword
       , longButton "Sign Up"
         (ViewChanged (getRootUrl ++ "/elm"))
         [ Button.primary
@@ -810,8 +813,8 @@ viewNewAccountForm user =
         ]
       ]
 
-viewNewAccount : User -> Html Msg
-viewNewAccount user =
+viewNewAccount : User -> String -> String -> Html Msg
+viewNewAccount user tmpPassword tmpConfirmPassword =
   Grid.container
     [ style "max-width" "100%" ]
     [ Grid.row
@@ -831,7 +834,7 @@ viewNewAccount user =
       ]
       [ Grid.col
         [ Col.xs12, Col.textAlign Text.alignXsRight ]
-        [ viewNewAccountForm user ]
+        [ viewNewAccountForm user tmpPassword tmpConfirmPassword ]
       ]
     ]
 
@@ -885,7 +888,7 @@ viewLogin user =
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
             [ myInput Input.text "My name" nameOptions
-            , myInput Input.password "My password" ([ Input.onInput SetUserPassword ] ++ passwordOptions)
+            , myInput Input.password "My password" ([ Input.onInput SetTmpPassword ] ++ passwordOptions)
             , longButton "Sign In"
               (ViewChanged (getRootUrl ++ "/elm"))
               [ Button.primary
