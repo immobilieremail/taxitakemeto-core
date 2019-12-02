@@ -232,7 +232,8 @@ type Msg
   | AddUserContact User.Contact String
   | SetTmpPassword String
   | SetTmpConfirmPassword String
-  | SetUserPassword Msg
+  | SetUserPassword
+  | GotDashboard (Result Http.Error User)
 
 
 type Route
@@ -545,12 +546,16 @@ update msg model =
       in
         ( { model | user = newUser }, Cmd.none )
 
-    SetUserPassword message ->
-      let
-        oldUser = model.user
-        newUser = { oldUser | password = if String.length model.tmpPassword >= 12 && model.tmpPassword == model.tmpConfirmPassword then (Just model.tmpPassword) else Nothing }
-      in
-        ( { model | user = newUser }, Cmd.none )
+    SetUserPassword ->
+      ( model, checkUserLogin model.user.name model.tmpPassword )
+
+    GotDashboard user ->
+      case user of
+        Ok result ->
+          ( { model | user = result, currentView = ViewUserDashboard }, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
 
 
 
@@ -618,7 +623,7 @@ view model =
           ]
 
       ViewLogin ->
-        div [] [ viewLogin model.user ]
+        div [] [ viewLogin model.user model.tmpPassword ]
 
       ViewNewAccount ->
         div [] [ viewNewAccount model.user model.tmpPassword model.tmpConfirmPassword ]
@@ -798,10 +803,10 @@ viewNewAccountForm user tmpPassword tmpConfirmPassword =
     signupConditions = user.name /= "" && userPassword /= "" && userPassword == userConfirmPassword
   in
     Form.form []
-      [ myInput Input.text "My name" []
+      [ myInput Input.text "My name" [ Input.value user.name ]
       , viewCompleteFormPassword tmpPassword tmpConfirmPassword
       , longButton "Sign Up"
-        (ViewChanged (getRootUrl ++ "/elm"))
+        SetUserPassword
         [ Button.primary
         , Button.attrs [ class "mb-2 mt-4" ]
         , Button.disabled (signupConditions == False)
@@ -856,13 +861,11 @@ longButton txt click options =
     ] ++ options)
     [ text txt ]
 
-viewLogin : User -> Html Msg
-viewLogin user =
+viewLogin : User -> String -> Html Msg
+viewLogin user tmpPassword =
   let
     nameOptions = if user.name /= "" then [ Input.value user.name ] else []
-    userPassword = case user.password of
-      Nothing -> ""
-      Just pswd -> pswd
+    userPassword = tmpPassword
     passwordOptions = if userPassword /= "" then [ Input.value userPassword ] else []
     signinConditions = user.name /= "" && userPassword /= ""
   in
@@ -890,7 +893,7 @@ viewLogin user =
             [ myInput Input.text "My name" nameOptions
             , myInput Input.password "My password" ([ Input.onInput SetTmpPassword ] ++ passwordOptions)
             , longButton "Sign In"
-              (ViewChanged (getRootUrl ++ "/elm"))
+              SetUserPassword
               [ Button.primary
               , Button.attrs [ class "mb-2 mt-4" ]
               , Button.disabled (signinConditions == False)
