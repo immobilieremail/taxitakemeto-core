@@ -1582,7 +1582,7 @@ decodeAudioContent =
   (field "delete" string)
 
 
--- getPIfromUrl : String -> Cmd Msg
+-- getPIfromUrl : SwissNumber -> Cmd Msg
 -- getPIfromUrl ocapUrl =
 --   Http.get
 --     { url = ocapUrl
@@ -1605,7 +1605,18 @@ decodeAudioContent =
 --     }
 
 
+-- checkUserLogin : String -> String -> Cmd Msg
+-- checkUserLogin login password =
+--   Http.post
+--     { url = "http://localhost:8000/api/login"
+--     , body = []
+--     , except = Http.exceptJson GotDashboard dashboardDecoder
+--     }
+
+
+
 --- Temporary fakers
+
 
 getPIfromUrl : String -> Cmd Msg
 getPIfromUrl ocapUrl =
@@ -1614,12 +1625,14 @@ getPIfromUrl ocapUrl =
       GotPI (Ok (Fake.pi ocapUrl))
     )
 
+
 getTravelfromUrl : SwissNumber -> Cmd Msg
 getTravelfromUrl ocapUrl =
   Process.sleep 2000
     |> Task.perform (\_ ->
       GotTravel (Ok (Fake.travel ocapUrl))
     )
+
 
 createNewTravel : String -> List PI -> Cmd Msg
 createNewTravel title listPI =
@@ -1628,3 +1641,10 @@ createNewTravel title listPI =
       GotNewTravel (Ok (Travel "http://localhost:8000/api/obj/newtravel" title listPI [] Accordion.initialState))
     )
 
+
+checkUserLogin : String -> String -> Cmd Msg
+checkUserLogin login password =
+  Process.sleep 100
+    |> Task.perform (\_ ->
+      GotDashboard (Ok (User "John Doe" [] (Just "password")))
+    )
