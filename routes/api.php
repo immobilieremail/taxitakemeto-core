@@ -19,5 +19,7 @@ Route::post('shell/{shell}', 'ShellController@send')->name('shell.send');
 
 Route::post('media', 'MediaController@store')->name('media.store');
 Route::post('list', 'OcapListController@store')->name('list.store');
+Route::post('pi', 'PIController@store')->name('pi.store');
+
 Route::apiResource('obj', 'FacetController');
 
