@@ -32,7 +32,11 @@ class PIViewFacet extends Facet
     {
         return [
             'type' => 'PIViewFacet',
-            'data' => []
+            'data' => [
+                "title" => $this->target->title,
+                "description" => $this->target->description,
+                "medias" => []
+            ]
         ];
     }
 }
