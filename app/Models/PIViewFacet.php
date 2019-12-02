@@ -22,4 +22,17 @@ class PIViewFacet extends Facet
     {
         return $this->belongsTo(PI::class);
     }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        return [
+            'type' => 'PIViewFacet',
+            'data' => []
+        ];
+    }
 }
