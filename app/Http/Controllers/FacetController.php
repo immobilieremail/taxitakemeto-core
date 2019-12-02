@@ -17,11 +17,6 @@ class FacetController extends Controller
         //
     }
 
-    public function create()
-    {
-        //
-    }
-
     /**
      * Undocumented function
      *
@@ -77,10 +72,5 @@ class FacetController extends Controller
         } else {
             return response('Method Not Allowed', 405);
         }
-    }
-
-    public function edit()
-    {
-        //
     }
 }
