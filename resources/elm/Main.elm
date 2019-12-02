@@ -68,7 +68,6 @@ type CurrentView
   | ViewListTravelDashboard
   | ViewListPIDashboard
   | SimpleViewPI
-  | LoadingPage
   | ViewSearchPI
   | ViewNewTravel
   | ViewLogin
@@ -603,12 +602,6 @@ view model =
 
       SimpleViewPI ->
         simpleViewPI model.carouselState model.mouseOver model.currentPI
-
-      LoadingPage ->
-        div []
-          [ viewNavbar model
-          , Loading.view
-          ]
 
       ViewSearchPI ->
         div []
