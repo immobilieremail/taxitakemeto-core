@@ -22,4 +22,22 @@ class PIEditFacet extends Facet
     {
         return $this->belongsTo(PI::class);
     }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        return [
+            'type' => 'PIViewFacet',
+            'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
+            'data' => [
+                "title" => $this->target->title,
+                "description" => $this->target->description,
+                "medias" => []
+            ]
+        ];
+    }
 }
