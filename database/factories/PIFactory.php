@@ -9,7 +9,9 @@ use Faker\Generator as Faker;
 
 $factory->define(PI::class, function (Faker $faker) {
     return [
-        //
+        'title' => $faker->title() . $faker->name(),
+        'description' => $faker->text(),
+        'address' => "1 rue des iiyama"
     ];
 });
 
