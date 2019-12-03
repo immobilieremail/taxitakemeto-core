@@ -31,7 +31,7 @@ class PIEditFacet extends Facet
     public function description()
     {
         return [
-            'type' => 'PIViewFacet',
+            'type' => 'PIEditFacet',
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'data' => [
                 "title" => $this->target->title,
