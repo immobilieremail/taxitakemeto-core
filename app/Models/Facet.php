@@ -43,15 +43,6 @@ class Facet extends SwissObject
         return null;
     }
 
-    /**
-     * Relation to OcapList
-     *
-     */
-    public function lists()
-    {
-        return $this->belongsToMany(OcapList::class);
-    }
-
     public function has_index()
     {
         return false;
