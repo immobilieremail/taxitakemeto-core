@@ -46,10 +46,10 @@ class PITest extends TestCase
     public function view_pi()
     {
         $pi = factory(PI::class)->create();
-        $response = $this->get(route('pi.show', ['obj' => $pi->viewFacet->id]));
+        $response = $this->get(route('obj.show', ['obj' => $pi->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(2)
             ->assertJsonStructure([
                 'type',
                 'data' => [
@@ -66,7 +66,7 @@ class PITest extends TestCase
      */
     public function bad_view_pi()
     {
-        $response = $this->get(route('pi.show', ['obj' => 'something bad']));
+        $response = $this->get(route('obj.show', ['obj' => 'something bad']));
         $response
             ->assertStatus(404);
     }
@@ -78,7 +78,7 @@ class PITest extends TestCase
     public function edit_pi()
     {
         $pi = factory(PI::class)->create();
-        $response = $this->get(route('pi.show', ['obj' => $pi->editFacet->id]));
+        $response = $this->get(route('obj.show', ['obj' => $pi->editFacet->id]));
         $response
             ->assertStatus(200)
             ->assertJsonCount(3)
@@ -99,7 +99,7 @@ class PITest extends TestCase
      */
     public function bad_edit_pi()
     {
-        $response = $this->get(route('pi.show', ['obj' => 'something very bad']));
+        $response = $this->get(route('obj.show', ['obj' => 'something very bad']));
         $response
             ->assertStatus(404);
     }
