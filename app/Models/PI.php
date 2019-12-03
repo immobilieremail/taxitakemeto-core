@@ -12,6 +12,15 @@ class PI extends Model
      */
     protected $table = 'p_i_s';
 
+    /**
+     * Model fillable data
+     *
+     * @var Array
+     */
+    protected $fillable = [
+        'title', 'description', 'address'
+    ];
+
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
