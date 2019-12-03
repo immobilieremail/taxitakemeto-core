@@ -27,6 +27,16 @@ class PI extends Model
     }
 
     /**
+     * OcapList facets for PI media list
+     *
+     * @return [type] [description]
+     */
+    public function mediaLists()
+    {
+        return $this->belongsToMany(Facet::class);
+    }
+
+    /**
      * EditFacet for specific PI
      *
      * @return [type] [description]
