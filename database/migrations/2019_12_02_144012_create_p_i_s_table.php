@@ -15,8 +15,11 @@ class CreatePISTable extends Migration
     {
         Schema::create('p_i_s', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('title')->nullable();
-            $table->string('description')->nullable();
+            $table->string('title');
+            $table->string('description');
+            $table->string('address');
+            $table->decimal('latitude', 10, 8)->nullable();
+            $table->decimal('longitude', 11, 8)->nullable();
             $table->timestamps();
         });
     }
