@@ -36,6 +36,7 @@ class PIEditFacet extends Facet
             'data' => [
                 "title" => $this->target->title,
                 "description" => $this->target->description,
+                'address' => $this->target->address,
                 "medias" => []
             ]
         ];
