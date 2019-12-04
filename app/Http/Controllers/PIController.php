@@ -3,9 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\PI;
+use App\Models\Facet;
 use App\Models\PIEditFacet;
 use App\Models\PIViewFacet;
+
+use App\Rules\PIRules;
+use App\Http\Requests\PIRequest;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PIController extends Controller
 {
@@ -15,22 +21,16 @@ class PIController extends Controller
      * @param Request $request
      * @return void
      */
-    public function store(Request $request)
+    public function store(PIRequest $request)
     {
-        $mediaLists = [];
-
-        if ($request->data == null
-            || !array_key_exists('title', $request['data'])
-            || !array_key_exists('description', $request['data'])
-            || !array_key_exists('address', $request['data'])
-            || !array_key_exists('medias', $request['data'])
-            || !preg_match("#([^/])+$#", $request['data']['medias'], $mediaLists)) {
-            return response('Bad Request', 400);
-        }
-
-        $pi = PI::create($request["data"]);
+        $pi = PI::create($request->all());
         $pi->editFacet()->save(new PIEditFacet);
         $pi->viewFacet()->save(new PIViewFacet);
+
+        if ($request->has('medias')) {
+            $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
+            $pi->mediaOcapListFacets()->save($listFacet);
+        }
 
         return response()->json([
             'type' => 'ocap',
