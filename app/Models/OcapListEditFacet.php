@@ -56,8 +56,9 @@ class OcapListEditFacet extends Facet
 
     public function destroyTarget()
     {
-        $ocapList = $this->target;
-        $ocapList-> delete();
+        $this->target->viewFacet->delete();
+        $this->target->delete();
+        $this->delete();
     }
 
     public function updateTarget(Request $request)

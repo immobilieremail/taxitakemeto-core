@@ -55,4 +55,16 @@ class PIEditFacet extends Facet
             ]
         ];
     }
+
+    public function has_destroy()
+    {
+        return true;
+    }
+
+    public function destroyTarget()
+    {
+        $this->target->viewFacet->delete();
+        $this->target->delete();
+        $this->delete();
+    }
 }

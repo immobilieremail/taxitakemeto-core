@@ -45,7 +45,8 @@ class MediaEditFacet extends Facet
 
     public function destroyTarget()
     {
-        $media = $this->target;
-        $media-> delete();
+        $this->target->viewFacet->delete();
+        $this->target->delete();
+        $this->delete();
     }
 }
