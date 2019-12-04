@@ -24,7 +24,7 @@ function getSwissNumberFromUrl(String $url): String
  *
  * @return String generated Swiss Number
  */
-function swiss_number(): String
+function swissNumber(): String
 {
     $swiss_number = new SwissNumber;
     return $swiss_number();

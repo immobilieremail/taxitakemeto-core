@@ -31,6 +31,6 @@ abstract class SwissObject extends Model
     {
         parent::__construct($attributes);
 
-        $this->id = swiss_number();
+        $this->id = swissNumber();
     }
 }

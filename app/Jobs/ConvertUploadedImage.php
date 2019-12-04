@@ -34,7 +34,7 @@ class ConvertUploadedImage implements ShouldQueue
      */
     public function handle()
     {
-        $image_name = swiss_number();
+        $image_name = swissNumber();
         $upload_path = Storage::disk('uploads')->getAdapter()->getPathPrefix();
         $convert_path = Storage::disk('converts')->getAdapter()->getPathPrefix();
 

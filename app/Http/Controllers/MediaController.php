@@ -30,7 +30,7 @@ class MediaController extends Controller
             return response('Unsupported Media Type', 415);
         }
 
-        $media_name = swiss_number() . '.' . $request->file('media')->extension();
+        $media_name = swissNumber() . '.' . $request->file('media')->extension();
         $path = $request->file('media')->storeAs('', $media_name, 'uploads');
         $mime_type = $request->file('media')->getMimeType();
 

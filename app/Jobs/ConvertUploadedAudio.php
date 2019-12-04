@@ -38,7 +38,7 @@ class ConvertUploadedAudio implements ShouldQueue
      */
     public function handle()
     {
-        $audio_name = swiss_number();
+        $audio_name = swissNumber();
         $ffprobe = \FFMpeg\FFProbe::create();
         $audio_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->audio->path;
         $bit_rate = $ffprobe->format($audio_path)->get('bit_rate') / 1024; // get bit rate in Kb
