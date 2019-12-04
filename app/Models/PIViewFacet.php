@@ -31,7 +31,7 @@ class PIViewFacet extends Facet
     public function description()
     {
         $mediaArray = [];
-        $mediaListFacet = $this->target->mediaLists->first();
+        $mediaListFacet = $this->target->mediaOcapListFacets->first();
 
         if ($mediaListFacet != null) {
             $mediaListContents = $mediaListFacet->target->contents;

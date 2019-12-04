@@ -31,7 +31,7 @@ class PI extends Model
      *
      * @return [type] [description]
      */
-    public function mediaLists()
+    public function mediaOcapListFacets()
     {
         return $this->belongsToMany(Facet::class);
     }
