@@ -22,11 +22,10 @@ class PITest extends TestCase
     {
         $ocaplist = factory(OcapList::class)->create();
         $response = $this->post(route('pi.store'), [
-            'data' => [
-                'title' => 'Title',
-                'description' => 'Description',
-                'medias' => route('obj.show', $ocaplist->editFacet->id)
-            ]
+            'title' => 'Title',
+            'description' => 'Description',
+            'address' => '1 rue des iiyama',
+            'medias' => route('obj.show', $ocaplist->editFacet->id)
         ]);
 
         $response
