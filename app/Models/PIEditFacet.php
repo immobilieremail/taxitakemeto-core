@@ -30,14 +30,28 @@ class PIEditFacet extends Facet
 
     public function description()
     {
+        $mediaArray = [];
+        $mediaListFacet = $this->target->mediaLists->first();
+
+        if ($mediaListFacet != null) {
+            $mediaListContents = $mediaListFacet->target->contents;
+            $mediaArray = $mediaListContents->map(function ($mediaFacet) {
+                return [
+                    'type' => 'ocap',
+                    'ocapType' => 'MediaViewFacet',
+                    'url' => route('obj.show', ['obj' => $mediaFacet->target->viewFacet->id])
+                ];
+            })->toArray();
+        }
+
         return [
             'type' => 'PIEditFacet',
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'data' => [
-                "title" => $this->target->title,
-                "description" => $this->target->description,
+                'title' => $this->target->title,
+                'description' => $this->target->description,
                 'address' => $this->target->address,
-                "medias" => []
+                'medias' => $mediaArray
             ]
         ];
     }
