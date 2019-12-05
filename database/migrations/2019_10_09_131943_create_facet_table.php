@@ -16,7 +16,7 @@ class CreateFacetTable extends Migration
         Schema::create('facets', function (Blueprint $table) {
             $table->string('id', 24)->primary();
             $table->bigInteger('target_id')->unsigned()->nullable();
-            $table->string('type');
+            $table->sti()->nullable();
             $table->timestamps();
         });
     }
