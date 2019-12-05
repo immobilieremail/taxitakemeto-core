@@ -102,4 +102,56 @@ class PITest extends TestCase
         $response
             ->assertStatus(404);
     }
+
+    /**
+     * @test
+     *
+     */
+    public function update_pi()
+    {
+        $pi = factory(PI::class)->create();
+        $request = [
+            'title' => 'Titre',
+            'description' => 'Description du PI',
+            'address' => '1 rue de la Tasse Bleue'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $pi->editFacet->id]), $request);
+        $response
+            ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_pi_with_medialist()
+    {
+        $pi = factory(PI::class)->create();
+        $list = factory(OcapList::class)->create();
+        $request = [
+            'title' => 'Titre',
+            'description' => 'Description du PI',
+            'address' => '1 rue de la Tasse Bleue',
+            'medias' => route('obj.show', ['obj' => $list->viewFacet->id])
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $pi->editFacet->id]), $request);
+        $response
+            ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_update_pi()
+    {
+        $request = [
+            'title' => 'Titre',
+            'description' => 'Description du PI',
+            'address' => '1 rue de la Tasse Bleue'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => 'acenvironment']), $request);
+        $response
+            ->assertStatus(404);
+    }
 }
