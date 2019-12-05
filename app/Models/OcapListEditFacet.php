@@ -61,6 +61,11 @@ class OcapListEditFacet extends Facet
         $this->delete();
     }
 
+    public function has_update()
+    {
+        return true;
+    }
+
     public function updateTarget(Request $request)
     {
         if (!isset($request["ocaps"]) || !is_array($request["ocaps"])) {
@@ -68,12 +73,7 @@ class OcapListEditFacet extends Facet
         }
 
         $ocapCollection = collect($request["ocaps"])->map(function ($ocap) {
-            $ocapId = [];
-            if (!preg_match("#([^/])+$#", $ocap, $ocapId)){
-                return null;
-            } else {
-                return Facet::all()->where('id', $ocapId[0])->first(); // BAAD
-            }
+            return Facet::all()->where('id', getSwissNumberFromUrl($ocap))->first(); // BAAD
         });
 
         if ($ocapCollection->search(null) !== false) {
@@ -85,10 +85,5 @@ class OcapListEditFacet extends Facet
             }
             return true;
         }
-    }
-
-    public function has_update()
-    {
-        return true;
     }
 }
