@@ -21,9 +21,10 @@ class MediaTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $media->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 "type",
+                "media_type",
                 "path"
             ]);
     }
@@ -49,11 +50,12 @@ class MediaTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $media->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 "type",
                 "view_facet",
-                "path",
+                "media_type",
+                "path"
             ]);
     }
 
