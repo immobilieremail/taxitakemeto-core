@@ -26,7 +26,7 @@ class TravelRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'medias' => new TravelRules
+            'pis' => new TravelRules
         ];
     }
 }
