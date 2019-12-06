@@ -24,6 +24,29 @@ class PITest extends TestCase
         $response = $this->post(route('pi.store'), [
             'title' => 'Title',
             'description' => 'Description',
+            'address' => '1 rue des iiyama'
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'ocapType',
+                'url'
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function create_pi_with_medias()
+    {
+        $ocaplist = factory(OcapList::class)->create();
+        $response = $this->post(route('pi.store'), [
+            'title' => 'Title',
+            'description' => 'Description',
             'address' => '1 rue des iiyama',
             'medias' => route('obj.show', $ocaplist->editFacet->id)
         ]);
@@ -54,7 +77,7 @@ class PITest extends TestCase
                 'data' => [
                     'title',
                     'description',
-                    'medias' => []
+                    'medias'
                 ]
             ]);
     }
@@ -87,7 +110,7 @@ class PITest extends TestCase
                 'data' => [
                     'title',
                     'description',
-                    'medias' => []
+                    'medias'
                 ]
             ]);
     }
@@ -151,6 +174,45 @@ class PITest extends TestCase
             'address' => '1 rue de la Tasse Bleue'
         ];
         $response = $this->put(route('obj.update', ['obj' => 'acenvironment']), $request);
+        $response
+            ->assertStatus(404);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_pi_with_bad_request()
+    {
+        $pi = factory(PI::class)->create();
+        $request = [
+            'title' => [],
+            'bad_field' => 'LPGdate'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $pi->editFacet->id]), $request);
+        $response
+            ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function delete_pi()
+    {
+        $pi = factory(PI::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $pi->editFacet->id]));
+        $response
+            ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_delete_pi()
+    {
+        $response = $this->delete(route('obj.destroy', ['obj' => 'badspycrossriver']));
         $response
             ->assertStatus(404);
     }
