@@ -80,9 +80,7 @@ class OcapListEditFacet extends Facet
             return false;
         } else {
             $this->target->contents()->detach();
-            foreach ($ocapCollection as $facet) {
-                $this->target->contents()->save($facet);
-            }
+            $this->target->contents()->saveMany($ocapCollection);
             return true;
         }
     }
