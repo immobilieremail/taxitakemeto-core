@@ -38,7 +38,7 @@ class TravelTest extends TestCase
      * @test
      *
      */
-    public function create_travel_with_medias()
+    public function create_travel_with_pis()
     {
         $ocaplist = factory(OcapList::class)->create();
         $response = $this->post(route('travel.store'), [
