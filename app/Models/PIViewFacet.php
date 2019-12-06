@@ -30,19 +30,7 @@ class PIViewFacet extends Facet
 
     public function description()
     {
-        $mediaArray = [];
-        $mediaListFacet = $this->target->mediaOcapListFacets->first();
-
-        if ($mediaListFacet != null) {
-            $mediaListContents = $mediaListFacet->target->contents;
-            $mediaArray = $mediaListContents->map(function ($mediaFacet) {
-                return [
-                    'type' => 'ocap',
-                    'ocapType' => 'MediaViewFacet',
-                    'url' => route('obj.show', ['obj' => $mediaFacet->target->viewFacet->id])
-                ];
-            })->toArray();
-        }
+        $ocapListFacet = $this->target->mediaOcapListFacets->first();
 
         return [
             'type' => 'PIViewFacet',
@@ -50,7 +38,8 @@ class PIViewFacet extends Facet
                 'title' => $this->target->title,
                 'description' => $this->target->description,
                 'address' => $this->target->address,
-                'medias' => $mediaArray
+                'medias' => ($ocapListFacet != null)
+                    ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
             ]
         ];
     }
