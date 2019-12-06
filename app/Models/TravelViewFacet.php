@@ -20,4 +20,23 @@ class TravelViewFacet extends Facet
     {
         return $this->belongsTo(Travel::class);
     }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        $ocapListFacet = $this->target->piOcapListFacets->first();
+
+        return [
+            'type' => 'TravelViewFacet',
+            'data' => [
+                'title' => $this->target->title,
+                'pis' => ($ocapListFacet != null)
+                    ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
+            ]
+        ];
+    }
 }

@@ -20,4 +20,24 @@ class TravelEditFacet extends Facet
     {
         return $this->belongsTo(Travel::class);
     }
+
+    public function has_show()
+    {
+        return true;
+    }
+
+    public function description()
+    {
+        $ocapListFacet = $this->target->piOcapListFacets->first();
+
+        return [
+            'type' => 'TravelEditFacet',
+            'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
+            'data' => [
+                'title' => $this->target->title,
+                'pis' => ($ocapListFacet != null)
+                    ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
+            ]
+        ];
+    }
 }
