@@ -17,6 +17,16 @@ class CreateFacetPITable extends Migration
             $table->bigInteger('p_i_id');
             $table->string('facet_id');
             $table->timestamps();
+
+            $table->foreign('p_i_id')
+                  ->references('id')
+                  ->on('p_i_s')
+                  ->onDelete('cascade');
+
+            $table->foreign('facet_id')
+                  ->references('id')
+                  ->on('facets')
+                  ->onDelete('cascade');
         });
     }
 

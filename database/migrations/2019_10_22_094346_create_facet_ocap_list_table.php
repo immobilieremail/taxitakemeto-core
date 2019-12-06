@@ -17,6 +17,16 @@ class CreateFacetOcapListTable extends Migration
             $table->bigInteger('ocap_list_id');
             $table->string('facet_id');
             $table->timestamps();
+
+            $table->foreign('ocap_list_id')
+                  ->references('id')
+                  ->on('ocap_lists')
+                  ->onDelete('cascade');
+
+            $table->foreign('facet_id')
+                  ->references('id')
+                  ->on('facets')
+                  ->onDelete('cascade');
         });
     }
 
