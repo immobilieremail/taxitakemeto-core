@@ -15,10 +15,10 @@ $factory->define(PI::class, function (Faker $faker) {
     ];
 });
 
-$factory->afterCreating(PI::class, function ($ocaplist, $faker) {
-    $ocaplist->viewFacet()->save(factory(PIViewFacet::class)->make());
+$factory->afterCreating(PI::class, function ($pi, $faker) {
+    $pi->viewFacet()->save(factory(PIViewFacet::class)->make());
 });
 
-$factory->afterCreating(PI::class, function ($ocaplist, $faker) {
-    $ocaplist->editFacet()->save(factory(PIEditFacet::class)->make());
+$factory->afterCreating(PI::class, function ($pi, $faker) {
+    $pi->editFacet()->save(factory(PIEditFacet::class)->make());
 });
