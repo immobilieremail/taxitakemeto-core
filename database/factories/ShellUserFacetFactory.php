@@ -2,7 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\ShellUserFacet;
+use App\Models\ShellUserFacet;
 use Faker\Generator as Faker;
 
 $factory->define(ShellUserFacet::class, function (Faker $faker) {
