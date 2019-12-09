@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Http\Request;
+
 class TravelEditFacet extends Facet
 {
     public function __construct(array $attributes = array())
@@ -51,5 +53,30 @@ class TravelEditFacet extends Facet
         $this->target->viewFacet->delete();
         $this->target->delete();
         $this->delete();
+    }
+
+    public function has_update()
+    {
+        return true;
+    }
+
+    public function updateTarget(Request $request)
+    {
+        if (!$request->has('title') || !is_string($request->title)) {
+            return false;
+        } else {
+            $this->target->update(['title' => $request->title]);
+        }
+
+        if ($request->has('pis') && is_string($request->medias)) {
+            $listFacet = Facet::all()->where('id', getSwissNumberFromUrl($request->medias))->first(); // BAAD
+            if ($listFacet == null) {
+                return false;
+            } else {
+                $this->target->piOcapListFacets()->detach();
+                $this->target->piOcapListFacets()->save($listFacet);
+            }
+        }
+        return true;
     }
 }
