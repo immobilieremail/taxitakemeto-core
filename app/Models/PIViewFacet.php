@@ -6,13 +6,6 @@ use Illuminate\Http\Request;
 
 class PIViewFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\PIViewFacet';
-    }
-
     /**
      * Inverse relation of ViewFacet for specific PI
      *

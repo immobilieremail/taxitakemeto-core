@@ -7,13 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaViewFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\MediaViewFacet';
-    }
-
     /**
      * Inverse relation of ViewFacet for specific media
      *

@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class OcapListEditFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\OcapListEditFacet';
-    }
-
     /**
      * Inverse relation of EditFacet for specific ocaplist
      *
@@ -73,7 +66,7 @@ class OcapListEditFacet extends Facet
         }
 
         $ocapCollection = collect($request["ocaps"])->map(function ($ocap) {
-            return Facet::all()->where('id', getSwissNumberFromUrl($ocap))->first(); // BAAD
+            return Facet::find(getSwissNumberFromUrl($ocap));
         });
 
         if ($ocapCollection->search(null) !== false) {

@@ -16,7 +16,7 @@ class ShellTest extends TestCase
      * @test
      *
      */
-    public function shell_entry_point()
+    public function create_shell()
     {
         $response = $this->post(route('shell.store'));
         $response
@@ -36,7 +36,7 @@ class ShellTest extends TestCase
     public function get_shell_user_facet()
     {
         $shellWithFacets = factory(Shell::class)->create();
-        $response = $this->get(route('obj.show', ['obj' => $shellWithFacets->userFacet]));
+        $response = $this->get(route('obj.show', ['obj' => $shellWithFacets->userFacet->id]));
         $response
             ->assertStatus(200)
             ->assertJsonCount(4)
@@ -54,6 +54,29 @@ class ShellTest extends TestCase
     public function get_bad_shell_user_facet()
     {
         $response = $this->get(route('obj.show', ['obj' => 'çafaitallusion']));
+        $response
+            ->assertStatus(404);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function delete_shell()
+    {
+        $shellWithFacets = factory(Shell::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $shellWithFacets->userFacet->id]));
+        $response
+            ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_delete_shell()
+    {
+        $response = $this->delete(route('obj.destroy', ['obj' => 'this is really delicious']));
         $response
             ->assertStatus(404);
     }

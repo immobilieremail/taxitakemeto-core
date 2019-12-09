@@ -29,8 +29,11 @@ abstract class SwissObject extends Model
      */
     public function __construct(array $attributes = array())
     {
-        parent::__construct($attributes);
+        $this->setSwissNumber();
+    }
 
+    public function setSwissNumber()
+    {
         $this->id = swissNumber();
     }
 }

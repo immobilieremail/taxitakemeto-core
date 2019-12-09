@@ -6,13 +6,6 @@ use Illuminate\Http\Request;
 
 class PIEditFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\PIEditFacet';
-    }
-
     /**
      * Inverse relation of EditFacet for specific PI
      *
@@ -83,7 +76,7 @@ class PIEditFacet extends Facet
         }
 
         if ($request->has('medias') && is_string($request->medias)) {
-            $listFacet = Facet::all()->where('id', getSwissNumberFromUrl($request->medias))->first(); // BAAD
+            $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
             if ($listFacet == null) {
                 return false;
             } else {

@@ -6,13 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class OcapListViewFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\OcapListViewFacet';
-    }
-
     /**
      * Inverse relation of ViewFacet for specific ocaplist
      *

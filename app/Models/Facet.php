@@ -5,9 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use MannikJ\Laravel\SingleTableInheritance\Traits\SingleTableInheritance;
 
-class Facet extends SwissObject
+class Facet extends Model
 {
     use SingleTableInheritance;
+
+    /**
+     * Setup to use string primary keys
+     * @var boolean
+     */
+    public      $incrementing   = false;
+    protected   $keyType        = 'string';
+
+    /**
+     * Swiss model have string casted PrimaryKey
+     * @var [type]
+     */
+    protected   $cast           = [
+        'id'    => 'string'
+    ];
 
     /**
      * Specific table to use
@@ -30,7 +45,13 @@ class Facet extends SwissObject
      */
     public function __construct(array $attributes = array())
     {
-        parent::__construct($attributes);
+        $this->ensureTypeCharacteristics();
+        $this->setSwissNumber();
+    }
+
+    public function setSwissNumber()
+    {
+        $this->id = swissNumber();
     }
 
     /**

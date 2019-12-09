@@ -7,13 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaEditFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
-
-        $this->type = 'App\Models\MediaEditFacet';
-    }
-
     /**
      * Inverse relation of EditFacet for specific media
      *
