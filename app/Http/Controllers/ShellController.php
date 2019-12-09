@@ -4,41 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Shell,
-    App\ShellUserFacet,
-    App\ShellDropboxFacet;
-
-use App\AudioListEditFacet,
-    App\AudioListViewFacet;
-
-use App\Jobs\ProcessDropboxMessage;
-
-use App\Http\Requests\UpdateShellRequest;
-use App\Http\Requests\SendDropboxMessageRequest;
+use App\Models\Shell;
+use App\Models\ShellUserFacet;
 
 class ShellController extends Controller
 {
-    public function create()
+    public function store()
     {
         $shell = Shell::create();
-        $shell_user = $shell->userFacet()->save(new ShellUserFacet);
-        $shell_dropbox = $shell->dropboxFacet()->save(new ShellDropboxFacet);
+        $shell->userFacet()->save(new ShellUserFacet);
 
-        return response()->json(
-            [
-                'type' => 'ocap',
-                'ocapType' => 'Shell',
-                'url' => route('shell.show', ['audio' => $shell_user->swiss_number])
-            ]
-        );
-    }
-
-    public function show($shell_id)
-    {
-        $shell = ShellUserFacet::findOrFail($shell_id);
-
-        return response()->json(
-                $shell->getJsonShell());
+        return response()->json([
+            'type' => 'ocap',
+            'ocapType' => 'ShellUserFacet',
+            'url' => route('obj.show', ['obj' => $shell->userFacet->id])
+        ]);
     }
 
     /**
