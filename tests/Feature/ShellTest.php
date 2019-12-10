@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Models\Shell;
+use App\Models\OcapList;
 
 class ShellTest extends TestCase
 {
@@ -39,11 +40,10 @@ class ShellTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $shellWithFacets->userFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(4)
+            ->assertJsonCount(2)
             ->assertJsonStructure([
                 'type',
-                'dropbox',
-                'contents'
+                'data'
             ]);
     }
 
@@ -62,21 +62,48 @@ class ShellTest extends TestCase
      * @test
      *
      */
-    public function delete_shell()
+    public function update_shell_travel_list()
     {
-        $shellWithFacets = factory(Shell::class)->create();
-        $response = $this->delete(route('obj.destroy', ['obj' => $shellWithFacets->userFacet->id]));
+        $shell = factory(Shell::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+        $request = [
+            'travels' => route('obj.show', ['obj' => $ocaplist->editFacet])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
         $response
             ->assertStatus(204);
+
+        $this->assertEquals($ocaplist->editFacet->id, $shell->travelOcapListFacets->first()->id);
     }
 
     /**
      * @test
      *
      */
-    public function bad_delete_shell()
+    public function bad_request_update_shell_travel_list()
     {
-        $response = $this->delete(route('obj.destroy', ['obj' => 'this is really delicious']));
+        $shell = factory(Shell::class)->create();
+        $request = [
+            'travels' => route('obj.show', ['obj' => 'saumon de Norvège'])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
+        $response
+            ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_shell_update_shell_travel_list()
+    {
+        $request = [
+            'travels' => route('obj.show', ['obj' => 'saumon de Norvège'])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => 'truite du Pérou']), $request);
         $response
             ->assertStatus(404);
     }
