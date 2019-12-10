@@ -8,6 +8,24 @@ use Illuminate\Support\Facades\Storage;
 class MediaEditFacet extends Facet
 {
     /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [
+        'show', 'destroy'
+    ];
+
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
+    {
+        return in_array($method, $this->permissions, true);
+    }
+
+    /**
      * Inverse relation of EditFacet for specific media
      *
      * @return [type] [description]
@@ -15,11 +33,6 @@ class MediaEditFacet extends Facet
     public function target()
     {
         return $this->belongsTo(Media::class);
-    }
-
-    public function has_show()
-    {
-        return true;
     }
 
     public function description()
@@ -30,11 +43,6 @@ class MediaEditFacet extends Facet
             'media_type' => $this->target->media_type,
             'path' => Storage::disk('converts')->url($this->target->path)
         ];
-    }
-
-    public function has_destroy()
-    {
-        return true;
     }
 
     public function destroyTarget()

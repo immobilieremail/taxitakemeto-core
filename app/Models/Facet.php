@@ -39,6 +39,12 @@ class Facet extends Model
     ];
 
     /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [];
+
+    /**
      * Constructor for eloquent model hierarchy
      *
      * @param array $attributes
@@ -55,6 +61,16 @@ class Facet extends Model
     }
 
     /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
+    {
+        return in_array($method, $this->permissions, true);
+    }
+
+    /**
      * Inverse of relationship
      *
      * @return [type] [description]
@@ -62,45 +78,5 @@ class Facet extends Model
     public function target()
     {
         return null;
-    }
-
-    public function has_index()
-    {
-        return false;
-    }
-
-    public function has_store()
-    {
-        return false;
-    }
-
-    public function has_create()
-    {
-        return false;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return boolean
-     */
-    public function has_show()
-    {
-        return false;
-    }
-
-    public function has_update()
-    {
-        return false;
-    }
-
-    public function has_destroy()
-    {
-        return false;
-    }
-
-    public function has_edit()
-    {
-        return false;
     }
 }

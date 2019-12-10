@@ -8,6 +8,24 @@ use Illuminate\Database\Eloquent\Model;
 class OcapListEditFacet extends Facet
 {
     /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [
+        'show', 'update', 'destroy'
+    ];
+
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
+    {
+        return in_array($method, $this->permissions, true);
+    }
+
+    /**
      * Inverse relation of EditFacet for specific ocaplist
      *
      * @return [type] [description]
@@ -15,11 +33,6 @@ class OcapListEditFacet extends Facet
     public function target()
     {
         return $this->belongsTo(OcapList::class);
-    }
-
-    public function has_show()
-    {
-        return true;
     }
 
     public function description()
@@ -42,21 +55,11 @@ class OcapListEditFacet extends Facet
         ];
     }
 
-    public function has_destroy()
-    {
-        return true;
-    }
-
     public function destroyTarget()
     {
         $this->target->viewFacet->delete();
         $this->target->delete();
         $this->delete();
-    }
-
-    public function has_update()
-    {
-        return true;
     }
 
     public function updateTarget(Request $request)
