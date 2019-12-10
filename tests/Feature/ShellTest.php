@@ -43,7 +43,31 @@ class ShellTest extends TestCase
             ->assertJsonCount(2)
             ->assertJsonStructure([
                 'type',
-                'data'
+                'data' => [
+                    'travels'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function get_shell_user_facet_with_travel_list()
+    {
+        $shell = factory(Shell::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $shell->travelOcapListFacets()->save($ocaplist->viewFacet);
+        $response = $this->get(route('obj.show', ['obj' => $shell->userFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJson([
+                'type' => 'ShellUserFacet',
+                'data' => [
+                    'travels' => route('obj.show', ['obj' => $ocaplist->viewFacet])
+                ]
             ]);
     }
 
