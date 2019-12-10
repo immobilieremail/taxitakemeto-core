@@ -5,7 +5,7 @@ namespace App\Rules;
 use App\Models\Facet;
 use Illuminate\Contracts\Validation\Rule;
 
-class TravelRules implements Rule
+class FacetRules implements Rule
 {
     /**
      * Determine if the validation rule passes.
@@ -26,6 +26,6 @@ class TravelRules implements Rule
      */
     public function message()
     {
-        return 'Bad Request : invalid pis field';
+        return 'The :attribute must exists.';
     }
 }
