@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\TravelRules;
+use App\Rules\FacetRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class TravelRequest extends FormRequest
@@ -26,7 +26,7 @@ class TravelRequest extends FormRequest
     {
         return [
             'title' => 'required',
-            'pis' => new TravelRules
+            'pis' => new FacetRules
         ];
     }
 }
