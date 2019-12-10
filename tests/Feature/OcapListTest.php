@@ -120,6 +120,20 @@ class OcapListTest extends TestCase
      * @test
      *
      */
+    public function update_ocap_list_via_view_facet()
+    {
+        $ocaps = [];
+        $ocaplist = factory(OcapList::class)->create();
+
+        $response = $this->put(route('obj.update', ['obj' => $ocaplist->viewFacet->id]), ["ocaps" => $ocaps]);
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_update_ocap_list()
     {
         $this->limitTo(10)->forAll(Generator\pos())->then(function ($nbr) {
@@ -180,6 +194,18 @@ class OcapListTest extends TestCase
         $response = $this->delete(route('obj.destroy', ['obj' => $ocaplist->editFacet->id]));
         $response
             ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function delete_ocap_list_via_view_facet()
+    {
+        $ocaplist = factory(OcapList::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $ocaplist->viewFacet->id]));
+        $response
+            ->assertStatus(405);
     }
 
     /**

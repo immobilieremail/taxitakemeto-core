@@ -108,6 +108,23 @@ class ShellTest extends TestCase
      * @test
      *
      */
+    public function update_shell_travel_list_via_dropbox_facet()
+    {
+        $shell = factory(Shell::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+        $request = [
+            'travels' => route('obj.show', ['obj' => $ocaplist->editFacet->id])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->dropboxFacet->id]), $request);
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_request_update_shell_travel_list()
     {
         $shell = factory(Shell::class)->create();
