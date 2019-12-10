@@ -44,8 +44,7 @@ class ShellUserFacet extends Facet
 
     private function processRequest(Request $request) : array
     {
-        $allowed = ['travels'];
-        $new_data = array_intersect_key($request->all(), array_flip($allowed));
+        $new_data = intersectFields(['travels'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
                 'travels' => is_string($value)

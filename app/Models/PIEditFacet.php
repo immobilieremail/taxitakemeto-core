@@ -57,8 +57,7 @@ class PIEditFacet extends Facet
 
     public function updateTarget(Request $request)
     {
-        $allowed = ['title', 'description', 'address'];
-        $new_data = array_intersect_key($request->all(), array_flip($allowed));
+        $new_data = intersectFields(['title', 'description', 'address'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
                 'title' => is_string($value),
