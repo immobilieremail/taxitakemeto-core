@@ -23,13 +23,16 @@ class ShellUserFacet extends Facet
 
     public function description()
     {
-        $ocapListFacet = $this->target->travelOcapListFacets->first();
+        $travelListFacet = $this->target->travelOcapListFacets->first();
+        $contactListFacet = $this->target->contactOcapListFacets->first();
 
         return [
             'type' => 'ShellUserFacet',
             'data' => [
-                'travels' => ($ocapListFacet != null)
-                    ? route('obj.show', ['obj' => $ocapListFacet->id]) : null
+                'travels' => ($travelListFacet != null)
+                    ? route('obj.show', ['obj' => $travelListFacet->id]) : null,
+                'contacts' => ($contactListFacet != null)
+                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null
             ]
         ];
     }

@@ -56,9 +56,11 @@ class ShellTest extends TestCase
     public function get_shell_user_facet_with_travel_list()
     {
         $shell = factory(Shell::class)->create();
-        $ocaplist = factory(OcapList::class)->create();
+        $travelList = factory(OcapList::class)->create();
+        $contactList = factory(OcapList::class)->create();
 
-        $shell->travelOcapListFacets()->save($ocaplist->viewFacet);
+        $shell->travelOcapListFacets()->save($travelList->editFacet);
+        $shell->contactOcapListFacets()->save($contactList->editFacet);
         $response = $this->get(route('obj.show', ['obj' => $shell->userFacet->id]));
         $response
             ->assertStatus(200)
@@ -66,7 +68,8 @@ class ShellTest extends TestCase
             ->assertJson([
                 'type' => 'ShellUserFacet',
                 'data' => [
-                    'travels' => route('obj.show', ['obj' => $ocaplist->viewFacet])
+                    'travels' => route('obj.show', ['obj' => $travelList->editFacet]),
+                    'contacts' => route('obj.show', ['obj' => $contactList->editFacet])
                 ]
             ]);
     }
