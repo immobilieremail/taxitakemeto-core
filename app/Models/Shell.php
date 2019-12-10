@@ -26,4 +26,15 @@ class Shell extends Model
         return $this->hasOne(ShellUserFacet::class, 'target_id')
                     ->where('type', 'App\Models\ShellUserFacet');
     }
+
+    /**
+     * DropboxFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function dropboxFacet()
+    {
+        return $this->hasOne(ShellDropboxFacet::class, 'target_id')
+                    ->where('type', 'App\Models\ShellDropboxFacet');
+    }
 }
