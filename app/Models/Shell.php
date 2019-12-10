@@ -17,6 +17,16 @@ class Shell extends Model
     }
 
     /**
+     * OcapList facets for Shell contact list
+     *
+     * @return [type] [description]
+     */
+    public function contactOcapListFacets()
+    {
+        return $this->belongsToMany(Facet::class, 'facet_shell_contact');
+    }
+
+    /**
      * UserFacet for specific Shell
      *
      * @return [type] [description]
