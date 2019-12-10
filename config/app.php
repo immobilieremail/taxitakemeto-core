@@ -71,6 +71,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Locales
+    |--------------------------------------------------------------------------
+    */
+
+    'locales' => ['fr', 'en',],
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
     |
@@ -169,6 +177,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Spatie\Glide\GlideServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -235,6 +244,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'FFMpeg' => Pbmedia\LaravelFFMpeg\FFMpegFacade::class,
+        'GlideImage' => Spatie\Glide\GlideImageFacade::class,
     ],
 
 ];

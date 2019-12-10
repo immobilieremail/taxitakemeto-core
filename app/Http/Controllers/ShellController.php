@@ -2,102 +2,114 @@
 
 namespace App\Http\Controllers;
 
-use App\Shell,
-    App\AudioList,
-    App\ShellDropbox,
-    App\JoinDropboxToMsg,
-    App\AudioListEditFacet,
-    App\AudioListViewFacet,
-    App\JoinShellEditFacet,
-    App\JoinShellViewFacet,
-    App\ShellDropboxMessage,
-    App\JoinShellShellDropbox;
-
 use Illuminate\Http\Request;
+
+use App\Shell,
+    App\ShellUserFacet,
+    App\ShellDropboxFacet;
+
+use App\AudioListEditFacet,
+    App\AudioListViewFacet;
+
+use App\Jobs\ProcessDropboxMessage;
+
+use App\Http\Requests\UpdateShellRequest;
+use App\Http\Requests\SendDropboxMessageRequest;
 
 class ShellController extends Controller
 {
-    public function index($lang)
-    {
-        $shells = Shell::all();
-        $shell_array = array();
-
-        foreach ($shells as $shell) {
-            array_push($shell_array, [
-                "swiss_number" => $shell->swiss_number,
-                "dropbox" => $shell->getDropbox()
-            ]);
-        }
-        return view('index', [
-            'shells' => $shell_array,
-            'lang' => $lang]);
-    }
-
-    public function show($lang, $shell_id)
-    {
-        $shell = Shell::find($shell_id);
-        if ($shell == NULL) {
-            return response(view('404'), 404);
-        } else {
-            return view('shell', [
-                'lang' => $lang,
-                'shell_id' => $shell_id,
-                'views' => $shell->audioListViewFacets(),
-                'edits' => $shell->audioListEditFacets(),
-                'dropbox' => $shell->shellDropboxMessages(),
-            ]);
-        }
-    }
-
-    public function store(Request $request, $lang)
+    public function create()
     {
         $shell = Shell::create();
-        $dropbox = ShellDropbox::create();
-        $join_shell_shell_dropbox = JoinShellShellDropbox::create([
-            'id_shell' => $shell->swiss_number,
-            'id_dropbox' => $dropbox->swiss_number
-        ]);
+        $shell_user = $shell->userFacet()->save(new ShellUserFacet);
+        $shell_dropbox = $shell->dropboxFacet()->save(new ShellDropboxFacet);
 
-        return redirect("$lang/shell/$shell->swiss_number", 303);
+        return response()->json(
+            [
+                'type' => 'ocap',
+                'ocapType' => 'Shell',
+                'url' => route('shell.show', ['audio' => $shell_user->swiss_number])
+            ]
+        );
     }
 
-    public function new_audio_list(Request $request, $lang, $shell_id)
+    public function show($shell_id)
     {
-        $audio_list = AudioList::create();
-        $audio_list_edit_facet = AudioListEditFacet::create(['id_list' => $audio_list->id]);
-        $join_shell_edit_facet = JoinShellEditFacet::create(['id_shell' => $shell_id, 'id_facet' => $audio_list_edit_facet->swiss_number]);
-        return redirect()->route('audiolist.edit', [$lang, $audio_list_edit_facet->swiss_number]);
+        $shell = ShellUserFacet::findOrFail($shell_id);
+
+        return response()->json(
+                $shell->getJsonShell());
     }
 
-    private function accept_facet($class_facet, $class_join, $shell_dropbox_message, $shell)
+    /**
+     * Get facet which will be linked to shell
+     *
+     * @param array $audiolist
+     * @return mixed
+     */
+    private function mapUpdateRequest(Array $audiolist)
     {
-        $audiolist_facet = $class_facet::find($shell_dropbox_message->capability);
-        $join_shell_facet = $class_join::create([
-            'id_shell' => $shell->swiss_number,
-            'id_facet' => $audiolist_facet->swiss_number
-        ]);
-        JoinDropboxToMsg::where('id_msg', $shell_dropbox_message->swiss_number)->delete();
+        $condition = isset($audiolist['ocap']) && isset($audiolist['ocapType']);
+
+        $ocap_class = ($condition) ? 'App\\' . $audiolist['ocapType'] . 'Facet' : null;
+        $facet_swiss_number = ($condition) ? getSwissNumberFromUrl($audiolist['ocap']) : '';
+
+        return (class_exists($ocap_class)) ? $ocap_class::find($facet_swiss_number) : null;
     }
 
-    public function accept($lang, $shell_id, $msg_id)
+    public function update(Request $request, $shell_id)
     {
-        $param = array();
-        $shell = Shell::find($shell_id);
-        $shell_dropbox_message = ShellDropboxMessage::find($msg_id);
+        $shell_user = ShellUserFacet::findOrFail($shell_id);
+        $condition = isset($request["data"]) && array_key_exists("audiolists", $request["data"]);
 
-        if ($shell != NULL) {
-            if ($shell_dropbox_message != NULL) {
-                if ($shell_dropbox_message->type == "ROFAL") {
-                    $this->accept_facet(AudioListViewFacet::class,
-                        JoinShellViewFacet::class, $shell_dropbox_message, $shell);
-                } else if ($shell_dropbox_message->type == "RWFAL") {
-                    $this->accept_facet(AudioListEditFacet::class,
-                        JoinShellEditFacet::class, $shell_dropbox_message, $shell);
-                } else
-                    return response(view('404'), 404);
-                return back();
-            }
+        $audiolists = ($condition) ? $request["data"]["audiolists"] : null;
+        $new_audiolists = collect($audiolists)->map(function ($audiolist) {
+            return $this->mapUpdateRequest($audiolist);
+        });
+        if (!$new_audiolists->contains(null) && $audiolists !== null) {
+            $shell_user->updateShell($new_audiolists);
+            return response()->json(
+                $shell_user->getJsonShell());
+        } else
+            abort(400);
+    }
+
+    /**
+     * Get objects needed to send a message to ShellDropbox
+     *
+     * @param mixed $data (return null if not array)
+     * @return mixed (array : null)
+     */
+    private function sendGetElementsID($data)
+    {
+        preg_match('#[^/]+$#', str_replace(
+            "/edit", "", $data["ocap"]), $ocap_id);
+
+        $ocap_class = 'App\\' . $data["ocapType"] . 'Facet';
+        if (method_exists($ocap_class, 'shells')) {
+            $facet = $ocap_class::find($ocap_id[0]);
+            if ($facet)
+                return $facet;
         }
-        return response(view('404'), 404);
+
+        return null;
+    }
+
+    public function send(Request $request, $shell_id)
+    {
+        $dropbox = ShellDropboxFacet::findOrFail($shell_id);
+
+        if (!isset($request['data']))
+            abort(400);
+
+        $valid_data = collect($request["data"])->map(function ($data) {
+            return $this->sendGetElementsID($data);
+        });
+        if (!$valid_data->contains(null) && !$valid_data->isEmpty()) {
+            foreach ($valid_data as $data)
+                $data->shells()->save($dropbox->shell);
+            return response('', 200);
+        } else
+            abort(400);
     }
 }
