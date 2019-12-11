@@ -72,4 +72,54 @@ class UserTest extends TestCase
         $response
             ->assertStatus(404);
     }
+
+    /**
+     * @test
+     *
+     */
+    public function update_user()
+    {
+        $user = factory(User::class)->create();
+        $request = [
+            'name' => 'Antonio Gonzales',
+            'email' => 'antonio.gonzales@immobilier.email',
+            'phone' => '+348921703',
+            'password' => 'lemotdepasse'
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $user->profileFacet->id]), $request);
+        $response
+            ->assertStatus(204);
+
+        $updated_user = User::find($user->id);
+
+        $this->assertEquals($request['name'], $updated_user->name);
+        $this->assertEquals($request['email'], $updated_user->email);
+        $this->assertEquals($request['phone'], $updated_user->phone);
+        $this->assertEquals($request['password'], $updated_user->password);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_request_update_user()
+    {
+        $user = factory(User::class)->create();
+
+        $response = $this->put(route('obj.update', ['obj' => $user->profileFacet->id]), ['md.yml' => []]);
+        $response
+            ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_update_user()
+    {
+        $response = $this->put(route('obj.update', ['obj' => 'cenestriendebienmechant']), ['md.yml' => []]);
+        $response
+            ->assertStatus(404);
+    }
 }
