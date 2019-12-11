@@ -151,4 +151,78 @@ class ShellTest extends TestCase
         $response
             ->assertStatus(404);
     }
+
+    /**
+     * @test
+     *
+     */
+    public function update_shell_contact_list()
+    {
+        $shell = factory(Shell::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+        $request = [
+            'contacts' => route('obj.show', ['obj' => $ocaplist->editFacet])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
+        $response
+            ->assertStatus(204);
+
+        $this->assertEquals($ocaplist->editFacet->id, $shell->contactOcapListFacets->first()->id);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_shell_contact_list_via_dropbox_facet()
+    {
+        $shell = factory(Shell::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+        $request = [
+            'contacts' => route('obj.show', ['obj' => $ocaplist->editFacet->id])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->dropboxFacet->id]), $request);
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function bad_request_update_shell_contact_list()
+    {
+        $shell = factory(Shell::class)->create();
+        $request = [
+            'contacts' => route('obj.show', ['obj' => 'saumon de Norvège'])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
+        $response
+            ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_shell_lists()
+    {
+        $shell = factory(Shell::class)->create();
+        $travelList = factory(OcapList::class)->create();
+        $contactList = factory(OcapList::class)->create();
+        $request = [
+            'travels' => route('obj.show', ['obj' => $travelList->editFacet]),
+            'contacts' => route('obj.show', ['obj' => $contactList->editFacet])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
+        $response
+            ->assertStatus(204);
+
+        $this->assertEquals($travelList->editFacet->id, $shell->travelOcapListFacets->first()->id);
+        $this->assertEquals($contactList->editFacet->id, $shell->contactOcapListFacets->first()->id);
+    }
 }
