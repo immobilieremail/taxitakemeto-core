@@ -34,6 +34,17 @@ class UserProfileFacet extends Facet
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Relation between this UserProfileFacet and a specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function shell()
+    {
+        return $this->hasOne(Shell::class, 'user_id')
+                    ->where('type', 'App\Models\Shell');
+    }
+
     public function description()
     {
         return [
