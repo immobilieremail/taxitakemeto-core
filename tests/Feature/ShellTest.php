@@ -44,7 +44,8 @@ class ShellTest extends TestCase
             ->assertJsonStructure([
                 'type',
                 'data' => [
-                    'travels'
+                    'travels',
+                    'contacts'
                 ]
             ]);
     }
