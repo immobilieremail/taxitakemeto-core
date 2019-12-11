@@ -2,6 +2,8 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 use App\Models\User;
+use App\Models\UserProfileFacet;
+
 use Faker\Generator as Faker;
 
 /*
@@ -22,4 +24,8 @@ $factory->define(User::class, function (Faker $faker) {
         'phone' => $faker->unique()->phoneNumber,
         'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi' // password
     ];
+});
+
+$factory->afterCreating(User::class, function ($user, $faker) {
+    $user->profileFacet()->save(factory(UserProfileFacet::class)->make());
 });

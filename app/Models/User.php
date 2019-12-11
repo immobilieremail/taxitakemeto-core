@@ -30,4 +30,15 @@ class User extends Model
     {
         parent::__construct($attributes);
     }
+
+    /**
+     * ProfileFacet for specific User
+     *
+     * @return [type] [description]
+     */
+    public function profileFacet()
+    {
+        return $this->hasOne(UserProfileFacet::class, 'target_id')
+                    ->where('type', 'App\Models\UserProfileFacet');
+    }
 }
