@@ -18,8 +18,9 @@ class ShellController extends Controller
         $shell->userFacet()->save(new ShellUserFacet);
         $shell->dropboxFacet()->save(new ShellDropboxFacet);
 
-        $fields = intersectFields(['travels', 'contacts'], $request->all());
+        $fields = intersectFields(['user', 'travels', 'contacts'], $request->all());
         $relations = [
+            'user' => $shell->users(),
             'travels' => $shell->travelOcapListFacets(),
             'contacts' => $shell->contactOcapListFacets()
         ];

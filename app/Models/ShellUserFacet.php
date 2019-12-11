@@ -59,13 +59,15 @@ class ShellUserFacet extends Facet
 
     private function processRequest(Request $request) : array
     {
-        $new_data = intersectFields(['travels', 'contacts'], $request->all());
+        $new_data = intersectFields(['travels', 'contacts', 'user'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
                 'travels' => is_string($value)
                     && Facet::find(getSwissNumberFromUrl($value)),
                 'contacts' => is_string($value)
-                    && Facet::find(getSwissNumberFromUrl($value))
+                    && Facet::find(getSwissNumberFromUrl($value)),
+                'user' => is_string($value)
+                    && UserProfileFacet::find(getSwissNumberFromUrl($value))
             ];
 
             return $tests[$key];
@@ -79,7 +81,8 @@ class ShellUserFacet extends Facet
         $tested_data = $this->processRequest($request);
         $updatables = [
             'travels' => $this->target->travelOcapListFacets(),
-            'contacts' => $this->target->contactOcapListFacets()
+            'contacts' => $this->target->contactOcapListFacets(),
+            'user' => $this->target->users()
         ];
 
         foreach ($tested_data as $i => $value) {

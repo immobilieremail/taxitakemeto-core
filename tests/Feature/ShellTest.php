@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use App\Models\Shell;
 use App\Models\OcapList;
+use App\Models\User;
 
 class ShellTest extends TestCase
 {
@@ -28,6 +29,38 @@ class ShellTest extends TestCase
                 'ocapType',
                 'url'
             ]);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function create_shell_with_request()
+    {
+        $user = factory(User::class)->create();
+        $travelList = factory(OcapList::class)->create();
+        $contactList = factory(OcapList::class)->create();
+        $request = [
+            'user' => route('obj.show', ['obj' => $user->profileFacet->id]),
+            'travels' => route('obj.show', ['obj' => $travelList->editFacet->id]),
+            'contacts' => route('obj.show', ['obj' => $contactList->editFacet->id])
+        ];
+
+        $response = $this->post(route('shell.store'), $request);
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'ocapType',
+                'url'
+            ]);
+
+        $created_shell = Shell::first();
+
+        $this->assertEquals($user->profileFacet->id, $created_shell->users->first()->id);
+        $this->assertEquals($travelList->editFacet->id, $created_shell->travelOcapListFacets->first()->id);
+        $this->assertEquals($contactList->editFacet->id, $created_shell->contactOcapListFacets->first()->id);
     }
 
     /**
@@ -227,5 +260,24 @@ class ShellTest extends TestCase
 
         $this->assertEquals($travelList->editFacet->id, $shell->travelOcapListFacets->first()->id);
         $this->assertEquals($contactList->editFacet->id, $shell->contactOcapListFacets->first()->id);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_shell_user()
+    {
+        $user = factory(User::class)->create();
+        $shell = factory(Shell::class)->create();
+        $request = [
+            'user' => route('obj.show', ['obj' => $user->profileFacet])
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $shell->userFacet]), $request);
+        $response
+            ->assertStatus(204);
+
+        $this->assertEquals($user->profileFacet->id, $shell->users->first()->id);
     }
 }
