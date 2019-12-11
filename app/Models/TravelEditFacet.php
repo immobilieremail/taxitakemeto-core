@@ -65,7 +65,7 @@ class TravelEditFacet extends Facet
         }
 
         if ($request->has('pis') && is_string($request->medias)) {
-            $listFacet = Facet::all()->where('id', getSwissNumberFromUrl($request->medias))->first(); // BAAD
+            $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
             if ($listFacet == null) {
                 return false;
             } else {
