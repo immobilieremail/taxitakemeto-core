@@ -18,6 +18,7 @@ Route::post('list', 'OcapListController@store')->name('list.store');
 Route::post('pi', 'PIController@store')->name('pi.store');
 Route::post('travel', 'TravelController@store')->name('travel.store');
 Route::post('shell', 'ShellController@store')->name('shell.store');
+Route::post('user', 'UserController@store')->name('user.store');
 
 Route::apiResource('obj', 'FacetController');
 
