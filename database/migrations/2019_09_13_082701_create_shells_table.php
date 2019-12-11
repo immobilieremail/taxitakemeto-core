@@ -15,7 +15,6 @@ class CreateShellsTable extends Migration
     {
         Schema::create('shells', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('user_id')->nullable();
             $table->timestamps();
         });
     }

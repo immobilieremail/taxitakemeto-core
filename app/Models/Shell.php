@@ -27,11 +27,13 @@ class Shell extends Model
     }
 
     /**
-     * Inverse relation of UserProfileFacet for specific shell
+     * UserProfileFacet for Shell user
+     *
+     * @return [type] [description]
      */
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(UserProfileFacet::class);
+        return $this->belongsToMany(UserProfileFacet::class, 'facet_shell_user');
     }
 
     /**
