@@ -175,7 +175,7 @@ fakeModel0 key state =
         "http://localhost:8000/api/obj/parisdakar"
         "Paris - Dakar"
         [ PI
-          "http://localhost:8000/api/obj/1"
+          "http://localhost:8000/api/obj/DID7eO6Fvhc_6xt1cPV9rg=="
           "Wat Phra Kaew Temple - Thaïland"
           "This is a description of Meenakshi Amman Temple."
           "9 Boulevard de la Canopée"
@@ -210,7 +210,7 @@ type Msg
   | UrlChanged Url.Url
   | ViewChanged String
   | GetPI SwissNumber
-  | GotPI (Result Http.Error PI)
+  | GotPI (Result Http.Error PIFacet)
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
@@ -368,26 +368,29 @@ update msg model =
 
     GotPI result ->
       case result of
-        Ok pi ->
-          case pi /= model.currentPI of
-            True ->
-              let
-                indexList = List.range 0 (List.length model.currentTravel.listPI)
-                indexPI =
-                  List.sum (
-                    List.filter (\index ->
-                      Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
-                  )
-                accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
-              in
-                ( { model | currentPI = pi
-                  , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
-                  , loading = False
-                  }
-                , Cmd.none )
+        Ok piFacet ->
+          let
+            pi = PI.piFromPIFacet piFacet
+          in
+            case pi /= model.currentPI of
+              True ->
+                let
+                  indexList = List.range 0 (List.length model.currentTravel.listPI)
+                  indexPI =
+                    List.sum (
+                      List.filter (\index ->
+                        Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
+                    )
+                  accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
+                in
+                  ( { model | currentPI = pi
+                    , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+                    , loading = False
+                    }
+                  , Cmd.none )
 
-            False ->
-              ( { model | loading = False }, Cmd.none )
+              False ->
+                ( { model | loading = False }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -1578,12 +1581,12 @@ decodeAudioContent =
   (field "delete" string)
 
 
--- getPIfromUrl : SwissNumber -> Cmd Msg
--- getPIfromUrl ocapUrl =
---   Http.get
---     { url = ocapUrl
---     , expect = Http.expectJson GotPI piDecoder
---     }
+getPIfromUrl : SwissNumber -> Cmd Msg
+getPIfromUrl ocapUrl =
+  Http.get
+    { url = ocapUrl
+    , expect = Http.expectJson GotPI piFacetDecoder
+    }
 
 -- getTravelfromUrl : SwissNumber -> Cmd Msg
 -- getTravelfromUrl ocapUrl =
@@ -1612,14 +1615,6 @@ decodeAudioContent =
 
 
 --- Temporary fakers
-
-
-getPIfromUrl : String -> Cmd Msg
-getPIfromUrl ocapUrl =
-  Process.sleep 2000
-    |> Task.perform (\_ ->
-      GotPI (Ok (Fake.pi ocapUrl))
-    )
 
 
 getTravelfromUrl : SwissNumber -> Cmd Msg
