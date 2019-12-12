@@ -17,11 +17,6 @@ class FacetController extends Controller
         //
     }
 
-    public function create()
-    {
-        //
-    }
-
     /**
      * Undocumented function
      *
@@ -30,36 +25,52 @@ class FacetController extends Controller
      */
     public function show(String $facet)
     {
-        $facet_obj = Facet::find($facet);
-        $true_facet = ($facet_obj != null) ? $facet_obj->facet_type::find($facet) : null;
+        $facet_obj = Facet::findOrFail($facet);
 
-        if ($true_facet != null && $true_facet->has_show() == true) {
-            return response()->json($true_facet->description());
+        if ($facet_obj->has_access('show') == true) {
+            return response()->json($facet_obj->description());
         } else {
-            return response('Not Found', 404);
+            return response('Method Not Allowed', 405);
         }
     }
 
-    public function update()
+    /**
+     * Undocumented function
+     *
+     * @param String $facet
+     * @param Request $request
+     * @return void
+     */
+    public function update(String $facet, Request $request)
     {
-        //
+        $facet_obj = Facet::findOrFail($facet);
+
+        if($facet_obj->has_access('update') == true) {
+            if ($facet_obj->updateTarget($request) == true) {
+                return response('No Content', 204);
+            } else {
+                return response('Bad Request', 400);
+            }
+        } else {
+            return response('Method Not Allowed', 405);
+        }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param String $facet
+     * @return void
+     */
     public function destroy(String $facet)
     {
-        $facet_obj = Facet::find($facet);
-        $true_facet = ($facet_obj != null) ? $facet_obj->facet_type::find($facet) : null;
+        $facet_obj = Facet::findOrFail($facet);
 
-        if ($true_facet != null && $true_facet->has_destroy() == true) {
-            $true_facet->destroyTarget();
+        if ($facet_obj->has_access('destroy') == true) {
+            $facet_obj->destroyTarget();
             return response('', 204);
         } else {
-            return response('Not Found', 404);
+            return response('Method Not Allowed', 405);
         }
-    }
-
-    public function edit()
-    {
-        //
     }
 }

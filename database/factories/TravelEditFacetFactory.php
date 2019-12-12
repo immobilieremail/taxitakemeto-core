@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\ShellDropboxFacet;
+use App\Models\TravelEditFacet;
 use Faker\Generator as Faker;
 
-$factory->define(ShellDropboxFacet::class, function (Faker $faker) {
+$factory->define(TravelEditFacet::class, function (Faker $faker) {
     return [
         //
     ];

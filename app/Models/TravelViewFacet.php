@@ -2,10 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Facet;
-use Illuminate\Support\Facades\Storage;
-
-class MediaViewFacet extends Facet
+class TravelViewFacet extends Facet
 {
     /**
      * Facet method permissions
@@ -26,21 +23,26 @@ class MediaViewFacet extends Facet
     }
 
     /**
-     * Inverse relation of ViewFacet for specific media
+     * Inverse relation of ViewFacet for specific travel
      *
      * @return [type] [description]
      */
     public function target()
     {
-        return $this->belongsTo(Media::class);
+        return $this->belongsTo(Travel::class);
     }
 
     public function description()
     {
+        $ocapListFacet = $this->target->piOcapListFacets->first();
+
         return [
-            'type' => 'MediaViewFacet',
-            'media_type' => $this->target->media_type,
-            'path' => Storage::disk('converts')->url($this->target->path)
+            'type' => 'TravelViewFacet',
+            'data' => [
+                'title' => $this->target->title,
+                'pis' => ($ocapListFacet != null)
+                    ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
+            ]
         ];
     }
 }

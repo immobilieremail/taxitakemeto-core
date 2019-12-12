@@ -14,6 +14,7 @@
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.8",
+        "mannikj/laravel-sti": "^1.6",
         "pbmedia/laravel-ffmpeg": "^4.0",
         "spatie/laravel-glide": "^3.4"
     },

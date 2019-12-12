@@ -4,9 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-use App\Rules\DropboxMessageRules;
-
-class SendDropboxMessageRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +24,10 @@ class SendDropboxMessageRequest extends FormRequest
     public function rules()
     {
         return [
-            'data' => ['required', new DropboxMessageRules]
+            'name' => 'required', 'string',
+            'email' => 'email:rfc',
+            'phone' => 'string',
+            'password' => 'string'
         ];
     }
 }

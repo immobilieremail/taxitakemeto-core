@@ -2,11 +2,12 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\ShellUserFacet;
+use App\Models\PIViewFacet;
 use Faker\Generator as Faker;
 
-$factory->define(ShellUserFacet::class, function (Faker $faker) {
+$factory->define(PIViewFacet::class, function (Faker $faker) {
     return [
         //
     ];
 });
+

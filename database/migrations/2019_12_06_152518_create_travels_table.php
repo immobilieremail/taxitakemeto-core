@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFacetTable extends Migration
+class CreateTravelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateFacetTable extends Migration
      */
     public function up()
     {
-        Schema::create('facets', function (Blueprint $table) {
-            $table->string('id', 24)->primary();
-            $table->bigInteger('target_id')->unsigned()->nullable();
-            $table->sti()->nullable();
+        Schema::create('travels', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('title');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ class CreateFacetTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('facets');
+        Schema::dropIfExists('travels');
     }
 }

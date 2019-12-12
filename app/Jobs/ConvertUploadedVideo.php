@@ -39,7 +39,7 @@ class ConvertUploadedVideo implements ShouldQueue
      */
     public function handle()
     {
-        $video_name = swiss_number();
+        $video_name = swissNumber();
         $ffprobe = \FFMpeg\FFProbe::create();
         $video_path = Storage::disk('uploads')->getAdapter()->getPathPrefix() . $this->video->path;
         $bit_rate = $ffprobe->format($video_path)->get('bit_rate') / 1024; // get bit rate in Kb

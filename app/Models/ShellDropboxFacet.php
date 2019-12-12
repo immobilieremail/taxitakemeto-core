@@ -1,15 +1,34 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\SwissObject;
+use Illuminate\Http\Request;
 
-class ShellDropboxFacet extends SwissObject
+class ShellDropboxFacet extends Facet
 {
-    protected $fillable = ['id_shell'];
+    /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [];
 
-    public function shell()
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
     {
-        return $this->belongsTo(Shell::class, 'id_shell');
+        return in_array($method, $this->permissions, true);
+    }
+
+    /**
+     * Inverse relation of DropboxFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function target()
+    {
+        return $this->belongsTo(Shell::class);
     }
 }
