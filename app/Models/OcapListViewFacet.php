@@ -49,6 +49,7 @@ class OcapListViewFacet extends Facet
         });
         return [
             'type' => 'OcapListViewFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'contents' => $collection->toArray()
         ];
     }

@@ -40,6 +40,7 @@ class PIEditFacet extends Facet
 
         return [
             'type' => 'PIEditFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'data' => [
                 'title' => $this->target->title,

@@ -40,6 +40,7 @@ class TravelEditFacet extends Facet
 
         return [
             'type' => 'TravelEditFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'data' => [
                 'title' => $this->target->title,

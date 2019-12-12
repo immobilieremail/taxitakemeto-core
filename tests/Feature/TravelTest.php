@@ -66,9 +66,10 @@ class TravelTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $travel->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'data' => [
                     'title',
                     'pis'
@@ -85,16 +86,18 @@ class TravelTest extends TestCase
         $travel = factory(Travel::class)->create();
         $ocaplist = factory(OcapList::class)->create();
 
+        $travel->update(['title' => 'New title']);
         $travel->piOcapListFacets()->save($ocaplist->viewFacet);
         $response = $this->get(route('obj.show', ['obj' => $travel->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
-            ->assertJsonStructure([
-                'type',
+            ->assertJsonCount(3)
+            ->assertJson([
+                'type' => 'TravelViewFacet',
+                'url' => route('obj.show', ['obj' => $travel->viewFacet->id]),
                 'data' => [
-                    'title',
-                    'pis'
+                    'title' => 'New title',
+                    'pis' => route('obj.show', ['obj' => $ocaplist->viewFacet->id])
                 ]
             ]);
     }
@@ -120,9 +123,10 @@ class TravelTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $travel->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'view_facet',
                 'data' => [
                     'title',
@@ -140,17 +144,19 @@ class TravelTest extends TestCase
         $travel = factory(Travel::class)->create();
         $ocaplist = factory(OcapList::class)->create();
 
+        $travel->update(['title' => 'New title']);
         $travel->piOcapListFacets()->save($ocaplist->viewFacet);
         $response = $this->get(route('obj.show', ['obj' => $travel->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
-            ->assertJsonStructure([
-                'type',
-                'view_facet',
+            ->assertJsonCount(4)
+            ->assertJson([
+                'type' => 'TravelEditFacet',
+                'url' => route('obj.show', ['obj' => $travel->editFacet->id]),
+                'view_facet' => route('obj.show', ['obj' => $travel->viewFacet->id]),
                 'data' => [
-                    'title',
-                    'pis'
+                    'title' => 'New title',
+                    'pis' => route('obj.show', ['obj' => $ocaplist->viewFacet->id])
                 ]
             ]);
     }

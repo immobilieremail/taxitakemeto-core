@@ -42,6 +42,7 @@ class ShellUserFacet extends Facet
 
         return [
             'type' => 'ShellUserFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
                 'user' => ($userFacet != null)
                     ? route('obj.show', ['obj' => $userFacet->id]) : null,

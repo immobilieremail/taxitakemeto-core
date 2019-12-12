@@ -39,6 +39,7 @@ class MediaViewFacet extends Facet
     {
         return [
             'type' => 'MediaViewFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'media_type' => $this->target->media_type,
             'path' => Storage::disk('converts')->url($this->target->path)
         ];
