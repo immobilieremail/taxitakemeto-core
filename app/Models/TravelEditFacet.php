@@ -58,20 +58,28 @@ class TravelEditFacet extends Facet
 
     public function updateTarget(Request $request)
     {
-        if (!$request->has('title') || !is_string($request->title)) {
-            return false;
-        } else {
+        $new_data = intersectFields(['title', 'pis'], $request->all());
+        $tested_data = array_filter($new_data, function ($value, $key) {
+            $tests = [
+                'title' => is_string($value),
+                'pis' => is_string($value)
+                    && Facet::find(getSwissNumberFromUrl($value))
+            ];
+
+            return $tests[$key];
+        }, ARRAY_FILTER_USE_BOTH);
+
+        if ($new_data != $tested_data) return false;
+
+        if (array_key_exists('title', $tested_data)) {
             $this->target->update(['title' => $request->title]);
         }
 
-        if ($request->has('pis') && is_string($request->medias)) {
-            $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
-            if ($listFacet == null) {
-                return false;
-            } else {
-                $this->target->piOcapListFacets()->detach();
-                $this->target->piOcapListFacets()->save($listFacet);
-            }
+        if (array_key_exists('pis', $tested_data)) {
+            $this->target->piOcapListFacets()->detach();
+            $this->target->piOcapListFacets()->save(
+                Facet::find(getSwissNumberFromUrl($request->pis))
+            );
         }
         return true;
     }
