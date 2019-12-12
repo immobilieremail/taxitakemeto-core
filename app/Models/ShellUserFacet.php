@@ -53,11 +53,6 @@ class ShellUserFacet extends Facet
         ];
     }
 
-    public function has_update()
-    {
-        return true;
-    }
-
     private function processRequest(Request $request) : array
     {
         $new_data = intersectFields(['travels', 'contacts', 'user'], $request->all());
