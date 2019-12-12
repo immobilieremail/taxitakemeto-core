@@ -73,11 +73,11 @@ class ShellTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $shellWithFacets->userFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(2)
             ->assertJsonStructure([
                 'type',
-                'user',
                 'data' => [
+                    'user',
                     'travels',
                     'contacts'
                 ]
@@ -91,19 +91,22 @@ class ShellTest extends TestCase
     public function get_shell_user_facet_with_travel_list()
     {
         $shell = factory(Shell::class)->create();
+
+        $user = factory(User::class)->create();
         $travelList = factory(OcapList::class)->create();
         $contactList = factory(OcapList::class)->create();
 
+        $shell->users()->save($user->profileFacet);
         $shell->travelOcapListFacets()->save($travelList->editFacet);
         $shell->contactOcapListFacets()->save($contactList->editFacet);
         $response = $this->get(route('obj.show', ['obj' => $shell->userFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(2)
             ->assertJson([
                 'type' => 'ShellUserFacet',
-                'user' => null,
                 'data' => [
+                    'user' => route('obj.show', ['obj' => $user->profileFacet]),
                     'travels' => route('obj.show', ['obj' => $travelList->editFacet]),
                     'contacts' => route('obj.show', ['obj' => $contactList->editFacet])
                 ]
