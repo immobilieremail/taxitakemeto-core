@@ -38,6 +38,7 @@ class UserProfileFacet extends Facet
     {
         return [
             'type' => 'UserProfileFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
                 'name' => $this->target->name,
                 'email' => $this->target->email,

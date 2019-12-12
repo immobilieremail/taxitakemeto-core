@@ -71,9 +71,10 @@ class PITest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $pi->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'data' => [
                     'title',
                     'description',
@@ -95,9 +96,10 @@ class PITest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $pi->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'data' => [
                     'title',
                     'description',
@@ -127,9 +129,10 @@ class PITest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $pi->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'view_facet',
                 'data' => [
                     'title',
@@ -152,9 +155,10 @@ class PITest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $pi->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'view_facet',
                 'data' => [
                     'title',

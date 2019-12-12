@@ -45,9 +45,10 @@ class OcapListTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $ocaplist->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 "type",
+                "url",
                 "contents"
             ]);
     }
@@ -65,9 +66,10 @@ class OcapListTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $ocaplist->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJson([
                 "type" => 'OcapListViewFacet',
+                "url" => route('obj.show', ['obj' => $ocaplist->viewFacet->id]),
                 "contents" => [
                     [
                         'type' => 'ocap',
@@ -99,9 +101,10 @@ class OcapListTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $ocaplist->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 "type",
+                "url",
                 "view_facet",
                 "contents",
             ]);
@@ -120,9 +123,10 @@ class OcapListTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $ocaplist->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(4)
             ->assertJson([
                 "type" => 'OcapListEditFacet',
+                "url" => route('obj.show', ['obj' => $ocaplist->editFacet->id]),
                 'view_facet' => route('obj.show', ['obj' => $ocaplist->viewFacet->id]),
                 "contents" => [
                     [

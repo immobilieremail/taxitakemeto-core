@@ -73,9 +73,10 @@ class ShellTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $shellWithFacets->userFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'data' => [
                     'user',
                     'travels',
@@ -102,9 +103,10 @@ class ShellTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $shell->userFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJson([
                 'type' => 'ShellUserFacet',
+                'url' => route('obj.show', ['obj' => $shell->userFacet->id]),
                 'data' => [
                     'user' => route('obj.show', ['obj' => $user->profileFacet]),
                     'travels' => route('obj.show', ['obj' => $travelList->editFacet]),

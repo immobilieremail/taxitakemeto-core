@@ -50,9 +50,10 @@ class UserTest extends TestCase
         $response = $this->get(route('obj.show', ['obj' => $user->profileFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(3)
             ->assertJsonStructure([
                 'type',
+                'url',
                 'data' => [
                     'name',
                     'email',

@@ -40,6 +40,7 @@ class PIViewFacet extends Facet
 
         return [
             'type' => 'PIViewFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
                 'title' => $this->target->title,
                 'description' => $this->target->description,

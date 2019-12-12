@@ -50,6 +50,7 @@ class OcapListEditFacet extends Facet
         });
         return [
             'type' => 'OcapListEditFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'contents' => $collection->toArray()
         ];

@@ -38,6 +38,7 @@ class TravelViewFacet extends Facet
 
         return [
             'type' => 'TravelViewFacet',
+            'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
                 'title' => $this->target->title,
                 'pis' => ($ocapListFacet != null)
