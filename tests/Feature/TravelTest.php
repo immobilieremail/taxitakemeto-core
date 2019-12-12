@@ -80,6 +80,29 @@ class TravelTest extends TestCase
      * @test
      *
      */
+    public function view_travel_with_pis()
+    {
+        $travel = factory(Travel::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $travel->piOcapListFacets()->save($ocaplist->viewFacet);
+        $response = $this->get(route('obj.show', ['obj' => $travel->viewFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'data' => [
+                    'title',
+                    'pis'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_view_travel()
     {
         $response = $this->get(route('obj.show', ['obj' => 'something bad']));
@@ -94,6 +117,30 @@ class TravelTest extends TestCase
     public function edit_travel()
     {
         $travel = factory(Travel::class)->create();
+        $response = $this->get(route('obj.show', ['obj' => $travel->editFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'view_facet',
+                'data' => [
+                    'title',
+                    'pis'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function edit_travel_with_pis()
+    {
+        $travel = factory(Travel::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $travel->piOcapListFacets()->save($ocaplist->viewFacet);
         $response = $this->get(route('obj.show', ['obj' => $travel->editFacet->id]));
         $response
             ->assertStatus(200)
@@ -194,6 +241,25 @@ class TravelTest extends TestCase
         $response = $this->put(route('obj.update', ['obj' => $travel->editFacet->id]), $request);
         $response
             ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_travel_with_bad_request_bis()
+    {
+        $travel = factory(Travel::class)->create();
+        $request = [
+            'title' => 'This is a title',
+            'pis' => 'thisisnotafaceturl'
+        ];
+
+        $response = $this->put(route('obj.update', ['obj' => $travel->editFacet->id]), $request);
+        $response
+            ->assertStatus(400);
+
+        $this->assertEquals($travel, Travel::create($travel->id));
     }
 
     /**
