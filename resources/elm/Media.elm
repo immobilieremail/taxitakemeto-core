@@ -112,7 +112,7 @@ viewFirstMedia attributes medias =
         _ ->
           img
           [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-              []
+          []
 
       Nothing ->
         img
