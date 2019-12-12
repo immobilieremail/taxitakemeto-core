@@ -86,6 +86,18 @@ class MediaTest extends TestCase
      * @test
      *
      */
+    public function delete_media_via_view_facet()
+    {
+        $media = factory(Media::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $media->viewFacet->id]));
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_delete_media()
     {
         $response = $this->delete(route('obj.destroy', ['obj' => "badbougieparfumee"]));

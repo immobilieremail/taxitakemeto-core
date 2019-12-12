@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\ShellDropboxFacet;
+use App\Models\ShellUserFacet;
 use Faker\Generator as Faker;
 
-$factory->define(ShellDropboxFacet::class, function (Faker $faker) {
+$factory->define(ShellUserFacet::class, function (Faker $faker) {
     return [
         //
     ];

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\PIRules;
+use App\Rules\FacetRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class PIRequest extends FormRequest
@@ -28,7 +28,7 @@ class PIRequest extends FormRequest
             'title' => 'required',
             'description' => 'required',
             'address' => 'required',
-            'medias' => new PIRules
+            'medias' => new FacetRules
         ];
     }
 }

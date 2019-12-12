@@ -1,61 +1,97 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
-use App\SwissObject;
+use Illuminate\Http\Request;
 
-use Illuminate\Support\Facades\DB;
-
-class ShellUserFacet extends SwissObject
+class ShellUserFacet extends Facet
 {
-    protected $fillable = ['id_shell'];
+    /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [
+        'show', 'update'
+    ];
 
-    public function shell()
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
     {
-        return $this->belongsTo(Shell::class, 'id_shell');
+        return in_array($method, $this->permissions, true);
     }
 
-    public function getJsonShell()
+    /**
+     * Inverse relation of UserFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function target()
     {
+        return $this->belongsTo(Shell::class);
+    }
+
+    public function description()
+    {
+        $userFacet = $this->target->users->first();
+        $travelListFacet = $this->target->travelOcapListFacets->first();
+        $contactListFacet = $this->target->contactOcapListFacets->first();
+
         return [
-            'type' => 'Shell',
-            'dropbox' => route('shell.send', ['shell' => $this->shell->dropboxFacet->swiss_number]),
-            'update' =>  route('shell.update', ['shell' => $this->swiss_number]),
-            'contents' => [
-                'audiolists_view' => $this->shell->getAudioListViews(),
-                'audiolists_edit' => $this->shell->getAudioListEdits()
+            'type' => 'ShellUserFacet',
+            'data' => [
+                'user' => ($userFacet != null)
+                    ? route('obj.show', ['obj' => $userFacet->id]) : null,
+                'travels' => ($travelListFacet != null)
+                    ? route('obj.show', ['obj' => $travelListFacet->id]) : null,
+                'contacts' => ($contactListFacet != null)
+                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null
             ]
         ];
     }
 
-    private function updateShellSetJoinPos($new_audiolist, $pos)
+    public function has_update()
     {
-        $join = JoinAudioList::where('shell_id', $this->id_shell)
-            ->where('join_audio_list_id', $new_audiolist->swiss_number)
-            ->first();
-        $join->pos = $pos;
-        $join->save();
+        return true;
     }
 
-    public function updateShell($new_audiolists)
+    private function processRequest(Request $request) : array
     {
-        $pos_edit = 0;
-        $pos_view = 0;
+        $new_data = intersectFields(['travels', 'contacts', 'user'], $request->all());
+        $tested_data = array_filter($new_data, function ($value, $key) {
+            $tests = [
+                'travels' => is_string($value)
+                    && Facet::find(getSwissNumberFromUrl($value)),
+                'contacts' => is_string($value)
+                    && Facet::find(getSwissNumberFromUrl($value)),
+                'user' => is_string($value)
+                    && UserProfileFacet::find(getSwissNumberFromUrl($value))
+            ];
 
-        DB::beginTransaction();
+            return $tests[$key];
+        }, ARRAY_FILTER_USE_BOTH);
 
-        $this->shell->audioListViews()->detach();
-        $this->shell->audioListEdits()->detach();
-        foreach ($new_audiolists as $new_audiolist) {
-            if ($new_audiolist instanceof AudioListEditFacet) {
-                $this->shell->audioListEdits()->save($new_audiolist);
-                $this->updateShellSetJoinPos($new_audiolist, $pos_edit++);
-            } else if ($new_audiolist instanceof AudioListViewFacet) {
-                $this->shell->audioListViews()->save($new_audiolist);
-                $this->updateShellSetJoinPos($new_audiolist, $pos_view++);
-            }
+        return $tested_data;
+    }
+
+    public function updateTarget(Request $request)
+    {
+        $tested_data = $this->processRequest($request);
+        $updatables = [
+            'travels' => $this->target->travelOcapListFacets(),
+            'contacts' => $this->target->contactOcapListFacets(),
+            'user' => $this->target->users()
+        ];
+
+        foreach ($tested_data as $i => $value) {
+            $facet = Facet::find(getSwissNumberFromUrl($value));
+
+            $updatables[$i]->detach();
+            $updatables[$i]->save($facet);
         }
-
-        DB::commit();
+        return !empty($tested_data);
     }
 }

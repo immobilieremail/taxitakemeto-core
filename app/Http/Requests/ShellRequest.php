@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Facet;
 use App\Rules\FacetRules;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class TravelRequest extends FormRequest
+class ShellRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,8 +27,8 @@ class TravelRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required',
-            'pis' => new FacetRules
+            'travels' => new FacetRules,
+            'contacts' => new FacetRules
         ];
     }
 }

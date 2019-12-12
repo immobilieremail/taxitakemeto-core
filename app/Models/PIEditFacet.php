@@ -6,11 +6,22 @@ use Illuminate\Http\Request;
 
 class PIEditFacet extends Facet
 {
-    public function __construct(array $attributes = array())
-    {
-        parent::__construct($attributes);
+    /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [
+        'show', 'update', 'destroy'
+    ];
 
-        $this->type = 'App\Models\PIEditFacet';
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
+    {
+        return in_array($method, $this->permissions, true);
     }
 
     /**
@@ -21,11 +32,6 @@ class PIEditFacet extends Facet
     public function target()
     {
         return $this->belongsTo(PI::class);
-    }
-
-    public function has_show()
-    {
-        return true;
     }
 
     public function description()
@@ -45,11 +51,6 @@ class PIEditFacet extends Facet
         ];
     }
 
-    public function has_destroy()
-    {
-        return true;
-    }
-
     public function destroyTarget()
     {
         $this->target->viewFacet->delete();
@@ -57,15 +58,9 @@ class PIEditFacet extends Facet
         $this->delete();
     }
 
-    public function has_update()
-    {
-        return true;
-    }
-
     public function updateTarget(Request $request)
     {
-        $allowed = ['title', 'description', 'address'];
-        $new_data = array_intersect_key($request->all(), array_flip($allowed));
+        $new_data = intersectFields(['title', 'description', 'address'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
                 'title' => is_string($value),
@@ -83,7 +78,7 @@ class PIEditFacet extends Facet
         }
 
         if ($request->has('medias') && is_string($request->medias)) {
-            $listFacet = Facet::all()->where('id', getSwissNumberFromUrl($request->medias))->first(); // BAAD
+            $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
             if ($listFacet == null) {
                 return false;
             } else {

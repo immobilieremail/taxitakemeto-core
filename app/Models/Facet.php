@@ -5,9 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use MannikJ\Laravel\SingleTableInheritance\Traits\SingleTableInheritance;
 
-class Facet extends SwissObject
+class Facet extends Model
 {
     use SingleTableInheritance;
+
+    /**
+     * Setup to use string primary keys
+     * @var boolean
+     */
+    public      $incrementing   = false;
+    protected   $keyType        = 'string';
+
+    /**
+     * Swiss model have string casted PrimaryKey
+     * @var [type]
+     */
+    protected   $cast           = [
+        'id'    => 'string'
+    ];
 
     /**
      * Specific table to use
@@ -24,13 +39,35 @@ class Facet extends SwissObject
     ];
 
     /**
+     * Facet method permissions
+     * @var array
+     */
+    protected $permissions      = [];
+
+    /**
      * Constructor for eloquent model hierarchy
      *
      * @param array $attributes
      */
     public function __construct(array $attributes = array())
     {
-        parent::__construct($attributes);
+        $this->ensureTypeCharacteristics();
+        $this->setSwissNumber();
+    }
+
+    public function setSwissNumber()
+    {
+        $this->id = swissNumber();
+    }
+
+    /**
+     * Check if Facet has permissions for specific request method
+     *
+     * @return bool permission
+     */
+    public function has_access(String $method): bool
+    {
+        return in_array($method, $this->permissions, true);
     }
 
     /**
@@ -41,45 +78,5 @@ class Facet extends SwissObject
     public function target()
     {
         return null;
-    }
-
-    public function has_index()
-    {
-        return false;
-    }
-
-    public function has_store()
-    {
-        return false;
-    }
-
-    public function has_create()
-    {
-        return false;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return boolean
-     */
-    public function has_show()
-    {
-        return false;
-    }
-
-    public function has_update()
-    {
-        return false;
-    }
-
-    public function has_destroy()
-    {
-        return false;
-    }
-
-    public function has_edit()
-    {
-        return false;
     }
 }

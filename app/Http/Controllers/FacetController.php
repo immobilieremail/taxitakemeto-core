@@ -27,7 +27,7 @@ class FacetController extends Controller
     {
         $facet_obj = Facet::findOrFail($facet);
 
-        if ($facet_obj->has_show() == true) {
+        if ($facet_obj->has_access('show') == true) {
             return response()->json($facet_obj->description());
         } else {
             return response('Method Not Allowed', 405);
@@ -45,7 +45,7 @@ class FacetController extends Controller
     {
         $facet_obj = Facet::findOrFail($facet);
 
-        if($facet_obj->has_update() == true) {
+        if($facet_obj->has_access('update') == true) {
             if ($facet_obj->updateTarget($request) == true) {
                 return response('No Content', 204);
             } else {
@@ -66,7 +66,7 @@ class FacetController extends Controller
     {
         $facet_obj = Facet::findOrFail($facet);
 
-        if ($facet_obj != null && $facet_obj->has_destroy() == true) {
+        if ($facet_obj->has_access('destroy') == true) {
             $facet_obj->destroyTarget();
             return response('', 204);
         } else {

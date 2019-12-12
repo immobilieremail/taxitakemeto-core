@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\ShellUserFacet;
+use App\Models\UserProfileFacet;
 use Faker\Generator as Faker;
 
-$factory->define(ShellUserFacet::class, function (Faker $faker) {
+$factory->define(UserProfileFacet::class, function (Faker $faker) {
     return [
         //
     ];

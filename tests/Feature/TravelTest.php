@@ -155,6 +155,21 @@ class TravelTest extends TestCase
      * @test
      *
      */
+    public function update_travel_via_view_facet()
+    {
+        $travel = factory(Travel::class)->create();
+        $request = [
+            'title' => 'Titre'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $travel->viewFacet->id]), $request);
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_update_travel()
     {
         $request = [
@@ -191,6 +206,18 @@ class TravelTest extends TestCase
         $response = $this->delete(route('obj.destroy', ['obj' => $travel->editFacet->id]));
         $response
             ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function delete_travel_via_view_facet()
+    {
+        $travel = factory(Travel::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $travel->viewFacet->id]));
+        $response
+            ->assertStatus(405);
     }
 
     /**

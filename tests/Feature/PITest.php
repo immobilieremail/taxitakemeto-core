@@ -166,6 +166,23 @@ class PITest extends TestCase
      * @test
      *
      */
+    public function update_pi_via_view_facet()
+    {
+        $pi = factory(PI::class)->create();
+        $request = [
+            'title' => 'Titre',
+            'description' => 'Description du PI',
+            'address' => '1 rue de la Tasse Bleue'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $pi->viewFacet->id]), $request);
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_update_pi()
     {
         $request = [
@@ -204,6 +221,18 @@ class PITest extends TestCase
         $response = $this->delete(route('obj.destroy', ['obj' => $pi->editFacet->id]));
         $response
             ->assertStatus(204);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function delete_pi_via_view_facet()
+    {
+        $pi = factory(PI::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $pi->viewFacet->id]));
+        $response
+            ->assertStatus(405);
     }
 
     /**
