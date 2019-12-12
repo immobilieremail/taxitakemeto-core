@@ -277,7 +277,10 @@ class PITest extends TestCase
         $response
             ->assertStatus(400);
 
-        $this->assertEquals($pi, PI::find($pi->id));
+        $new_pi = PI::find($pi->id);
+        $this->assertEquals($pi->title, $new_pi->title);
+        $this->assertEquals($pi->description, $new_pi->description);
+        $this->assertEquals($pi->address, $new_pi->address);
     }
 
     /**

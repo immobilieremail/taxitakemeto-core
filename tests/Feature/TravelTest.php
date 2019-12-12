@@ -259,7 +259,7 @@ class TravelTest extends TestCase
         $response
             ->assertStatus(400);
 
-        $this->assertEquals($travel, Travel::create($travel->id));
+        $this->assertEquals($travel->title, Travel::find($travel->id)->title);
     }
 
     /**
