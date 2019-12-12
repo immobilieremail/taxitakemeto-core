@@ -86,6 +86,30 @@ class PITest extends TestCase
      * @test
      *
      */
+    public function view_pi_with_medias()
+    {
+        $pi = factory(PI::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $pi->mediaOcapListFacets()->save($ocaplist->viewFacet);
+        $response = $this->get(route('obj.show', ['obj' => $pi->viewFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJsonStructure([
+                'type',
+                'data' => [
+                    'title',
+                    'description',
+                    'medias'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_view_pi()
     {
         $response = $this->get(route('obj.show', ['obj' => 'something bad']));
@@ -100,6 +124,31 @@ class PITest extends TestCase
     public function edit_pi()
     {
         $pi = factory(PI::class)->create();
+        $response = $this->get(route('obj.show', ['obj' => $pi->editFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                'type',
+                'view_facet',
+                'data' => [
+                    'title',
+                    'description',
+                    'medias'
+                ]
+            ]);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function edit_pi_with_medias()
+    {
+        $pi = factory(PI::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $pi->mediaOcapListFacets()->save($ocaplist->viewFacet);
         $response = $this->get(route('obj.show', ['obj' => $pi->editFacet->id]));
         $response
             ->assertStatus(200)
@@ -209,6 +258,26 @@ class PITest extends TestCase
         $response = $this->put(route('obj.update', ['obj' => $pi->editFacet->id]), $request);
         $response
             ->assertStatus(400);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function update_pi_with_bad_request_bis()
+    {
+        $pi = factory(PI::class)->create();
+        $request = [
+            'title' => 'New title',
+            'description' => 'A description that describe what the description describe.',
+            'address' => '6 rue du Martin Pécheur',
+            'medias' => 'arandomstringthatcannotbeafaceturl'
+        ];
+        $response = $this->put(route('obj.update', ['obj' => $pi->editFacet->id]), $request);
+        $response
+            ->assertStatus(400);
+
+        $this->assertEquals($pi, PI::find($pi->id));
     }
 
     /**
