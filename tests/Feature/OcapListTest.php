@@ -53,6 +53,32 @@ class OcapListTest extends TestCase
     }
 
     /**
+    * @test
+    *
+    */
+    public function view_ocap_list_with_contents()
+    {
+        $media = factory(Media::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $ocaplist->contents()->save($media->viewFacet);
+        $response = $this->get(route('obj.show', ['obj' => $ocaplist->viewFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(2)
+            ->assertJson([
+                "type" => 'OcapListViewFacet',
+                "contents" => [
+                    [
+                        'type' => 'ocap',
+                        'ocapType' => 'MediaViewFacet',
+                        'url' => route('obj.show', ['obj' => $media->viewFacet->id])
+                    ]
+                ]
+            ]);
+    }
+
+    /**
      * @test
      *
      */
@@ -78,6 +104,33 @@ class OcapListTest extends TestCase
                 "type",
                 "view_facet",
                 "contents",
+            ]);
+    }
+
+    /**
+    * @test
+    *
+    */
+    public function edit_facet_ocap_list_with_contents()
+    {
+        $media = factory(Media::class)->create();
+        $ocaplist = factory(OcapList::class)->create();
+
+        $ocaplist->contents()->save($media->viewFacet);
+        $response = $this->get(route('obj.show', ['obj' => $ocaplist->editFacet->id]));
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJson([
+                "type" => 'OcapListEditFacet',
+                'view_facet' => route('obj.show', ['obj' => $ocaplist->viewFacet->id]),
+                "contents" => [
+                    [
+                        'type' => 'ocap',
+                        'ocapType' => 'MediaViewFacet',
+                        'url' => route('obj.show', ['obj' => $media->viewFacet->id])
+                    ]
+                ]
             ]);
     }
 
