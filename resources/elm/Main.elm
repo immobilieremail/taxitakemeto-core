@@ -1459,14 +1459,22 @@ viewCarouselButtonNext mouseOver =
 
 viewCarousel : List Media -> Carousel.State -> List OverButton -> Html Msg
 viewCarousel medias carouselState mouseOver =
-  div []
-    [ Carousel.config CarouselMsg []
-      |> Carousel.slides
-        (List.map Media.carouselSlide medias)
-      |> Carousel.view carouselState
-    , viewCarouselButtonPrev mouseOver
-    , viewCarouselButtonNext mouseOver
-    ]
+  case List.isEmpty medias of
+    True ->
+      div [ class "d-flex" ]
+        [ img
+          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+          []
+        ]
+    False ->
+      div []
+        [ Carousel.config CarouselMsg []
+          |> Carousel.slides
+            (List.map Media.carouselSlide medias)
+          |> Carousel.view carouselState
+        , viewCarouselButtonPrev mouseOver
+        , viewCarouselButtonNext mouseOver
+        ]
 
 
 piChangeViewButton : String -> Msg -> Html Msg
