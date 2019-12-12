@@ -42,10 +42,30 @@ type alias PI =
   }
 
 
+type alias PIFacet =
+  { swissNumber : SN.SwissNumber
+  , facetType : String
+  , title : String
+  , description : String
+  , address : String
+  , mediaList : Maybe SN.SwissNumber
+  }
+
+
 
 swissNumberIsNotEqual : SwissNumber -> PI -> Bool
 swissNumberIsNotEqual swissNumber pi =
   pi.swissNumber /= swissNumber
+
+
+piFromPIFacet : PIFacet -> PI
+piFromPIFacet piFacet =
+  PI
+    piFacet.swissNumber
+    piFacet.title
+    piFacet.description
+    piFacet.address
+    [] [] [] []
 
 
 
@@ -268,3 +288,15 @@ piDecoder =
   (field "audios" (D.list decodeAudioContent))
   (field "tags" (D.list tagDecoder))
   (field "typespi" (D.list typePIDecoder))
+
+
+piFacetDecoder : Decoder PIFacet
+piFacetDecoder =
+  D.map6 PIFacet
+  (field "url" string)
+  (field "type" string)
+  (field "data" (field "title" string))
+  (field "data" (field "description" string))
+  (field "data" (field "address" string))
+  (D.maybe (field "data" (field "medias" string)))
+
