@@ -60,6 +60,7 @@ class PIEditFacet extends Facet
 
     public function updateTarget(Request $request)
     {
+        $ret_v = false;
         $new_data = intersectFields(['title', 'description', 'address'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
@@ -71,12 +72,6 @@ class PIEditFacet extends Facet
             return $tests[$key];
         }, ARRAY_FILTER_USE_BOTH);
 
-        if (empty($tested_data)) {
-            return false;
-        } else {
-            $this->target->update($tested_data);
-        }
-
         if ($request->has('medias') && is_string($request->medias)) {
             $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
             if ($listFacet == null) {
@@ -84,8 +79,17 @@ class PIEditFacet extends Facet
             } else {
                 $this->target->mediaOcapListFacets()->detach();
                 $this->target->mediaOcapListFacets()->save($listFacet);
+                $ret_v = true;
             }
         }
-        return true;
+
+        if (empty($tested_data) && !$ret_v) {
+            return false;
+        } else {
+            $this->target->update($tested_data);
+            $ret_v = true;
+        }
+
+        return $ret_v;
     }
 }
