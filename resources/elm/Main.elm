@@ -87,7 +87,6 @@ type alias Model =
   , currentPI : PI
   , proposals : List PI
   , checked : List PI
-  , listTravel : List Travel
   , carouselState : Carousel.State
   , accordionState : Accordion.State
   , modalVisibility : Modal.Visibility
@@ -111,7 +110,6 @@ model0 key state =
   , currentPI = PI "" "" "" "" [] [] [] []
   , proposals = []
   , checked = []
-  , listTravel = []
   , carouselState = Carousel.initialState
   , accordionState = Accordion.initialState
   , modalVisibility = Modal.hidden
@@ -128,14 +126,7 @@ model0 key state =
 fakeModel0 : Nav.Key -> Navbar.State -> Model
 fakeModel0 key state =
   let model = model0 key state
-  in { model | listTravel =
-    [ Travel
-      "http://localhost:8000/api/obj/24v_uNRPOK@silw7G05QVg=="
-      "Paris - Dakar"
-      []
-      [ "+33 6 12 34 56 78", "foo@bar.com" ]
-      Accordion.initialState
-    ], proposals =
+  in { model | proposals =
     [ PI
       "http://localhost:8000/api/obj/1"
       "Wat Phra Kaew Temple - Thaïland"
@@ -335,7 +326,7 @@ updateFromUrl model url commonCmd =
 
             Just ocapUrl ->
               ( { model | currentTravel =
-                case (List.head (List.filter (\travel -> travel.swissNumber == ocapUrl) model.listTravel)) of
+                case (List.head (List.filter (\travel -> travel.swissNumber == ocapUrl) model.shell.travelList)) of
                   Just travel ->
                     travel
 
@@ -401,10 +392,12 @@ update msg model =
                   let
                     updatedTravel = { travel | accordionState = model.currentTravel.accordionState }
                     mappedList = (
-                      List.map (\t -> if t.swissNumber == travel.swissNumber then travel else t) model.listTravel)
+                      List.map (\t -> if t.swissNumber == travel.swissNumber then travel else t) model.shell.travelList)
+                    oldShell = model.shell
+                    newShell = { oldShell | travelList = mappedList }
                   in
                     ( { model | currentTravel = updatedTravel
-                      , listTravel = mappedList
+                      , shell = newShell
                       , message = Nothing
                       , loading = False
                       }, Cmd.none )
@@ -423,10 +416,7 @@ update msg model =
     GotShell result ->
       case result of
         Ok shell ->
-          let
-            newModel = { model | shell = shell, user = shell.user }
-          in
-            ( newModel, Cmd.none )
+          ( { model | shell = shell }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -488,8 +478,9 @@ update msg model =
 
     AddCheckedToTravel swissNumber ->
       let
-        oldListTravel = model.listTravel
-        newListTravel = (List.map (Travel.updateListPI swissNumber model.checked) oldListTravel)
+        oldShell = model.shell
+        oldTravelList = oldShell.travelList
+        newShell = { oldShell | travelList = (List.map (Travel.updateListPI swissNumber model.checked) oldTravelList) }
       in
         case model.currentTravel.swissNumber == swissNumber of
           True ->
@@ -497,10 +488,10 @@ update msg model =
               oldCurrentTravel = model.currentTravel
               newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
             in
-              ( { model | currentTravel = newCurrentTravel, listTravel = newListTravel, checked = [] }, Cmd.none )
+              ( { model | currentTravel = newCurrentTravel, shell = newShell, checked = [] }, Cmd.none )
 
           False ->
-            ( { model | listTravel = newListTravel, checked = [] }, Cmd.none )
+            ( { model | shell = newShell, checked = [] }, Cmd.none )
 
     CreateNewTravel ->
       ( { model | loading = True }, createNewTravel model.formTitle model.checked )
@@ -508,23 +499,27 @@ update msg model =
     GotNewTravel result ->
       case result of
         Ok travel ->
-          case Url.fromString (getRootUrl ++ "/elm") of
-            Just url ->
-              updateFromUrl
-                { model | currentTravel = travel
-                , listTravel = model.listTravel ++ [ travel ]
-                , checked = []
-                , accordionState = Accordion.initialState
-                , loading = False
-                } url (Nav.pushUrl model.key (Url.toString url))
+          let
+            oldShell = model.shell
+            newShell = { oldShell | travelList = model.shell.travelList ++ [ travel ] }
+          in
+            case Url.fromString (getRootUrl ++ "/elm") of
+              Just url ->
+                updateFromUrl
+                  { model | currentTravel = travel
+                  , shell = newShell
+                  , checked = []
+                  , accordionState = Accordion.initialState
+                  , loading = False
+                  } url (Nav.pushUrl model.key (Url.toString url))
 
-            Nothing ->
-              ( { model | currentTravel = travel
-                , listTravel = model.listTravel ++ [ travel ]
-                , checked = []
-                , accordionState = Accordion.initialState
-                , loading = False
-                }, Cmd.none )
+              Nothing ->
+                ( { model | currentTravel = travel
+                  , shell = newShell
+                  , checked = []
+                  , accordionState = Accordion.initialState
+                  , loading = False
+                  }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -601,7 +596,7 @@ view model =
           [ viewNavbar model
           , h2 [ class "title" ]
             [ text "My Travels" ]
-          , Travel.viewList model.listTravel
+          , Travel.viewList model.shell.travelList
           ]
 
       ViewListPIDashboard ->
@@ -1055,7 +1050,7 @@ viewUserDashboardAccordion model =
     , blocks =
       [ Accordion.block
         [ Block.attrs [ class "user-accordion-body-padding" ] ]
-        (List.map (viewBlockTravel model.currentTravel.swissNumber) model.listTravel)
+        (List.map (viewBlockTravel model.currentTravel.swissNumber) model.shell.travelList)
       ]
     }
 
