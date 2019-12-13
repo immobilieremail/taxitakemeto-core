@@ -424,7 +424,7 @@ update msg model =
       case result of
         Ok shell ->
           let
-            newModel = { model | shell = shell, user = shell.user, listTravel = shell.travelList }
+            newModel = { model | shell = shell, user = shell.user }
           in
             ( newModel, Cmd.none )
 
