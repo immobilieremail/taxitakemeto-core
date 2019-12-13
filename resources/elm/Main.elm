@@ -346,7 +346,7 @@ updateFromUrl model url commonCmd =
                 }
               , Cmd.batch
                 [ commonCmd
-                , getTravelfromUrl ocapUrl
+                , getSingleTravel ocapUrl
                 ]
               )
 
@@ -1588,13 +1588,6 @@ getSinglePI ocapUrl =
     (R.getSinglePIRequest ocapUrl)
 
 
--- getTravelfromUrl : SwissNumber -> Cmd Msg
--- getTravelfromUrl ocapUrl =
---   Http.get
---     { url = ocapUrl
---     , except = Http.exceptJson GotTravel travelDecoder
---     }
-
 -- createNewTravel : String -> List PI -> Cmd Msg
 -- createNewTravel title listPI =
 --   Http.post
@@ -1615,14 +1608,6 @@ getSinglePI ocapUrl =
 
 
 --- Temporary fakers
-
-
-getTravelfromUrl : SwissNumber -> Cmd Msg
-getTravelfromUrl ocapUrl =
-  Process.sleep 2000
-    |> Task.perform (\_ ->
-      GotTravel (Ok (Fake.travel ocapUrl))
-    )
 
 
 createNewTravel : String -> List PI -> Cmd Msg
