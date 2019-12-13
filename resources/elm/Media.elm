@@ -159,16 +159,8 @@ viewAudioLanguage audio =
     ]
 
 
--- JSON API
 
-decodeAudioContent : Decoder Audio
-decodeAudioContent =
-  D.map5 Audio
-  (field "type" string)
-  (field "language" string)
-  (field "view_facet" string)
-  (field "path" string)
-  (field "delete" string)
+-- JSON API
 
 
 mediaTypeDecoder : Decoder MediaType

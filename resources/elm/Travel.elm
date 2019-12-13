@@ -99,16 +99,6 @@ viewList listTravel =
 -- JSON Decoders
 
 
-travelDecoder : Decoder Travel
-travelDecoder =
-  D.map5 Travel
-  (field "swiss_number" string)
-  (field "title" string)
-  (field "listPI" (D.list PI.piDecoder))
-  (field "listContact" (D.list string))
-  (D.null Accordion.initialState)
-
-
 travelFacetDecoder : Decoder TravelFacet
 travelFacetDecoder =
   D.map4 TravelFacet
