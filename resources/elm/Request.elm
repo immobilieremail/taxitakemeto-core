@@ -161,5 +161,17 @@ getSingleShellRequest ocapUrl =
             Task.succeed (Shell.shellFromShellFacet shellFacet)
 
           Just travelListUrl ->
-            Task.succeed (Shell.shellFromShellFacet shellFacet)
+            getOcapListfromUrl travelListUrl
+              |> Task.andThen
+                (\travellist ->
+                  List.map (getSingleTravelRequest << .url) travellist.contents
+                    |> Task.sequence
+                    |> Task.andThen
+                      (\travels ->
+                        let
+                          shell = Shell.shellFromShellFacet shellFacet
+                        in
+                          Task.succeed { shell | travelList = travels }
+                      )
+                )
       )
