@@ -42,13 +42,14 @@ type alias MediaFacet =
 
 
 
-
-
 mediaFromMediaFacet : MediaFacet -> Media
 mediaFromMediaFacet mediaFacet =
-  Media
-    mediaFacet.mediaType
-    mediaFacet.path
+  Media mediaFacet.mediaType mediaFacet.path
+
+
+audioFromMediaFacet : MediaFacet -> Audio
+audioFromMediaFacet mediaFacet =
+  Audio "Language" mediaFacet.path
 
 
 -- CONSTRUCTORS (used to fake Media)
