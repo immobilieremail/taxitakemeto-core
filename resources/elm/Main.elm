@@ -127,22 +127,10 @@ fakeModel0 key state =
   let model = model0 key state
   in { model | listTravel =
     [ Travel
-      "http://localhost:8000/api/obj/parisdakar"
+      "http://localhost:8000/api/obj/24v_uNRPOK@silw7G05QVg=="
       "Paris - Dakar"
       []
       [ "+33 6 12 34 56 78", "foo@bar.com" ]
-      Accordion.initialState
-    , Travel
-      "http://localhost:8000/api/obj/voyagebirmanie"
-      "Petit voyage en Birmanie"
-      []
-      []
-      Accordion.initialState
-    , Travel
-      "http://localhost:8000/api/obj/sejourtadjikistan"
-      "Séjour au Tadjikistan"
-      []
-      []
       Accordion.initialState
     ], proposals =
     [ PI
@@ -174,7 +162,7 @@ fakeModel0 key state =
       [ PI.hotel ]
     ], currentTravel =
       Travel
-        "http://localhost:8000/api/obj/parisdakar"
+        "http://localhost:8000/api/obj/24v_uNRPOK@silw7G05QVg=="
         "Paris - Dakar"
         [ PI
           "http://localhost:8000/api/obj/SLyUrmxqRGy@x1oQDExASA=="
