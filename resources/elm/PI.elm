@@ -8,7 +8,7 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Button as Button
 import Media exposing (..)
-import SwissNumber as SN exposing (SwissNumber)
+import SwissNumber exposing (SwissNumber)
 
 
 
@@ -31,7 +31,7 @@ type TypePI
 
 
 type alias PI =
-  { swissNumber : SN.SwissNumber
+  { swissNumber : SwissNumber
   , title : String
   , description : String
   , address : String
@@ -43,12 +43,12 @@ type alias PI =
 
 
 type alias PIFacet =
-  { swissNumber : SN.SwissNumber
+  { swissNumber : SwissNumber
   , facetType : String
   , title : String
   , description : String
   , address : String
-  , mediaList : Maybe SN.SwissNumber
+  , mediaList : Maybe SwissNumber
   }
 
 
