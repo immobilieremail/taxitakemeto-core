@@ -1,8 +1,4 @@
-module Media exposing (
-  MediaType, Media, Audio,
-  carouselSlide, viewFirstMedia, viewAudioLanguage,
-  decodeAudioContent, mediaDecoder,
-  videoType, audioType, imageType)
+module Media exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -13,6 +9,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 import Bootstrap.Text as Text
 import Bootstrap.Carousel.Slide as Slide
+import SwissNumber as SN
 
 
 
@@ -30,6 +27,14 @@ type alias Media =
   }
 
 
+type alias MediaFacet =
+  { jsonType : String
+  , url : SN.SwissNumber
+  , mediaType : MediaType
+  , path : String
+  }
+
+
 type alias Audio =
   { jsontype : String
   , language : String
@@ -38,6 +43,13 @@ type alias Audio =
   , deleteAudio : String
   }
 
+
+
+mediaFromMediaFacet : MediaFacet -> Media
+mediaFromMediaFacet mediaFacet =
+  Media
+    mediaFacet.mediaType
+    mediaFacet.path
 
 
 -- CONSTRUCTORS (used to fake Media)
@@ -182,3 +194,12 @@ mediaDecoder =
   D.map2 Media
   (field "mediaType" mediaTypeDecoder)
   (field "url" string)
+
+
+mediaFacetDecoder : Decoder MediaFacet
+mediaFacetDecoder =
+  D.map4 MediaFacet
+  (field "type" string)
+  (field "url" string)
+  (field "media_type" mediaTypeDecoder)
+  (field "path" string)
