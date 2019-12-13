@@ -82,3 +82,31 @@ handleJsonResponse decoder response =
 
         Ok result ->
           Ok result
+
+
+getSinglePIRequest : SwissNumber -> Task Http.Error PI
+getSinglePIRequest ocapUrl =
+  getPIfromUrl ocapUrl
+    |> Task.andThen
+      (\piFacet ->
+        case piFacet.mediaList of
+          Nothing ->
+            Task.succeed (PI.piFromPIFacet piFacet)
+
+          Just mediaListUrl ->
+            getOcapListfromUrl mediaListUrl
+              |> Task.andThen
+                (\medialist ->
+                  List.map (getMediafromUrl << .url) medialist.contents
+                    |> Task.sequence
+                    |> Task.andThen
+                      (\mediaFacets ->
+                        let
+                          pi = PI.piFromPIFacet piFacet
+                          medias = List.map Media.mediaFromMediaFacet mediaFacets
+                        in
+                          Task.succeed { pi | medias = medias }
+                      )
+                )
+      )
+

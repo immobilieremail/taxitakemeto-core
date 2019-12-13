@@ -1591,30 +1591,7 @@ decodeAudioContent =
 getSinglePI : SwissNumber -> Cmd Msg
 getSinglePI ocapUrl =
   Task.attempt GotPI
-    (R.getPIfromUrl ocapUrl
-      |> Task.andThen
-        (\piFacet ->
-          case piFacet.mediaList of
-            Nothing ->
-              Task.succeed (PI.piFromPIFacet piFacet)
-
-            Just mediaListUrl ->
-              R.getOcapListfromUrl mediaListUrl
-                |> Task.andThen
-                  (\medialist ->
-                    List.map (R.getMediafromUrl << .url) medialist.contents
-                      |> Task.sequence
-                      |> Task.andThen
-                        (\mediaFacets ->
-                          let
-                            pi = PI.piFromPIFacet piFacet
-                            medias = List.map Media.mediaFromMediaFacet mediaFacets
-                          in
-                            Task.succeed { pi | medias = medias }
-                        )
-                  )
-        )
-    )
+    (R.getSinglePIRequest ocapUrl)
 
 
 -- getTravelfromUrl : SwissNumber -> Cmd Msg
