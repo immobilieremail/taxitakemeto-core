@@ -745,8 +745,9 @@ viewProfile user tmpPassword tmpConfirmPassword modalVisibility =
         Just password ->
           Form.group []
             [ longButton "Reset my password" (ShowModal) [ Button.primary ] ]
-
-      , h4 [ class "title" ] [ text "Contact" ]
+      ]
+    , Form.form []
+      [ h4 [ class "title" ] [ text "Contact" ]
       , if List.length user.contact == 0 then
         Message.viewWarningMessage
           "You should add a contact information to help you interact with people."
