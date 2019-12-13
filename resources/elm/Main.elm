@@ -1576,16 +1576,14 @@ simpleViewPI carouselState mouseOver pi =
     ]
 
 
+
 -- JSON API
 
-decodeAudioContent : Decoder Audio
-decodeAudioContent =
-  D.map5 Audio
-  (field "type" string)
-  (field "language" string)
-  (field "view_facet" string)
-  (field "path" string)
-  (field "delete" string)
+
+getSingleTravel : SwissNumber -> Cmd Msg
+getSingleTravel ocapUrl =
+  Task.attempt GotTravel
+    (R.getSingleTravelRequest ocapUrl)
 
 
 getSinglePI : SwissNumber -> Cmd Msg

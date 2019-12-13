@@ -110,3 +110,28 @@ getSinglePIRequest ocapUrl =
                 )
       )
 
+
+getSingleTravelRequest : SwissNumber -> Task Http.Error Travel
+getSingleTravelRequest ocapUrl =
+  getTravelfromUrl ocapUrl
+    |> Task.andThen
+      (\travelFacet ->
+        case travelFacet.piList of
+          Nothing ->
+            Task.succeed (Travel.travelFromTravelFacet travelFacet)
+
+          Just piListUrl ->
+            getOcapListfromUrl piListUrl
+              |> Task.andThen
+                (\pilist ->
+                  List.map (getSinglePIRequest << .url) pilist.contents
+                    |> Task.sequence
+                    |> Task.andThen
+                      (\pis ->
+                        let
+                          travel = Travel.travelFromTravelFacet travelFacet
+                        in
+                          Task.succeed { travel | listPI = pis }
+                      )
+                )
+      )
