@@ -211,7 +211,6 @@ type Msg
   = LinkClicked Browser.UrlRequest
   | UrlChanged Url.Url
   | ViewChanged String
-  | GetPI SwissNumber
   | GotPI (Result Http.Error PI)
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
@@ -364,9 +363,6 @@ update msg model =
 
     UrlChanged url ->
       updateFromUrl model url Cmd.none
-
-    GetPI swissNumber ->
-      ( model, getSinglePI swissNumber )
 
     GotPI result ->
       case result of
