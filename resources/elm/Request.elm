@@ -4,6 +4,7 @@ import Http
 import Task exposing (Task)
 import Json.Decode as D exposing (Decoder)
 import SwissNumber as SN exposing (SwissNumber)
+import Travel exposing (..)
 import Media exposing (..)
 import Ocap exposing (..)
 import PI exposing (..)
@@ -43,6 +44,18 @@ getPIfromUrl ocapUrl =
     , url = ocapUrl
     , body = Http.emptyBody
     , resolver = Http.stringResolver <| handleJsonResponse <| PI.piFacetDecoder
+    , timeout = Nothing
+    }
+
+
+getTravelfromUrl : SwissNumber -> Task Http.Error TravelFacet
+getTravelfromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| Travel.travelFacetDecoder
     , timeout = Nothing
     }
 
