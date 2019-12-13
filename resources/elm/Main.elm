@@ -33,6 +33,7 @@ import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Alert as Alert
 import Color
 import Process
+import Request as R
 import PI exposing (..)
 import Fake exposing (..)
 import Ocap exposing (..)
@@ -1587,79 +1588,10 @@ decodeAudioContent =
   (field "delete" string)
 
 
-getOcapListfromUrl : SwissNumber -> Task Http.Error OcapListFacet
-getOcapListfromUrl ocapUrl =
-  Http.task
-    { method = "GET"
-    , headers = []
-    , url = ocapUrl
-    , body = Http.emptyBody
-    , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapListFacetDecoder
-    , timeout = Nothing
-    }
-
-
-getMediafromUrl : SwissNumber -> Task Http.Error MediaFacet
-getMediafromUrl ocapUrl =
-  Http.task
-    { method = "GET"
-    , headers = []
-    , url = ocapUrl
-    , body = Http.emptyBody
-    , resolver = Http.stringResolver <| handleJsonResponse <| Media.mediaFacetDecoder
-    , timeout = Nothing
-    }
-
-
-getPIfromUrl : SwissNumber -> Task Http.Error PIFacet
-getPIfromUrl ocapUrl =
-  Http.task
-    { method = "GET"
-    , headers = []
-    , url = ocapUrl
-    , body = Http.emptyBody
-    , resolver = Http.stringResolver <| handleJsonResponse <| PI.piFacetDecoder
-    , timeout = Nothing
-    }
-
-
-type DataError
-  = NoPI
-
-
-type Error
-  = HttpError Http.Error
-  | DataError DataError
-
-
-handleJsonResponse : Decoder a -> Http.Response String -> Result Http.Error a
-handleJsonResponse decoder response =
-  case response of
-    Http.BadUrl_ url ->
-      Err (Http.BadUrl url)
-
-    Http.Timeout_ ->
-      Err Http.Timeout
-
-    Http.BadStatus_ { statusCode } _ ->
-      Err (Http.BadStatus statusCode)
-
-    Http.NetworkError_ ->
-      Err Http.NetworkError
-
-    Http.GoodStatus_ _ body ->
-      case D.decodeString decoder body of
-        Err _ ->
-          Err (Http.BadBody body)
-
-        Ok result ->
-          Ok result
-
-
 getSinglePI : SwissNumber -> Cmd Msg
 getSinglePI ocapUrl =
   Task.attempt GotPI
-    (getPIfromUrl ocapUrl
+    (R.getPIfromUrl ocapUrl
       |> Task.andThen
         (\piFacet ->
           case piFacet.mediaList of
@@ -1667,10 +1599,10 @@ getSinglePI ocapUrl =
               Task.succeed (PI.piFromPIFacet piFacet)
 
             Just mediaListUrl ->
-              getOcapListfromUrl mediaListUrl
+              R.getOcapListfromUrl mediaListUrl
                 |> Task.andThen
                   (\medialist ->
-                    List.map (getMediafromUrl << .url) medialist.contents
+                    List.map (R.getMediafromUrl << .url) medialist.contents
                       |> Task.sequence
                       |> Task.andThen
                         (\mediaFacets ->
