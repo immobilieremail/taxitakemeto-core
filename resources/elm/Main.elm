@@ -8,6 +8,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
+import Task exposing (Task)
 import Json.Decode as D exposing (Decoder,map4, map3, field, string, int, list)
 import Url
 import Url.Parser as P
@@ -32,9 +33,9 @@ import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Alert as Alert
 import Color
 import Process
-import Task
 import PI exposing (..)
 import Fake exposing (..)
+import Ocap exposing (..)
 import Media exposing (..)
 import User exposing (User)
 import Travel exposing (Travel)
@@ -175,7 +176,7 @@ fakeModel0 key state =
         "http://localhost:8000/api/obj/parisdakar"
         "Paris - Dakar"
         [ PI
-          "http://localhost:8000/api/obj/DID7eO6Fvhc_6xt1cPV9rg=="
+          "http://localhost:8000/api/obj/SLyUrmxqRGy@x1oQDExASA=="
           "Wat Phra Kaew Temple - Thaïland"
           "This is a description of Meenakshi Amman Temple."
           "9 Boulevard de la Canopée"
@@ -210,7 +211,7 @@ type Msg
   | UrlChanged Url.Url
   | ViewChanged String
   | GetPI SwissNumber
-  | GotPI (Result Http.Error PIFacet)
+  | GotPI (Result Http.Error PI)
   | GotTravel (Result Http.Error Travel)
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
@@ -306,7 +307,7 @@ updateFromUrl model url commonCmd =
               ( { model | loading = True, currentView = ViewUserDashboard }
               , Cmd.batch
                 [ commonCmd
-                , getPIfromUrl ocapUrl
+                , getSinglePI ocapUrl
                 ]
               )
 
@@ -322,7 +323,7 @@ updateFromUrl model url commonCmd =
                 ( { model | currentView = SimpleViewPI }
                 , Cmd.batch
                   [ commonCmd
-                  , getPIfromUrl ocapUrl
+                  , getSinglePI ocapUrl
                   ]
                 )
 
@@ -364,33 +365,30 @@ update msg model =
       updateFromUrl model url Cmd.none
 
     GetPI swissNumber ->
-      ( model, getPIfromUrl swissNumber )
+      ( model, getSinglePI swissNumber )
 
     GotPI result ->
       case result of
-        Ok piFacet ->
-          let
-            pi = PI.piFromPIFacet piFacet
-          in
-            case pi /= model.currentPI of
-              True ->
-                let
-                  indexList = List.range 0 (List.length model.currentTravel.listPI)
-                  indexPI =
-                    List.sum (
-                      List.filter (\index ->
-                        Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
-                    )
-                  accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
-                in
-                  ( { model | currentPI = pi
-                    , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
-                    , loading = False
-                    }
-                  , Cmd.none )
+        Ok pi ->
+          case pi /= model.currentPI of
+            True ->
+              let
+                indexList = List.range 0 (List.length model.currentTravel.listPI)
+                indexPI =
+                  List.sum (
+                    List.filter (\index ->
+                      Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
+                  )
+                accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
+              in
+                ( { model | currentPI = pi
+                  , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
+                  , loading = False
+                  }
+                , Cmd.none )
 
-              False ->
-                ( { model | loading = False }, Cmd.none )
+            False ->
+              ( { model | loading = False }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -1589,12 +1587,103 @@ decodeAudioContent =
   (field "delete" string)
 
 
-getPIfromUrl : SwissNumber -> Cmd Msg
-getPIfromUrl ocapUrl =
-  Http.get
-    { url = ocapUrl
-    , expect = Http.expectJson GotPI piFacetDecoder
+getOcapListfromUrl : SwissNumber -> Task Http.Error OcapListFacet
+getOcapListfromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapListFacetDecoder
+    , timeout = Nothing
     }
+
+
+getMediafromUrl : SwissNumber -> Task Http.Error MediaFacet
+getMediafromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| Media.mediaFacetDecoder
+    , timeout = Nothing
+    }
+
+
+getPIfromUrl : SwissNumber -> Task Http.Error PIFacet
+getPIfromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| PI.piFacetDecoder
+    , timeout = Nothing
+    }
+
+
+type DataError
+  = NoPI
+
+
+type Error
+  = HttpError Http.Error
+  | DataError DataError
+
+
+handleJsonResponse : Decoder a -> Http.Response String -> Result Http.Error a
+handleJsonResponse decoder response =
+  case response of
+    Http.BadUrl_ url ->
+      Err (Http.BadUrl url)
+
+    Http.Timeout_ ->
+      Err Http.Timeout
+
+    Http.BadStatus_ { statusCode } _ ->
+      Err (Http.BadStatus statusCode)
+
+    Http.NetworkError_ ->
+      Err Http.NetworkError
+
+    Http.GoodStatus_ _ body ->
+      case D.decodeString decoder body of
+        Err _ ->
+          Err (Http.BadBody body)
+
+        Ok result ->
+          Ok result
+
+
+getSinglePI : SwissNumber -> Cmd Msg
+getSinglePI ocapUrl =
+  Task.attempt GotPI
+    (getPIfromUrl ocapUrl
+      |> Task.andThen
+        (\piFacet ->
+          case piFacet.mediaList of
+            Nothing ->
+              Task.succeed (PI.piFromPIFacet piFacet)
+
+            Just mediaListUrl ->
+              getOcapListfromUrl mediaListUrl
+                |> Task.andThen
+                  (\medialist ->
+                    List.map (getMediafromUrl << .url) medialist.contents
+                      |> Task.sequence
+                      |> Task.andThen
+                        (\mediaFacets ->
+                          let
+                            pi = PI.piFromPIFacet piFacet
+                            medias = List.map Media.mediaFromMediaFacet mediaFacets
+                          in
+                            Task.succeed { pi | medias = medias }
+                        )
+                  )
+        )
+    )
+
 
 -- getTravelfromUrl : SwissNumber -> Cmd Msg
 -- getTravelfromUrl ocapUrl =
