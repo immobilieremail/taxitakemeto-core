@@ -416,7 +416,22 @@ update msg model =
     GotShell result ->
       case result of
         Ok shell ->
-          ( { model | shell = shell }, Cmd.none )
+          case model.currentTravel.swissNumber /= "" of
+            True ->
+              ( { model | shell = shell }, Cmd.none )
+
+            False ->
+              let
+                newCurrentTravel =
+                  case List.head shell.travelList of
+                    Just travel ->
+                      travel
+
+                    Nothing ->
+                      model.currentTravel
+
+              in
+                ( { model | shell = shell, currentTravel = newCurrentTravel }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
