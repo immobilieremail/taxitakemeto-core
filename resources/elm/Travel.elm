@@ -60,6 +60,14 @@ updateAccordionState state travel =
   }
 
 
+travelFromTravelFacet : TravelFacet -> Travel
+travelFromTravelFacet travelFacet =
+  Travel
+    travelFacet.swissNumber
+    travelFacet.title
+    [] [] Accordion.initialState
+
+
 
 -- VIEWS
 
