@@ -17,6 +17,14 @@ import PI exposing (PI)
 -- TYPES
 
 
+type alias TravelFacet =
+  { swissNumber : SwissNumber
+  , facetType : String
+  , title : String
+  , piList : Maybe SwissNumber
+  }
+
+
 type alias Travel =
   { swissNumber : SwissNumber
   , title : String
@@ -91,3 +99,12 @@ travelDecoder =
   (field "listPI" (D.list PI.piDecoder))
   (field "listContact" (D.list string))
   (D.null Accordion.initialState)
+
+
+travelFacetDecoder : Decoder TravelFacet
+travelFacetDecoder =
+  D.map4 TravelFacet
+  (field "url" string)
+  (field "type" string)
+  (field "data" (field "title" string))
+  (D.maybe (field "data" (field "pis" string)))
