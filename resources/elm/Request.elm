@@ -5,6 +5,7 @@ import Task exposing (Task)
 import Json.Decode as D exposing (Decoder)
 import SwissNumber as SN exposing (SwissNumber)
 import Travel exposing (..)
+import Shell exposing (..)
 import Media exposing (..)
 import Ocap exposing (..)
 import PI exposing (..)
@@ -56,6 +57,18 @@ getTravelfromUrl ocapUrl =
     , url = ocapUrl
     , body = Http.emptyBody
     , resolver = Http.stringResolver <| handleJsonResponse <| Travel.travelFacetDecoder
+    , timeout = Nothing
+    }
+
+
+getShellfromUrl : SwissNumber -> Task Http.Error ShellFacet
+getShellfromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| Shell.shellFacetDecoder
     , timeout = Nothing
     }
 
@@ -135,4 +148,18 @@ getSingleTravelRequest ocapUrl =
                           Task.succeed { travel | listPI = pis }
                       )
                 )
+      )
+
+
+getSingleShellRequest : SwissNumber -> Task Http.Error Shell
+getSingleShellRequest ocapUrl =
+  getShellfromUrl ocapUrl
+    |> Task.andThen
+      (\shellFacet ->
+        case shellFacet.travelList of
+          Nothing ->
+            Task.succeed (Shell.shellFromShellFacet shellFacet)
+
+          Just travelListUrl ->
+            Task.succeed (Shell.shellFromShellFacet shellFacet)
       )

@@ -189,9 +189,18 @@ fakeModel0 key state =
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-  let (state, cmd) = Navbar.initialState UpdateNavbar
-      model = fakeModel0 key state
-  in updateFromUrl model url cmd
+  let
+    (state, cmd) = Navbar.initialState UpdateNavbar
+    model = fakeModel0 key state
+  in
+    updateFromUrl
+      model
+      url
+      (Cmd.batch
+        [ cmd
+        , getSingleShell "http://localhost:8000/api/obj/RuXHOocpWt65Qu71TyPA@A=="
+        ]
+      )
 
 
 
@@ -1577,6 +1586,12 @@ simpleViewPI carouselState mouseOver pi =
 
 
 -- JSON API
+
+
+getSingleShell : SwissNumber -> Cmd Msg
+getSingleShell ocapUrl =
+  Task.attempt GotShell
+    (R.getSingleShellRequest ocapUrl)
 
 
 getSingleTravel : SwissNumber -> Cmd Msg
