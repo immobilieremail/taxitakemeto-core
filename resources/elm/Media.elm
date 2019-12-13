@@ -27,6 +27,12 @@ type alias Media =
   }
 
 
+type alias Audio =
+  { language : String
+  , path : String
+  }
+
+
 type alias MediaFacet =
   { jsonType : String
   , url : SN.SwissNumber
@@ -35,13 +41,6 @@ type alias MediaFacet =
   }
 
 
-type alias Audio =
-  { jsontype : String
-  , language : String
-  , viewfacet : String
-  , path : String
-  , deleteAudio : String
-  }
 
 
 

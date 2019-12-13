@@ -17,9 +17,9 @@ pi ocapUrl =
     , medias = [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg"
       , Media Media.imageType "https://bangkokmonamour.files.wordpress.com/2015/09/vue-generale-temple.jpg"
       , Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/c/c1/Wat_Phra_Kaew_by_Ninara_TSP_edit_crop.jpg" ]
-    , audios = [ Audio "" "Thaï" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
+    , audios = [ Audio "Thaï" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "English" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "French" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ]
     , tags = [ PI.free, PI.reserved ]
     , typespi = [ PI.touristicPlace ]
     }
@@ -32,9 +32,9 @@ pi ocapUrl =
     , medias = [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg"
       , Media Media.imageType "https://www.holidify.com/images/cmsuploads/compressed/Festival-Village-at-the-Singapore-Night-Festival.-Photo-courtesy-of-Singapore-Night-Festival-2016-2_20180730124945.jpg"
       , Media Media.imageType "https://d3ba08y2c5j5cf.cloudfront.net/wp-content/uploads/2017/07/11161819/iStock-545286388-copy-smaller-1920x1317.jpg" ]
-    , audios = [ Audio "" "Chinese" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
+    , audios = [ Audio "Chinese" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "English" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "French" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ]
     , tags = [ PI.paying ]
     , typespi = [ PI.restaurant, PI.touristicPlace ]
     }
@@ -47,8 +47,8 @@ pi ocapUrl =
     , medias = [ Media Media.imageType "https://www.ahstatic.com/photos/2472_ho_00_p_1024x768.jpg"
       , Media Media.imageType "https://www.ahstatic.com/photos/2551_ho_00_p_1024x768.jpg"
       , Media Media.imageType "https://q-cf.bstatic.com/images/hotel/max1024x768/161/161139975.jpg" ]
-    , audios = [ Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
+    , audios = [ Audio "French" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "English" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ]
     , tags = [ PI.paying, PI.notReserved, PI.onGoing, PI.free ]
     , typespi = [ PI.hotel ]
     }
@@ -61,9 +61,9 @@ pi ocapUrl =
     , medias = [ Media Media.imageType "https://cdn.pixabay.com/photo/2016/08/28/22/22/souk-1627045_960_720.jpg"
       , Media Media.imageType "https://visitmarrakech.ma/wp-content/uploads/2018/02/Souks_Marrakech_Maroc.jpg"
       , Media Media.imageType "https://decorationorientale.com/wp-content/uploads/2018/05/Marrakech-Souk.jpg" ]
-    , audios = [ Audio "" "Arabian" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "French" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ""
-      , Audio "" "English" "" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" "" ]
+    , audios = [ Audio "Arabian" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "French" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3"
+      , Audio "English" "http://localhost:8000/storage/converts/DX9ytBq8luIwmUcu6fiN2g==.mp3" ]
     , tags = [ PI.onGoing, PI.free, PI.notReserved ]
     , typespi = [ PI.shop, PI.touristicPlace, PI.restaurant ]
     }
