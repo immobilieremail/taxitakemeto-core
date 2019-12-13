@@ -39,6 +39,7 @@ import Fake exposing (..)
 import Ocap exposing (..)
 import Media exposing (..)
 import User exposing (User)
+import Shell exposing (Shell)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
@@ -97,6 +98,7 @@ type alias Model =
   , user : User
   , message : Maybe Message.Message
   , loading : Bool
+  , shell : Shell
   }
 
 
@@ -120,6 +122,7 @@ model0 key state =
   , user = User "John Doe" [] Nothing
   , message = Nothing
   , loading = False
+  , shell = Shell (User "John Doe" [] Nothing) [] []
   }
 
 fakeModel0 : Nav.Key -> Navbar.State -> Model
@@ -201,6 +204,7 @@ type Msg
   | ViewChanged String
   | GotPI (Result Http.Error PI)
   | GotTravel (Result Http.Error Travel)
+  | GotShell (Result Http.Error Shell)
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
@@ -403,6 +407,17 @@ update msg model =
 
             False ->
               ( model, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
+
+    GotShell result ->
+      case result of
+        Ok shell ->
+          let
+            newModel = { model | shell = shell, user = shell.user, listTravel = shell.travelList }
+          in
+            ( newModel, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
