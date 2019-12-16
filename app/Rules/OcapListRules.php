@@ -19,10 +19,10 @@ class OcapListRules implements Rule
     {
         if (!is_array($value))
             return false;
-        $ocapCollection = collect($value)->map(function ($ocap) {
+        $map_result = array_map(function ($ocap) {
             return Facet::find(getSwissNumberFromUrl($ocap));
-        });
-        return $ocapCollection->search(null) !== false;
+        }, $value);
+        return !in_array(null, $map_result);
     }
 
     /**
@@ -32,6 +32,6 @@ class OcapListRules implements Rule
      */
     public function message()
     {
-        return 'The :attribute must be an array of valid facets.';
+        return 'The :attribute field must be an array of valid facets.';
     }
 }
