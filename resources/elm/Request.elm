@@ -116,8 +116,10 @@ getSinglePIRequest ocapUrl =
                       (\mediaFacets ->
                         let
                           pi = PI.piFromPIFacet piFacet
-                          medias = List.map Media.mediaFromMediaFacet (List.filter (\mediaFacet -> mediaFacet.mediaType /= AudioType) mediaFacets)
-                          audios = List.map Media.audioFromMediaFacet (List.filter (\mediaFacet -> mediaFacet.mediaType == AudioType) mediaFacets)
+                          audiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType == AudioType) mediaFacets
+                          notaudiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType /= AudioType) mediaFacets
+                          audios = List.map Media.audioFromMediaFacet audiotyped
+                          medias = List.map Media.mediaFromMediaFacet notaudiotyped
                         in
                           Task.succeed { pi | medias = medias, audios = audios }
                       )
