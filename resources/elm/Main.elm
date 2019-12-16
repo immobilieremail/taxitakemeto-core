@@ -267,12 +267,23 @@ updateFromUrl model url commonCmd =
               ( model, commonCmd )
 
             Just ocapUrl ->
-              ( { model | loading = True, currentView = ViewUserDashboard }
-              , Cmd.batch
-                [ commonCmd
-                , getSinglePI ocapUrl
-                ]
-              )
+              let
+                getPIinTravel = (\travel -> List.filter (\pi -> pi.swissNumber == ocapUrl) travel.listPI)
+                piList = List.concatMap getPIinTravel model.shell.travelList
+                newCurrentPI =
+                  case List.head piList of
+                    Nothing -> model.currentPI
+                    Just newPI -> newPI
+              in
+                ( { model | loading = List.isEmpty piList
+                  , currentView = ViewUserDashboard
+                  , currentPI = newCurrentPI
+                  }
+                , Cmd.batch
+                  [ commonCmd
+                  , getSinglePI ocapUrl
+                  ]
+                )
 
         RouteSimplePI data ->
           case data of
@@ -342,7 +353,6 @@ update msg model =
                 accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
               in
                 ( { model | currentPI = pi
-                  , currentTravel = Travel.updateAccordionState (Accordion.initialStateCardOpen accordionId) model.currentTravel
                   , loading = False
                   }
                 , Cmd.none )
@@ -1356,13 +1366,7 @@ piAccordionCard currentPI carouselState accordionState mouseOver index pi =
     , blocks =
       [ Accordion.block [ Block.attrs [ class "test" ] ]
         [ Block.text []
-          [ case pi.swissNumber == currentPI.swissNumber of
-            True ->
-              viewPI carouselState accordionState mouseOver index currentPI
-
-            False ->
-              Loading.view
-          ]
+          [ viewPI carouselState accordionState mouseOver index currentPI ]
         ]
       ]
     }
