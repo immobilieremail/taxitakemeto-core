@@ -488,7 +488,7 @@ update msg model =
             ( { model | shell = newShell, checked = [] }, Cmd.none )
 
     CreateNewTravel ->
-      ( { model | loading = True }, createNewTravel model.formTitle model.checked )
+      ( { model | loading = True }, createSingleTravel model.formTitle model.checked )
 
     GotNewTravel result ->
       case result of
@@ -1610,34 +1610,14 @@ getSinglePI ocapUrl =
     (R.getSinglePIRequest ocapUrl)
 
 
--- createNewTravel : String -> List PI -> Cmd Msg
--- createNewTravel title listPI =
---   Http.post
---     { url = "http://localhost:8000/api/travel"
---     , body = []
---     , except = Http.expectJson GotNewTravel travelDecoder
---     }
-
-
--- checkUserLogin : String -> String -> Cmd Msg
--- checkUserLogin login password =
---   Http.post
---     { url = "http://localhost:8000/api/login"
---     , body = []
---     , except = Http.exceptJson GotDashboard dashboardDecoder
---     }
+createSingleTravel : String -> List PI -> Cmd Msg
+createSingleTravel title piList =
+  Task.attempt GotNewTravel
+    (R.createNewTravelRequest title piList)
 
 
 
 --- Temporary fakers
-
-
-createNewTravel : String -> List PI -> Cmd Msg
-createNewTravel title listPI =
-  Process.sleep 2000
-    |> Task.perform (\_ ->
-      GotNewTravel (Ok (Travel "http://localhost:8000/api/obj/newtravel" title listPI [] Accordion.initialState))
-    )
 
 
 checkUserLogin : String -> String -> Cmd Msg

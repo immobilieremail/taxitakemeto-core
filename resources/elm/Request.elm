@@ -2,6 +2,7 @@ module Request exposing (..)
 
 import Http
 import Task exposing (Task)
+import Json.Encode as E exposing (..)
 import Json.Decode as D exposing (Decoder)
 import SwissNumber as SN exposing (SwissNumber)
 import Travel exposing (..)
@@ -69,6 +70,30 @@ getShellfromUrl ocapUrl =
     , url = ocapUrl
     , body = Http.emptyBody
     , resolver = Http.stringResolver <| handleJsonResponse <| Shell.shellFacetDecoder
+    , timeout = Nothing
+    }
+
+
+createNewPIList : List PI -> Task Http.Error Ocap
+createNewPIList piList =
+  Http.task
+    { method = "POST"
+    , headers = []
+    , url = "http://localhost:8000/api/list"
+    , body = Http.jsonBody (E.object [ ("ocaps", E.list E.string (List.map (\pi -> pi.swissNumber) piList)) ])
+    , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapDecoder
+    , timeout = Nothing
+    }
+
+
+createNewTravel : String -> SwissNumber -> Task Http.Error Ocap
+createNewTravel title listUrl =
+  Http.task
+    { method = "POST"
+    , headers = []
+    , url = "http://localhost:8000/api/travel"
+    , body = Http.jsonBody (E.object [ ("title", E.string title), ("pis", E.string listUrl) ])
+    , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapDecoder
     , timeout = Nothing
     }
 
@@ -176,4 +201,17 @@ getSingleShellRequest ocapUrl =
                           Task.succeed { shell | travelList = travels }
                       )
                 )
+      )
+
+
+createNewTravelRequest : String -> List PI -> Task Http.Error Travel
+createNewTravelRequest title piList =
+  createNewPIList piList
+    |> Task.andThen
+      (\listOcap ->
+        createNewTravel title listOcap.url
+          |> Task.andThen
+            (\travelOcap ->
+              getSingleTravelRequest travelOcap.url
+            )
       )
