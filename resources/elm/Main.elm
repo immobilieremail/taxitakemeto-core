@@ -1054,27 +1054,41 @@ viewUserDashboard model =
     [ Grid.row []
       [ Grid.col
         [ Col.xs12 ]
-        [ h3
-          [ class "title" ]
-          [ text model.currentTravel.title ]
-        , case (List.length model.currentTravel.listPI) > 0 of
+        [ case String.length model.currentTravel.swissNumber > 0 of
           True ->
-            viewListPIDashboard model model.currentTravel
+            div []
+              [ h3
+                [ class "title" ]
+                [ text model.currentTravel.title ]
+              , case (List.length model.currentTravel.listPI) > 0 of
+                True ->
+                  viewListPIDashboard model model.currentTravel
+
+                False ->
+                  case model.loading of
+                    True ->
+                      Loading.view
+
+                    False ->
+                      div
+                        [ class "text-center my-3" ]
+                        [ Button.linkButton
+                          [ Button.primary
+                          , Button.attrs [ href "/elm/search" ]
+                          ]
+                          [ text "Add Points of Interest" ]
+                        ]
+              ]
 
           False ->
-            case model.loading of
-              True ->
-                Loading.view
-
-              False ->
-                div
-                  [ class "text-center my-3" ]
-                  [ Button.linkButton
-                    [ Button.primary
-                    , Button.attrs [ href "/elm/search" ]
-                    ]
-                    [ text "Add Points of Interest" ]
-                  ]
+            div
+              [ class "text-center my-3" ]
+              [ Button.linkButton
+                [ Button.primary
+                , Button.attrs [ href "/elm/newtravel" ]
+                ]
+                [ text "Create a new Travel" ]
+              ]
         ]
       , Grid.col
         [ Col.xs12 ]
