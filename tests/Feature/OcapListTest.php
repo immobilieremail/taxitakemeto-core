@@ -36,6 +36,29 @@ class OcapListTest extends TestCase
     }
 
     /**
+     * @test
+     *
+     */
+    public function create_ocap_list_with_contents()
+    {
+        $media = factory(Media::class)->create();
+        $request = [
+            'ocaps' => [
+                route('obj.show', ['obj' => $media->viewFacet->id])
+            ]
+        ];
+        $response = $this->post(route('list.store'), $request);
+        $response
+            ->assertStatus(200)
+            ->assertJsonCount(3)
+            ->assertJsonStructure([
+                "type",
+                "ocapType",
+                "url"
+            ]);
+    }
+
+    /**
     * @test
     *
     */
