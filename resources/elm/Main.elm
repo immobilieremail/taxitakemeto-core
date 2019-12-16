@@ -128,7 +128,7 @@ fakeModel0 key state =
   let model = model0 key state
   in { model | proposals =
     [ PI
-      "http://localhost:8000/api/obj/1"
+      "http://localhost:8000/api/obj/KJq_mt98VE4@D5Nq4px9Kg=="
       "Wat Phra Kaew Temple - Thaïland"
       "This is a description of Meenakshi Amman Temple."
       "9 Boulevard de la Canopée"
@@ -137,10 +137,10 @@ fakeModel0 key state =
       [ PI.free, PI.reserved ]
       [ PI.touristicPlace ]
     , PI
-      "http://localhost:8000/api/obj/2"
+      "http://localhost:8000/api/obj/RMS2_HLSluNnBc4Ak6nNSQ=="
       "Food Festival - Singapour"
       "It’s no secret that Singaporeans are united in their love for great food."
-      "666 Rue de l'Enfer"
+      "221B Baker Street"
       [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg" ]
       []
       [ PI.paying ]
