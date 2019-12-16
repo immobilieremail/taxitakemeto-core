@@ -23,10 +23,12 @@ class OcapListController extends Controller
         $ocapList->editFacet()->save(new OcapListEditFacet);
         $ocapList->viewFacet()->save(new OcapListViewFacet);
 
-        foreach ($request->ocaps as $ocap) {
-            $ocapList->contents()->save(
-                Facet::find(getSwissNumberFromUrl($ocap))
-            );
+        if (array_key_exists('ocaps', $request->all())) {
+            foreach ($request->ocaps as $ocap) {
+                $ocapList->contents()->save(
+                    Facet::find(getSwissNumberFromUrl($ocap))
+                );
+            }
         }
 
         return response()->json([
