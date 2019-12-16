@@ -196,6 +196,7 @@ type Msg
   | SetTmpConfirmPassword String
   | SetUserPassword
   | GotDashboard (Result Http.Error User)
+  | EmptyResponse (Result Http.Error ())
 
 
 type Route
@@ -471,9 +472,10 @@ update msg model =
           True ->
             let
               oldCurrentTravel = model.currentTravel
-              newCurrentTravel = { oldCurrentTravel | listPI = oldCurrentTravel.listPI ++ model.checked }
+              newCurrentTravelPIs = oldCurrentTravel.listPI ++ model.checked
+              newCurrentTravel = { oldCurrentTravel | listPI = newCurrentTravelPIs }
             in
-              ( { model | currentTravel = newCurrentTravel, shell = newShell, checked = [] }, Cmd.none )
+              ( { model | currentTravel = newCurrentTravel, shell = newShell, checked = [] }, addPItoTravel swissNumber newCurrentTravelPIs )
 
           False ->
             ( { model | shell = newShell, checked = [] }, Cmd.none )
@@ -545,6 +547,9 @@ update msg model =
 
         Err _ ->
           ( model, Cmd.none )
+
+    EmptyResponse _ ->
+      ( model, Cmd.none )
 
 
 
@@ -1605,6 +1610,12 @@ createSingleTravel : String -> List PI -> Cmd Msg
 createSingleTravel title piList =
   Task.attempt GotNewTravel
     (R.createNewTravelRequest title piList)
+
+
+addPItoTravel : SwissNumber -> List PI -> Cmd Msg
+addPItoTravel ocapUrl piList =
+  Task.attempt EmptyResponse
+    (R.addPItoTravelRequest ocapUrl piList)
 
 
 

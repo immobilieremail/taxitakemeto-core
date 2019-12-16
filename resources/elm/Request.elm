@@ -74,6 +74,18 @@ getShellfromUrl ocapUrl =
     }
 
 
+putToOcapList : List { a | swissNumber : SwissNumber } -> SwissNumber -> Task Http.Error ()
+putToOcapList ocapList ocapUrl =
+  Http.task
+    { method = "PUT"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.jsonBody (E.object [ ("ocaps", E.list E.string (List.map (\obj -> obj.swissNumber) ocapList)) ])
+    , resolver = Http.stringResolver (\_ -> Ok ())
+    , timeout = Nothing
+    }
+
+
 createNewPIList : List PI -> Task Http.Error Ocap
 createNewPIList piList =
   Http.task
@@ -214,4 +226,22 @@ createNewTravelRequest title piList =
             (\travelOcap ->
               getSingleTravelRequest travelOcap.url
             )
+      )
+
+
+addPItoTravelRequest : SwissNumber -> List PI -> Task Http.Error ()
+addPItoTravelRequest ocapUrl piList =
+  getTravelfromUrl ocapUrl
+    |> Task.andThen
+      (\travelFacet ->
+        case travelFacet.piList of
+          Just piListUrl ->
+            putToOcapList piList piListUrl
+
+          Nothing ->
+            createNewPIList piList
+              |> Task.andThen
+                (\piOcapList ->
+                  putToOcapList piList piOcapList.url
+                )
       )
