@@ -47,7 +47,7 @@ class PIEditFacet extends Facet
                 'description' => $this->target->description,
                 'address' => $this->target->address,
                 'medias' => ($ocapListFacet != null)
-                    ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
+                    ? route('obj.show', ['obj' => $ocapListFacet->id]) : null
             ]
         ];
     }
