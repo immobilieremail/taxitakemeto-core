@@ -68,8 +68,6 @@ main =
 
 type CurrentView
   = ViewUserDashboard
-  | ViewListTravelDashboard
-  | ViewListPIDashboard
   | SimpleViewPI
   | ViewSearchPI
   | ViewNewTravel
@@ -600,20 +598,6 @@ view model =
         div []
           [ viewNavbar model
           , viewUserDashboard model
-          ]
-
-      ViewListTravelDashboard ->
-        div []
-          [ viewNavbar model
-          , h2 [ class "title" ]
-            [ text "My Travels" ]
-          , Travel.viewList model.shell.travelList
-          ]
-
-      ViewListPIDashboard ->
-        div []
-          [ viewNavbar model
-          , viewListPIDashboard model model.currentTravel
           ]
 
       SimpleViewPI ->
