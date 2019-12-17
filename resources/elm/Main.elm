@@ -120,7 +120,7 @@ model0 key state =
   , user = User "John Doe" [] Nothing
   , message = Nothing
   , loading = False
-  , shell = Shell (User "John Doe" [] Nothing) [] []
+  , shell = Shell "" [] [] (User "John Doe" [] Nothing)
   }
 
 fakeModel0 : Nav.Key -> Navbar.State -> Model

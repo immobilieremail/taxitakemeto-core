@@ -26,16 +26,17 @@ type alias ShellDropbox =
 
 
 type alias Shell =
-  { user : User
+  { swissNumber : SwissNumber
   , travelList : List Travel
   , contactList : List ShellDropbox
+  , user : User
   }
 
 
 
 shellFromShellFacet : ShellFacet -> Shell
 shellFromShellFacet shellFacet =
-  Shell (User "John Doe" [] Nothing) [] []
+  Shell shellFacet.swissNumber [] [] (User "John Doe" [] Nothing)
 
 
 -- JSON Decoders
