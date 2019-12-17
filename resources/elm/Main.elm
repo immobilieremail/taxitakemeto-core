@@ -212,6 +212,11 @@ type Route
   | RouteTravel (Maybe String)
 
 
+replaceInList : List { a | swissNumber : SwissNumber } -> { a | swissNumber : SwissNumber } -> List { a | swissNumber : SwissNumber }
+replaceInList list object =
+  List.map (\obj -> if obj.swissNumber == object.swissNumber then object else obj) list
+
+
 getRootUrl : String
 getRootUrl =
   "http://localhost:8000"
@@ -341,21 +346,25 @@ update msg model =
     GotPI result ->
       case result of
         Ok pi ->
-          case pi /= model.currentPI of
-            True ->
-              let
-                indexList = List.range 0 (List.length model.currentTravel.listPI)
-                indexPI =
-                  List.sum (
-                    List.filter (\index ->
-                      Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
-                  )
-                accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
-              in
-                ( { model | currentPI = pi }, Cmd.none )
+          let
+            oldCurrentTravel = model.currentTravel
+            newCurrentTravel = { oldCurrentTravel | listPI = replaceInList oldCurrentTravel.listPI pi }
 
-            False ->
-              ( model, Cmd.none )
+            oldShell = model.shell
+            newShell = { oldShell | travelList = replaceInList oldShell.travelList newCurrentTravel }
+
+            indexList = List.range 0 (List.length model.currentTravel.listPI)
+            indexPI =
+              List.sum (
+                List.filter (\index ->
+                  Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
+              )
+            accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
+          in
+            ( { model | currentPI = pi
+              , currentTravel = newCurrentTravel
+              , shell = newShell
+              }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -369,8 +378,7 @@ update msg model =
                 True ->
                   let
                     updatedTravel = { travel | accordionState = model.currentTravel.accordionState }
-                    mappedList = (
-                      List.map (\t -> if t.swissNumber == travel.swissNumber then travel else t) model.shell.travelList)
+                    mappedList = replaceInList model.shell.travelList travel
                     oldShell = model.shell
                     newShell = { oldShell | travelList = mappedList }
                   in
