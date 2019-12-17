@@ -245,3 +245,20 @@ addPItoTravelRequest ocapUrl piList =
                   putToOcapList piList piOcapList.url
                 )
       )
+
+addTraveltoShellRequest : SwissNumber -> List Travel -> Task Http.Error ()
+addTraveltoShellRequest ocapUrl travelList =
+  getShellfromUrl ocapUrl
+    |> Task.andThen
+      (\shellFacet ->
+        case shellFacet.travelList of
+          Just travelListUrl ->
+            putToOcapList travelList travelListUrl
+
+          Nothing ->
+            createNewOcapList travelList
+              |> Task.andThen
+                (\travelOcapList ->
+                  putToOcapList travelList travelOcapList.url
+                )
+      )

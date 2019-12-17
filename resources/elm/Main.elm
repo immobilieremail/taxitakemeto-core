@@ -1622,6 +1622,11 @@ addPItoTravel ocapUrl piList =
     (R.addPItoTravelRequest ocapUrl piList)
 
 
+addTraveltoShell : SwissNumber -> List Travel -> Cmd Msg
+addTraveltoShell ocapUrl travelList =
+  Task.attempt EmptyResponse
+    (R.addTraveltoShellRequest ocapUrl travelList)
+
 
 --- Temporary fakers
 
