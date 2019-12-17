@@ -60,6 +60,26 @@ class Facet extends Model
         $this->id = swissNumber();
     }
 
+    public function recipients()
+    {
+        return $this->sent_invitations->map(function($invitation) { return $invitation->recipient()->first(); });
+    }
+
+    public function sender()
+    {
+        return $this->received_invitation->sender()->first();
+    }
+
+    public function sent_invitations()
+    {
+        return $this->hasMany(Invitation::class, 'sender');
+    }
+
+    public function received_invitation()
+    {
+        return $this->hasOne(Invitation::class, 'recipient');
+    }
+
     /**
      * Check if Facet has permissions for specific request method
      *
