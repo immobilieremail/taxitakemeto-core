@@ -352,13 +352,10 @@ update msg model =
                   )
                 accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
               in
-                ( { model | currentPI = pi
-                  , loading = False
-                  }
-                , Cmd.none )
+                ( { model | currentPI = pi }, Cmd.none )
 
             False ->
-              ( { model | loading = False }, Cmd.none )
+              ( model, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
