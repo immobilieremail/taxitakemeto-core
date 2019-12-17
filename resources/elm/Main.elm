@@ -495,7 +495,8 @@ update msg model =
         Ok travel ->
           let
             oldShell = model.shell
-            newShell = { oldShell | travelList = model.shell.travelList ++ [ travel ] }
+            newTravelList = model.shell.travelList ++ [ travel ]
+            newShell = { oldShell | travelList = newTravelList }
           in
             case Url.fromString (getRootUrl ++ "/elm") of
               Just url ->
@@ -505,7 +506,12 @@ update msg model =
                   , checked = []
                   , accordionState = Accordion.initialState
                   , loading = False
-                  } url (Nav.pushUrl model.key (Url.toString url))
+                  } url
+                  (Cmd.batch
+                    [ Nav.pushUrl model.key (Url.toString url)
+                    , addTraveltoShell model.shell.swissNumber newTravelList
+                    ]
+                  )
 
               Nothing ->
                 ( { model | currentTravel = travel
