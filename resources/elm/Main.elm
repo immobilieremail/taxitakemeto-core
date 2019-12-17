@@ -1353,8 +1353,8 @@ viewSimplePILink pi =
       ]
     ]
 
-piAccordionCard : PI -> Carousel.State -> Accordion.State -> List OverButton -> Int -> PI -> Accordion.Card Msg
-piAccordionCard currentPI carouselState accordionState mouseOver index pi =
+piAccordionCard : Carousel.State -> Accordion.State -> List OverButton -> Bool -> Int -> PI -> Accordion.Card Msg
+piAccordionCard carouselState accordionState mouseOver loading index pi =
   Accordion.card
     { id = pi.swissNumber ++ "#" ++ String.fromInt index
     , options = [ Card.attrs [ class "card-option" ] ]
@@ -1366,7 +1366,10 @@ piAccordionCard currentPI carouselState accordionState mouseOver index pi =
     , blocks =
       [ Accordion.block [ Block.attrs [ class "test" ] ]
         [ Block.text []
-          [ viewPI carouselState accordionState mouseOver index currentPI ]
+          [ case loading of
+            False -> viewPI carouselState accordionState mouseOver index pi
+            True -> Loading.view
+          ]
         ]
       ]
     }
@@ -1418,7 +1421,7 @@ viewListPIDashboard model travel =
       , accordionView
         TravelAccordionMsg
         travel.accordionState
-        (List.indexedMap (piAccordionCard model.currentPI model.carouselState travel.accordionState model.mouseOver) travel.listPI)
+        (List.indexedMap (piAccordionCard model.carouselState travel.accordionState model.mouseOver model.loading) travel.listPI)
       ]
     , if List.length travel.listContact > 0 then viewContact travel else div [] []
     ]
