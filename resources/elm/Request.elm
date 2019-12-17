@@ -86,13 +86,13 @@ putToOcapList ocapList ocapUrl =
     }
 
 
-createNewPIList : List PI -> Task Http.Error Ocap
-createNewPIList piList =
+createNewOcapList : List { a | swissNumber : SwissNumber } -> Task Http.Error Ocap
+createNewOcapList ocapList =
   Http.task
     { method = "POST"
     , headers = []
     , url = "http://localhost:8000/api/list"
-    , body = Http.jsonBody (E.object [ ("ocaps", E.list E.string (List.map (\pi -> pi.swissNumber) piList)) ])
+    , body = Http.jsonBody (E.object [ ("ocaps", E.list E.string (List.map (\ocap -> ocap.swissNumber) ocapList)) ])
     , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapDecoder
     , timeout = Nothing
     }
@@ -218,7 +218,7 @@ getSingleShellRequest ocapUrl =
 
 createNewTravelRequest : String -> List PI -> Task Http.Error Travel
 createNewTravelRequest title piList =
-  createNewPIList piList
+  createNewOcapList piList
     |> Task.andThen
       (\listOcap ->
         createNewTravel title listOcap.url
@@ -239,7 +239,7 @@ addPItoTravelRequest ocapUrl piList =
             putToOcapList piList piListUrl
 
           Nothing ->
-            createNewPIList piList
+            createNewOcapList piList
               |> Task.andThen
                 (\piOcapList ->
                   putToOcapList piList piOcapList.url
