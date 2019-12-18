@@ -57,4 +57,15 @@ class Shell extends Model
         return $this->hasOne(ShellDropboxFacet::class, 'target_id')
                     ->where('type', 'App\Models\ShellDropboxFacet');
     }
+
+    /**
+     * InviteFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function inviteFacet()
+    {
+        return $this->hasOne(ShellInviteFacet::class, 'target_id')
+                    ->where('type', 'App\Models\ShellInviteFacet');
+    }
 }
