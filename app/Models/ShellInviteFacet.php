@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Http\Request;
+
 class ShellInviteFacet extends Facet
 {
     /**
@@ -9,7 +11,7 @@ class ShellInviteFacet extends Facet
      * @var array
      */
     protected $permissions      = [
-        'show'
+        'store', 'show'
     ];
 
     /**
@@ -32,7 +34,21 @@ class ShellInviteFacet extends Facet
         return $this->belongsTo(Shell::class);
     }
 
-    public function description()
+    public function post_data(Request $request): array
+    {
+        $shell = Shell::create();
+        $shell->userFacet()->save(new ShellUserFacet);
+        $shell->inviteFacet()->save(new ShellInviteFacet);
+        $shell->dropboxFacet()->save(new ShellDropboxFacet);
+
+        $this->target->dropboxFacet->sent_invitations()->save(
+            Invitation::make(['recipient' => $shell->dropboxFacet->id])
+        );
+
+        return [];
+    }
+
+    public function description(): array
     {
         $userFacet = $this->target->users->first();
 
@@ -42,7 +58,7 @@ class ShellInviteFacet extends Facet
             'data' => [
                 'name' => ($userFacet != null)
                     ? $userFacet->target->name : null,
-                'dropbox' => $this->target->dropboxFacet
+                'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id])
             ]
         ];
     }
