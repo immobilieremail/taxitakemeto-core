@@ -20,7 +20,7 @@ class FacetController extends Controller
     /**
      * Undocumented function
      *
-     * @param Facet $facet
+     * @param String $facet
      * @return void
      */
     public function show(String $facet)
