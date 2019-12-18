@@ -67,7 +67,9 @@ class Facet extends Model
 
     public function sender()
     {
-        return $this->received_invitation->sender()->first();
+        if ($this->received_invitation !== null)
+            return $this->received_invitation->sender()->first();
+        return null;
     }
 
     public function sent_invitations()
