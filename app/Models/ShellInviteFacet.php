@@ -45,7 +45,9 @@ class ShellInviteFacet extends Facet
             Invitation::make(['recipient' => $shell->dropboxFacet->id])
         );
 
-        return [];
+        return [
+            'recipient' => route('obj.show', ['obj' => $shell->dropboxFacet->id])
+        ];
     }
 
     public function description(): array
