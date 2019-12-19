@@ -5,14 +5,16 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 use App\Models\Shell;
 use App\Models\OcapList;
 use App\Models\User;
+use App\Models\Invitation;
 
 class ShellTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     /**
      * @test
@@ -284,5 +286,25 @@ class ShellTest extends TestCase
             ->assertStatus(204);
 
         $this->assertEquals($user->profileFacet->id, $shell->users->first()->id);
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function create_invitation()
+    {
+        $previous_shell_count = Shell::all()->count();
+        $previous_invitation_count = Invitation::all()->count();
+
+        $sender_shell = factory(Shell::class)->create();
+        $result = $sender_shell->inviteFacet->create_invitation();
+
+        $final_shell_count = Shell::all()->count();
+        $final_invitation_count = Invitation::all()->count();
+
+        $this->assertTrue($result !== false);
+        $this->assertTrue($previous_shell_count + 2 == $final_shell_count);
+        $this->assertTrue($previous_invitation_count + 1 == $final_invitation_count);
     }
 }
