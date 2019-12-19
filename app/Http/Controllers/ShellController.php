@@ -8,6 +8,7 @@ use App\Models\Facet;
 
 use App\Models\Shell;
 use App\Models\ShellUserFacet;
+use App\Models\ShellInviteFacet;
 use App\Models\ShellDropboxFacet;
 
 class ShellController extends Controller
@@ -15,8 +16,6 @@ class ShellController extends Controller
     public function store(ShellRequest $request)
     {
         $shell = Shell::create();
-        $shell->userFacet()->save(new ShellUserFacet);
-        $shell->dropboxFacet()->save(new ShellDropboxFacet);
 
         $fields = intersectFields(['user', 'travels', 'contacts'], $request->all());
         $relations = [

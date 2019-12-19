@@ -21,8 +21,6 @@ class TravelController extends Controller
     public function store(TravelRequest $request)
     {
         $travel = Travel::create($request->all());
-        $travel->editFacet()->save(new TravelEditFacet);
-        $travel->viewFacet()->save(new TravelViewFacet);
 
         if ($request->has('pis')) {
             $listFacet = Facet::find(getSwissNumberFromUrl($request->pis));

@@ -12,15 +12,32 @@ class FacetController extends Controller
         //
     }
 
-    public function store()
+    /**
+     * Undocumented function
+     * @param String $facet
+     * @param Request $request
+     * @return void
+     */
+    public function store(String $facet, Request $request)
     {
-        //
+        $facet_obj = Facet::findOrFail($facet);
+
+        if ($facet_obj->has_access('store') == true) {
+            $result = $facet_obj->post_data($request);
+            if ($result === false) {
+                return response('Bad Request', 400);
+            } else {
+                return response()->json($result);
+            }
+        } else {
+            return response('Method Not Allowed', 405);
+        }
     }
 
     /**
      * Undocumented function
      *
-     * @param Facet $facet
+     * @param String $facet
      * @return void
      */
     public function show(String $facet)

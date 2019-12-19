@@ -10,17 +10,9 @@ class ShellDropboxFacet extends Facet
      * Facet method permissions
      * @var array
      */
-    protected $permissions      = [];
-
-    /**
-     * Check if Facet has permissions for specific request method
-     *
-     * @return bool permission
-     */
-    public function has_access(String $method): bool
-    {
-        return in_array($method, $this->permissions, true);
-    }
+    protected $permissions      = [
+        'show'
+    ];
 
     /**
      * Inverse relation of DropboxFacet for specific Shell
@@ -30,5 +22,14 @@ class ShellDropboxFacet extends Facet
     public function target()
     {
         return $this->belongsTo(Shell::class);
+    }
+
+    public function description()
+    {
+        $userFacet = $this->target->users->first();
+
+        return [
+            'name' => ($userFacet != null) ? $userFacet->target->name : null
+        ];
     }
 }

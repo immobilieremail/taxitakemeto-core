@@ -31,6 +31,17 @@ class Travel extends Model
         parent::__construct($attributes);
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (Travel $travel) {
+            $travel->editFacet()->save(new TravelEditFacet);
+            $travel->viewFacet()->save(new TravelViewFacet);
+        });
+    }
+
+
     /**
      * OcapList facets for Travel PI list
      *

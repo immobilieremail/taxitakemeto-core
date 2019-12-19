@@ -34,6 +34,16 @@ class Media extends Model
         parent::__construct($attributes);
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (Media $media) {
+            $media->editFacet()->save(new MediaEditFacet);
+            $media->viewFacet()->save(new MediaViewFacet);
+        });
+    }
+
     /**
      * EditFacet for specific media
      *

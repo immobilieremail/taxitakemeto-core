@@ -4,6 +4,7 @@
 
 use App\Models\Shell;
 use App\Models\ShellUserFacet;
+use App\Models\ShellInviteFacet;
 use App\Models\ShellDropboxFacet;
 
 use Faker\Generator as Faker;
@@ -16,6 +17,10 @@ $factory->define(Shell::class, function (Faker $faker) {
 
 $factory->afterCreating(Shell::class, function ($shell, $faker) {
     $shell->userFacet()->save(factory(ShellUserFacet::class)->make());
+});
+
+$factory->afterCreating(Shell::class, function ($shell, $faker) {
+    $shell->dropboxFacet()->save(factory(ShellInviteFacet::class)->make());
 });
 
 $factory->afterCreating(Shell::class, function ($shell, $faker) {

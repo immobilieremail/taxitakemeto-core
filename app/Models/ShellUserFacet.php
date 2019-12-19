@@ -15,16 +15,6 @@ class ShellUserFacet extends Facet
     ];
 
     /**
-     * Check if Facet has permissions for specific request method
-     *
-     * @return bool permission
-     */
-    public function has_access(String $method): bool
-    {
-        return in_array($method, $this->permissions, true);
-    }
-
-    /**
      * Inverse relation of UserFacet for specific Shell
      *
      * @return [type] [description]
@@ -39,6 +29,7 @@ class ShellUserFacet extends Facet
         $userFacet = $this->target->users->first();
         $travelListFacet = $this->target->travelOcapListFacets->first();
         $contactListFacet = $this->target->contactOcapListFacets->first();
+        $sender = $this->target->dropboxFacet->sender();
 
         return [
             'type' => 'ShellUserFacet',
@@ -49,7 +40,16 @@ class ShellUserFacet extends Facet
                 'travels' => ($travelListFacet != null)
                     ? route('obj.show', ['obj' => $travelListFacet->id]) : null,
                 'contacts' => ($contactListFacet != null)
-                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null
+                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null,
+                'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id]),
+                'invitation' => route('obj.show', ['obj' => $this->target->inviteFacet->id]),
+                'recipients' => $this->target->dropboxFacet->recipients()->map(
+                    function ($recipientDropbox) {
+                        return route('obj.show', ['obj' => $recipientDropbox->id]);
+                    }
+                ),
+                'sender' => ($sender != null)
+                    ? route('obj.show', ['obj' => $sender->id]) : null
             ]
         ];
     }

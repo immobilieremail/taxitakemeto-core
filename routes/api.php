@@ -20,5 +20,6 @@ Route::post('travel', 'TravelController@store')->name('travel.store');
 Route::post('shell', 'ShellController@store')->name('shell.store');
 Route::post('user', 'UserController@store')->name('user.store');
 
-Route::apiResource('obj', 'FacetController');
+Route::apiResource('obj', 'FacetController')->except('store');
+Route::post('obj/{obj}', 'FacetController@store')->name('obj.store');
 

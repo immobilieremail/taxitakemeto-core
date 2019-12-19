@@ -26,6 +26,16 @@ class PI extends Model
         parent::__construct($attributes);
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (PI $pi) {
+            $pi->editFacet()->save(new PIEditFacet);
+            $pi->viewFacet()->save(new PIViewFacet);
+        });
+    }
+
     /**
      * OcapList facets for PI media list
      *
