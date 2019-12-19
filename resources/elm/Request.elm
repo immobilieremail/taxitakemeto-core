@@ -62,6 +62,18 @@ getTravelfromUrl ocapUrl =
     }
 
 
+getDropboxFromUrl : SwissNumber -> Task Http.Error DropboxFacet
+getDropboxFromUrl ocapUrl =
+  Http.task
+    { method = "GET"
+    , headers = []
+    , url = ocapUrl
+    , body = Http.emptyBody
+    , resolver = Http.stringResolver <| handleJsonResponse <| Shell.dropboxFacetDecoder
+    , timeout = Nothing
+    }
+
+
 getShellfromUrl : SwissNumber -> Task Http.Error ShellFacet
 getShellfromUrl ocapUrl =
   Http.task
@@ -187,6 +199,15 @@ getSingleTravelRequest ocapUrl =
                           Task.succeed { travel | listPI = pis }
                       )
                 )
+      )
+
+
+getDropboxRequest : SwissNumber -> Task Http.Error ShellDropbox
+getDropboxRequest ocapUrl =
+  getDropboxFromUrl ocapUrl
+    |> Task.andThen
+      (\dropboxFacet ->
+        Task.succeed (ShellDropbox ocapUrl dropboxFacet.name)
       )
 
 

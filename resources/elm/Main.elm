@@ -39,7 +39,7 @@ import Fake exposing (..)
 import Ocap exposing (..)
 import Media exposing (..)
 import User exposing (User)
-import Shell exposing (Shell)
+import Shell exposing (Shell, ShellDropbox)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
 import OverButton as OB exposing (..)
@@ -96,6 +96,7 @@ type alias Model =
   , message : Maybe Message.Message
   , loading : Bool
   , shell : Shell
+  , senderDropbox : Maybe ShellDropbox
   }
 
 
@@ -118,7 +119,8 @@ model0 key state =
   , user = User "John Doe" [] Nothing
   , message = Nothing
   , loading = False
-  , shell = Shell "" [] [] (User "John Doe" [] Nothing)
+  , shell = Shell "" [] [] (User "John Doe" [] Nothing) Nothing
+  , senderDropbox = Nothing
   }
 
 fakeModel0 : Nav.Key -> Navbar.State -> Model
@@ -152,14 +154,7 @@ init flags url key =
     (state, cmd) = Navbar.initialState UpdateNavbar
     model = fakeModel0 key state
   in
-    updateFromUrl
-      model
-      url
-      (Cmd.batch
-        [ cmd
-        , getSingleShell "http://localhost:8000/api/obj/RuXHOocpWt65Qu71TyPA@A=="
-        ]
-      )
+    updateFromUrl model url cmd
 
 
 
@@ -177,6 +172,7 @@ type Msg
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
   | TravelAccordionMsg Accordion.State
+  | CloseInvitationModal
   | CloseModal
   | ShowModal
   | CarouselPrev
@@ -194,6 +190,7 @@ type Msg
   | SetTmpConfirmPassword String
   | SetUserPassword
   | GotDashboard (Result Http.Error User)
+  | GotDropbox (Result Http.Error ShellDropbox)
   | EmptyResponse (Result Http.Error ())
 
 
@@ -208,6 +205,7 @@ type Route
   | RoutePI (Maybe String)
   | RouteSimplePI (Maybe String)
   | RouteTravel (Maybe String)
+  | RouteShell (Maybe String)
 
 
 replaceInList : List { a | swissNumber : SwissNumber } -> { a | swissNumber : SwissNumber } -> List { a | swissNumber : SwissNumber }
@@ -233,6 +231,7 @@ router =
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
   , P.map RouteSimplePI <| P.s "elm" </> P.s "pi" </> P.s "simpleview" </> P.fragment identity
   , P.map RouteTravel <| P.s "elm" </> P.s "travel" </> P.fragment identity
+  , P.map RouteShell <| P.s "elm" </> P.s "shell" </> P.fragment identity
   ]
 
 updateFromUrl : Model -> Url.Url -> Cmd Msg -> ( Model, Cmd Msg )
@@ -327,6 +326,19 @@ updateFromUrl model url commonCmd =
                 ]
               )
 
+        RouteShell data ->
+          case data of
+            Nothing ->
+              ( model, commonCmd )
+
+            Just ocapUrl ->
+              ( { model | currentView = ViewUserDashboard }
+              , Cmd.batch
+                [ commonCmd
+                , getSingleShell ocapUrl
+                ]
+              )
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
@@ -400,11 +412,17 @@ update msg model =
     GotShell result ->
       case result of
         Ok shell ->
-          case model.currentTravel.swissNumber /= "" of
-            True ->
-              ( { model | shell = shell }, Cmd.none )
+          let
+            finalCmd = case shell.sender of
+              Nothing ->
+                Cmd.none
 
-            False ->
+              Just senderDropboxUrl ->
+                getDropbox senderDropboxUrl
+          in
+            if model.currentTravel.swissNumber /= "" then
+              ( { model | shell = shell }, finalCmd )
+            else
               let
                 newCurrentTravel =
                   case List.head shell.travelList of
@@ -415,7 +433,7 @@ update msg model =
                       model.currentTravel
 
               in
-                ( { model | shell = shell, currentTravel = newCurrentTravel }, Cmd.none )
+                ( { model | shell = shell, currentTravel = newCurrentTravel }, finalCmd )
 
         Err _ ->
           ( model, Cmd.none )
@@ -445,6 +463,13 @@ update msg model =
 
     CloseModal ->
       ( { model | modalVisibility = Modal.hidden } , Cmd.none )
+
+    CloseInvitationModal ->
+      let
+        oldShell = model.shell
+        newShell = { oldShell | sender = Nothing }
+      in
+        ( { model | shell = newShell }, Cmd.none )
 
     CarouselPrev ->
       ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
@@ -567,6 +592,14 @@ update msg model =
         Err _ ->
           ( model, Cmd.none )
 
+    GotDropbox result ->
+      case result of
+        Ok dropbox ->
+          ( { model | senderDropbox = Just dropbox }, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
+
     EmptyResponse _ ->
       ( model, Cmd.none )
 
@@ -644,7 +677,7 @@ viewNavbar model =
     |> Navbar.withAnimation
     |> Navbar.collapseMedium
     |> Navbar.brand
-      [ href "/elm" ]
+      [ href ("/elm/shell#" ++ model.shell.swissNumber) ]
       [ img
         [ src "https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/user_male2-512.png"
         , class "navbar-icon"
@@ -660,9 +693,9 @@ viewNavbar model =
     |> Navbar.view model.navbarState
 
 
-viewModal : Modal.Visibility -> String -> Html Msg -> Html Msg -> Html Msg
-viewModal modalVisibility title body footer =
-  Modal.config CloseModal
+viewModal : Modal.Visibility -> Msg -> String -> Html Msg -> Html Msg -> Html Msg
+viewModal modalVisibility msg title body footer =
+  Modal.config msg
     |> Modal.small
     |> Modal.hideOnBackdropClick True
     |> Modal.h3 [] [ text title ]
@@ -707,6 +740,7 @@ viewProfile user tmpPassword tmpConfirmPassword modalVisibility =
   Grid.container []
     [ viewModal
       modalVisibility
+      CloseModal
       "Create my password"
       (viewCompleteFormPassword tmpPassword tmpConfirmPassword)
       (Button.button
@@ -1015,15 +1049,13 @@ viewUserDashboardAccordionToggle accordionState =
       ]
     , Grid.col
       [ Col.xs4, Col.textAlign Text.alignXsRight ]
-      [ case Accordion.isOpen "card1" accordionState of
-        True ->
+      [ if Accordion.isOpen "card1" accordionState then
           img
             [ src "https://image.noelshack.com/fichiers/2019/47/1/1574075725-arrow-up.png"
             , style "max-width" "20px"
             ]
             [ text "/\\" ]
-
-        False ->
+        else
           img
             [ src "https://image.noelshack.com/fichiers/2019/47/1/1574075721-arrow-down.png"
             , style "max-width" "20px"
@@ -1055,41 +1087,35 @@ viewUserDashboard model =
     [ Grid.row []
       [ Grid.col
         [ Col.xs12 ]
-        [ case String.length model.currentTravel.swissNumber > 0 of
-          True ->
+        [ if String.length model.currentTravel.swissNumber > 0 then
             div []
               [ h3
                 [ class "title" ]
                 [ text model.currentTravel.title ]
-              , case (List.length model.currentTravel.listPI) > 0 of
-                True ->
+              , if List.length model.currentTravel.listPI > 0 then
                   viewListPIDashboard model model.currentTravel
-
-                False ->
-                  case model.loading of
-                    True ->
-                      Loading.view
-
-                    False ->
-                      div
-                        [ class "text-center my-3" ]
-                        [ Button.linkButton
-                          [ Button.primary
-                          , Button.attrs [ href "/elm/search" ]
-                          ]
-                          [ text "Add Points of Interest" ]
+                else
+                  if model.loading then
+                    Loading.view
+                  else
+                    div
+                      [ class "text-center my-3" ]
+                      [ Button.linkButton
+                        [ Button.primary
+                        , Button.attrs [ href "/elm/search" ]
                         ]
+                        [ text "Add Points of Interest" ]
+                      ]
               ]
-
-          False ->
-            div
-              [ class "text-center my-3" ]
-              [ Button.linkButton
-                [ Button.primary
-                , Button.attrs [ href "/elm/newtravel" ]
-                ]
-                [ text "Create a new Travel" ]
+        else
+          div
+            [ class "text-center my-3" ]
+            [ Button.linkButton
+              [ Button.primary
+              , Button.attrs [ href "/elm/newtravel" ]
               ]
+              [ text "Create a new Travel" ]
+            ]
         ]
       , Grid.col
         [ Col.xs12 ]
@@ -1101,6 +1127,20 @@ viewUserDashboard model =
           model.accordionState
           [ viewUserDashboardAccordion model ]
         ]
+      , Grid.col
+        [ Col.xs12 ]
+        <| case model.senderDropbox of
+            Nothing ->
+              []
+
+            Just senderDropbox ->
+              [ viewModal
+                Modal.shown
+                CloseInvitationModal
+                ("You have been invited by " ++ senderDropbox.name)
+                (div [] [ text "body" ])
+                (div [] [])
+              ]
       ]
     ]
 
@@ -1589,6 +1629,12 @@ simpleViewPI carouselState mouseOver pi =
 
 -- JSON API
 
+
+
+getDropbox : SwissNumber -> Cmd Msg
+getDropbox ocapUrl =
+  Task.attempt GotDropbox
+    (R.getDropboxRequest ocapUrl)
 
 getSingleShell : SwissNumber -> Cmd Msg
 getSingleShell ocapUrl =
