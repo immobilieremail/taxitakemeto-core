@@ -10,7 +10,9 @@ class ShellDropboxFacet extends Facet
      * Facet method permissions
      * @var array
      */
-    protected $permissions      = [];
+    protected $permissions      = [
+        'show'
+    ];
 
     /**
      * Inverse relation of DropboxFacet for specific Shell
@@ -20,5 +22,14 @@ class ShellDropboxFacet extends Facet
     public function target()
     {
         return $this->belongsTo(Shell::class);
+    }
+
+    public function description()
+    {
+        $userFacet = $this->target->users->first();
+
+        return [
+            'name' => ($userFacet != null) ? $userFacet->target->name : null
+        ];
     }
 }
