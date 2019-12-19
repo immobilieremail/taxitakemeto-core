@@ -23,11 +23,11 @@ class FacetController extends Controller
         $facet_obj = Facet::findOrFail($facet);
 
         if ($facet_obj->has_access('store') == true) {
-            $response = $facet_obj->post_data($request);
-            if ($response === false) {
+            $result = $facet_obj->post_data($request);
+            if ($result === false) {
                 return response('Bad Request', 400);
             } else {
-                return response()->json($response);
+                return response()->json($result);
             }
         } else {
             return response('Method Not Allowed', 405);
