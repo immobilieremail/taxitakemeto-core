@@ -41,7 +41,12 @@ class ShellUserFacet extends Facet
                 'contacts' => ($contactListFacet != null)
                     ? route('obj.show', ['obj' => $contactListFacet->id]) : null,
                 'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id]),
-                'invitation' => route('obj.show', ['obj' => $this->target->inviteFacet->id])
+                'invitation' => route('obj.show', ['obj' => $this->target->inviteFacet->id]),
+                'recipients' => $this->target->dropboxFacet->recipients()->map(
+                    function ($recipientDropbox) {
+                        return route('obj.show', ['obj' => $recipientDropbox->id]
+                    );
+                })
             ]
         ];
     }
