@@ -31,6 +31,15 @@ class User extends Model
         parent::__construct($attributes);
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (User $user) {
+            $user->profileFacet()->save(new UserProfileFacet);
+        });
+    }
+
     /**
      * ProfileFacet for specific User
      *

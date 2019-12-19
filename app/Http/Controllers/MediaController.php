@@ -37,10 +37,7 @@ class MediaController extends Controller
         $media_type = [];
         preg_match('#(^[a-z])\w+#', $mime_type, $media_type);
 
-        # TODO : replace by new Media (doesn't work with ConvertUploadedMedia Jobs)
         $media = Media::create(['path' => $path, 'media_type' => $media_type[0]]);
-        $media->editFacet()->save(new MediaEditFacet);
-        $media->viewFacet()->save(new MediaViewFacet);
 
         if ($media_type[0] == 'audio') {
             $this->dispatch(new ConvertUploadedAudio($media));

@@ -17,6 +17,16 @@ class OcapList extends Model
         parent::__construct($attributes);
     }
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (OcapList $ocaplist) {
+            $ocaplist->editFacet()->save(new OcapListEditFacet);
+            $ocaplist->viewFacet()->save(new OcapListViewFacet);
+        });
+    }
+
     public function contents()
     {
         return $this->belongsToMany(Facet::class);

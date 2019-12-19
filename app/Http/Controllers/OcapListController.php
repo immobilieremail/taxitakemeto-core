@@ -20,8 +20,6 @@ class OcapListController extends Controller
     public function store(OcapListRequest $request)
     {
         $ocapList = OcapList::create();
-        $ocapList->editFacet()->save(new OcapListEditFacet);
-        $ocapList->viewFacet()->save(new OcapListViewFacet);
 
         if (array_key_exists('ocaps', $request->all())) {
             foreach ($request->ocaps as $ocap) {
