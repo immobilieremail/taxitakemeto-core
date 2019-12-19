@@ -24,7 +24,7 @@ class ShellInviteFacet extends Facet
         return $this->belongsTo(Shell::class);
     }
 
-    public function post_data(Request $request): array
+    public function create_invitation()
     {
         $new_shell = Shell::create();
 
@@ -32,9 +32,16 @@ class ShellInviteFacet extends Facet
             Invitation::make(['recipient' => $new_shell->dropboxFacet->id])
         );
 
-        return [
-            'recipient' => route('obj.show', ['obj' => $new_shell->dropboxFacet->id])
-        ];
+        if ($new_shell->exists()) {
+            return [];
+        } else {
+            return false;
+        }
+    }
+
+    public function post_data(Request $request): array
+    {
+        return $this->create_invitation();
     }
 
     public function description(): array
