@@ -11,6 +11,7 @@ use App\Models\Shell;
 use App\Models\OcapList;
 use App\Models\User;
 use App\Models\Invitation;
+use App\Models\DatabaseCounter;
 
 class ShellTest extends TestCase
 {
@@ -294,17 +295,13 @@ class ShellTest extends TestCase
      */
     public function create_invitation()
     {
-        $previous_shell_count = Shell::all()->count();
-        $previous_invitation_count = Invitation::all()->count();
+        $counter = new DatabaseCounter(Shell::class, Invitation::class);
 
         $sender_shell = factory(Shell::class)->create();
         $result = $sender_shell->inviteFacet->create_invitation();
 
-        $final_shell_count = Shell::all()->count();
-        $final_invitation_count = Invitation::all()->count();
-
         $this->assertTrue($result !== false);
-        $this->assertTrue($previous_shell_count + 2 == $final_shell_count);
-        $this->assertTrue($previous_invitation_count + 1 == $final_invitation_count);
+        $this->assertTrue($counter->hasDiff(Shell::class, 2));
+        $this->assertTrue($counter->hasDiff(Invitation::class, 1));
     }
 }
