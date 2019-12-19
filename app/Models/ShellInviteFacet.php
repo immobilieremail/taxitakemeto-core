@@ -27,9 +27,6 @@ class ShellInviteFacet extends Facet
     public function post_data(Request $request): array
     {
         $shell = Shell::create();
-        $shell->userFacet()->save(new ShellUserFacet);
-        $shell->inviteFacet()->save(new ShellInviteFacet);
-        $shell->dropboxFacet()->save(new ShellDropboxFacet);
 
         $this->target->dropboxFacet->sent_invitations()->save(
             Invitation::make(['recipient' => $shell->dropboxFacet->id])

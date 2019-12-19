@@ -16,9 +16,6 @@ class ShellController extends Controller
     public function store(ShellRequest $request)
     {
         $shell = Shell::create();
-        $shell->userFacet()->save(new ShellUserFacet);
-        $shell->inviteFacet()->save(new ShellInviteFacet);
-        $shell->dropboxFacet()->save(new ShellDropboxFacet);
 
         $fields = intersectFields(['user', 'travels', 'contacts'], $request->all());
         $relations = [

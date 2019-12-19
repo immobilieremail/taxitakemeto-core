@@ -7,6 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 class Shell extends Model
 {
     /**
+     * Create Shell facets on boot
+     *
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (Shell $shell) {
+            $shell->userFacet()->save(new ShellUserFacet);
+            $shell->inviteFacet()->save(new ShellInviteFacet);
+            $shell->dropboxFacet()->save(new ShellDropboxFacet);
+        });
+    }
+
+    /**
      * OcapList facets for Shell travel list
      *
      * @return [type] [description]
