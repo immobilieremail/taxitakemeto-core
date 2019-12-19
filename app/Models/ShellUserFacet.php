@@ -49,7 +49,9 @@ class ShellUserFacet extends Facet
                 'travels' => ($travelListFacet != null)
                     ? route('obj.show', ['obj' => $travelListFacet->id]) : null,
                 'contacts' => ($contactListFacet != null)
-                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null
+                    ? route('obj.show', ['obj' => $contactListFacet->id]) : null,
+                'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id]),
+                'invitation' => route('obj.show', ['obj' => $this->target->inviteFacet->id])
             ]
         ];
     }
