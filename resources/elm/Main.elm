@@ -66,7 +66,6 @@ type CurrentView
   | ViewNewPI
   | ViewLogin
   | ViewNewAccount
-  | ViewInvit
   | ViewProfile
 
 
@@ -175,7 +174,6 @@ type Route
   | RouteLogin
   | RouteProfile
   | RouteNewAccount
-  | RouteInvit
   | RouteSearch
   | RouteNewPI
   | RouteNewTravel
@@ -202,7 +200,6 @@ router =
   , P.map RouteLogin <| P.s "elm" </> P.s "login"
   , P.map RouteProfile <| P.s "elm" </> P.s "profile"
   , P.map RouteNewAccount <| P.s "elm" </> P.s "newaccount"
-  , P.map RouteInvit <| P.s "elm" </> P.s "invit"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
   , P.map RouteNewPI <| P.s "elm" </> P.s "newpi"
   , P.map RouteNewTravel <| P.s "elm" </> P.s "newtravel"
@@ -231,9 +228,6 @@ updateFromUrl model url commonCmd =
 
         RouteNewAccount ->
           ( { model | currentView = ViewNewAccount }, commonCmd )
-
-        RouteInvit ->
-          ( { model | currentView = ViewInvit }, commonCmd )
 
         RouteSearch ->
           ( { model | currentView = ViewSearchPI }, commonCmd )
@@ -627,9 +621,6 @@ view model =
       ViewNewAccount ->
         div [] [ viewNewAccount model.user model.tmpPassword model.tmpConfirmPassword ]
 
-      ViewInvit ->
-        div [] [ viewInvit model.user ]
-
       ViewProfile ->
         div []
           [ viewNavbar model
@@ -910,99 +901,21 @@ viewLogin user tmpPassword =
       ]
 
 
-viewJanistorCard : Html Msg
-viewJanistorCard =
-  Grid.row
-    [ Row.middleXs
-    , Row.attrs
-      [ class "my-container" ]
-    ]
-    [ Grid.col
-      [ Col.xs12
-      , Col.textAlign Text.alignXsCenter
-      ]
-      [ h5 [] [ text "You have been invited by" ]
-      , div
-        [ class "lightgrey-background py-3 px-4" ]
-        [ h3
-          [ class "mb-3" ]
-          [ text "Bob Butler" ]
-        , Grid.row []
-          [ Grid.col
-            [ Col.xs4 ]
-            [ img
-              [ src "https://miro.medium.com/fit/c/160/160/0*7K7xu3sVR5U-fn9s.jpg"
-              , class "img-fluid rounded"
-              ]
-              []
-            ]
-          , Grid.col
-            [ Col.xs8
-            , Col.textAlign Text.alignXsLeft
-            ]
-            [ p [] [ text "This text is a description of Bob Butler." ] ]
-            ]
-          ]
-        ]
-      ]
-
-viewInvitForm : User -> Html Msg
-viewInvitForm user =
-  let
-    nameOptions =
-      [ Input.id "myname"
-      , Input.onInput SetUserName
-      , Input.placeholder "My name"
-      , Input.attrs [ class "mb-4" ]
-      ] ++ if user.name /= "" then [ Input.value user.name ] else []
-  in
-    Form.form []
-      [ Input.text nameOptions
-      , myInput Input.text "My email address" [ Input.onInput (AddUserContact (User.Email "")) ]
-      , h6 [ class "text-center my-1" ] [ text "OR" ]
-      , myInput Input.text "My phone number" [ Input.onInput (AddUserContact (User.Phone "")) ]
-      , Button.button
+viewInvit : ShellDropbox -> Html Msg
+viewInvit senderDropbox =
+  viewModal
+    Modal.shown
+    CloseInvitationModal
+    "Welcome to TaxiTakeMeTo"
+    (div [] [ text ("You have been invited by " ++ senderDropbox.name ++ ".") ])
+    (div []
+      [ Button.button
         [ Button.primary
-        , Button.attrs [ class "ml-sm-2 my-2" ]
-        , Button.disabled (String.length user.name == 0 || user.contact == [])
-        , Button.onClick (ViewChanged (getRootUrl ++ "/elm"))
+        , Button.onClick CloseInvitationModal
         ]
-        [ text "Submit" ]
+        [ text "Ok" ]
       ]
-
-viewInvit : User -> Html Msg
-viewInvit user =
-  Grid.container
-    [ style "max-width" "100%" ]
-    [ Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "lightgrey-background p-3 mb-3" ]
-      ]
-      [ Grid.col
-        [ Col.xs12 ]
-        [ h3
-          [ class "title" ]
-          [ text "Hi traveller !" ]
-        ]
-      ]
-    , Grid.row
-      [ Row.middleXs ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsCenter ]
-        [ h5 [] [ text "Who are you ?" ]
-        ]
-      ]
-    , Grid.row
-      [ Row.middleXs
-      , Row.attrs [ class "my-container" ]
-      ]
-      [ Grid.col
-        [ Col.xs12, Col.textAlign Text.alignXsRight ]
-        [ viewInvitForm user ]
-      ]
-    , hr [] []
-    , viewJanistorCard
-    ]
+    )
 
 
 viewBlockTravel : SwissNumber -> Travel -> Block.Item Msg
@@ -1107,13 +1020,7 @@ viewUserDashboard model =
               []
 
             Just senderDropbox ->
-              [ viewModal
-                Modal.shown
-                CloseInvitationModal
-                ("You have been invited by " ++ senderDropbox.name)
-                (div [] [ text "body" ])
-                (div [] [])
-              ]
+              [ viewInvit senderDropbox ]
       ]
     ]
 
