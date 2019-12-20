@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, h1, h2, h3, h4, h5, h6, div, text, img, p, hr, label, span, a)
+import Html exposing (Html, h1, h2, h3, h4, h5, div, text, img, hr, label, span, a)
 import Html.Attributes exposing (class, style, href, src, placeholder, id)
 import Html.Events exposing (onClick, onSubmit, onMouseOut, onMouseOver)
 import Http
@@ -30,7 +30,7 @@ import Process
 import Request as R
 import PI exposing (PI)
 import Media exposing (Media)
-import User exposing (User, Contact)
+import User exposing (User)
 import Shell exposing (Shell, ShellDropbox)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
@@ -196,8 +196,7 @@ getRootUrl =
 router : P.Parser (Route -> a) a
 router =
   P.oneOf
-  [ P.map RouteHome <| P.s "elm"
-  , P.map RouteLogin <| P.s "elm" </> P.s "login"
+  [ P.map RouteLogin <| P.s "elm"
   , P.map RouteProfile <| P.s "elm" </> P.s "profile"
   , P.map RouteNewAccount <| P.s "elm" </> P.s "newaccount"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
@@ -221,7 +220,15 @@ updateFromUrl model url commonCmd =
           ( { model | currentView = ViewUserDashboard }, commonCmd )
 
         RouteLogin ->
-          ( { model | currentView = ViewLogin }, commonCmd )
+          if model.shell.swissNumber == "" then
+            ( { model | currentView = ViewLogin }, commonCmd )
+          else
+            case Url.fromString (getRootUrl ++ "/elm/shell#" ++ model.shell.swissNumber) of
+              Nothing ->
+                ( { model | currentView = ViewLogin }, Cmd.none )
+
+              Just shellUrl ->
+                updateFromUrl model shellUrl commonCmd
 
         RouteProfile ->
           ( { model | currentView = ViewProfile }, commonCmd )
@@ -471,7 +478,7 @@ update msg model =
           ( { model | shell = newShell, checked = [] }, Cmd.none )
 
     CreateNewPI ->
-      ( { model | loading = True }, createSinglePI model.formTitle model.formTitle model.formTitle )
+      ( { model | loading = True }, createSinglePI model.formTitle model.formDescription model.formAddress )
 
     GotNewPI result ->
       case result of
@@ -651,7 +658,6 @@ viewNavbar model =
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
       , navbarItem "/elm/newpi" "Create new PI"
-      , navbarItem "/elm/login" "Login"
       , navbarItem "/elm/profile" "My profile"
       ]
     |> Navbar.view model.navbarState
@@ -1129,14 +1135,14 @@ viewCreateNewPI model =
           , Form.group []
             [ Input.text
               [ Input.attrs [ placeholder "My Point of Interest address" ]
-              , Input.onInput SetTitle
+              , Input.onInput SetAddress
               ]
             ]
           , Form.group [ Form.attrs [ class "text-left" ] ]
             [ Form.label [] [ text "My Point of Interest description" ]
             , Textarea.textarea
               [ Textarea.rows 3
-              , Textarea.onInput SetTitle
+              , Textarea.onInput SetDescription
               ]
             ]
           , Button.button
