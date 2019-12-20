@@ -1,15 +1,17 @@
-module Request exposing (..)
+module Request exposing (
+  getDropboxRequest, getSingleShellRequest, getSingleTravelRequest, getSinglePIRequest,
+  createNewTravelRequest, createNewPIRequest, addPItoTravelRequest, addTraveltoShellRequest)
 
 import Http
 import Task exposing (Task)
-import Json.Encode as E exposing (..)
+import Json.Encode as E exposing (string, list)
 import Json.Decode as D exposing (Decoder)
 import SwissNumber exposing (SwissNumber)
-import Travel exposing (..)
-import Shell exposing (..)
-import Media exposing (..)
-import Ocap exposing (..)
-import PI exposing (..)
+import Travel exposing (Travel, TravelFacet)
+import Shell exposing (Shell, ShellFacet, ShellDropbox, DropboxFacet)
+import Media exposing (MediaFacet)
+import Ocap exposing (Ocap, OcapListFacet)
+import PI exposing (PI, PIFacet)
 
 -- TYPES
 
@@ -189,8 +191,8 @@ getSinglePIRequest ocapUrl =
                       (\mediaFacets ->
                         let
                           pi = PI.piFromPIFacet piFacet
-                          audiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType == AudioType) mediaFacets
-                          notaudiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType /= AudioType) mediaFacets
+                          audiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType == Media.AudioType) mediaFacets
+                          notaudiotyped = List.filter (\mediaFacet -> mediaFacet.mediaType /= Media.AudioType) mediaFacets
                           audios = List.map Media.audioFromMediaFacet audiotyped
                           medias = List.map Media.mediaFromMediaFacet notaudiotyped
                         in

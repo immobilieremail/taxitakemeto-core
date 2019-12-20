@@ -1,13 +1,12 @@
 module PI exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
+import Html exposing (text, img)
+import Html.Attributes exposing (class, src)
+import Json.Decode as D exposing (Decoder, field, string)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Button as Button
-import Media exposing (..)
+import Media exposing (Media, Audio)
 import SwissNumber exposing (SwissNumber)
 
 
@@ -35,8 +34,8 @@ type alias PI =
   , title : String
   , description : String
   , address : String
-  , medias : List Media.Media
-  , audios : List Media.Audio
+  , medias : List Media
+  , audios : List Audio
   , tags : List Tag
   , typespi : List TypePI
   }
@@ -131,7 +130,7 @@ viewTagPI tag =
         [ Button.small
         , Button.attrs [ class "pi-tag" ]
         , Button.outlineSuccess
-        , (Button.disabled True)
+        , Button.disabled True
         ]
         [ text "Free" ]
       ]
@@ -143,7 +142,7 @@ viewTagPI tag =
         [ Button.small
         , Button.attrs [ class "pi-tag" ]
         , Button.outlineWarning
-        , (Button.disabled True)
+        , Button.disabled True
         ]
         [ text "Paying" ]
       ]
@@ -155,7 +154,7 @@ viewTagPI tag =
         [ Button.small
         , Button.attrs [ class "pi-tag" ]
         , Button.outlineInfo
-        , (Button.disabled True)
+        , Button.disabled True
         ]
         [ text "Reserved" ]
       ]
@@ -167,7 +166,7 @@ viewTagPI tag =
         [ Button.small
         , Button.attrs [ class "pi-tag" ]
         , Button.outlineDanger
-        , (Button.disabled True)
+        , Button.disabled True
         ]
         [ text "Not Reserved" ]
       ]
@@ -179,7 +178,7 @@ viewTagPI tag =
         [ Button.small
         , Button.attrs [ class "pi-tag" ]
         , Button.outlinePrimary
-        , (Button.disabled True)
+        , Button.disabled True
         ]
         [ text "On Going" ]
       ]

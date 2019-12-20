@@ -1,9 +1,8 @@
-module Travel exposing (..)
+module Travel exposing (Travel, TravelFacet, travelFacetDecoder, updateAccordionState, updateListPI, swissNumberIsNotEqual, travelFromTravelFacet, viewList, view)
 
-import Html exposing (..)
-import Html.Events exposing (..)
-import Html.Attributes exposing (..)
-import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
+import Html exposing (Html, text, h5, div, a)
+import Html.Attributes exposing (class, href)
+import Json.Decode as D exposing (Decoder, map4, field, string)
 import Bootstrap.Accordion as Accordion
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
@@ -42,12 +41,10 @@ swissNumberIsNotEqual swissNumber travel =
 
 updateListPI : SwissNumber -> List PI -> Travel -> Travel
 updateListPI swissNumber list travel =
-  case travel.swissNumber == swissNumber of
-    True ->
-      { travel | listPI = travel.listPI ++ list }
-
-    False ->
-      travel
+  if travel.swissNumber == swissNumber then
+    { travel | listPI = travel.listPI ++ list }
+  else
+    travel
 
 
 updateAccordionState : Accordion.State -> Travel -> Travel

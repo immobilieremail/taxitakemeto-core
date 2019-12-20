@@ -1,7 +1,6 @@
 module Shell exposing (..)
 
-import Html exposing (..)
-import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
+import Json.Decode as D exposing (Decoder, field, string)
 import SwissNumber exposing (SwissNumber)
 import Travel exposing (Travel)
 import User exposing (User)

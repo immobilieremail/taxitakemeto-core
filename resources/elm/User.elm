@@ -1,7 +1,5 @@
 module User exposing (..)
 
-import Bootstrap.Form.Input as Input
-
 
 
 -- TYPES
@@ -54,7 +52,7 @@ filterContactType comparable contact =
   let
     value = getContactValue contact
   in
-    if (getContactType comparable) value == (getContactType contact) value then
+    if getContactType comparable value == getContactType contact value then
       False
     else
       True

@@ -1,18 +1,14 @@
 module Main exposing (..)
 
 import Browser
-import File exposing (File)
-import Array
 import Browser.Navigation as Nav
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, h1, h2, h3, h4, h5, h6, div, text, img, p, hr, label, span, a)
+import Html.Attributes exposing (class, style, href, src, placeholder, id)
+import Html.Events exposing (onClick, onSubmit, onMouseOut, onMouseOver)
 import Http
-import Task exposing (Task)
-import Json.Decode as D exposing (Decoder,map4, map3, field, string, int, list)
+import Task exposing (attempt)
 import Url
-import Url.Parser as P
-import Url.Parser exposing ((</>))
+import Url.Parser as P exposing ((</>))
 import Bootstrap.Accordion as Accordion
 import Bootstrap.Navbar as Navbar
 import Bootstrap.Grid as Grid
@@ -21,29 +17,25 @@ import Bootstrap.Grid.Row as Row
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
-import Bootstrap.ListGroup as Listgroup
 import Bootstrap.Modal as Modal
 import Bootstrap.Text as Text
 import Bootstrap.Carousel as Carousel
-import Bootstrap.Carousel.Slide as Slide
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
+import Bootstrap.Form.Textarea as Textarea
 import Bootstrap.Form.Checkbox as Checkbox
 import Bootstrap.Form.InputGroup as InputGroup
-import Bootstrap.Alert as Alert
 import Color
 import Process
 import Request as R
-import PI exposing (..)
-import Fake exposing (..)
-import Ocap exposing (..)
-import Media exposing (..)
-import User exposing (User)
+import PI exposing (PI)
+import Media exposing (Media)
+import User exposing (User, Contact)
 import Shell exposing (Shell, ShellDropbox)
 import Travel exposing (Travel)
 import SwissNumber exposing (SwissNumber)
-import OverButton as OB exposing (..)
-import Message as Message exposing (..)
+import OverButton as OB exposing (OverButton, carouselPrevButton, carouselNextButton)
+import Message as Message exposing (Message, userDashboardType, view, viewWarningMessage)
 import ViewLoading as Loading exposing (view)
 
 
@@ -283,7 +275,7 @@ updateFromUrl model url commonCmd =
 
             Just ocapUrl ->
               let
-                getPIinTravel = (\travel -> List.filter (\pi -> pi.swissNumber == ocapUrl) travel.listPI)
+                getPIinTravel = \travel -> List.filter (\pi -> pi.swissNumber == ocapUrl) travel.listPI
                 piList = List.concatMap getPIinTravel model.shell.travelList
                 newCurrentPI =
                   case List.head piList of
@@ -323,7 +315,7 @@ updateFromUrl model url commonCmd =
 
             Just ocapUrl ->
               ( { model | currentTravel =
-                case (List.head (List.filter (\travel -> travel.swissNumber == ocapUrl) model.shell.travelList)) of
+                case List.head (List.filter (\travel -> travel.swissNumber == ocapUrl) model.shell.travelList) of
                   Just travel ->
                     travel
 
@@ -375,14 +367,6 @@ update msg model =
 
             oldShell = model.shell
             newShell = { oldShell | travelList = replaceInList oldShell.travelList newCurrentTravel }
-
-            indexList = List.range 0 (List.length model.currentTravel.listPI)
-            indexPI =
-              List.sum (
-                List.filter (\index ->
-                  Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) model.currentTravel.accordionState) indexList
-              )
-            accordionId = pi.swissNumber ++ "#" ++ String.fromInt indexPI
           in
             ( { model | currentPI = pi
               , currentTravel = newCurrentTravel
@@ -395,29 +379,25 @@ update msg model =
     GotTravel result ->
       case result of
         Ok travel ->
-          case travel.swissNumber /= "" of
-            True ->
-              case travel /= model.currentTravel of
-                True ->
-                  let
-                    updatedTravel = { travel | accordionState = model.currentTravel.accordionState }
-                    mappedList = replaceInList model.shell.travelList travel
-                    oldShell = model.shell
-                    newShell = { oldShell | travelList = mappedList }
-                  in
-                    ( { model | currentTravel = updatedTravel
-                      , shell = newShell
-                      , message = Nothing
-                      , loading = False
-                      }, Cmd.none )
-
-                False ->
-                  ( { model | message = Nothing
-                    , loading = False
-                    }, Cmd.none )
-
-            False ->
-              ( model, Cmd.none )
+          if travel.swissNumber /= "" then
+            if travel /= model.currentTravel then
+              let
+                updatedTravel = { travel | accordionState = model.currentTravel.accordionState }
+                mappedList = replaceInList model.shell.travelList travel
+                oldShell = model.shell
+                newShell = { oldShell | travelList = mappedList }
+              in
+                ( { model | currentTravel = updatedTravel
+                  , shell = newShell
+                  , message = Nothing
+                  , loading = False
+                  }, Cmd.none )
+            else
+              ( { model | message = Nothing
+                , loading = False
+                }, Cmd.none )
+          else
+            ( model, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -464,7 +444,7 @@ update msg model =
       ( { model | accordionState = state }, Cmd.none )
 
     TravelAccordionMsg state ->
-      ( { model | currentTravel = (Travel.updateAccordionState state model.currentTravel) }, Cmd.none )
+      ( { model | currentTravel = Travel.updateAccordionState state model.currentTravel }, Cmd.none )
 
     ShowModal ->
       ( { model | modalVisibility = Modal.shown } , Cmd.none )
@@ -486,45 +466,39 @@ update msg model =
       ( { model | carouselState = Carousel.next model.carouselState }, Cmd.none )
 
     MouseOver overButton ->
-      case (List.member overButton model.mouseOver) of
-        True ->
-          (model, Cmd.none)
-
-        False ->
-          ( { model | mouseOver = overButton :: model.mouseOver }, Cmd.none )
+      if List.member overButton model.mouseOver then
+        ( model, Cmd.none )
+      else
+        ( { model | mouseOver = overButton :: model.mouseOver }, Cmd.none )
 
     MouseOut overButton ->
       ( { model | mouseOver = List.filter (\n -> n /= overButton) model.mouseOver }, Cmd.none )
 
     AddToCheck pi bool ->
-      case bool of
-        True ->
-          ( { model
-            | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked) ++ [ pi ]
-            }, Cmd.none )
-
-        False ->
-          ( { model
-            | checked = (List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked)
-            }, Cmd.none )
+      if bool then
+        ( { model
+          | checked = pi :: List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked
+          }, Cmd.none )
+      else
+        ( { model
+          | checked = List.filter (PI.swissNumberIsNotEqual pi.swissNumber) model.checked
+          }, Cmd.none )
 
     AddCheckedToTravel swissNumber ->
       let
         oldShell = model.shell
         oldTravelList = oldShell.travelList
-        newShell = { oldShell | travelList = (List.map (Travel.updateListPI swissNumber model.checked) oldTravelList) }
+        newShell = { oldShell | travelList = List.map (Travel.updateListPI swissNumber model.checked) oldTravelList }
       in
-        case model.currentTravel.swissNumber == swissNumber of
-          True ->
-            let
-              oldCurrentTravel = model.currentTravel
-              newCurrentTravelPIs = oldCurrentTravel.listPI ++ model.checked
-              newCurrentTravel = { oldCurrentTravel | listPI = newCurrentTravelPIs }
-            in
-              ( { model | currentTravel = newCurrentTravel, shell = newShell, checked = [] }, addPItoTravel swissNumber newCurrentTravelPIs )
-
-          False ->
-            ( { model | shell = newShell, checked = [] }, Cmd.none )
+        if model.currentTravel.swissNumber == swissNumber then
+          let
+            oldCurrentTravel = model.currentTravel
+            newCurrentTravelPIs = oldCurrentTravel.listPI ++ model.checked
+            newCurrentTravel = { oldCurrentTravel | listPI = newCurrentTravelPIs }
+          in
+            ( { model | currentTravel = newCurrentTravel, shell = newShell, checked = [] }, addPItoTravel swissNumber newCurrentTravelPIs )
+        else
+          ( { model | shell = newShell, checked = [] }, Cmd.none )
 
     CreateNewPI ->
       ( { model | loading = True }, createSinglePI model.formTitle model.formTitle model.formTitle )
@@ -598,7 +572,7 @@ update msg model =
 
     AddUserContact contactType contact ->
       let
-        newContact = (User.getContactType contactType) contact
+        newContact = User.getContactType contactType contact
         filteredContactList = List.filter (User.filterContactType contactType) model.user.contact
 
         oldUser = model.user
@@ -735,7 +709,7 @@ viewProfileLabel input txt value options =
       [ class "profile-label" ]
       [ text txt ]
     , input
-      ([ Input.value value ] ++ options)
+      ( Input.value value :: options)
     ]
 
 inputContactEmail : String -> Html Msg
@@ -784,14 +758,14 @@ viewProfile user tmpPassword tmpConfirmPassword modalVisibility =
       , case user.password of
         Nothing ->
           Form.group []
-            [ longButton "Create a password" (ShowModal) [ Button.primary ]
+            [ longButton "Create a password" ShowModal [ Button.primary ]
             , Form.help []
               [ text "Connect to the application using a password" ]
             ]
 
-        Just password ->
+        Just _ ->
           Form.group []
-            [ longButton "Reset my password" (ShowModal) [ Button.primary ] ]
+            [ longButton "Reset my password" ShowModal [ Button.primary ] ]
       ]
     , Form.form []
       [ h4 [ class "title" ] [ text "Contact" ]
@@ -814,7 +788,7 @@ viewSingleFormPassword placehold message feedback options  =
       , Input.attrs [ class "my-2" ]
       , Input.onInput message
       ] ++ options)
-    , if (Tuple.first feedback) then
+    , if Tuple.first feedback then
       Form.invalidFeedback []
         [ text (Tuple.second feedback) ]
     else
@@ -942,7 +916,7 @@ viewLogin user tmpPassword =
           [ Form.form
             [ onSubmit (ViewChanged (getRootUrl ++ "/elm")) ]
             [ myInput Input.text "My name" nameOptions
-            , myInput Input.password "My password" ([ Input.onInput SetTmpPassword ] ++ passwordOptions)
+            , myInput Input.password "My password" ( Input.onInput SetTmpPassword :: passwordOptions)
             , longButton "Sign In"
               SetUserPassword
               [ Button.primary
@@ -1236,19 +1210,17 @@ viewCreateNewTravel model =
           ]
         ]
       ]
-    , case model.loading of
-      True ->
+    , if model.loading then
         Loading.view
-
-      False ->
+      else
         Grid.row []
-        [ Grid.col
-          [ Col.xs12 ]
-          [ hr [] [] ]
-        , Grid.col
-          [ Col.xs12 ]
-          (List.map viewCheckedPI model.checked)
-        ]
+          [ Grid.col
+            [ Col.xs12 ]
+            [ hr [] [] ]
+          , Grid.col
+            [ Col.xs12 ]
+            (List.map viewCheckedPI model.checked)
+          ]
     ]
 
 
@@ -1412,14 +1384,11 @@ viewSearchPI model =
       [ class "proposals mb-4" ]
       [ div []
         (List.map (viewProposal model.checked) model.proposals)
-      , case List.length model.checked > 0 of
-        True ->
+      , if List.length model.checked > 0 then
           div []
             [ h4 [] [ text "Selected PIs" ] ]
-
-        False ->
+        else
           div [] []
-
       , div
         [ class "mb-3" ]
         (List.map viewOneLinePI model.checked)
@@ -1468,9 +1437,10 @@ piAccordionCard carouselState accordionState mouseOver loading index pi =
     , blocks =
       [ Accordion.block [ Block.attrs [ class "test" ] ]
         [ Block.text []
-          [ case loading of
-            False -> viewPI carouselState accordionState mouseOver index pi
-            True -> Loading.view
+          [ if loading then
+              Loading.view
+            else
+              viewPI carouselState accordionState mouseOver index pi
           ]
         ]
       ]
@@ -1541,12 +1511,10 @@ viewCarouselButtonPrev mouseOver =
       [ class "carousel-control-prev-icon"
       , onMouseOver (MouseOver OB.carouselPrevButton)
       , onMouseOut (MouseOut OB.carouselPrevButton)
-      , case (List.member OB.carouselPrevButton mouseOver) of
-        False ->
-          style "opacity" ".5"
-
-        True ->
+      , if List.member OB.carouselPrevButton mouseOver then
           style "opacity" ".9"
+        else
+          style "opacity" ".5"
       ]
       []
     ]
@@ -1563,34 +1531,31 @@ viewCarouselButtonNext mouseOver =
       [ class "carousel-control-next-icon"
       , onMouseOver (MouseOver OB.carouselNextButton)
       , onMouseOut (MouseOut OB.carouselNextButton)
-      , case (List.member CarouselNextButton mouseOver) of
-        False ->
-          style "opacity" ".5"
-
-        True ->
+      , if List.member OB.CarouselNextButton mouseOver then
           style "opacity" ".9"
+        else
+          style "opacity" ".5"
       ]
       []
     ]
 
 viewCarousel : List Media -> Carousel.State -> List OverButton -> Html Msg
 viewCarousel medias carouselState mouseOver =
-  case List.isEmpty medias of
-    True ->
-      div [ class "d-flex" ]
-        [ img
-          [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
-          []
-        ]
-    False ->
-      div []
-        [ Carousel.config CarouselMsg []
-          |> Carousel.slides
-            (List.map Media.carouselSlide medias)
-          |> Carousel.view carouselState
-        , viewCarouselButtonPrev mouseOver
-        , viewCarouselButtonNext mouseOver
-        ]
+  if List.isEmpty medias then
+    div [ class "d-flex" ]
+      [ img
+        [ src "https://www.labaleine.fr/sites/baleine/files/image-not-found.jpg" ]
+        []
+      ]
+  else
+    div []
+      [ Carousel.config CarouselMsg []
+        |> Carousel.slides
+          (List.map Media.carouselSlide medias)
+        |> Carousel.view carouselState
+      , viewCarouselButtonPrev mouseOver
+      , viewCarouselButtonNext mouseOver
+      ]
 
 
 piChangeViewButton : String -> Msg -> Html Msg
@@ -1620,11 +1585,9 @@ viewPI carouselState accordionState mouseOver index pi =
         [ Row.middleXs ]
         [ Grid.col
           [ Col.sm6 ]
-          [ case Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) accordionState of
-            True ->
+          [ if Accordion.isOpen (pi.swissNumber ++ "#" ++ String.fromInt index) accordionState then
               viewCarousel pi.medias carouselState mouseOver
-
-            False ->
+            else
               Media.viewFirstMedia [] pi.medias
           ]
         , Grid.col

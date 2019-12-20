@@ -1,6 +1,6 @@
-module Ocap exposing (..)
+module Ocap exposing (Ocap, OcapListFacet, ocapDecoder, ocapListFacetDecoder)
 
-import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
+import Json.Decode as D exposing (Decoder, map3, field, string, list)
 import SwissNumber as SN
 
 

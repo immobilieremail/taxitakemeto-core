@@ -1,9 +1,8 @@
 module Media exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
-import Json.Decode as D exposing (Decoder, map4, map3, field, string, int, list)
+import Html exposing (Html, source, video, img, div, text, h4)
+import Html.Attributes exposing (class, type_, src, style, controls)
+import Json.Decode as D exposing (Decoder, map4, field, string)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
@@ -52,24 +51,6 @@ audioFromMediaFacet mediaFacet =
   Audio "Language" mediaFacet.path
 
 
--- CONSTRUCTORS (used to fake Media)
-
-
-imageType : MediaType
-imageType =
-  ImageType
-
-
-audioType : MediaType
-audioType =
-  AudioType
-
-
-videoType : MediaType
-videoType =
-  VideoType
-
-
 
 -- VIEW
 
@@ -103,12 +84,12 @@ viewFirstMedia : List (Html.Attribute msg) -> List Media -> Html msg
 viewFirstMedia attributes medias =
   div
     [ class "d-flex" ]
-    [ case (List.head medias) of
+    [ case List.head medias of
       Just media ->
         case media.mediaType of
         ImageType ->
           img
-            ([ src media.url ] ++ attributes)
+            ( src media.url :: attributes)
             []
 
         VideoType ->
@@ -180,12 +161,6 @@ mediaTypeDecoder =
         somethingElse ->
           D.fail <| "Unknown mediaType: " ++ somethingElse
     )
-
-mediaDecoder : Decoder Media
-mediaDecoder =
-  D.map2 Media
-  (field "mediaType" mediaTypeDecoder)
-  (field "url" string)
 
 
 mediaFacetDecoder : Decoder MediaFacet

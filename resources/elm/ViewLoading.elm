@@ -1,8 +1,7 @@
 module ViewLoading exposing (view)
 
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html exposing (Html, div)
+import Html.Attributes exposing (class)
 import Loading exposing ( LoaderType(..), defaultConfig, render )
 
 
