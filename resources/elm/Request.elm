@@ -211,14 +211,23 @@ getDropboxRequest ocapUrl =
       )
 
 
-getSingleShellRequest : SwissNumber -> Task Http.Error Shell
+getSingleShellRequest : SwissNumber -> Task Http.Error (Shell, Maybe ShellDropbox)
 getSingleShellRequest ocapUrl =
   getShellfromUrl ocapUrl
     |> Task.andThen
       (\shellFacet ->
         case shellFacet.travelList of
           Nothing ->
-            Task.succeed (Shell.shellFromShellFacet shellFacet)
+            case shellFacet.sender of
+              Nothing ->
+                Task.succeed (Shell.shellFromShellFacet shellFacet, Nothing)
+
+              Just senderDropboxUrl ->
+                getDropboxFromUrl senderDropboxUrl
+                  |> Task.andThen
+                    (\dropboxFacet ->
+                      Task.succeed (Shell.shellFromShellFacet shellFacet, Just (ShellDropbox senderDropboxUrl dropboxFacet.name))
+                    )
 
           Just travelListUrl ->
             getOcapListfromUrl travelListUrl
@@ -231,7 +240,16 @@ getSingleShellRequest ocapUrl =
                         let
                           shell = Shell.shellFromShellFacet shellFacet
                         in
-                          Task.succeed { shell | travelList = travels }
+                          case shellFacet.sender of
+                            Nothing ->
+                              Task.succeed ({ shell | travelList = travels }, Nothing)
+
+                            Just senderDropboxUrl ->
+                              getDropboxFromUrl senderDropboxUrl
+                                |> Task.andThen
+                                  (\dropboxFacet ->
+                                    Task.succeed ({ shell | travelList = travels }, Just (ShellDropbox senderDropboxUrl dropboxFacet.name))
+                                  )
                       )
                 )
       )

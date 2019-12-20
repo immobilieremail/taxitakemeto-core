@@ -167,7 +167,7 @@ type Msg
   | ViewChanged String
   | GotPI (Result Http.Error PI)
   | GotTravel (Result Http.Error Travel)
-  | GotShell (Result Http.Error Shell)
+  | GotShell (Result Http.Error (Shell, Maybe ShellDropbox))
   | UpdateNavbar Navbar.State
   | CarouselMsg Carousel.Msg
   | AccordionMsg Accordion.State
@@ -190,7 +190,6 @@ type Msg
   | SetTmpConfirmPassword String
   | SetUserPassword
   | GotDashboard (Result Http.Error User)
-  | GotDropbox (Result Http.Error ShellDropbox)
   | EmptyResponse (Result Http.Error ())
 
 
@@ -411,29 +410,24 @@ update msg model =
 
     GotShell result ->
       case result of
-        Ok shell ->
-          let
-            finalCmd = case shell.sender of
-              Nothing ->
-                Cmd.none
+        Ok (shell, senderDropbox) ->
+          if model.currentTravel.swissNumber /= "" then
+            ( { model | shell = shell }, Cmd.none )
+          else
+            let
+              newCurrentTravel =
+                case List.head shell.travelList of
+                  Just travel ->
+                    travel
 
-              Just senderDropboxUrl ->
-                getDropbox senderDropboxUrl
-          in
-            if model.currentTravel.swissNumber /= "" then
-              ( { model | shell = shell }, finalCmd )
-            else
-              let
-                newCurrentTravel =
-                  case List.head shell.travelList of
-                    Just travel ->
-                      travel
+                  Nothing ->
+                    model.currentTravel
 
-                    Nothing ->
-                      model.currentTravel
-
-              in
-                ( { model | shell = shell, currentTravel = newCurrentTravel }, finalCmd )
+            in
+              ( { model | shell = shell
+                , currentTravel = newCurrentTravel
+                , senderDropbox = senderDropbox
+                }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -469,7 +463,7 @@ update msg model =
         oldShell = model.shell
         newShell = { oldShell | sender = Nothing }
       in
-        ( { model | shell = newShell }, Cmd.none )
+        ( { model | shell = newShell, senderDropbox = Nothing }, Cmd.none )
 
     CarouselPrev ->
       ( { model | carouselState = Carousel.prev model.carouselState }, Cmd.none )
@@ -588,14 +582,6 @@ update msg model =
       case user of
         Ok result ->
           ( { model | user = result, currentView = ViewUserDashboard }, Cmd.none )
-
-        Err _ ->
-          ( model, Cmd.none )
-
-    GotDropbox result ->
-      case result of
-        Ok dropbox ->
-          ( { model | senderDropbox = Just dropbox }, Cmd.none )
 
         Err _ ->
           ( model, Cmd.none )
@@ -1630,11 +1616,6 @@ simpleViewPI carouselState mouseOver pi =
 -- JSON API
 
 
-
-getDropbox : SwissNumber -> Cmd Msg
-getDropbox ocapUrl =
-  Task.attempt GotDropbox
-    (R.getDropboxRequest ocapUrl)
 
 getSingleShell : SwissNumber -> Cmd Msg
 getSingleShell ocapUrl =
