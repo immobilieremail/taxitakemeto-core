@@ -71,6 +71,7 @@ type CurrentView
   | SimpleViewPI
   | ViewSearchPI
   | ViewNewTravel
+  | ViewNewPI
   | ViewLogin
   | ViewNewAccount
   | ViewInvit
@@ -90,6 +91,8 @@ type alias Model =
   , modalVisibility : Modal.Visibility
   , mouseOver : List OverButton
   , formTitle : String
+  , formDescription : String
+  , formAddress : String
   , tmpPassword : String
   , tmpConfirmPassword : String
   , user : User
@@ -114,6 +117,8 @@ model0 key state =
   , modalVisibility = Modal.hidden
   , mouseOver = []
   , formTitle = ""
+  , formDescription = ""
+  , formAddress = ""
   , tmpPassword = ""
   , tmpConfirmPassword = ""
   , user = User "John Doe" [] Nothing
@@ -181,9 +186,13 @@ type Msg
   | MouseOut OverButton
   | AddToCheck PI Bool
   | AddCheckedToTravel SwissNumber
+  | CreateNewPI
   | CreateNewTravel
+  | GotNewPI (Result Http.Error PI)
   | GotNewTravel (Result Http.Error Travel)
   | SetTitle String
+  | SetDescription String
+  | SetAddress String
   | SetUserName String
   | AddUserContact User.Contact String
   | SetTmpPassword String
@@ -200,6 +209,7 @@ type Route
   | RouteNewAccount
   | RouteInvit
   | RouteSearch
+  | RouteNewPI
   | RouteNewTravel
   | RoutePI (Maybe String)
   | RouteSimplePI (Maybe String)
@@ -226,6 +236,7 @@ router =
   , P.map RouteNewAccount <| P.s "elm" </> P.s "newaccount"
   , P.map RouteInvit <| P.s "elm" </> P.s "invit"
   , P.map RouteSearch <| P.s "elm" </> P.s "search"
+  , P.map RouteNewPI <| P.s "elm" </> P.s "newpi"
   , P.map RouteNewTravel <| P.s "elm" </> P.s "newtravel"
   , P.map RoutePI <| P.s "elm" </> P.s "pi" </> P.fragment identity
   , P.map RouteSimplePI <| P.s "elm" </> P.s "pi" </> P.s "simpleview" </> P.fragment identity
@@ -258,6 +269,9 @@ updateFromUrl model url commonCmd =
 
         RouteSearch ->
           ( { model | currentView = ViewSearchPI }, commonCmd )
+
+        RouteNewPI ->
+          ( { model | currentView = ViewNewPI }, commonCmd )
 
         RouteNewTravel ->
           ( { model | currentView = ViewNewTravel }, commonCmd )
@@ -512,6 +526,17 @@ update msg model =
           False ->
             ( { model | shell = newShell, checked = [] }, Cmd.none )
 
+    CreateNewPI ->
+      ( { model | loading = True }, createSinglePI model.formTitle model.formTitle model.formTitle )
+
+    GotNewPI result ->
+      case result of
+        Ok pi ->
+          ( { model | proposals = pi :: model.proposals }, Cmd.none )
+
+        Err _ ->
+          ( model, Cmd.none )
+
     CreateNewTravel ->
       ( { model | loading = True }, createSingleTravel model.formTitle model.checked )
 
@@ -551,6 +576,12 @@ update msg model =
 
     SetTitle title ->
       ( { model | formTitle = title }, Cmd.none )
+
+    SetDescription description ->
+      ( { model | formDescription = description }, Cmd.none )
+
+    SetAddress address ->
+      ( { model | formAddress = address }, Cmd.none )
 
     SetTmpPassword pswd ->
       ( { model | tmpPassword = pswd }, Cmd.none )
@@ -634,6 +665,12 @@ view model =
           , viewCreateNewTravel model
           ]
 
+      ViewNewPI ->
+        div []
+          [ viewNavbar model
+          , viewCreateNewPI model
+          ]
+
       ViewLogin ->
         div [] [ viewLogin model.user model.tmpPassword ]
 
@@ -672,7 +709,7 @@ viewNavbar model =
       ]
     |> Navbar.items
       [ navbarItem "/elm/search" "Search PI"
-      , navbarItem "/elm/invit" "Invitation"
+      , navbarItem "/elm/newpi" "Create new PI"
       , navbarItem "/elm/login" "Login"
       , navbarItem "/elm/profile" "My profile"
       ]
@@ -1215,6 +1252,50 @@ viewCreateNewTravel model =
     ]
 
 
+viewCreateNewPI : Model -> Html Msg
+viewCreateNewPI model =
+  Grid.container []
+    [ Grid.row []
+      [ Grid.col
+        [ Col.xs12 ]
+        [ h2
+          [ class "title" ]
+          [ text "Create new Point of Interest" ]
+        , Form.form
+          [ onSubmit CreateNewPI
+          , class "text-right"
+          ]
+          [ Form.group []
+            [ Input.text
+              [ Input.attrs [ placeholder "My Point of Interest title" ]
+              , Input.onInput SetTitle
+              ]
+            ]
+          , Form.group []
+            [ Input.text
+              [ Input.attrs [ placeholder "My Point of Interest address" ]
+              , Input.onInput SetTitle
+              ]
+            ]
+          , Form.group [ Form.attrs [ class "text-left" ] ]
+            [ Form.label [] [ text "My Point of Interest description" ]
+            , Textarea.textarea
+              [ Textarea.rows 3
+              , Textarea.onInput SetTitle
+              ]
+            ]
+          , Button.button
+            [ Button.primary
+            , Button.attrs [ class "ml-sm-2 my-2" ]
+            , Button.disabled (model.loading || String.length model.formTitle == 0)
+            ]
+            [ text "Create" ]
+          ]
+        ]
+      ]
+    ]
+
+
 viewSearchBar : Html Msg
 viewSearchBar =
   Grid.row
@@ -1639,6 +1720,12 @@ createSingleTravel : String -> List PI -> Cmd Msg
 createSingleTravel title piList =
   Task.attempt GotNewTravel
     (R.createNewTravelRequest title piList)
+
+
+createSinglePI : String -> String -> String -> Cmd Msg
+createSinglePI title description address =
+  Task.attempt GotNewPI
+    (R.createNewPIRequest title description address)
 
 
 addPItoTravel : SwissNumber -> List PI -> Cmd Msg

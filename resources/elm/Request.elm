@@ -4,7 +4,7 @@ import Http
 import Task exposing (Task)
 import Json.Encode as E exposing (..)
 import Json.Decode as D exposing (Decoder)
-import SwissNumber as SN exposing (SwissNumber)
+import SwissNumber exposing (SwissNumber)
 import Travel exposing (..)
 import Shell exposing (..)
 import Media exposing (..)
@@ -105,6 +105,18 @@ createNewOcapList ocapList =
     , headers = []
     , url = "http://localhost:8000/api/list"
     , body = Http.jsonBody (E.object [ ("ocaps", E.list E.string (List.map (\ocap -> ocap.swissNumber) ocapList)) ])
+    , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapDecoder
+    , timeout = Nothing
+    }
+
+
+createNewPI : String -> String -> String -> Task Http.Error Ocap
+createNewPI title description address =
+  Http.task
+    { method = "POST"
+    , headers = []
+    , url = "http://localhost:8000/api/pi"
+    , body = Http.jsonBody (E.object [ ("title", E.string title), ("description", E.string description), ("address", E.string address) ])
     , resolver = Http.stringResolver <| handleJsonResponse <| Ocap.ocapDecoder
     , timeout = Nothing
     }
@@ -277,6 +289,15 @@ createNewTravelRequest title piList =
             (\travelOcap ->
               getSingleTravelRequest travelOcap.url
             )
+      )
+
+
+createNewPIRequest : String -> String -> String -> Task Http.Error PI
+createNewPIRequest title description address =
+  createNewPI title description address
+    |> Task.andThen
+      (\piOcap ->
+        getSinglePIRequest piOcap.url
       )
 
 
