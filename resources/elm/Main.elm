@@ -120,36 +120,12 @@ model0 key state =
   , senderDropbox = Nothing
   }
 
-fakeModel0 : Nav.Key -> Navbar.State -> Model
-fakeModel0 key state =
-  let model = model0 key state
-  in { model | proposals =
-    [ PI
-      "http://localhost:8000/api/obj/KJq_mt98VE4@D5Nq4px9Kg=="
-      "Wat Phra Kaew Temple - Thaïland"
-      "This is a description of Meenakshi Amman Temple."
-      "9 Boulevard de la Canopée"
-      [ Media Media.imageType "https://upload.wikimedia.org/wikipedia/commons/b/b2/Wat_Phra_Sri_Rattana_Satsadaram_11.jpg" ]
-      []
-      [ PI.free, PI.reserved ]
-      [ PI.touristicPlace ]
-    , PI
-      "http://localhost:8000/api/obj/RMS2_HLSluNnBc4Ak6nNSQ=="
-      "Food Festival - Singapour"
-      "It’s no secret that Singaporeans are united in their love for great food."
-      "221B Baker Street"
-      [ Media Media.imageType "https://www.je-papote.com/wp-content/uploads/2016/08/food-festival-singapour.jpg" ]
-      []
-      [ PI.paying ]
-      [ PI.restaurant, PI.touristicPlace ]
-    ]
-  }
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
   let
     (state, cmd) = Navbar.initialState UpdateNavbar
-    model = fakeModel0 key state
+    model = model0 key state
   in
     updateFromUrl model url cmd
 
