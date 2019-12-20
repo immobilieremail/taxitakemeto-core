@@ -344,13 +344,13 @@ update msg model =
     LinkClicked urlRequest ->
       case urlRequest of
         Browser.Internal url ->
-          updateFromUrl model url (Nav.pushUrl model.key (Url.toString url))
+          updateFromUrl { model | loading = False } url (Nav.pushUrl model.key (Url.toString url))
 
         Browser.External href ->
           ( model, Nav.load href )
 
     UrlChanged url ->
-      updateFromUrl model url Cmd.none
+      updateFromUrl { model | loading = False } url Cmd.none
 
     GotPI result ->
       case result of
@@ -523,7 +523,7 @@ update msg model =
             newTravelList = model.shell.travelList ++ [ travel ]
             newShell = { oldShell | travelList = newTravelList }
           in
-            case Url.fromString (getRootUrl ++ "/elm") of
+            case Url.fromString (getRootUrl ++ "/elm/shell#" ++ model.shell.swissNumber) of
               Just url ->
                 updateFromUrl
                   { model | currentTravel = travel
