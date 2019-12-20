@@ -122,6 +122,18 @@ createNewTravel title listUrl =
     }
 
 
+putToShell : SwissNumber -> Http.Body -> Task Http.Error ()
+putToShell shellUrl jsonBody =
+  Http.task
+    { method = "PUT"
+    , headers = []
+    , url = shellUrl
+    , body = jsonBody
+    , resolver = Http.stringResolver (\_ -> Ok ())
+    , timeout = Nothing
+    }
+
+
 handleJsonResponse : Decoder a -> Http.Response String -> Result Http.Error a
 handleJsonResponse decoder response =
   case response of
@@ -293,11 +305,19 @@ addTraveltoShellRequest ocapUrl travelList =
         case shellFacet.travelList of
           Just travelListUrl ->
             putToOcapList travelList travelListUrl
+              |> Task.andThen
+                (\_ ->
+                  putToShell ocapUrl <| Http.jsonBody (E.object [ ("travels", E.string travelListUrl) ])
+                )
 
           Nothing ->
             createNewOcapList travelList
               |> Task.andThen
                 (\travelOcapList ->
                   putToOcapList travelList travelOcapList.url
+                    |> Task.andThen
+                      (\_ ->
+                        putToShell ocapUrl <| Http.jsonBody (E.object [ ("travels", E.string travelOcapList.url) ])
+                      )
                 )
       )
