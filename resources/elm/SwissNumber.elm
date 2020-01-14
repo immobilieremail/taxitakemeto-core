@@ -1,3 +1,5 @@
 module SwissNumber exposing (SwissNumber)
 
-type alias SwissNumber = String
+
+type alias SwissNumber =
+    String

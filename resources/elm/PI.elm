@@ -1,12 +1,12 @@
 module PI exposing (..)
 
-import Html exposing (text, img)
-import Html.Attributes exposing (class, src)
-import Json.Decode as D exposing (Decoder, field, string)
+import Bootstrap.Button as Button
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
-import Bootstrap.Button as Button
-import Media exposing (Media, Audio)
+import Html exposing (img, text)
+import Html.Attributes exposing (class, src)
+import Json.Decode as D exposing (Decoder, field, string)
+import Media exposing (Audio, Media)
 import SwissNumber exposing (SwissNumber)
 
 
@@ -15,56 +15,58 @@ import SwissNumber exposing (SwissNumber)
 
 
 type Tag
-  = Free
-  | Paying
-  | Reserved
-  | NotReserved
-  | OnGoing
+    = Free
+    | Paying
+    | Reserved
+    | NotReserved
+    | OnGoing
 
 
 type TypePI
-  = Restaurant
-  | Hotel
-  | Shop
-  | TouristicPlace
+    = Restaurant
+    | Hotel
+    | Shop
+    | TouristicPlace
 
 
 type alias PI =
-  { swissNumber : SwissNumber
-  , title : String
-  , description : String
-  , address : String
-  , medias : List Media
-  , audios : List Audio
-  , tags : List Tag
-  , typespi : List TypePI
-  }
+    { swissNumber : SwissNumber
+    , title : String
+    , description : String
+    , address : String
+    , medias : List Media
+    , audios : List Audio
+    , tags : List Tag
+    , typespi : List TypePI
+    }
 
 
 type alias PIFacet =
-  { swissNumber : SwissNumber
-  , facetType : String
-  , title : String
-  , description : String
-  , address : String
-  , mediaList : Maybe SwissNumber
-  }
-
+    { swissNumber : SwissNumber
+    , facetType : String
+    , title : String
+    , description : String
+    , address : String
+    , mediaList : Maybe SwissNumber
+    }
 
 
 swissNumberIsNotEqual : SwissNumber -> PI -> Bool
 swissNumberIsNotEqual swissNumber pi =
-  pi.swissNumber /= swissNumber
+    pi.swissNumber /= swissNumber
 
 
 piFromPIFacet : PIFacet -> PI
 piFromPIFacet piFacet =
-  PI
-    piFacet.swissNumber
-    piFacet.title
-    piFacet.description
-    piFacet.address
-    [] [] [] []
+    PI
+        piFacet.swissNumber
+        piFacet.title
+        piFacet.description
+        piFacet.address
+        []
+        []
+        []
+        []
 
 
 
@@ -73,47 +75,47 @@ piFromPIFacet piFacet =
 
 free : Tag
 free =
-  Free
+    Free
 
 
 paying : Tag
 paying =
-  Paying
+    Paying
 
 
 reserved : Tag
 reserved =
-  Reserved
+    Reserved
 
 
 notReserved : Tag
 notReserved =
-  NotReserved
+    NotReserved
 
 
 onGoing : Tag
 onGoing =
-  OnGoing
+    OnGoing
 
 
 restaurant : TypePI
 restaurant =
-  Restaurant
+    Restaurant
 
 
 hotel : TypePI
 hotel =
-  Hotel
+    Hotel
 
 
 shop : TypePI
 shop =
-  Shop
+    Shop
 
 
 touristicPlace : TypePI
 touristicPlace =
-  TouristicPlace
+    TouristicPlace
 
 
 
@@ -122,110 +124,110 @@ touristicPlace =
 
 viewTagPI : Tag -> Grid.Column msg
 viewTagPI tag =
-  case tag of
-  Free ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ class "pi-tag" ]
-        , Button.outlineSuccess
-        , Button.disabled True
-        ]
-        [ text "Free" ]
-      ]
+    case tag of
+        Free ->
+            Grid.col
+                [ Col.attrs [ class "py-1" ] ]
+                [ Button.button
+                    [ Button.small
+                    , Button.attrs [ class "pi-tag" ]
+                    , Button.outlineSuccess
+                    , Button.disabled True
+                    ]
+                    [ text "Free" ]
+                ]
 
-  Paying ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ class "pi-tag" ]
-        , Button.outlineWarning
-        , Button.disabled True
-        ]
-        [ text "Paying" ]
-      ]
+        Paying ->
+            Grid.col
+                [ Col.attrs [ class "py-1" ] ]
+                [ Button.button
+                    [ Button.small
+                    , Button.attrs [ class "pi-tag" ]
+                    , Button.outlineWarning
+                    , Button.disabled True
+                    ]
+                    [ text "Paying" ]
+                ]
 
-  Reserved ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ class "pi-tag" ]
-        , Button.outlineInfo
-        , Button.disabled True
-        ]
-        [ text "Reserved" ]
-      ]
+        Reserved ->
+            Grid.col
+                [ Col.attrs [ class "py-1" ] ]
+                [ Button.button
+                    [ Button.small
+                    , Button.attrs [ class "pi-tag" ]
+                    , Button.outlineInfo
+                    , Button.disabled True
+                    ]
+                    [ text "Reserved" ]
+                ]
 
-  NotReserved ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ class "pi-tag" ]
-        , Button.outlineDanger
-        , Button.disabled True
-        ]
-        [ text "Not Reserved" ]
-      ]
+        NotReserved ->
+            Grid.col
+                [ Col.attrs [ class "py-1" ] ]
+                [ Button.button
+                    [ Button.small
+                    , Button.attrs [ class "pi-tag" ]
+                    , Button.outlineDanger
+                    , Button.disabled True
+                    ]
+                    [ text "Not Reserved" ]
+                ]
 
-  OnGoing ->
-    Grid.col
-      [ Col.attrs [ class "py-1" ] ]
-      [ Button.button
-        [ Button.small
-        , Button.attrs [ class "pi-tag" ]
-        , Button.outlinePrimary
-        , Button.disabled True
-        ]
-        [ text "On Going" ]
-      ]
+        OnGoing ->
+            Grid.col
+                [ Col.attrs [ class "py-1" ] ]
+                [ Button.button
+                    [ Button.small
+                    , Button.attrs [ class "pi-tag" ]
+                    , Button.outlinePrimary
+                    , Button.disabled True
+                    ]
+                    [ text "On Going" ]
+                ]
 
 
 viewTypePI : TypePI -> Grid.Column msg
 viewTypePI typepi =
-  case typepi of
-  Restaurant ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
-      [ img
-        [ class "pi-type-icon"
-        , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
-        ]
-        []
-      ]
+    case typepi of
+        Restaurant ->
+            Grid.col
+                [ Col.xs3, Col.attrs [ class "pi-type" ] ]
+                [ img
+                    [ class "pi-type-icon"
+                    , src "https://cdn.pixabay.com/photo/2019/09/08/17/24/eat-4461470_960_720.png"
+                    ]
+                    []
+                ]
 
-  Shop ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
-      [ img
-        [ class "pi-type-icon"
-        , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
-        ]
-        []
-      ]
+        Shop ->
+            Grid.col
+                [ Col.xs3, Col.attrs [ class "pi-type" ] ]
+                [ img
+                    [ class "pi-type-icon"
+                    , src "https://cdn.pixabay.com/photo/2015/12/23/01/14/edit-1105049_960_720.png"
+                    ]
+                    []
+                ]
 
-  Hotel ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
-      [ img
-        [ class "pi-type-icon"
-        , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
-        ]
-        []
-      ]
+        Hotel ->
+            Grid.col
+                [ Col.xs3, Col.attrs [ class "pi-type" ] ]
+                [ img
+                    [ class "pi-type-icon"
+                    , src "https://cdn.pixabay.com/photo/2015/12/28/02/58/home-1110868_960_720.png"
+                    ]
+                    []
+                ]
 
-  TouristicPlace ->
-    Grid.col
-      [ Col.xs3, Col.attrs [ class "pi-type" ] ]
-      [ img
-        [ class "pi-type-icon"
-        , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
-        ]
-        []
-      ]
+        TouristicPlace ->
+            Grid.col
+                [ Col.xs3, Col.attrs [ class "pi-type" ] ]
+                [ img
+                    [ class "pi-type-icon"
+                    , src "https://cdn.pixabay.com/photo/2016/01/10/22/23/location-1132648_960_720.png"
+                    ]
+                    []
+                ]
 
 
 
@@ -234,55 +236,56 @@ viewTypePI typepi =
 
 tagDecoder : Decoder Tag
 tagDecoder =
-  D.string
-    |> D.andThen (\str ->
-      case str of
-        "free" ->
-          D.succeed Free
+    D.string
+        |> D.andThen
+            (\str ->
+                case str of
+                    "free" ->
+                        D.succeed Free
 
-        "paying" ->
-          D.succeed Paying
+                    "paying" ->
+                        D.succeed Paying
 
-        "on going" ->
-          D.succeed OnGoing
+                    "on going" ->
+                        D.succeed OnGoing
 
-        "not reserved" ->
-          D.succeed NotReserved
+                    "not reserved" ->
+                        D.succeed NotReserved
 
-        somethingElse ->
-          D.fail <| "Unknown tag: " ++ somethingElse
-    )
+                    somethingElse ->
+                        D.fail <| "Unknown tag: " ++ somethingElse
+            )
 
 
 typePIDecoder : Decoder TypePI
 typePIDecoder =
-  D.string
-    |> D.andThen (\str ->
-      case str of
-        "restaurant" ->
-          D.succeed Restaurant
+    D.string
+        |> D.andThen
+            (\str ->
+                case str of
+                    "restaurant" ->
+                        D.succeed Restaurant
 
-        "hotel" ->
-          D.succeed Hotel
+                    "hotel" ->
+                        D.succeed Hotel
 
-        "shop" ->
-          D.succeed Shop
+                    "shop" ->
+                        D.succeed Shop
 
-        "touristicPlace" ->
-          D.succeed TouristicPlace
+                    "touristicPlace" ->
+                        D.succeed TouristicPlace
 
-        somethingElse ->
-          D.fail <| "Unknown tag: " ++ somethingElse
-    )
+                    somethingElse ->
+                        D.fail <| "Unknown tag: " ++ somethingElse
+            )
 
 
 piFacetDecoder : Decoder PIFacet
 piFacetDecoder =
-  D.map6 PIFacet
-  (field "url" string)
-  (field "type" string)
-  (field "data" (field "title" string))
-  (field "data" (field "description" string))
-  (field "data" (field "address" string))
-  (D.maybe (field "data" (field "medias" string)))
-
+    D.map6 PIFacet
+        (field "url" string)
+        (field "type" string)
+        (field "data" (field "title" string))
+        (field "data" (field "description" string))
+        (field "data" (field "address" string))
+        (D.maybe (field "data" (field "medias" string)))

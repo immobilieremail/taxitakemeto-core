@@ -1,8 +1,9 @@
 module OverButton exposing (..)
 
+
 type OverButton
-  = CarouselPrevButton
-  | CarouselNextButton
+    = CarouselPrevButton
+    | CarouselNextButton
 
 
 

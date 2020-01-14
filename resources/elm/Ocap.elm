@@ -1,6 +1,6 @@
 module Ocap exposing (Ocap, OcapListFacet, ocapDecoder, ocapListFacetDecoder)
 
-import Json.Decode as D exposing (Decoder, map3, field, string, list)
+import Json.Decode as D exposing (Decoder, field, list, map3, string)
 import SwissNumber as SN
 
 
@@ -9,16 +9,16 @@ import SwissNumber as SN
 
 
 type alias Ocap =
-  { ocapType : String
-  , url : SN.SwissNumber
-  }
+    { ocapType : String
+    , url : SN.SwissNumber
+    }
 
 
 type alias OcapListFacet =
-  { swissNumber : SN.SwissNumber
-  , jsonType : String
-  , contents : List Ocap
-  }
+    { swissNumber : SN.SwissNumber
+    , jsonType : String
+    , contents : List Ocap
+    }
 
 
 
@@ -27,14 +27,14 @@ type alias OcapListFacet =
 
 ocapDecoder : Decoder Ocap
 ocapDecoder =
-  D.map2 Ocap
-  (field "ocapType" string)
-  (field "url" string)
+    D.map2 Ocap
+        (field "ocapType" string)
+        (field "url" string)
 
 
 ocapListFacetDecoder : Decoder OcapListFacet
 ocapListFacetDecoder =
-  D.map3 OcapListFacet
-  (field "url" string)
-  (field "type" string)
-  (field "contents" (D.list ocapDecoder))
+    D.map3 OcapListFacet
+        (field "url" string)
+        (field "type" string)
+        (field "contents" (D.list ocapDecoder))
