@@ -2,31 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Media;
+use App\Models\Media;
 use Illuminate\Http\Request;
+use App\Models\MediaEditFacet;
+use App\Models\MediaViewFacet;
+use App\Jobs\ConvertUploadedAudio;
+use App\Jobs\ConvertUploadedImage;
+use App\Jobs\ConvertUploadedVideo;
 
 class MediaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -35,51 +20,38 @@ class MediaController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        if ($request->has('media') == false) {
+            return response('Bad Request', 400);
+        }
+        elseif ($request->file('media') == null) {
+            return response('Unsupported Media Type', 415);
+        }
+        elseif (!in_array(substr($request->file('media')->getMimeType(), 0, 6), ['audio/', 'video/', 'image/'], true)) {
+            return response('Unsupported Media Type', 415);
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Media  $media
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Media $media)
-    {
-        //
-    }
+        $media_name = swissNumber() . '.' . $request->file('media')->extension();
+        $path = $request->file('media')->storeAs('', $media_name, 'uploads');
+        $mime_type = $request->file('media')->getMimeType();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Media  $media
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Media $media)
-    {
-        //
-    }
+        $media_type = [];
+        preg_match('#(^[a-z])\w+#', $mime_type, $media_type);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Media  $media
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Media $media)
-    {
-        //
-    }
+        $media = Media::create(['path' => $path, 'media_type' => $media_type[0]]);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Media  $media
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Media $media)
-    {
-        //
+        if ($media_type[0] == 'audio') {
+            $this->dispatch(new ConvertUploadedAudio($media));
+        }
+        elseif ($media_type[0] == 'video') {
+            $this->dispatch(new ConvertUploadedVideo($media));
+        }
+        elseif ($media_type[0] == 'image') {
+            $this->dispatch(new ConvertUploadedImage($media));
+        }
+        return response()->json([
+            'type' => 'ocap',
+            'ocapType' => 'MediaEditFacet',
+            'url' => route('obj.show', ['obj' => $media->editFacet->id])
+        ]);
     }
 }

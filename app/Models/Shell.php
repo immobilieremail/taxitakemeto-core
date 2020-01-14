@@ -1,66 +1,86 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class Shell extends Model
 {
+    /**
+     * Create Shell facets on boot
+     *
+     */
+    public static function boot()
+    {
+        parent::boot();
+
+        static::created(function (Shell $shell) {
+            $shell->userFacet()->save(new ShellUserFacet);
+            $shell->inviteFacet()->save(new ShellInviteFacet);
+            $shell->dropboxFacet()->save(new ShellDropboxFacet);
+        });
+    }
+
+    /**
+     * OcapList facets for Shell travel list
+     *
+     * @return [type] [description]
+     */
+    public function travelOcapListFacets()
+    {
+        return $this->belongsToMany(Facet::class, 'facet_shell_travel');
+    }
+
+    /**
+     * OcapList facets for Shell contact list
+     *
+     * @return [type] [description]
+     */
+    public function contactOcapListFacets()
+    {
+        return $this->belongsToMany(Facet::class, 'facet_shell_contact');
+    }
+
+    /**
+     * UserProfileFacet for Shell user
+     *
+     * @return [type] [description]
+     */
+    public function users()
+    {
+        return $this->belongsToMany(UserProfileFacet::class, 'facet_shell_user');
+    }
+
+    /**
+     * UserFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
     public function userFacet()
     {
-        return $this->HasOne(ShellUserFacet::class, 'id_shell', 'id');
+        return $this->hasOne(ShellUserFacet::class, 'target_id')
+                    ->where('type', 'App\Models\ShellUserFacet');
     }
 
+    /**
+     * DropboxFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
     public function dropboxFacet()
     {
-        return $this->HasOne(ShellDropboxFacet::class, 'id_shell', 'id');
+        return $this->hasOne(ShellDropboxFacet::class, 'target_id')
+                    ->where('type', 'App\Models\ShellDropboxFacet');
     }
 
-    public function audioListEdits()
+    /**
+     * InviteFacet for specific Shell
+     *
+     * @return [type] [description]
+     */
+    public function inviteFacet()
     {
-        return $this->morphedByMany('App\AudioListEditFacet', 'join_audio_list')->withPivot('pos');
-    }
-
-    public function audioListViews()
-    {
-        return $this->morphedByMany('App\AudioListViewFacet', 'join_audio_list')->withPivot('pos');
-    }
-
-    private function formatAudioListFacets($audiolist, $type)
-    {
-        $url = ($audiolist instanceof AudioListEditFacet) ?
-            'audiolist.edit' : 'audiolist.show';
-
-        return [
-            'type' => 'ocap',
-            'ocapType' => $type,
-            'url' => route($url, ['audiolist' => $audiolist->swiss_number])
-        ];
-    }
-
-    private function getAudioListFacets($audios, String $facet_type)
-    {
-        return array_map(function ($audio, $type) {
-            return $this->formatAudioListFacets($audio, $type);
-        }, $audios, array_fill(0, count($audios), $facet_type));
-    }
-
-    public function getAudioListViews()
-    {
-        $audios = $this->audioListViews->sortBy(function ($audio, $key) {
-            return $audio->pivot->pos;
-        })->values()->all();
-
-        return $this->getAudioListFacets($audios, "AudioListView");
-    }
-
-    public function getAudioListEdits()
-    {
-        $audios = $this->audioListEdits->sortBy(function ($audio, $key) {
-            return $audio->pivot->pos;
-        })->values()->all();
-
-        return $this->getAudioListFacets($audios, "AudioListEdit");
+        return $this->hasOne(ShellInviteFacet::class, 'target_id')
+                    ->where('type', 'App\Models\ShellInviteFacet');
     }
 }

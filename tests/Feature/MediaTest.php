@@ -9,44 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MediaTest extends TestCase
 {
-    /**
-     * @test
-     *
-     */
-    public function create_media()
-    {
-        $response = $this->post(route('media.store'), ['media' => fopen('/home/mohamed/Téléchargements/applause.wav', 'r')]);
-        $response
-            ->assertStatus(200)
-            ->assertJsonCount(3)
-            ->assertJsonStructure([
-                "type",
-                "ocapType",
-                "url"
-            ]);
-    }
-
-    /**
-     * @test
-     *
-     */
-    public function create_bad_media()
-    {
-        $response = $this->post(route('media.store'), ['media' => "('/home/mohamed/Téléchargements/applause.wav')"]);
-        $response
-            ->assertStatus(415);
-    }
-
-    /**
-     * @test
-     *
-     */
-    public function create_bad_request_media()
-    {
-        $response = $this->post(route('media.store'), ['string' => "('/home/mohamed/Téléchargements/applause.wav')"]);
-        $response
-            ->assertStatus(400);
-    }
+    use RefreshDatabase;
 
     /**
      * @test
@@ -55,12 +18,14 @@ class MediaTest extends TestCase
     public function view_media()
     {
         $media = factory(Media::class)->create();
-        $response = $this->get(route('media.show', ['medium' => $media->viewFacet->swiss_number]));
+        $response = $this->get(route('obj.show', ['obj' => $media->viewFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(2)
+            ->assertJsonCount(4)
             ->assertJsonStructure([
                 "type",
+                "url",
+                "media_type",
                 "path"
             ]);
     }
@@ -71,7 +36,7 @@ class MediaTest extends TestCase
      */
     public function bad_view_media()
     {
-        $response = $this->get(route('media.show', ['medium' => "nimportequoi"]));
+        $response = $this->get(route('obj.show', ['obj' => "nimportequoi"]));
         $response
             ->assertStatus(404);
     }
@@ -80,18 +45,19 @@ class MediaTest extends TestCase
      * @test
      *
      */
-    public function edit_media()
+    public function edit_facet_media()
     {
         $media = factory(Media::class)->create();
-        $response = $this->get(route('media.edit', ['medium' => $media->editFacet->swiss_number]));
+        $response = $this->get(route('obj.show', ['obj' => $media->editFacet->id]));
         $response
             ->assertStatus(200)
-            ->assertJsonCount(4)
+            ->assertJsonCount(5)
             ->assertJsonStructure([
                 "type",
+                "url",
                 "view_facet",
-                "path",
-                "delete"
+                "media_type",
+                "path"
             ]);
     }
 
@@ -99,9 +65,9 @@ class MediaTest extends TestCase
      * @test
      *
      */
-    public function bad_edit_media()
+    public function bad_edit_facet_media()
     {
-        $response = $this->get(route('media.edit', ['medium' => "dautrechoses"]));
+        $response = $this->get(route('obj.show', ['obj' => "dautreschoses"]));
         $response
             ->assertStatus(404);
     }
@@ -113,7 +79,7 @@ class MediaTest extends TestCase
     public function delete_media()
     {
         $media = factory(Media::class)->create();
-        $response = $this->delete(route('media.destroy', ['medium' => $media->editFacet->swiss_number]));
+        $response = $this->delete(route('obj.destroy', ['obj' => $media->editFacet->id]));
         $response
             ->assertStatus(204);
     }
@@ -122,9 +88,21 @@ class MediaTest extends TestCase
      * @test
      *
      */
+    public function delete_media_via_view_facet()
+    {
+        $media = factory(Media::class)->create();
+        $response = $this->delete(route('obj.destroy', ['obj' => $media->viewFacet->id]));
+        $response
+            ->assertStatus(405);
+    }
+
+    /**
+     * @test
+     *
+     */
     public function bad_delete_media()
     {
-        $response = $this->delete(route('media.destroy', ['medium' => "badbougieparfumee"]));
+        $response = $this->delete(route('obj.destroy', ['obj' => "badbougieparfumee"]));
         $response
             ->assertStatus(404);
     }

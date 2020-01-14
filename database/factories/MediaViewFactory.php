@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\MediaView;
+use App\Models\MediaViewFacet;
 use Faker\Generator as Faker;
 
-$factory->define(MediaView::class, function (Faker $faker) {
+$factory->define(MediaViewFacet::class, function (Faker $faker) {
     return [
         //
     ];

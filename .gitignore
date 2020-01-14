@@ -13,3 +13,7 @@ yarn-error.log
 .vscode/
 tmp/
 .env.testing
+/coverage
+/elm-stuff
+/public
+package-lock.json

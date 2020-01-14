@@ -2,10 +2,10 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Models\MediaEdit;
+use App\Models\MediaEditFacet;
 use Faker\Generator as Faker;
 
-$factory->define(MediaEdit::class, function (Faker $faker) {
+$factory->define(MediaEditFacet::class, function (Faker $faker) {
     return [
         //
     ];

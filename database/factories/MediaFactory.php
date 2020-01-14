@@ -3,21 +3,21 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Models\Media;
-use App\Models\MediaEdit;
-use App\Models\MediaView;
+use App\Models\MediaEditFacet;
+use App\Models\MediaViewFacet;
 use Faker\Generator as Faker;
 
 $factory->define(Media::class, function (Faker $faker) {
     return [
         'path' => $faker->url(),
-        'mimetype' => $faker->mimeType
+        'media_type' => $faker->randomElement($array = ['audio', 'video', 'image'])
     ];
 });
 
 $factory->afterCreating(Media::class, function ($media, $faker) {
-    $media->viewFacet()->save(factory(MediaView::class)->make());
+    $media->viewFacet()->save(factory(MediaViewFacet::class)->make());
 });
 
 $factory->afterCreating(Media::class, function ($media, $faker) {
-    $media->editFacet()->save(factory(MediaEdit::class)->make());
+    $media->editFacet()->save(factory(MediaEditFacet::class)->make());
 });

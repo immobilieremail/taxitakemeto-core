@@ -1,0 +1,193 @@
+@import '_bootstrapmix';
+
+@media only screen and (max-width:960px) {
+    /* browsers larger than 960px; */
+    $size: 1.1rem;
+    .resize-text {
+      font-size: $size;
+    }
+}
+
+@media only screen and (min-width:960px) {
+    /* browsers larger than 960px; */
+    $size: 1.5rem;
+    .resize-text {
+      font-size: $size;
+    }
+}
+
+@mixin carousel-button {
+    position: absolute;
+    top: 30%;
+    bottom: 30%;
+    height: 40%;
+}
+
+a {
+    text-decoration: none !important;
+    outline: currentcolor none medium !important;
+}
+
+h5 {
+    overflow-wrap: break-word !important;
+}
+
+.my-container {
+    max-width: 540px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+}
+
+.title {
+    @include text-center;
+    padding-top: 1.5rem !important;
+}
+
+.lightgrey-background {
+    @include rounded;
+    background: #f7f7f7;
+}
+
+.checked-pi {
+    @include rounded;
+    padding: .75rem 1.25rem;
+    background-color: rgba(0, 0, 0, .03);
+}
+
+.test {
+    border: solid #f7f7f7;
+    border-top: none;
+    padding: 0rem !important;
+    border-bottom-left-radius: .25rem !important;
+    border-bottom-right-radius: .25rem !important;
+}
+
+.card-button {
+    text-decoration: none !important;
+    white-space: normal;
+    // bootstrap .btn-block
+    display: block;
+    width: 100%;
+}
+
+.card-option {
+    border: none !important;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.user-accordion-body-padding {
+    padding-left: 0px !important;
+    padding-top: .5rem !important;
+}
+
+.accordion-header {
+    border-bottom: none !important;
+}
+
+.little-image {
+    @include img-fluid;
+    max-width: 70px !important;
+}
+
+.icon-image {
+    @include img-fluid;
+    max-width: 20px !important;
+}
+
+.pi-view-button {
+    @include rounded;
+    @include img-fluid;
+    padding-left: 1rem !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    width: 60px;
+}
+
+.carousel-button-prev {
+    @include carousel-button;
+    left: 0;
+}
+
+.carousel-button-next {
+    @include carousel-button;
+    right: 0;
+}
+
+.navbar-icon {
+    @include rounded;
+    display: inline-block !important;
+    // bootstrap .img-thumbnails
+    vertical-align: middle;
+    border-style: none;
+    width: 60px;
+}
+
+.travel-header {
+    @include rounded;
+    padding: .75rem !important;
+    margin-bottom: .75rem !important;
+    background-color: rgba(0, 0, 0, .03);
+    border-bottom: none;
+}
+
+.travel-body {
+    @include row;
+    @include py-3;
+    @include rounded;
+    background-color: rgb(238, 238, 236);
+    align-items: center !important;
+}
+
+.pi-type {
+    min-width: 50px;
+    margin-top: .5rem !important;
+}
+
+.pi-type-icon {
+    @include rounded;
+    // bootstrap .d-block
+    display: block !important;
+    width: 30px;
+}
+
+.pi-tag {
+    width: 120px;
+    height: 30px;
+}
+
+.pi-tags {
+    @include py-3;
+    @include d-flex;
+    @include rounded;
+    @include text-center;
+    -ms-flex-pack: distribute !important;
+    justify-content: space-around !important;
+}
+
+.streamer-image {
+    @include rounded;
+    max-width: 100%;
+}
+
+.proposals {
+    @include text-center;
+    margin-left: 5%;
+    margin-right: 5%;
+    max-width: 90%;
+}
+
+.audio-size {
+    width: 100%;
+    max-width: 300px;
+}
+
+.profile-label {
+    margin: 0px !important;
+    font-weight: bold;
+}
+
+.little-text {
+    font-size: 12px !important;
+    color: #6c757d !important;
+}

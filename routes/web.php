@@ -11,5 +11,6 @@
 |
 */
 
-Route::get('/elm', function (){
-    return view('elm');});
+Route::get('{any}', function () {
+    return view('elm');
+})->name('home')->where('any', '.*');
