@@ -15,6 +15,13 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+The databases must be created. With PostgreSQL:
+
+```
+bin/setup-local-pgsql
+```
+
+
 # Running
 
 You start the application with:

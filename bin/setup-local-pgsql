@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. .env
+
+(cd /; sudo -u postgres psql -c "DROP USER IF EXISTS $DB_USERNAME; CREATE USER $DB_USERNAME WITH CREATEDB PASSWORD '$DB_PASSWORD';");
+
+export PGPASSWORD=$DB_PASSWORD;
+psql -h $DB_HOST -p $DB_PORT -U $DB_USERNAME -d postgres -c "CREATE DATABASE \"$DB_DATABASE\";";
