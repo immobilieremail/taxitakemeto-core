@@ -27,7 +27,7 @@ bin/setup-local-pgsql
 You start the application with:
 
 ```
-php artisan serve    
+php artisan serve
 npm run watch
 
 ```
