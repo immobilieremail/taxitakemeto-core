@@ -7,52 +7,31 @@ use Illuminate\Http\Request;
 
 class FacetController extends Controller
 {
-    public function index()
+    /**
+     * Respond to GET
+     *
+     * @param String $facet
+     * @return void
+     */
+    public function show(String $facet, Request $request)
     {
-        //
+        return Facet::findOrFail($facet)->show($request);
     }
 
     /**
-     * Undocumented function
+     * Respond to POST
+     *
      * @param String $facet
      * @param Request $request
      * @return void
      */
     public function store(String $facet, Request $request)
     {
-        $facet_obj = Facet::findOrFail($facet);
-
-        if ($facet_obj->has_access('store') == true) {
-            $result = $facet_obj->post_data($request);
-            if ($result === false) {
-                return response('Bad Request', 400);
-            } else {
-                return response()->json($result);
-            }
-        } else {
-            return response('Method Not Allowed', 405);
-        }
+        return Facet::findOrFail($facet)->store($request);
     }
 
     /**
-     * Undocumented function
-     *
-     * @param String $facet
-     * @return void
-     */
-    public function show(String $facet)
-    {
-        $facet_obj = Facet::findOrFail($facet);
-
-        if ($facet_obj->has_access('show') == true) {
-            return response()->json($facet_obj->description());
-        } else {
-            return response('Method Not Allowed', 405);
-        }
-    }
-
-    /**
-     * Undocumented function
+     * Respond to PUT/PATCH
      *
      * @param String $facet
      * @param Request $request
@@ -60,34 +39,17 @@ class FacetController extends Controller
      */
     public function update(String $facet, Request $request)
     {
-        $facet_obj = Facet::findOrFail($facet);
-
-        if($facet_obj->has_access('update') == true) {
-            if ($facet_obj->updateTarget($request) == true) {
-                return response('No Content', 204);
-            } else {
-                return response('Bad Request', 400);
-            }
-        } else {
-            return response('Method Not Allowed', 405);
-        }
+        return Facet::findOrFail($facet)->httpUpdate($request);
     }
 
     /**
-     * Undocumented function
+     * Respond to DESTROY
      *
      * @param String $facet
      * @return void
      */
     public function destroy(String $facet)
     {
-        $facet_obj = Facet::findOrFail($facet);
-
-        if ($facet_obj->has_access('destroy') == true) {
-            $facet_obj->destroyTarget();
-            return response('', 204);
-        } else {
-            return response('Method Not Allowed', 405);
-        }
+        return Facet::findOrFail($facet)->httpDestroy();
     }
 }
