@@ -8,19 +8,28 @@ composer install
 npm install
 ```
 
-And then initialize config:
+And then initialize configs:
 
 ```
 cp .env.example .env
 php artisan key:generate
+
+cp .env.testing.example .env.testing
 ```
+
+The databases must be created. With PostgreSQL:
+
+```
+bin/setup-local-pgsql
+```
+
 
 # Running
 
 You start the application with:
 
 ```
-php artisan serve    
+php artisan serve
 npm run watch
 
 ```
