@@ -8,11 +8,13 @@ composer install
 npm install
 ```
 
-And then initialize config:
+And then initialize configs:
 
 ```
 cp .env.example .env
 php artisan key:generate
+
+cp .env.testing.example .env.testing
 ```
 
 The databases must be created. With PostgreSQL:
