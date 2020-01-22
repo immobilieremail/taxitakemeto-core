@@ -112,6 +112,21 @@ class Facet extends Model
         return new JsonResponse($jsonData, $status, [], 0);
     }
 
+    /**
+     * Common simple responses
+     */
+
+    public function noContent() {
+        return $this->response('', 204);
+    }
+
+    public function badRequest() {
+        return $this->response('Bad request', 400);
+    }
+
+    public function serverError() {
+        return $this->response('Server error', 500);
+    }
 
     public function recipients()
     {

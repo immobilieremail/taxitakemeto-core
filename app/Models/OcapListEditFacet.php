@@ -8,14 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class OcapListEditFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show', 'update', 'destroy'
-    ];
-
-    /**
      * Inverse relation of EditFacet for specific ocaplist
      *
      * @return [type] [description]
@@ -25,7 +17,7 @@ class OcapListEditFacet extends Facet
         return $this->belongsTo(OcapList::class);
     }
 
-    public function description()
+    public function show()
     {
         $facetList = $this->target->contents;
         $collection = $facetList->map(function ($facet) {
@@ -38,25 +30,18 @@ class OcapListEditFacet extends Facet
                 'url' => route('obj.show', ['obj' => $facet->id])
             ];
         });
-        return [
+        return $this->jsonResponse([
             'type' => 'OcapListEditFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'contents' => $collection->toArray()
-        ];
+        ]);
     }
 
-    public function destroyTarget()
-    {
-        $this->target->viewFacet->delete();
-        $this->target->delete();
-        $this->delete();
-    }
-
-    public function updateTarget(Request $request)
+    public function httpUpdate(Request $request)
     {
         if (!isset($request["ocaps"]) || !is_array($request["ocaps"])) {
-            return false;
+            return $this->badRequest();
         }
 
         $ocapCollection = collect($request["ocaps"])->map(function ($ocap) {
@@ -64,11 +49,21 @@ class OcapListEditFacet extends Facet
         });
 
         if ($ocapCollection->search(null) !== false) {
-            return false;
+            return $this->badRequest();
         } else {
             $this->target->contents()->detach();
             $this->target->contents()->saveMany($ocapCollection);
-            return true;
+            return $this->noContent();
         }
     }
+
+    public function httpDestroy() {
+        return $this->deleteEverything();
+    }
+
+    public function deleteDependentFacets()
+    {
+        $this->target->viewFacet->delete();
+    }
+
 }
