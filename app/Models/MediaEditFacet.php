@@ -28,11 +28,12 @@ class MediaEditFacet extends Facet
         ]);
     }
 
-    public function httpDestroy()
+    public function httpDestroy() {
+        return $this->deleteEverything();
+    }
+
+    public function deleteDependentFacets()
     {
         $this->target->viewFacet->delete();
-        $this->target->delete();
-        $this->delete();
-        return $this->response('', 204);
     }
 }
