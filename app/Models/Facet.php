@@ -82,6 +82,27 @@ class Facet extends Model
     }
 
 
+    /**
+     * Delete the target and all dependent facets
+     *
+     * This is not called by default.
+     */
+    public function deleteEverything() {
+        $this->deleteDependentFacets();
+        $this->target->delete();
+        $this->delete();
+        return $this->response('', 204);
+    }
+
+    /**
+     * Delete dependent facets
+     *
+     * By default, this does nothing but can be overloaded.
+     */
+    public function deleteDependentFacets() {
+    }
+
+
     public function response($content, $status = 200) {
         return new Response($content, $status, []);
     }
