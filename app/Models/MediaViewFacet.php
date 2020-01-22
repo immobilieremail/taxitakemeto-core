@@ -8,14 +8,6 @@ use Illuminate\Support\Facades\Storage;
 class MediaViewFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show'
-    ];
-
-    /**
      * Inverse relation of ViewFacet for specific media
      *
      * @return [type] [description]
@@ -25,13 +17,13 @@ class MediaViewFacet extends Facet
         return $this->belongsTo(Media::class);
     }
 
-    public function description()
+    public function show()
     {
-        return [
+        return $this->jsonResponse([
             'type' => 'MediaViewFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'media_type' => $this->target->media_type,
             'path' => Storage::disk('converts')->url($this->target->path)
-        ];
+        ]);
     }
 }

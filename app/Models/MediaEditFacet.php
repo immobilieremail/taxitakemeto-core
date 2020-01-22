@@ -8,14 +8,6 @@ use Illuminate\Support\Facades\Storage;
 class MediaEditFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show', 'destroy'
-    ];
-
-    /**
      * Inverse relation of EditFacet for specific media
      *
      * @return [type] [description]
@@ -25,21 +17,22 @@ class MediaEditFacet extends Facet
         return $this->belongsTo(Media::class);
     }
 
-    public function description()
+    public function show()
     {
-        return [
+        return $this->jsonResponse([
             'type' => 'MediaEditFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
             'media_type' => $this->target->media_type,
             'path' => Storage::disk('converts')->url($this->target->path)
-        ];
+        ]);
     }
 
-    public function destroyTarget()
+    public function httpDestroy()
     {
         $this->target->viewFacet->delete();
         $this->target->delete();
         $this->delete();
+        return $this->response('', 204);
     }
 }
