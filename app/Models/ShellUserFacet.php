@@ -24,14 +24,14 @@ class ShellUserFacet extends Facet
         return $this->belongsTo(Shell::class);
     }
 
-    public function description()
+    public function show()
     {
         $userFacet = $this->target->users->first();
         $travelListFacet = $this->target->travelOcapListFacets->first();
         $contactListFacet = $this->target->contactOcapListFacets->first();
         $sender = $this->target->dropboxFacet->sender();
 
-        return [
+        return $this->jsonResponse([
             'type' => 'ShellUserFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
@@ -51,7 +51,7 @@ class ShellUserFacet extends Facet
                 'sender' => ($sender != null)
                     ? route('obj.show', ['obj' => $sender->id]) : null
             ]
-        ];
+        ]);
     }
 
     private function processRequest(Request $request) : array
@@ -73,7 +73,7 @@ class ShellUserFacet extends Facet
         return $tested_data;
     }
 
-    public function updateTarget(Request $request)
+    public function httpUpdate(Request $request)
     {
         $tested_data = $this->processRequest($request);
         $updatables = [
@@ -88,6 +88,6 @@ class ShellUserFacet extends Facet
             $updatables[$i]->detach();
             $updatables[$i]->save($facet);
         }
-        return !empty($tested_data);
+        return empty($tested_data) ? $this->badRequest() : $this->noContent();
     }
 }
