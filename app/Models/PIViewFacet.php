@@ -7,14 +7,6 @@ use Illuminate\Http\Request;
 class PIViewFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show'
-    ];
-
-    /**
      * Inverse relation of ViewFacet for specific PI
      *
      * @return [type] [description]
@@ -24,11 +16,11 @@ class PIViewFacet extends Facet
         return $this->belongsTo(PI::class);
     }
 
-    public function description()
+    public function show()
     {
         $ocapListFacet = $this->target->mediaOcapListFacets->first();
 
-        return [
+        return $this->jsonResponse([
             'type' => 'PIViewFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
@@ -38,6 +30,6 @@ class PIViewFacet extends Facet
                 'medias' => ($ocapListFacet != null)
                     ? route('obj.show', ['obj' => $ocapListFacet->target->viewFacet->id]) : null
             ]
-        ];
+        ]);
     }
 }

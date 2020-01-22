@@ -7,14 +7,6 @@ use Illuminate\Http\Request;
 class PIEditFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show', 'update', 'destroy'
-    ];
-
-    /**
      * Inverse relation of EditFacet for specific PI
      *
      * @return [type] [description]
@@ -24,11 +16,11 @@ class PIEditFacet extends Facet
         return $this->belongsTo(PI::class);
     }
 
-    public function description()
+    public function show()
     {
         $ocapListFacet = $this->target->mediaOcapListFacets->first();
 
-        return [
+        return $this->jsonResponse([
             'type' => 'PIEditFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
@@ -39,19 +31,12 @@ class PIEditFacet extends Facet
                 'medias' => ($ocapListFacet != null)
                     ? route('obj.show', ['obj' => $ocapListFacet->id]) : null
             ]
-        ];
+        ]);
     }
 
-    public function destroyTarget()
+    public function httpUpdate(Request $request)
     {
-        $this->target->viewFacet->delete();
-        $this->target->delete();
-        $this->delete();
-    }
-
-    public function updateTarget(Request $request)
-    {
-        $ret_v = false;
+        $success = false;
         $new_data = intersectFields(['title', 'description', 'address'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
             $tests = [
@@ -66,21 +51,30 @@ class PIEditFacet extends Facet
         if ($request->has('medias') && is_string($request->medias)) {
             $listFacet = Facet::find(getSwissNumberFromUrl($request->medias));
             if ($listFacet == null) {
-                return false;
+                return $this->badRequest();
             } else {
                 $this->target->mediaOcapListFacets()->detach();
                 $this->target->mediaOcapListFacets()->save($listFacet);
-                $ret_v = true;
+                $success = true;
             }
         }
 
-        if (empty($tested_data) && !$ret_v) {
-            return false;
+        if (empty($tested_data) && !$success) {
+            return $this->badRequest();
         } else {
             $this->target->update($tested_data);
-            $ret_v = true;
+            $success = true;
         }
 
-        return $ret_v;
+        return $success ? $this->noContent() : $this->badRequest();
+    }
+
+    public function httpDestroy()
+    {
+        return $this->deleteEverything();
+    }
+
+    public function deleteDependentFacets() {
+        $this->target->viewFacet->delete();
     }
 }
