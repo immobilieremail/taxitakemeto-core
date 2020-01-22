@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use MannikJ\Laravel\SingleTableInheritance\Traits\SingleTableInheritance;
@@ -69,11 +70,11 @@ class Facet extends Model
         return $this->response('Method Not Allowed', 405);
     }
 
-    public function store() {
+    public function store(Request $request) {
         return $this->response('Method Not Allowed', 405);
     }
 
-    public function httpUpdate() {
+    public function httpUpdate(Request $request) {
         return $this->response('Method Not Allowed', 405);
     }
 
