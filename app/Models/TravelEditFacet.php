@@ -7,14 +7,6 @@ use Illuminate\Http\Request;
 class TravelEditFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show', 'update', 'destroy'
-    ];
-
-    /**
      * Inverse relation of EditFacet for specific travel
      *
      * @return [type] [description]
@@ -24,11 +16,11 @@ class TravelEditFacet extends Facet
         return $this->belongsTo(Travel::class);
     }
 
-    public function description()
+    public function show()
     {
         $ocapListFacet = $this->target->piOcapListFacets->first();
 
-        return [
+        return $this->jsonResponse([
             'type' => 'TravelEditFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'view_facet' => route('obj.show', ['obj' => $this->target->viewFacet->id]),
@@ -37,17 +29,10 @@ class TravelEditFacet extends Facet
                 'pis' => ($ocapListFacet != null)
                     ? route('obj.show', ['obj' => $ocapListFacet->id]) : null
             ]
-        ];
+        ]);
     }
 
-    public function destroyTarget()
-    {
-        $this->target->viewFacet->delete();
-        $this->target->delete();
-        $this->delete();
-    }
-
-    public function updateTarget(Request $request)
+    public function httpUpdate(Request $request)
     {
         $new_data = intersectFields(['title', 'pis'], $request->all());
         $tested_data = array_filter($new_data, function ($value, $key) {
@@ -60,7 +45,7 @@ class TravelEditFacet extends Facet
             return $tests[$key];
         }, ARRAY_FILTER_USE_BOTH);
 
-        if ($new_data != $tested_data) return false;
+        if ($new_data != $tested_data) return $this->badRequest();
 
         if (array_key_exists('title', $tested_data)) {
             $this->target->update(['title' => $request->title]);
@@ -72,6 +57,16 @@ class TravelEditFacet extends Facet
                 Facet::find(getSwissNumberFromUrl($request->pis))
             );
         }
-        return true;
+        return $this->noContent();
+    }
+
+    public function httpDestroy()
+    {
+        return $this->deleteEverything();
+    }
+
+    public function deleteDependentFacets() 
+    {
+        $this->target->viewFacet->delete();
     }
 }
