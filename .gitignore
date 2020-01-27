@@ -5,6 +5,7 @@
 /vendor
 .env
 .phpunit.result.cache
+.vscode/
 Homestead.json
 Homestead.yaml
 npm-debug.log
@@ -12,3 +13,7 @@ yarn-error.log
 .vscode/
 tmp/
 .env.testing
+/coverage
+/elm-stuff
+/public
+package-lock.json

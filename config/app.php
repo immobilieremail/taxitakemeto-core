@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://localhost:8000'),
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -89,6 +89,10 @@ return [
     */
 
     'locale' => 'en',
+        'languages' => [
+            'en' => 'English',
+            'fr' => 'Français',
+        ],
 
     /*
     |--------------------------------------------------------------------------
@@ -173,6 +177,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Spatie\Glide\GlideServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -182,6 +187,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+
+        Collective\Html\HtmlServiceProvider::class,
+        Pbmedia\LaravelFFMpeg\FFMpegServiceProvider::class,
 
     ],
 
@@ -234,7 +242,10 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
+        'FFMpeg' => Pbmedia\LaravelFFMpeg\FFMpegFacade::class,
+        'GlideImage' => Spatie\Glide\GlideImageFacade::class,
     ],
 
 ];

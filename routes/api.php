@@ -13,6 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('media', 'MediaController@store')->name('media.store');
+Route::post('list', 'OcapListController@store')->name('list.store');
+Route::post('pi', 'PIController@store')->name('pi.store');
+Route::post('travel', 'TravelController@store')->name('travel.store');
+Route::post('shell', 'ShellController@store')->name('shell.store');
+Route::post('user', 'UserController@store')->name('user.store');
+
+Route::apiResource('obj', 'FacetController')->except('store');
+Route::post('obj/{obj}', 'FacetController@store')->name('obj.store');
+

@@ -1,5 +1,43 @@
-Taxi Take Me To
-==============
+# Setup
+
+After first checkout, you need to install dependencies:
+
+```
+composer install
+
+npm install
+```
+
+And then initialize configs:
+
+```
+cp .env.example .env
+php artisan key:generate
+
+cp .env.testing.example .env.testing
+```
+
+The databases must be created. With PostgreSQL:
+
+```
+bin/setup-local-pgsql
+```
+
+
+# Running
+
+You start the application with:
+
+```
+php artisan serve
+npm run watch
+
+```
+
+
+# Laravel
+
+<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 Setup development environment
 --------

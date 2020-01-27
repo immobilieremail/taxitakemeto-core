@@ -11,19 +11,6 @@
 |
 */
 
-Route::get('/', 'IndexController@index');
-
-Route::resource('upload-audio', 'UploadAudioController');
-
-Route::resource('list-audio', 'ListAudioController');
-
-
-/*
-|--------------------------------------------------------------------------
-| Setup Language via session
-|--------------------------------------------------------------------------
-*/
-Route::get('/language/{lang}', 'IndexController@language')->name('language');
-Auth::routes(['verify' => true]);
-
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('{any}', function () {
+    return view('elm');
+})->name('home')->where('any', '.*');

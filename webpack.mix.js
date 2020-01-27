@@ -11,5 +11,19 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js')
+mix.webpackConfig( {
+    module: {
+	rules: [{
+	    test: /\.elm$/,
+	    exclude: [/elm-stuff/, /node_modules/],
+	    use: {
+		loader: 'elm-webpack-loader',
+            options: {
+                debug: true
+            },
+	    }
+	}]
+    }
+})
+    .js('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css');
