@@ -6,14 +6,6 @@ use Illuminate\Http\Request;
 
 class UserProfileFacet extends Facet
 {
-     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'show', 'update'
-    ];
-
     /**
      * Inverse relation of ProfileFacet for specific user
      *
@@ -24,9 +16,9 @@ class UserProfileFacet extends Facet
         return $this->belongsTo(User::class);
     }
 
-    public function description()
+    public function show()
     {
-        return [
+        return $this->jsonResponse([
             'type' => 'UserProfileFacet',
             'url' => route('obj.show', ['obj' => $this->id]),
             'data' => [
@@ -35,10 +27,10 @@ class UserProfileFacet extends Facet
                 'phone' => $this->target->phone,
                 'password' => $this->target->password
             ]
-        ];
+        ]);
     }
 
-    public function updateTarget(Request $request)
+    public function httpUpdate(Request $request)
     {
         $allowed = ['name', 'email', 'phone', 'password'];
         $new_data = intersectFields($allowed, $request->all());
@@ -54,6 +46,6 @@ class UserProfileFacet extends Facet
         }, ARRAY_FILTER_USE_BOTH);
 
         $this->target->update($tested_data);
-        return !empty($tested_data);
+        return empty($tested_data) ? $this->badRequest() : $this->noContent();
     }
 }
