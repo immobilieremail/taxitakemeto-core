@@ -20,9 +20,9 @@ $factory->afterCreating(Shell::class, function ($shell, $faker) {
 });
 
 $factory->afterCreating(Shell::class, function ($shell, $faker) {
-    $shell->dropboxFacet()->save(factory(ShellInviteFacet::class)->make());
+    $shell->dropboxFacets()->save(factory(ShellInviteFacet::class)->make());
 });
 
 $factory->afterCreating(Shell::class, function ($shell, $faker) {
-    $shell->dropboxFacet()->save(factory(ShellDropboxFacet::class)->make());
+    $shell->dropboxFacets()->save(factory(ShellDropboxFacet::class)->make());
 });

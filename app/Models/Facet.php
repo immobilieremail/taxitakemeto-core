@@ -53,6 +53,7 @@ class Facet extends Model
      */
     public function __construct(array $attributes = array())
     {
+        parent::__construct($attributes);
         $this->ensureTypeCharacteristics();
         $this->setSwissNumber();
     }

@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ShellDropboxFacet;
+
 
 class Shell extends Model
 {
+    const DEFAULT_DROPBOX_PETNAME = '__public';
+
     /**
      * Create Shell facets on boot
      *
@@ -17,7 +21,7 @@ class Shell extends Model
         static::created(function (Shell $shell) {
             $shell->userFacet()->save(new ShellUserFacet);
             $shell->inviteFacet()->save(new ShellInviteFacet);
-            $shell->dropboxFacet()->save(new ShellDropboxFacet);
+            $shell->dropboxFacets()->save(new ShellDropboxFacet(['petname' => self::DEFAULT_DROPBOX_PETNAME]));
         });
     }
 
@@ -67,10 +71,15 @@ class Shell extends Model
      *
      * @return [type] [description]
      */
-    public function dropboxFacet()
+    public function dropboxFacets()
     {
-        return $this->hasOne(ShellDropboxFacet::class, 'target_id')
+        return $this->hasMany(ShellDropboxFacet::class, 'target_id')
                     ->where('type', 'App\Models\ShellDropboxFacet');
+    }
+
+    public function getDropbox($petname = self::DEFAULT_DROPBOX_PETNAME)
+    {
+        return $this->dropboxFacets()->where('petname', $petname)->first();
     }
 
     /**

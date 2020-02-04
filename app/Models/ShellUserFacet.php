@@ -29,7 +29,7 @@ class ShellUserFacet extends Facet
         $userFacet = $this->target->users->first();
         $travelListFacet = $this->target->travelOcapListFacets->first();
         $contactListFacet = $this->target->contactOcapListFacets->first();
-        $sender = $this->target->dropboxFacet->sender();
+        $sender = $this->target->getDropbox()->sender();
 
         return $this->jsonResponse([
             'type' => 'ShellUserFacet',
@@ -41,9 +41,9 @@ class ShellUserFacet extends Facet
                     ? route('obj.show', ['obj' => $travelListFacet->id]) : null,
                 'contacts' => ($contactListFacet != null)
                     ? route('obj.show', ['obj' => $contactListFacet->id]) : null,
-                'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id]),
+                'dropbox' => route('obj.show', ['obj' => $this->target->getDropbox()->id]),
                 'invitation' => route('obj.show', ['obj' => $this->target->inviteFacet->id]),
-                'recipients' => $this->target->dropboxFacet->recipients()->map(
+                'recipients' => $this->target->getDropbox()->recipients()->map(
                     function ($recipientDropbox) {
                         return route('obj.show', ['obj' => $recipientDropbox->id]);
                     }

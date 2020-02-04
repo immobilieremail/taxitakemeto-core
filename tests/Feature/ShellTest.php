@@ -161,7 +161,7 @@ class ShellTest extends TestCase
             'travels' => route('obj.show', ['obj' => $ocaplist->editFacet->id])
         ];
 
-        $response = $this->put(route('obj.update', ['obj' => $shell->dropboxFacet->id]), $request);
+        $response = $this->put(route('obj.update', ['obj' => $shell->getDropbox()->id]), $request);
         $response
             ->assertStatus(405);
     }
@@ -228,7 +228,7 @@ class ShellTest extends TestCase
             'contacts' => route('obj.show', ['obj' => $ocaplist->editFacet->id])
         ];
 
-        $response = $this->put(route('obj.update', ['obj' => $shell->dropboxFacet->id]), $request);
+        $response = $this->put(route('obj.update', ['obj' => $shell->getDropbox()->id]), $request);
         $response
             ->assertStatus(405);
     }

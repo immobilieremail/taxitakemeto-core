@@ -14,6 +14,8 @@ class ShellDropboxFacet extends Facet
         'show'
     ];
 
+    protected $fillable = [ 'petname' ];
+
     /**
      * Inverse relation of DropboxFacet for specific Shell
      *
