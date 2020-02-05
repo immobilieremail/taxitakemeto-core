@@ -21,7 +21,7 @@ class ShellInviteFacet extends Facet
         return $this->target->inviteNewUser();
     }
 
-    public function description(): array
+    public function show(): array
     {
         $userFacet = $this->target->users->first();
 
