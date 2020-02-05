@@ -305,6 +305,6 @@ class ShellTest extends TestCase
         $response = $this->post(route('obj.store', ['obj' => $sender_shell->inviteFacet->id]));
 
         $this->assertTrue($counter->hasDiff(Shell::class, 2));
-        $this->assertTrue($facets->hasDiff('App\Models\ShellDropboxFacet', 2)); // one in sender, one in new shell
+        $this->assertTrue($facets->hasDiff('App\Models\ShellDropboxFacet', 3)); // two in sender, one in new shell
     }
 }
