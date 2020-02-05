@@ -28,8 +28,8 @@ class ShellInviteFacet extends Facet
     {
         $new_shell = Shell::create();
 
-        $this->target->dropboxFacet->sent_invitations()->save(
-            Invitation::make(['recipient' => $new_shell->dropboxFacet->id])
+        $this->target->getDropbox()->sent_invitations()->save(
+            Invitation::make(['recipient' => $new_shell->getDropbox()->id])
         );
 
         if ($new_shell->exists()) {

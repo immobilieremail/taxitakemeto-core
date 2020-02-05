@@ -13,6 +13,7 @@ use App\Models\OcapList;
 use App\Models\User;
 use App\Models\Invitation;
 use App\Models\DatabaseCounter;
+use App\Models\FacetCounter;
 
 class ShellTest extends TestCase
 {
@@ -297,15 +298,13 @@ class ShellTest extends TestCase
     public function create_invitation()
     {
         $counter = new DatabaseCounter(Shell::class, Invitation::class);
+        $facets = new FacetCounter('App\Models\ShellDropboxFacet');
 
         $sender_shell = factory(Shell::class)->create();
-        $dropboxCounter = new DatabaseCounter(ShellDropboxFacet::class);
-
         $result = $sender_shell->inviteFacet->create_invitation();
 
         $this->assertTrue($result !== false);
         $this->assertTrue($counter->hasDiff(Shell::class, 2));
-        $this->assertTrue($counter->hasDiff(Invitation::class, 1));
-        $this->assertTrue($dropboxCounter->hasDiff(ShellDropboxFacet::class, 1));
+        $this->assertTrue($facets->hasDiff('App\Models\ShellDropboxFacet', 2)); // one in sender, one in new shell
     }
 }

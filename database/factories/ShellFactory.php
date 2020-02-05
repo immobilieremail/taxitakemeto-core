@@ -14,15 +14,3 @@ $factory->define(Shell::class, function (Faker $faker) {
         //
     ];
 });
-
-$factory->afterCreating(Shell::class, function ($shell, $faker) {
-    $shell->userFacet()->save(factory(ShellUserFacet::class)->make());
-});
-
-$factory->afterCreating(Shell::class, function ($shell, $faker) {
-    $shell->dropboxFacets()->save(factory(ShellInviteFacet::class)->make());
-});
-
-$factory->afterCreating(Shell::class, function ($shell, $faker) {
-    $shell->dropboxFacets()->save(factory(ShellDropboxFacet::class)->make());
-});
