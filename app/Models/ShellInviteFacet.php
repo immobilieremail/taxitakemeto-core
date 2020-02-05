@@ -24,24 +24,9 @@ class ShellInviteFacet extends Facet
         return $this->belongsTo(Shell::class);
     }
 
-    public function create_invitation()
-    {
-        $new_shell = Shell::create();
-
-        $this->target->getDropbox()->sent_invitations()->save(
-            Invitation::make(['recipient' => $new_shell->getDropbox()->id])
-        );
-
-        if ($new_shell->exists()) {
-            return [];
-        } else {
-            return false;
-        }
-    }
-
     public function post_data(Request $request): array
     {
-        return $this->create_invitation();
+        return $this->target->inviteNewUser();
     }
 
     public function description(): array
@@ -54,7 +39,7 @@ class ShellInviteFacet extends Facet
             'data' => [
                 'name' => ($userFacet != null)
                     ? $userFacet->target->name : null,
-                'dropbox' => route('obj.show', ['obj' => $this->target->dropboxFacet->id])
+                'dropbox' => route('obj.show', ['obj' => $this->target->getDropbox()->id])
             ]
         ];
     }

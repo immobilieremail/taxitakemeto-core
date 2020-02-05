@@ -297,11 +297,12 @@ class ShellTest extends TestCase
      */
     public function create_invitation()
     {
-        $counter = new DatabaseCounter(Shell::class, Invitation::class);
+        $counter = new DatabaseCounter(Shell::class);
         $facets = new FacetCounter('App\Models\ShellDropboxFacet');
 
         $sender_shell = factory(Shell::class)->create();
-        $result = $sender_shell->inviteFacet->create_invitation();
+
+        $result = $sender_shell->inviteNewUser();
 
         $this->assertTrue($result !== false);
         $this->assertTrue($counter->hasDiff(Shell::class, 2));

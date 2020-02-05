@@ -92,4 +92,15 @@ class Shell extends Model
         return $this->hasOne(ShellInviteFacet::class, 'target_id')
                     ->where('type', 'App\Models\ShellInviteFacet');
     }
+
+    public function inviteNewUser()
+    {
+            $new_shell = Shell::create();
+
+            if ($new_shell->exists()) {
+                return [];
+            } else {
+                return false;
+            }
+    }
 }
