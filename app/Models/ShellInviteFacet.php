@@ -7,14 +7,6 @@ use Illuminate\Http\Request;
 class ShellInviteFacet extends Facet
 {
     /**
-     * Facet method permissions
-     * @var array
-     */
-    protected $permissions      = [
-        'store', 'show'
-    ];
-
-    /**
      * Inverse relation of InviteFacet for specific Shell
      *
      * @return [type] [description]
@@ -24,7 +16,7 @@ class ShellInviteFacet extends Facet
         return $this->belongsTo(Shell::class);
     }
 
-    public function post_data(Request $request): array
+    public function store(Request $request): array
     {
         return $this->target->inviteNewUser();
     }
