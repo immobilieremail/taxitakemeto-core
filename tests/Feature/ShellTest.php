@@ -297,14 +297,17 @@ class ShellTest extends TestCase
      */
     public function create_invitation()
     {
+        $invitee = 'foo';
         $counter = new DatabaseCounter(Shell::class);
         $facets = new FacetCounter('App\Models\ShellDropboxFacet');
 
         $sender_shell = factory(Shell::class)->create();
 
-        $response = $this->post(route('obj.store', ['obj' => $sender_shell->inviteFacet->id]));
+        $request = [ 'petname' => $invitee ];
+        $response = $this->post(route('obj.store', ['obj' => $sender_shell->inviteFacet->id]), $request);
 
         $this->assertTrue($counter->hasDiff(Shell::class, 2));
         $this->assertTrue($facets->hasDiff('App\Models\ShellDropboxFacet', 3)); // two in sender, one in new shell
+        $this->assertNotNull($sender_shell->getDropbox($invitee));
     }
 }
