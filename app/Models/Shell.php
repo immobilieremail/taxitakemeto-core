@@ -93,10 +93,10 @@ class Shell extends Model
                     ->where('type', 'App\Models\ShellInviteFacet');
     }
 
-    public function inviteNewUser()
+    public function inviteNewUser($petname)
     {
             $new_shell = Shell::create();
-            $this->dropboxFacets()->save(new ShellDropboxFacet);
+            $this->dropboxFacets()->save(new ShellDropboxFacet(['petname' => $petname]));
 
             if ($new_shell->exists()) {
                 return [];

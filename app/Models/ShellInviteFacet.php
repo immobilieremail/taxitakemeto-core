@@ -18,7 +18,7 @@ class ShellInviteFacet extends Facet
 
     public function store(Request $request): array
     {
-        return $this->target->inviteNewUser();
+        return $this->target->inviteNewUser($request->petname);
     }
 
     public function show(): array
