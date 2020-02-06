@@ -96,6 +96,7 @@ class Shell extends Model
     public function inviteNewUser()
     {
             $new_shell = Shell::create();
+            $this->dropboxFacets()->save(new ShellDropboxFacet);
 
             if ($new_shell->exists()) {
                 return [];
