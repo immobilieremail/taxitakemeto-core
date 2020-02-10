@@ -295,6 +295,24 @@ class ShellTest extends TestCase
      * @test
      *
      */
+    public function add_vcards()
+    {
+        $name1 = 'Sunan';
+        $name2 = 'John';
+
+        $shell = factory(Shell::class)->create();
+        $shell->addVcard($name1);
+        $this->assertEquals($name1, $shell->vcards()->first()->name);
+
+        $shell->addVcard($name2);
+        $this->assertEquals(2, count($shell->vcards()->get()->all()));
+        $this->assertEquals(1, $shell->vcards()->where(['name' => $name2])->count());
+    }
+
+    /**
+     * @test
+     *
+     */
     public function create_invitation()
     {
         $invitee = 'foo';
@@ -302,6 +320,7 @@ class ShellTest extends TestCase
         $facets = new FacetCounter('App\Models\ShellDropboxFacet');
 
         $sender_shell = factory(Shell::class)->create();
+        $sender_shell->addVcard('Sunan');
 
         $request = [ 'petname' => $invitee ];
         $response = $this->post(route('obj.store', ['obj' => $sender_shell->inviteFacet->id]), $request);

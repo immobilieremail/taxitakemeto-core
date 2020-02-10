@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ShellDropboxFacet;
+use App\Models\Vcard;
 
 
 class Shell extends Model
@@ -103,5 +104,15 @@ class Shell extends Model
             } else {
                 return false;
             }
+    }
+
+    public function vcards()
+    {
+        return $this->hasMany('App\Models\Vcard');
+    }
+
+    public function addVCard($name)
+    {
+        return $this->vcards()->save(new Vcard(['name' => $name]));
     }
 }
