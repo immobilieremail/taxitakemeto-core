@@ -21,6 +21,7 @@ class TwilioServiceTest extends TestCase
         $twilio = new TwilioService;
         $result = $twilio->post("sms message", $valid_number);
         $this->assertTrue(isset($result["sid"]));
+        $this->assertTrue(!empty($result["sid"]));
         $this->assertFalse(isset($result["error"]));
     }
     
@@ -34,6 +35,7 @@ class TwilioServiceTest extends TestCase
         $twilio = new TwilioService;
         $result = $twilio->post("sms message", $invalid_number);
         $this->assertTrue(isset($result["error"]));
+        $this->assertTrue(!empty($result["error"]));
         $this->assertTrue(!isset($result["sid"]));
     }
 }
