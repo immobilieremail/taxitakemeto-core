@@ -14,10 +14,11 @@
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.8",
-        "rollbar/rollbar-laravel": "^4.0",
         "mannikj/laravel-sti": "^1.6",
         "pbmedia/laravel-ffmpeg": "^4.0",
-        "spatie/laravel-glide": "^3.4"
+        "rollbar/rollbar-laravel": "^4.0",
+        "spatie/laravel-glide": "^3.4",
+        "twilio/sdk": "^5.42"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
