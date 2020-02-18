@@ -20,6 +20,7 @@ class TwilioService {
     }
 
     public function post(string $body, string $recipient) {
+        $output = [];
         try {
             $message = $this->twilio->messages
                         ->create($recipient, 
@@ -27,9 +28,10 @@ class TwilioService {
                             "body" => $body,
                             "from" => $this->origin_number
                         ]);
+            $output["sid"] = $message->sid;
         } catch (RestException $e) {
-            return $e;
+            $output["error"] = $e->getMessage();
         }
-        return $message->sid;
+        return $output;
     }
 }
