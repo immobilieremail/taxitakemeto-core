@@ -19,9 +19,18 @@ class TwilioServiceTest extends TestCase
     {
         $valid_number = "+33123456789";
         $sms_body = "sms message";
-        $twilio = new TwilioService;
 
-        $result = $twilio->post($sms_body, $valid_number);
+        //TODO: Mock the call to the Twilio API in a way that allows testing of the TwilioService class
+        $fake_twilio = $this->mock(TwilioService::class, function ($mock) use ($valid_number, $sms_body) {
+            $mock->shouldReceive('post')
+            ->once()
+            ->with($sms_body, $valid_number)
+            ->andReturn(["sid" => "something"]);
+        });
+        $result = $fake_twilio->post($sms_body, $valid_number);
+        
+        // $twilio = new TwilioService;
+        // $result = $twilio->post($sms_body, $valid_number);
         $this->assertTrue(isset($result["sid"]));
         $this->assertTrue(!empty($result["sid"]));
         $this->assertFalse(isset($result["error"]));
@@ -35,9 +44,18 @@ class TwilioServiceTest extends TestCase
     {
         $invalid_number = "thisIsn'tAPhoneNumber";
         $sms_body = "sms message";
-        $twilio = new TwilioService;
-
-        $result = $twilio->post($sms_body, $invalid_number);
+        
+        //TODO: Mock the call to the Twilio API in a way that allows testing of the TwilioService class
+        $fake_twilio = $this->mock(TwilioService::class, function ($mock) use ($invalid_number, $sms_body) {
+            $mock->shouldReceive('post')
+                ->once()
+                ->with($sms_body, $invalid_number)
+                ->andReturn(["error" => "something"]);
+        });
+        $result = $fake_twilio->post($sms_body, $invalid_number);
+        
+        // $twilio = new TwilioService;
+        // $result = $twilio->post($sms_body, $invalid_number);
         $this->assertTrue(isset($result["error"]));
         $this->assertTrue(!empty($result["error"]));
         $this->assertTrue(!isset($result["sid"]));
