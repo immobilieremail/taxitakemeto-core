@@ -18,8 +18,10 @@ class TwilioServiceTest extends TestCase
     public function should_post_with_valid_recipient()
     {
         $valid_number = "+33123456789";
+        $sms_body = "sms message";
         $twilio = new TwilioService;
-        $result = $twilio->post("sms message", $valid_number);
+
+        $result = $twilio->post($sms_body, $valid_number);
         $this->assertTrue(isset($result["sid"]));
         $this->assertTrue(!empty($result["sid"]));
         $this->assertFalse(isset($result["error"]));
@@ -32,8 +34,10 @@ class TwilioServiceTest extends TestCase
     public function should_not_post_with_valid_recipient()
     {
         $invalid_number = "thisIsn'tAPhoneNumber";
+        $sms_body = "sms message";
         $twilio = new TwilioService;
-        $result = $twilio->post("sms message", $invalid_number);
+
+        $result = $twilio->post($sms_body, $invalid_number);
         $this->assertTrue(isset($result["error"]));
         $this->assertTrue(!empty($result["error"]));
         $this->assertTrue(!isset($result["sid"]));
