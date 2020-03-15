@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Lang;
 use App\Models\ShellDropboxFacet;
 use App\Models\Vcard;
+use App\Services\API\TwilioService;
 
 
 class Shell extends Model
@@ -94,13 +96,14 @@ class Shell extends Model
                     ->where('type', 'App\Models\ShellInviteFacet');
     }
 
-    public function inviteNewUser($petname)
+    public function inviteNewUser($petname, $phone)
     {
             $new_shell = Shell::create();
             $this->dropboxFacets()->save(new ShellDropboxFacet(['petname' => $petname]));
 
             if ($new_shell->exists()) {
-                return [];
+                $twilio = new TwilioService;
+                return $twilio->post(Lang::get('twilio.invited', ['name' => $petname, 'url' => route('home', ['path' => '/elm/shell']) . '#' . route('obj.show', ['obj' => $new_shell->userFacet->id])]), $phone);
             } else {
                 return false;
             }

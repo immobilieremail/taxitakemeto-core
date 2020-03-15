@@ -322,7 +322,8 @@ class ShellTest extends TestCase
         $sender_shell = factory(Shell::class)->create();
         $sender_shell->addVcard('Sunan');
 
-        $request = [ 'petname' => $invitee ];
+        $phone = "+33612345678";
+        $request = [ 'petname' => $invitee, 'phone' => $phone ];
         $response = $this->post(route('obj.store', ['obj' => $sender_shell->inviteFacet->id]), $request);
 
         $this->assertTrue($counter->hasDiff(Shell::class, 2));
