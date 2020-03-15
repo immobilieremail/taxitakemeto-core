@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('{path}', function () {
+Route::get('/u{path}', function () {
     return view('elm');
 })->name('home')->where('path', '.*');

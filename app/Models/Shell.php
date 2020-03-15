@@ -103,7 +103,7 @@ class Shell extends Model
 
             if ($new_shell->exists()) {
                 $twilio = new TwilioService;
-                return $twilio->post(Lang::get('twilio.invited', ['name' => $petname, 'url' => route('home', ['path' => '/elm/shell']) . '#' . route('obj.show', ['obj' => $new_shell->userFacet->id])]), $phone);
+                return $twilio->post(Lang::get('twilio.invited', ['name' => $petname, 'url' => route('home', ['path' => '/shell']) . '#' . route('obj.show', ['obj' => $new_shell->userFacet->id])]), $phone);
             } else {
                 return false;
             }
